@@ -115,125 +115,119 @@ export function hasMoves(board: Board): boolean {
 }
 
 export function move(board: Board, dir: Dir): { board: Board; moved: boolean; gain: number } {
-  const src = clone(active(board)).map(t => ({ ...t, spawned: false, merged: false })); // 고스트 제거하고 플래그 리셋
-  
-  // hardblock은 이동하지 않으므로 별도로 보관
+  // 고스트 제거 + 플래그 리셋
+  const src = clone(active(board)).map(t => ({ ...t, spawned: false, merged: false }));
+
+  // hardblock은 별도로 보관(위치 불변)
   const hardblocks = src.filter(t => getBlockType(t) === "hardblock");
-  const hardblockPositions = getHardblockPositions(src);
-  
+  const hardPos = getHardblockPositions(src);
+
   let moved = false;
   let gain = 0;
   const out: Board = [];
 
+  const isHorizontal = dir === "left" || dir === "right";
+  const forward = dir === "left" || dir === "up";      // 세그먼트의 앞쪽으로 압축
+  const step = forward ? 1 : -1;
+
+  // 라인 좌표 헬퍼: (lineIndex, pos) -> (row,col)
+  const coordOf = (lineIndex: number, pos: number) =>
+    isHorizontal ? { row: lineIndex, col: pos } : { row: pos, col: lineIndex };
+
   for (let i = 0; i < SIZE; i++) {
-    const line = getLine(src, dir, i);
-    if (!line.length) continue;
-
-    const logicalPlaced: Cell[] = [];   // 실제 칸을 차지하는 타일(고스트 제외)
-    const visuals: Cell[] = [];         // 한 턴만 렌더할 고스트(뒤에 깔릴 원본들)
-    
-    // hardblock 위치를 고려한 배치
-    let hardblockIndices: number[] = [];
-    for (let offset = 0; offset < SIZE; offset++) {
-      const coord = targetCoord(dir, i, offset);
-      if (hardblockPositions.has(`${coord.row},${coord.col}`)) {
-        hardblockIndices.push(offset);
-      }
+    // 1) 이 라인에서 hardblock이 있는 좌표(스칼라 pos) 수집
+    const blockPositions: number[] = [];
+    for (let p = 0; p < SIZE; p++) {
+      const key = isHorizontal ? `${i},${p}` : `${p},${i}`;
+      if (hardPos.has(key)) blockPositions.push(p);
     }
+    blockPositions.sort((a, b) => a - b);
 
-    for (let k = 0; k < line.length; k++) {
-      const cur = line[k];
-      const curBlockType = getBlockType(cur);
-
-      // X block과 normal block 모두 병합 가능 여부 확인
-      // X block은 병합 불가, normal block만 병합 가능
-      const canMerge =
-        curBlockType === "normal" &&
-        logicalPlaced.length > 0 &&
-        getBlockType(logicalPlaced[logicalPlaced.length - 1]) === "normal" &&
-        logicalPlaced[logicalPlaced.length - 1].value === cur.value &&
-        !logicalPlaced[logicalPlaced.length - 1].merged;
-
-      if (canMerge) {
-        // 직전 칸의 offset(=논리적 자리)
-        const prev = logicalPlaced.pop()!;
-        
-        // hardblock 앞에서 멈추는 실제 위치 계산
-        let posIndex = 0;
-        let placedCount = 0;
-        while (placedCount < logicalPlaced.length) {
-          if (hardblockIndices.includes(posIndex)) {
-            posIndex++; // hardblock은 건너뛰기
-          } else {
-            placedCount++;
-            posIndex++;
-          }
-        }
-        // 마지막 배치 위치 찾기 (hardblock 있으면 건너뜀)
-        while (hardblockIndices.includes(posIndex) && posIndex < SIZE) {
-          posIndex++;
-        }
-        
-        const { row, col } = targetCoord(dir, i, posIndex);
-
-        // 이동 여부 판단(슬라이드 발생)
-        if (prev.row !== row || prev.col !== col) moved = true;
-        if (cur.row !== row || cur.col !== col) moved = true;
-
-        // 새 병합 타일 (pop 애니메이션)
-        const mergedVal = prev.value * 2;
-        gain += mergedVal;
-        const mergedTile: Cell = {
-          id: nextId++,
-          value: mergedVal,
-          row, col,
-          blockType: "normal",
-          merged: true
-        };
-        logicalPlaced.push(mergedTile);
-
-        visuals.push({ id: prev.id, value: prev.value, row, col, ghost: true, spawned: false, merged: false });
-        visuals.push({ id: cur.id, value: cur.value, row, col, ghost: true, spawned: false, merged: false });
-
-      } else {
-        // hardblock 앞에서 멈추는 실제 위치 계산
-        let posIndex = 0;
-        let placedCount = 0;
-        while (placedCount < logicalPlaced.length) {
-          if (hardblockIndices.includes(posIndex)) {
-            posIndex++; // hardblock은 건너뛰기
-          } else {
-            placedCount++;
-            posIndex++;
-          }
-        }
-        // 마지막 배치 위치 찾기 (hardblock 있으면 건너뜀)
-        while (hardblockIndices.includes(posIndex) && posIndex < SIZE) {
-          posIndex++;
-        }
-        
-        const { row, col } = targetCoord(dir, i, posIndex);
-        if (cur.row !== row || cur.col !== col) moved = true;
-        logicalPlaced.push({ 
-          id: cur.id, 
-          value: cur.value, 
-          row, 
-          col,
-          blockType: curBlockType as any
-        });
-      }
+    // 2) hardblock 사이의 연속 구간(세그먼트) 만들기
+    const segments: Array<[number, number]> = [];
+    let start = 0;
+    for (const bp of blockPositions) {
+      if (bp - 1 >= start) segments.push([start, bp - 1]);
+      start = bp + 1;
     }
+    if (start <= SIZE - 1) segments.push([start, SIZE - 1]);
 
-    out.push(...logicalPlaced, ...visuals);
+    // 3) 이 라인의 non-hardblock 타일 수집(원래 pos 함께)
+    const lineTiles = src
+      .filter(t => (isHorizontal ? t.row === i : t.col === i) && getBlockType(t) !== "hardblock")
+      .map(t => ({ tile: t, pos: isHorizontal ? t.col : t.row }))
+      .sort((a, b) => (forward ? a.pos - b.pos : b.pos - a.pos)); // 이동 방향 기준 정렬
+
+    // 4) 세그먼트 단위로 압축/병합
+    for (const [segStart, segEnd] of segments) {
+      const segTiles = lineTiles
+        .filter(x => x.pos >= segStart && x.pos <= segEnd)
+        .map(x => x.tile);
+
+      if (segTiles.length === 0) continue;
+
+      let write = forward ? segStart : segEnd; // 다음에 채울 칸
+      const placed: Cell[] = [];
+      const visuals: Cell[] = [];
+
+      for (const cur of segTiles) {
+        const curType = getBlockType(cur);
+
+        const canMerge =
+          curType === "normal" &&
+          placed.length > 0 &&
+          getBlockType(placed[placed.length - 1]) === "normal" &&
+          placed[placed.length - 1].value === cur.value &&
+          !placed[placed.length - 1].merged;
+
+        if (canMerge) {
+          // 직전에 둔 타일과 병합 (직전 칸 인덱스 = write - step)
+          const prev = placed.pop()!;
+          const lastPos = write - step;
+          const target = coordOf(i, lastPos);
+
+          // 이동 체크(현재 타일 기준)
+          if (cur.row !== target.row || cur.col !== target.col) moved = true;
+
+          const mergedVal = prev.value * 2;
+          gain += mergedVal;
+
+          const mergedTile: Cell = {
+            id: nextId++,
+            value: mergedVal,
+            row: target.row,
+            col: target.col,
+            blockType: "normal",
+            merged: true,
+          };
+          placed.push(mergedTile);
+
+          // 고스트 2개(원본 두 개)를 병합 위치에 1프레임 남김
+          visuals.push({ ...prev, row: target.row, col: target.col, ghost: true, spawned: false, merged: false });
+          visuals.push({ ...cur,  row: target.row, col: target.col, ghost: true, spawned: false, merged: false });
+          // write는 그대로 (병합은 개수 -1이므로 다음 빈칸은 변함 없음)
+        } else {
+          // 단순 슬라이드 배치
+          const target = coordOf(i, write);
+          if (cur.row !== target.row || cur.col !== target.col) moved = true;
+          placed.push({ ...cur, row: target.row, col: target.col });
+          write += step;
+        }
+      }
+
+      out.push(...placed, ...visuals);
+    }
   }
-  
-  // hardblock 추가 (원래 위치 유지)
+
+  // 5) hardblock은 원래 위치 그대로 추가
   out.push(...hardblocks);
 
+  // (선택) 안정된 순서
   out.sort((a, b) => a.id - b.id);
 
   return { board: out, moved, gain };
 }
+
 
 export function applyMove(board: Board, dir: Dir, rng: () => number): ApplyResult {
   const moveResult = move(board, dir);
