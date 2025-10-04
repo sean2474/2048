@@ -1,0 +1,21 @@
+{
+  "name": "2048-io",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:socket": "pnpm --filter socket dev",
+    "dev": "concurrently -n WEB,SOCKET -c green,cyan \"pnpm dev:web\" \"pnpm dev:socket\"",
+    "build": "pnpm -r build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "zod": "^4.1.11"
+  }
+}

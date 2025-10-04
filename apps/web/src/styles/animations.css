@@ -1,0 +1,12 @@
+@theme {
+  @keyframes pop-spawn {
+    0%   { transform: scale(0.6); opacity: .6; }
+    60%  { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  @keyframes pop-merge {
+    0%   { transform: scale(0); }
+    40%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+}

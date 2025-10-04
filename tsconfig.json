@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [{ "path": "apps/web" }, { "path": "apps/socket" }, { "path": "packages/game-core" }, { "path": "packages/schema" }],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "game-core": ["packages/game-core/src"],
+      "schema": ["packages/schema/index.ts"]
+    }
+  }
+}

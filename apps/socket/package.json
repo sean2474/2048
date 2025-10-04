@@ -1,0 +1,20 @@
+{
+	"name": "socket",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "tsx watch index.ts",
+		"start": "tsx index.ts"
+	},
+	"dependencies": {
+		"http": "0.0.1-security",
+		"seedrandom": "^3.0.5",
+		"socket.io": "^4.8.1",
+		"game-core": "workspace:*",
+		"schema": "workspace:*"
+	},
+	"devDependencies": {
+		"tsx": "^4.7.0",
+		"@types/node": "^20.0.0"
+	}
+}
