@@ -1,42 +1,106 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Loader2, Users } from "lucide-react"
 import { BoardView } from "@/components/2048/board"
 import { initBoard } from "@/lib/2048"
+import { io, Socket } from "socket.io-client"
+import { usePlayer } from "@/hooks/use-player"
+import { createClient } from "@/lib/supabase/client"
+import { Board } from "@/types"
+import { Avatar } from "@radix-ui/react-avatar"
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { uuid } from 'uuidv4';
 
 export default function SearchingScreen() {
-  const [userName] = useState("Player_2048")
+  const router = useRouter();
+  const supabase = createClient();
+
+  const [boardview, setBoardview] = useState<Board>([]);
+
+  const [username, setUsername] = useState("Player_2048")
   const [searchTime, setSearchTime] = useState(0)
+  const [isSearching, setIsSearching] = useState(true);
+  const socketRef = useRef<Socket | null>(null);
+  const roomIdRef = useRef<string>("");
+  const { player } = usePlayer();
 
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setSearchTime((prev) => prev + 1)
-  //   }, 1000)
+  useEffect(() => {
+    async function init() {
+      if (player === undefined) return;
+      else if (player === null) await supabase.auth.signInAnonymously()
+      else setUsername(player.name)
+    }
+    init();
+  }, [player])
 
-  //   return () => clearInterval(timer)
-  // }, [])
+  useEffect(() => {
+    setBoardview(initBoard(4, 8));
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSearchTime((prev) => prev + 1)
+    }, 1000)
+
+    // 소켓 연결 및 매칭 요청
+    const socket = io("http://localhost:4000");
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      console.log("Connected to matchmaking server");
+      // 퀵플레이용 랜덤 방 ID 생성
+      const quickplayRoomId = uuid();
+      roomIdRef.current = quickplayRoomId;
+      socket.emit("message", {
+        t: "findMatch",
+        roomId: quickplayRoomId
+      });
+    });
+
+    socket.on("message", (data: any) => {
+      console.log("Received:", data);
+      
+      if (data.t === "state" && data.opp) {
+        // 상대방이 실제로 조인했을 때만 게임 시작
+        router.push(`/play/${roomIdRef.current}`);
+      }
+    });
+
+    return () => {
+      clearInterval(timer);
+      socket.disconnect();
+    };
+  }, [router])
+
+  const cancelSearch = () => {
+    setIsSearching(false);
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+    }
+    router.push("/");
+  };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-6xl">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left Side - User Info & Game Preview */}
           <div className="space-y-6">
             <div className="p-6 bg-card border-2 border-border">
               <div className="flex items-center gap-4 mb-6">
-                <div className="h-16 w-16 border-2 border-primary">
-                  <div className="bg-primary text-primary-foreground text-xl font-bold">
-                    {userName.slice(0, 2).toUpperCase()}
-                  </div>
-                </div>
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={player?.image_path || ""} />
+                  <AvatarFallback>{player?.name || "Guest"}</AvatarFallback>
+                </Avatar>
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">{userName}</h2>
+                  <h2 className="text-2xl font-bold text-foreground">{player?.name || "Guest 2048"}</h2>
                   <p className="text-muted-foreground">Ready to play</p>
                 </div>
               </div>
-              <BoardView board={initBoard(4, 8)} />
+              <BoardView board={boardview} />
               <div className="mt-6 flex items-center justify-between text-sm">
                 <div>
                   <p className="text-muted-foreground">Best Score</p>
@@ -69,9 +133,9 @@ export default function SearchingScreen() {
                   <h1 className="text-4xl font-bold text-foreground flex items-center justify-center gap-2">
                     Searching
                     <span className="flex gap-1">
-                      <span className="animate-pulse-dot-1">.</span>
-                      <span className="animate-pulse-dot-2">.</span>
-                      <span className="animate-pulse-dot-3">.</span>
+                      <span className="animate-[pulse_1.5s_ease-in-out_infinite]">.</span>
+                      <span className="animate-[pulse_1.5s_ease-in-out_infinite_0.2s]">.</span>
+                      <span className="animate-[pulse_1.5s_ease-in-out_infinite_0.4s]">.</span>
                     </span>
                   </h1>
                   <p className="text-muted-foreground text-lg">Looking for an opponent</p>
@@ -101,21 +165,33 @@ export default function SearchingScreen() {
                 </div>
 
                 {/* Cancel Button */}
-                <div className="pt-4">
-                  <Button variant="outline" size="lg" className="w-full border-2 bg-transparent">
-                    Cancel Search
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  onClick={cancelSearch}
+                  className="w-full max-w-xs"
+                >
+                  Cancel Search
+                </Button>
               </div>
             </div>
 
             {/* Quick Tips */}
-            <div className="p-4 bg-muted/50 border border-border">
-              <h4 className="font-semibold text-sm text-foreground mb-2">💡 Quick Tip</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                In multiplayer mode, the first player to reach 2048 wins! Use arrow keys to move tiles and combine
-                matching numbers.
-              </p>
+            <div className="p-6 bg-card/50 border border-border space-y-3">
+              <h3 className="font-semibold text-foreground">Quick Tips</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <span>Merge tiles to attack your opponent</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <span>Block attacks with X blocks</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <span>Watch out for hardblocks!</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

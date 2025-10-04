@@ -1,5 +1,5 @@
-import type { BlockType, Board, Cell, Dir, Effect } from "schema";
-import { SIZE } from "schema";
+import type { BlockType, Board, Cell, Dir, Effect } from "schema/in-game";
+import { SIZE } from "schema/in-game";
 
 export type ApplyResult = {
   board: Board;

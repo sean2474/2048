@@ -18,7 +18,7 @@ export function Tile({ tile }: { tile: Cell }) {
       )} 
       style={{
         transform: `translate(calc((100% + var(--gap)) * ${col}), calc((100% + var(--gap)) * ${row}))`,
-        fontSize: value >= 1024 ? "2.4rem" : value >= 128 ? "2.7rem" : "3rem",
+        fontSize: value >= 1024 ? "1.8rem" : value >= 128 ? "2.5rem" : "2.8rem",
         zIndex: ghost ? 20 : merged ? 30 : 40,
       }}
     >

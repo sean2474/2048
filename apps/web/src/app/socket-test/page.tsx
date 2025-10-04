@@ -85,7 +85,6 @@ export default function SocketTestPage() {
 
     const msg: ClientMsg = {
       t: "input",
-      turnId: serverState?.t === "state" ? serverState.turnId : 0,
       dir,
     };
 

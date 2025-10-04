@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { initBoard, move, spawnRandom, hasMoves } from "@/lib/2048";
-import { Board, Dir, Cell, BlockType } from "@/types";
+import { Board, Dir } from "@/types";
 import { useSwipe } from "@/hooks/use-swipe";
 import { Button } from "@/components/ui/button";
 import { BoardView } from "@/components/2048/board";

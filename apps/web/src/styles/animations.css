@@ -9,4 +9,11 @@
     40%  { transform: scale(1.15); }
     100% { transform: scale(1); }
   }
+  @keyframes pulse {
+    0% { transform: translateY(0); }
+    40% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    60% { transform: translateY(0); }
+    100% { transform: translateY(0); }
+  }
 }
