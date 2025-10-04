@@ -1,4 +1,4 @@
-import type { Board, Cell, Dir, Effect } from "schema";
+import type { BlockType, Board, Cell, Dir, Effect } from "schema";
 import { SIZE } from "schema";
 
 export type ApplyResult = {
@@ -14,6 +14,7 @@ let nextId = 1;
 // ========== 헬퍼 함수 ==========
 const clone = (b: Board): Board => b.map(t => ({ ...t }));
 const active = (b: Board): Board => b.filter(t => !t.ghost); // 로직은 고스트 제외
+const getBlockType = (cell: Cell): string => cell.blockType || "normal";
 
 function emptyCoords(b: Board): Array<{ row: number; col: number }> {
   const occ = new Set(active(b).map(t => `${t.row},${t.col}`));
@@ -25,8 +26,21 @@ function emptyCoords(b: Board): Array<{ row: number; col: number }> {
   return out;
 }
 
+// hardblock 위치 가져오기
+function getHardblockPositions(b: Board): Set<string> {
+  return new Set(
+    active(b)
+      .filter(t => getBlockType(t) === "hardblock")
+      .map(t => `${t.row},${t.col}`)
+  );
+}
+
 function getLine(b: Board, dir: Dir, index: number): Cell[] {
-  const line = active(b).filter(t => (dir === "left" || dir === "right") ? t.row === index : t.col === index);
+  // hardblock은 라인에서 제외 (움직이지 않음)
+  const line = active(b).filter(t => {
+    const inLine = (dir === "left" || dir === "right") ? t.row === index : t.col === index;
+    return inLine && getBlockType(t) !== "hardblock";
+  });
   if (dir === "left") line.sort((a, b) => a.col - b.col);
   if (dir === "right") line.sort((a, b) => b.col - a.col);
   if (dir === "up") line.sort((a, b) => a.row - b.row);
@@ -52,7 +66,7 @@ export function initBoard(range?: number, numTiles?: number): Board {
   return b;
 }
 
-export function spawnRandom(board: Board, range?: number): Board {
+export function spawnRandom(board: Board, range?: number, blockType?: BlockType): Board {
   const empties = emptyCoords(board);
   if (!empties.length) return board;
   const spot = empties[Math.floor(Math.random() * empties.length)];
@@ -60,23 +74,41 @@ export function spawnRandom(board: Board, range?: number): Board {
   let value = 0;
   if (range) value = Math.pow(2, Math.round(Math.random() * range + 1));
   else value = Math.random() < 0.9 ? 2 : 4;
+  if (blockType) value = blockType === "xblock" ? -1 : blockType === "hardblock" ? -2 : value;
 
   return [
     ...board,
-    { id: nextId++, value, row: spot.row, col: spot.col, spawned: true }
+    { id: nextId++, value, row: spot.row, col: spot.col, spawned: true, blockType }
   ];
 }
 
 export function hasMoves(board: Board): boolean {
   const act = active(board);
+  const normalTiles = act.filter(t => getBlockType(t) === "normal");
+  
+  // 빈 공간이 있으면 이동 가능
   if (act.length < SIZE * SIZE) return true;
-  const grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
-  for (const t of act) grid[t.row][t.col] = t.value;
+  
+  // 인접한 같은 값의 normal 타일이 있는지 확인
+  const grid = Array.from({ length: SIZE }, () => Array<Cell | null>(SIZE).fill(null));
+  for (const t of act) grid[t.row][t.col] = t;
+  
   for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
-      const v = grid[r][c];
-      if (c + 1 < SIZE && grid[r][c + 1] === v) return true;
-      if (r + 1 < SIZE && grid[r + 1][c] === v) return true;
+      const cell = grid[r][c];
+      if (!cell || getBlockType(cell) !== "normal") continue;
+      
+      const v = cell.value;
+      // 오른쪽 확인
+      if (c + 1 < SIZE) {
+        const right = grid[r][c + 1];
+        if (right && getBlockType(right) === "normal" && right.value === v) return true;
+      }
+      // 아래 확인
+      if (r + 1 < SIZE) {
+        const down = grid[r + 1][c];
+        if (down && getBlockType(down) === "normal" && down.value === v) return true;
+      }
     }
   }
   return false;
@@ -84,6 +116,10 @@ export function hasMoves(board: Board): boolean {
 
 export function move(board: Board, dir: Dir): { board: Board; moved: boolean; gain: number } {
   const src = clone(active(board)).map(t => ({ ...t, spawned: false, merged: false })); // 고스트 제거하고 플래그 리셋
+  
+  // hardblock은 이동하지 않으므로 별도로 보관
+  const hardblocks = src.filter(t => getBlockType(t) === "hardblock");
+  const hardblockPositions = getHardblockPositions(src);
   
   let moved = false;
   let gain = 0;
@@ -95,19 +131,49 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
 
     const logicalPlaced: Cell[] = [];   // 실제 칸을 차지하는 타일(고스트 제외)
     const visuals: Cell[] = [];         // 한 턴만 렌더할 고스트(뒤에 깔릴 원본들)
+    
+    // hardblock 위치를 고려한 배치
+    let hardblockIndices: number[] = [];
+    for (let offset = 0; offset < SIZE; offset++) {
+      const coord = targetCoord(dir, i, offset);
+      if (hardblockPositions.has(`${coord.row},${coord.col}`)) {
+        hardblockIndices.push(offset);
+      }
+    }
 
     for (let k = 0; k < line.length; k++) {
       const cur = line[k];
+      const curBlockType = getBlockType(cur);
 
+      // X block과 normal block 모두 병합 가능 여부 확인
+      // X block은 병합 불가, normal block만 병합 가능
       const canMerge =
+        curBlockType === "normal" &&
         logicalPlaced.length > 0 &&
+        getBlockType(logicalPlaced[logicalPlaced.length - 1]) === "normal" &&
         logicalPlaced[logicalPlaced.length - 1].value === cur.value &&
         !logicalPlaced[logicalPlaced.length - 1].merged;
 
       if (canMerge) {
         // 직전 칸의 offset(=논리적 자리)
         const prev = logicalPlaced.pop()!;
-        const posIndex = logicalPlaced.length;
+        
+        // hardblock 앞에서 멈추는 실제 위치 계산
+        let posIndex = 0;
+        let placedCount = 0;
+        while (placedCount < logicalPlaced.length) {
+          if (hardblockIndices.includes(posIndex)) {
+            posIndex++; // hardblock은 건너뛰기
+          } else {
+            placedCount++;
+            posIndex++;
+          }
+        }
+        // 마지막 배치 위치 찾기 (hardblock 있으면 건너뜀)
+        while (hardblockIndices.includes(posIndex) && posIndex < SIZE) {
+          posIndex++;
+        }
+        
         const { row, col } = targetCoord(dir, i, posIndex);
 
         // 이동 여부 판단(슬라이드 발생)
@@ -121,6 +187,7 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
           id: nextId++,
           value: mergedVal,
           row, col,
+          blockType: "normal",
           merged: true
         };
         logicalPlaced.push(mergedTile);
@@ -129,15 +196,39 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
         visuals.push({ id: cur.id, value: cur.value, row, col, ghost: true, spawned: false, merged: false });
 
       } else {
-        const posIndex = logicalPlaced.length;
+        // hardblock 앞에서 멈추는 실제 위치 계산
+        let posIndex = 0;
+        let placedCount = 0;
+        while (placedCount < logicalPlaced.length) {
+          if (hardblockIndices.includes(posIndex)) {
+            posIndex++; // hardblock은 건너뛰기
+          } else {
+            placedCount++;
+            posIndex++;
+          }
+        }
+        // 마지막 배치 위치 찾기 (hardblock 있으면 건너뜀)
+        while (hardblockIndices.includes(posIndex) && posIndex < SIZE) {
+          posIndex++;
+        }
+        
         const { row, col } = targetCoord(dir, i, posIndex);
         if (cur.row !== row || cur.col !== col) moved = true;
-        logicalPlaced.push({ id: cur.id, value: cur.value, row, col });
+        logicalPlaced.push({ 
+          id: cur.id, 
+          value: cur.value, 
+          row, 
+          col,
+          blockType: curBlockType as any
+        });
       }
     }
 
     out.push(...logicalPlaced, ...visuals);
   }
+  
+  // hardblock 추가 (원래 위치 유지)
+  out.push(...hardblocks);
 
   out.sort((a, b) => a.id - b.id);
 

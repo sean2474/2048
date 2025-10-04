@@ -1,14 +1,2 @@
-export const SIZE = 5 as const;
-export type Dir = "left" | "right" | "up" | "down";
-
-export type Cell = {
-  id: number;
-  value: number;
-  row: number;
-  col: number;
-  spawned?: boolean;
-  merged?: boolean;
-  ghost?: boolean;
-};
-
-export type Board = Cell[];
+// schema 패키지에서 타입 임포트
+export { SIZE, type Dir, type Cell, type Board, type BlockType } from "schema";

@@ -3,7 +3,12 @@ import { cn } from "@/lib/utils";
 import { tileBg, tileFg } from "@/lib/tile-colors";
 
 export function Tile({ tile }: { tile: Cell }) {
-  const { row, col, value, spawned, merged, ghost } = tile;
+  const { row, col, value, spawned, merged, ghost, blockType } = tile;
+  
+  // 블록 타입 결정
+  const type = blockType || "normal";
+  const isXBlock = type === "xblock";
+  const isHardBlock = type === "hardblock";
   
   return (
     <div 
@@ -21,14 +26,22 @@ export function Tile({ tile }: { tile: Cell }) {
         className={cn(
           "grid place-items-center rounded-md w-full h-full",
           spawned && "animate-[pop-spawn_0.18s_ease-out_50ms_both]",
-          merged && "animate-[pop-merge_0.16s_ease-out_50ms_both]"
+          merged && "animate-[pop-merge_0.16s_ease-out_50ms_both]",
+          isXBlock && "border-4 border-red-600",
+          isHardBlock && "border-4 border-gray-900"
         )}
         style={{
-          background: tileBg(value),
-          color: tileFg(value),
+          background: isHardBlock ? "#2c2c2c" : isXBlock ? "#ff6b6b" : tileBg(value),
+          color: isHardBlock ? "#ffffff" : isXBlock ? "#ffffff" : tileFg(value),
         }}
       >
-        {value}
+        {isHardBlock ? (
+          <></>
+        ) : isXBlock ? (
+          <span className="text-4xl font-black">✖</span>
+        ) : (
+          value
+        )}
       </div>
     </div>
   );

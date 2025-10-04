@@ -18,11 +18,15 @@ export type Effect =
   | { type: "addBlock"; count: number }       // 128 합치고 X블록 없으면 상대 1개
   | { type: "removeBlock"; rows: number };    // 128 합치고 X블록 있으면 지우기 
 
+// 블록 타입 정의
+export type BlockType = "normal" | "xblock" | "hardblock";
+
 export type Cell = {
   id: number;
   value: number;
   row: number;
   col: number;
+  blockType?: BlockType;  // undefined는 "normal"로 간주
   spawned?: boolean;
   merged?: boolean;
   ghost?: boolean;
