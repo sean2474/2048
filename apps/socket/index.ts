@@ -17,7 +17,15 @@ import { joinRoom, handleInput } from "./src/game";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
-  cors: { origin: "*" },
+  cors: {
+    origin: [
+      "https://www.2048duo.io",
+      "https://2048duo.io",
+      "http://localhost:3000",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 io.on("connection", (socket) => {
@@ -108,5 +116,5 @@ io.on("connection", (socket) => {
 
 const PORT = Number(process.env.PORT) || 4000;
 httpServer.listen(PORT, () => {
-  console.log(`Authoritative game server listening on :${PORT}`);
+  console.log("Authoritative game server listening on :" + (process.env.PORT || 4000));
 });
