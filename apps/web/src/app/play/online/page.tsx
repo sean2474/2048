@@ -12,7 +12,6 @@ import { createClient } from "@/lib/supabase/client"
 import { Board } from "@/types"
 import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { uuid } from 'uuidv4';
 
 export default function SearchingScreen() {
   const router = useRouter();
@@ -20,9 +19,7 @@ export default function SearchingScreen() {
 
   const [boardview, setBoardview] = useState<Board>([]);
 
-  const [username, setUsername] = useState("Player_2048")
   const [searchTime, setSearchTime] = useState(0)
-  const [isSearching, setIsSearching] = useState(true);
   const socketRef = useRef<Socket | null>(null);
   const roomIdRef = useRef<string>("");
   const { player } = usePlayer();
@@ -31,7 +28,6 @@ export default function SearchingScreen() {
     async function init() {
       if (player === undefined) return;
       else if (player === null) await supabase.auth.signInAnonymously()
-      else setUsername(player.name)
     }
     init();
   }, [player])
@@ -51,20 +47,19 @@ export default function SearchingScreen() {
 
     socket.on("connect", () => {
       console.log("Connected to matchmaking server");
-      // 퀵플레이용 랜덤 방 ID 생성
-      const quickplayRoomId = uuid();
-      roomIdRef.current = quickplayRoomId;
-      socket.emit("message", {
-        t: "findMatch",
-        roomId: quickplayRoomId
-      });
+      socket.emit("message", { t: "findMatch" });
     });
-
+    
     socket.on("message", (data: any) => {
       console.log("Received:", data);
       
+      if (data.t === "matchFound") {
+        console.log("Match found! Room:", data.roomId);
+        roomIdRef.current = data.roomId;
+        router.push(`/play/${data.roomId}`);
+      }
+    
       if (data.t === "state" && data.opp) {
-        // 상대방이 실제로 조인했을 때만 게임 시작
         router.push(`/play/${roomIdRef.current}`);
       }
     });
@@ -76,7 +71,6 @@ export default function SearchingScreen() {
   }, [router])
 
   const cancelSearch = () => {
-    setIsSearching(false);
     if (socketRef.current) {
       socketRef.current.disconnect();
     }

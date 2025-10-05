@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import seedrandom from "seedrandom";
 import { applyMove, emitDebuffEvents, applyEffects, newBoard } from "game-core";
 import type { Board, S2C, ClientMsg, Effect } from "schema/in-game";
+import { v4 as uuid } from "uuid";
 
 type PlayerId = string;
 type RoomId = string;
@@ -109,7 +110,7 @@ function cancelMatch(pid: PlayerId) {
 }
 
 function createMatch(p1: PlayerId, p2: PlayerId) {
-  const roomId = `match-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const roomId = uuid();
   const seed = `${roomId}-${Date.now()}`;
   const rng = mkRng(seed);
 

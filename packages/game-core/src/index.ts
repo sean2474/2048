@@ -269,14 +269,37 @@ export function applyMove(board: Board, dir: Dir, rng: () => number): ApplyResul
 }
 
 export function emitDebuffEvents(mergedMaxTile: number): Effect[] {
-  if (mergedMaxTile >= 1024) return [{ type: "removeBlock", rows: 1 }];
-  if (mergedMaxTile >= 128)  return [{ type: "addBlock", count: 1 }];
+  if (mergedMaxTile === 512) return [{ type: "addBlock", blockType: "hardblock" }];
+  if (mergedMaxTile === 128) return [{ type: "addBlock", blockType: "xblock" }];
   return [{ type: "none" }];
 }
 
 export function applyEffects(board: Board, effects: Effect[], rng: () => number): Board {
-  // 예시: addBlock은 랜덤 빈 칸에 -1 같은 '장애물' 기입 등
-  return board;
+  let newBoard = board;
+  
+  for (const effect of effects) {
+    if (effect.type === "none") continue;
+    
+    if (effect.type === "addBlock") {
+      // 상대방 보드에 방해 블록 추가
+      const blockType = effect.blockType || "xblock"; // xblock 또는 hardblock
+      
+      newBoard = spawnRandom(newBoard, undefined, blockType as BlockType);
+    }
+    
+    if (effect.type === "removeBlock") {
+      // X블록 제거 로직 (나중에 구현 가능)
+      const xblocks = active(newBoard).filter(t => getBlockType(t) === "xblock");
+      
+      // 랜덤하게 xblock 제거
+      const shuffled = [...xblocks].sort(() => rng() - 0.5);
+      const removeIds = new Set(shuffled.slice(0, 1).map(t => t.id));
+      
+      newBoard = newBoard.filter(t => !removeIds.has(t.id));
+    }
+  }
+  
+  return newBoard;
 }
 
 export function newBoard(rng: () => number): Board {

@@ -1,0 +1,21 @@
+app = "my-2048-server"
+primary_region = "nrt"
+
+[build]
+  dockerfile = "./Dockerfile"
+
+[env]
+  PORT = "4000"
+
+[[services]]
+  internal_port = 4000
+  protocol = "tcp"
+  auto_start_machines = true
+  auto_stop_machines = true
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
