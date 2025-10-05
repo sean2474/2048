@@ -1,21 +1,32 @@
-app = "my-2048-server"
-primary_region = "nrt"
+# fly.toml app configuration file generated for 2048-socket on 2025-10-04T20:33:42-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = '2048-socket'
+primary_region = 'dfw'
 
 [build]
-  dockerfile = "./Dockerfile"
+  dockerfile = './Dockerfile'
 
 [env]
-  PORT = "4000"
+  PORT = '4000'
 
 [[services]]
+  protocol = 'tcp'
   internal_port = 4000
-  protocol = "tcp"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
-  auto_stop_machines = true
 
   [[services.ports]]
-    handlers = ["http"]
     port = 80
+    handlers = ['http']
+
   [[services.ports]]
-    handlers = ["tls", "http"]
     port = 443
+    handlers = ['tls', 'http']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

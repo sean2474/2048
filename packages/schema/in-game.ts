@@ -41,7 +41,7 @@ export type ServerState = {
   effects?: Effect[];
 };
 
-export type Reject = { t: "reject"; reason: "stale_turn" | "room_closed" | "invalid" };
+export type Reject = { t: "reject"; reason: "stale_turn" | "room_closed" | "invalid" | "not_in_room" | "room_not_found" };
 export type End = { t: "end"; winner: "you" | "opp" | "draw" };
 
 export type S2C = ServerState | Reject | End;
