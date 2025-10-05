@@ -39,6 +39,9 @@ importers:
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
+      tsx:
+        specifier: ^4.7.0
+        version: 4.20.6
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
@@ -49,9 +52,6 @@ importers:
       '@types/seedrandom':
         specifier: ^3.0.8
         version: 3.0.8
-      tsx:
-        specifier: ^4.7.0
-        version: 4.20.6
 
   apps/web:
     dependencies:

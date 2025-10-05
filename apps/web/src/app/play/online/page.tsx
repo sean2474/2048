@@ -52,6 +52,7 @@ export default function SearchingScreen() {
   useEffect(() => {
     if (!userId) return;
 
+    console.log("userId", userId);
     const timer = setInterval(() => {
       setSearchTime((prev) => prev + 1)
     }, 1000)
