@@ -1,6 +1,5 @@
 import { LoginBtn } from '@/components/ui/login-button';
 import { SignupForm } from '@/components/widget/signup-form';
-import Image from 'next/image';
 
 export default async function Page() {
 

@@ -16,51 +16,64 @@ import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 export default function SearchingScreen() {
   const router = useRouter();
   const supabase = createClient();
+  const { player } = usePlayer();
+  const [userId, setUserId] = useState<string>("");
 
   const [boardview, setBoardview] = useState<Board>([]);
-
   const [searchTime, setSearchTime] = useState(0)
   const socketRef = useRef<Socket | null>(null);
   const roomIdRef = useRef<string>("");
-  const { player } = usePlayer();
 
   useEffect(() => {
     async function init() {
       if (player === undefined) return;
-      else if (player === null) await supabase.auth.signInAnonymously()
+      
+      if (player === null) {
+        // 기존 세션 확인
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          // 세션 없으면 익명 로그인
+          const { data: { user } } = await supabase.auth.signInAnonymously()
+          setUserId(user?.id || "")
+        } else {
+          setUserId(session.user.id)
+        }
+      } else {
+        setUserId(player.id)
+      }
     }
     init();
-  }, [player])
+  }, [player, supabase])
 
   useEffect(() => {
     setBoardview(initBoard(4, 8));
   }, [])
 
   useEffect(() => {
+    if (!userId) return;
+
     const timer = setInterval(() => {
       setSearchTime((prev) => prev + 1)
     }, 1000)
 
-    // 소켓 연결 및 매칭 요청
-    const socket = io("http://localhost:4000");
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL!);
     socketRef.current = socket;
 
     socket.on("connect", () => {
       console.log("Connected to matchmaking server");
-      socket.emit("message", { t: "findMatch" });
+      socket.emit("message", { t: "findMatch", userId });
     });
     
-    socket.on("message", (data: any) => {
+    socket.on("message", (data) => {
       console.log("Received:", data);
       
       if (data.t === "matchFound") {
         console.log("Match found! Room:", data.roomId);
         roomIdRef.current = data.roomId;
+        
+        // 매칭 소켓 disconnect 후 게임 페이지로 이동
+        socket.disconnect();
         router.push(`/play/${data.roomId}`);
-      }
-    
-      if (data.t === "state" && data.opp) {
-        router.push(`/play/${roomIdRef.current}`);
       }
     });
 
@@ -68,7 +81,7 @@ export default function SearchingScreen() {
       clearInterval(timer);
       socket.disconnect();
     };
-  }, [router])
+  }, [router, userId])
 
   const cancelSearch = () => {
     if (socketRef.current) {

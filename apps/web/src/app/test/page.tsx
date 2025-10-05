@@ -73,7 +73,7 @@ export default function SoloPage() {
       const dir = map[e.key];
       if (dir) { e.preventDefault(); doMove(dir); }
     };
-    window.addEventListener("keydown", onKey, { passive: false } as any);
+    window.addEventListener("keydown", onKey, { passive: false });
     return () => window.removeEventListener("keydown", onKey);
   }, [doMove]);
 

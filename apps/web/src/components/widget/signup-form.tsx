@@ -1,12 +1,10 @@
 'use client';
 
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { EmailInput, PasswordConfirmInput, PasswordInput } from '@/components/ui/input';
 import Link from "next/link";
 
 export function SignupForm() {
-  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -18,9 +16,6 @@ export function SignupForm() {
     hasSpecial: false 
   });
   const [showPwIndicator, setShowPwIndicator] = useState(false);
-
-  const encodedEmail = searchParams.get('state');
-  const email = encodedEmail ? atob(decodeURIComponent(encodedEmail)) : '';
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     const pw = e.target.value;
@@ -57,18 +52,18 @@ export function SignupForm() {
         )}
 
         {/* defaultValue로 읽기 전용 email */}
-        <EmailInput defaultValue={email} readOnly />
+        <EmailInput />
         <div className="relative">
           <PasswordInput onChange={handlePasswordChange} value={password} onFocus={() => setShowPwIndicator(true)} onBlur={() => setShowPwIndicator(false)}/>
           {showPwIndicator && <PasswordRulesIndicator rules={rules} />}
         </div>
         <PasswordConfirmInput />
 
-        <button type='submit' className='w-full text-background bg-primary border-primary border border-solid transition-all duration-300 hover:bg-background hover:text-font mt-6 h-14 rounded-md font-bold'>
+        <button type='submit' className='w-full text-background bg-primary border-primary border border-solid transition-all duration-300 hover:bg-transparent hover:text-primary mt-6 h-14 rounded-md font-bold'>
           {isLoading ? "Proceeding..." : "Continue"}
           </button>
         </form>
-        <Link className='text-primary bg-white hover:brightness-90 transition duration-300 mt-3 flex items-center justify-center text-center h-10 px-3 rounded-md font-bold' href={`/auth/signup?state=${encodedEmail}`}>
+        <Link className='text-primary bg-white hover:brightness-90 transition duration-300 mt-3 flex items-center justify-center text-center h-10 px-3 rounded-md font-bold' href={`/login`}>
           Go Back
         </Link>
     </>

@@ -5,50 +5,92 @@ import { useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, Loader2 } from "lucide-react";
+import { usePlayer } from "@/hooks/use-player";
+import { createClient } from "@/lib/supabase/client";
 
 export default function CreateRoomPage() {
   const router = useRouter();
+  const supabase = createClient();
+  const { user } = usePlayer();
+
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [roomId, setRoomId] = useState<string>("");
+  const [joinCode, setJoinCode] = useState<string>("");
   const [copied, setCopied] = useState(false);
   const [connecting, setConnecting] = useState(true);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    // 소켓 연결 및 방 생성
-    const newSocket = io("http://localhost:4000");
+    async function init() {
+      if (user === undefined) return;
+      
+      if (user === null) {
+        // 기존 세션 확인
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          // 세션 있으면 재사용
+          setUserId(session.user.id);
+        } else {
+          // 세션 없으면 익명 로그인
+          const { data: { user }, error } = await supabase.auth.signInAnonymously();
+          if (error) throw error;
+          setUserId(user?.id);
+        }
+      } else {
+        setUserId(user.id);
+      }
+    }
+    init();
+  }, [user, supabase]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL!);
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
       console.log("Connected:", newSocket.id);
       
-      // 랜덤 6자리 방 ID 생성
-      const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-      setRoomId(newRoomId);
+      // 랜덤 6자리 join code 생성
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      setJoinCode(code);
       setConnecting(false);
       
-      // 방 참가
+      // 서버에 join code로 대기 등록
       newSocket.emit("message", {
-        t: "joinRoom",
-        roomId: newRoomId
+        t: "createRoomWithCode",
+        userId,
+        joinCode: code
       });
     });
 
-    newSocket.on("message", (data: any) => {
+    newSocket.on("message", (data) => {
       console.log("Received:", data);
       
-      // if (data.t === "state") {
-      //   // 상대방이 조인하면 게임 페이지로 이동
-      //   router.push(`/play/${roomId}`);
-      // }
+      if (data.t === "waitingForPlayer") {
+        console.log("Waiting for another player...");
+      }
+
+      if (data.t === "roomReady") {
+        // 서버에서 실제 roomId 받음 → 매칭 소켓 disconnect 후 게임 페이지로 이동
+        console.log("Room ready! Redirecting to:", `/play/${data.roomId}`);
+        newSocket.disconnect();
+        router.push(`/play/${data.roomId}`);
+      }
+
+      if (data.t === "error") {
+        console.error("Error:", data.reason);
+        alert(`Error: ${data.reason}`);
+      }
     });
 
     return () => {
       newSocket.disconnect();
     };
-  }, [router, roomId]);
+  }, [router, userId, supabase]);
 
-  const copyRoomCode = () => {
-    navigator.clipboard.writeText(roomId);
+  const copyJoinCode = () => {
+    navigator.clipboard.writeText(joinCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -84,13 +126,13 @@ export default function CreateRoomPage() {
         <div className="p-6 bg-card border-2 border-border rounded-lg space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">
-              Share this room code:
+              Share this join code:
             </label>
             <div className="flex items-center gap-2">
               <div className="flex-1 px-4 py-3 bg-muted rounded-lg font-mono text-3xl font-bold text-center tracking-wider">
-                {roomId}
+                {joinCode}
               </div>
-              <Button size="icon" onClick={copyRoomCode} className="h-12 w-12">
+              <Button size="icon" onClick={copyJoinCode} className="h-12 w-12">
                 {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
               </Button>
             </div>
@@ -103,7 +145,7 @@ export default function CreateRoomPage() {
 
           <div className="pt-4 border-t border-border">
             <p className="text-sm text-muted-foreground text-center">
-              Your friend can join by clicking "Join Room" on the main menu
+              Your friend can join by clicking &quot;Join Room&quot; on the main menu
               and entering this code.
             </p>
           </div>
@@ -114,11 +156,7 @@ export default function CreateRoomPage() {
             <div className="h-2 w-2 bg-primary rounded-full" />
             <span>Waiting for opponent...</span>
           </div>
-          <Button
-            variant="outline"
-            onClick={cancel}
-            className="w-full"
-          >
+          <Button variant="outline" onClick={cancel} className="w-full">
             Cancel
           </Button>
         </div>

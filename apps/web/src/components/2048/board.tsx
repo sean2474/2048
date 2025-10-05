@@ -3,8 +3,8 @@ import { Tile } from "./tile";
 
 export function BoardView({ board }: { board: Board }) {
   const containerStyle: React.CSSProperties = {
-    // @ts-ignore
-    "--size": SIZE as unknown as string,
+    // @ts-expect-error type error
+    "--size": SIZE,
     "--gap": "15px",
     "--pad": "15px",
     "--tile": `calc((100% - (var(--gap) * (var(--size) + 1))) / var(--size))`,

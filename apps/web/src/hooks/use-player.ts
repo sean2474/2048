@@ -14,19 +14,19 @@ export const usePlayer = () => {
       setUser(user)
     }
     getUser()
-  }, [])
+  }, [supabase])
 
   useEffect(() => {
     const getPlayer = async () => {
-      if (!user) {
+      if (!user || user.is_anonymous) {
         setPlayer(null)
         return
       }
-      const { data: player } = await supabase.from("players").select("*").eq("id", user?.id).single()
+      const { data: player } = await supabase.from("players").select("*").eq("id", user.id).single()
       setPlayer(player)
     }
     getPlayer()
-  }, [user])
+  }, [user, supabase])
 
   return { user, player }
 }
