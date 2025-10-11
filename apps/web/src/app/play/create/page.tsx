@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, Loader2 } from "lucide-react";
 import { usePlayer } from "@/hooks/use-player";
-import { createClient } from "@/lib/supabase/client";
 
 export default function CreateRoomPage() {
   const router = useRouter();
@@ -20,6 +20,14 @@ export default function CreateRoomPage() {
   const [userId, setUserId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
+    // 이미 게임 중인지 체크
+    const currentGameRoom = localStorage.getItem("currentGameRoomId");
+    if (currentGameRoom) {
+      console.log("Already in game, redirecting to:", currentGameRoom);
+      router.push(`/play/${currentGameRoom}`);
+      return;
+    }
+
     async function init() {
       if (user === undefined) return;
       

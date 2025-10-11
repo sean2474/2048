@@ -4,14 +4,12 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Loader2, Users } from "lucide-react"
-import { BoardView } from "@/components/2048/board"
-import { initBoard } from "@/lib/2048"
 import { io, Socket } from "socket.io-client"
 import { usePlayer } from "@/hooks/use-player"
 import { createClient } from "@/lib/supabase/client"
-import { Board } from "@/types"
 import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DemoBoard } from "@/components/widget/demo-board"
 
 export default function SearchingScreen() {
   const router = useRouter();
@@ -19,12 +17,19 @@ export default function SearchingScreen() {
   const { player } = usePlayer();
   const [userId, setUserId] = useState<string>("");
 
-  const [boardview, setBoardview] = useState<Board>([]);
   const [searchTime, setSearchTime] = useState(0)
   const socketRef = useRef<Socket | null>(null);
   const roomIdRef = useRef<string>("");
 
   useEffect(() => {
+    // 이미 게임 중인지 체크
+    const currentGameRoom = localStorage.getItem("currentGameRoomId");
+    if (currentGameRoom) {
+      console.log("Already in game, redirecting to:", currentGameRoom);
+      router.push(`/play/${currentGameRoom}`);
+      return;
+    }
+
     async function init() {
       if (player === undefined) return;
       
@@ -43,11 +48,7 @@ export default function SearchingScreen() {
       }
     }
     init();
-  }, [player, supabase])
-
-  useEffect(() => {
-    setBoardview(initBoard(4, 8));
-  }, [])
+  }, [player, supabase, router])
 
   useEffect(() => {
     if (!userId) return;
@@ -108,7 +109,7 @@ export default function SearchingScreen() {
                   <p className="text-muted-foreground">Ready to play</p>
                 </div>
               </div>
-              <BoardView board={boardview} />
+              <DemoBoard />
               <div className="mt-6 flex items-center justify-between text-sm">
                 <div>
                   <p className="text-muted-foreground">Best Score</p>

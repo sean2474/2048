@@ -11,7 +11,7 @@ export const Header = async () => {
   return (
     <header className="flex justify-between gap-2 px-3 py-4"> 
       <Link href="/" className="text-2xl font-bold ml-10">
-        2048brawl.io
+        2048duo.io
       </Link>
       <div className="flex gap-2 items-center mr-10">
         {(user && player) ? (

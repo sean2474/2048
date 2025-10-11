@@ -6,10 +6,21 @@ import { io, Socket } from "socket.io-client";
 import { BoardView } from "@/components/2048/board";
 import { Button } from "@/components/ui/button";
 import type { Dir, S2C } from "@/types";
-import { Trophy } from "lucide-react";
+import { Trophy, Flag } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePlayer } from "@/hooks/use-player";
 import { createClient } from "@/lib/supabase/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function GamePage() {
   const params = useParams();
@@ -51,6 +62,9 @@ export default function GamePage() {
     const userId = user.id;
     console.log("[GamePage] Connecting with userId:", userId);
     
+    // 게임 시작 - roomId 저장
+    localStorage.setItem("currentGameRoomId", roomId);
+    
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL!);
     setSocket(newSocket);
 
@@ -77,18 +91,25 @@ export default function GamePage() {
         setGameState(data);
       } else if (data.t === "end") {
         setGameState(data);
+        // 게임 종료 - roomId 제거
+        localStorage.removeItem("currentGameRoomId");
       } else if (data.t === "reject") {
-        // 방에 접속할 수 없음 - 메인으로 리다이렉트
+        // 방에 접속할 수 없음 - roomId 제거하고 메인으로 리다이렉트
         console.error("Cannot join room:", data.reason);
-        alert(`Cannot join room: ${data.reason}`);
+        localStorage.removeItem("currentGameRoomId");
         router.push("/");
       }
     });
 
     return () => {
       newSocket.disconnect();
+      // 컴포넌트 언마운트 시에도 제거 (뒤로가기 등)
+      // 단, 게임이 진행 중이면 유지
+      if (gameState?.t === "end" || !gameState) {
+        localStorage.removeItem("currentGameRoomId");
+      }
     };
-  }, [roomId, router, user]);
+  }, [roomId, router, user, gameState]);
 
   // 키보드 입력
   const handleMove = useCallback((dir: Dir) => {
@@ -102,6 +123,9 @@ export default function GamePage() {
   }, [socket, connected, gameState]);
 
   useEffect(() => {
+    // 게임이 종료되었으면 키보드 입력 무시
+    if (gameState?.t === "end") return;
+
     const onKey = (e: KeyboardEvent) => {
       const map: Record<string, Dir> = {
         ArrowLeft: "left",
@@ -122,13 +146,30 @@ export default function GamePage() {
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [handleMove]);
+  }, [handleMove, gameState]);
 
-  const leaveRoom = () => {
-    if (socket) {
-      socket.disconnect();
+  const handleSurrender = () => {
+    if (!socket || !connected) return;
+    
+    socket.emit("message", { t: "surrender" });
+  };
+
+  // 승리 이유 텍스트
+  const getReasonText = (reason: string) => {
+    switch (reason) {
+      case "reached_2048":
+        return " 2048 ";
+      case "opponent_locked":
+        return " ";
+      case "surrender":
+        return " ";
+      case "opponent_disconnected":
+        return " ";
+      case "draw":
+        return " ";
+      default:
+        return "";
     }
-    router.push("/");
   };
 
   // 게임 상태가 아직 없으면 로딩
@@ -156,37 +197,84 @@ export default function GamePage() {
     );
   }
 
-  // 게임 종료
-  if (gameState.t === "end") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="text-center space-y-6">
-          <Trophy className={`h-20 w-20 mx-auto ${gameState.winner === "you" ? "text-yellow-500" : "text-gray-500"}`} />
-          <h1 className="text-6xl font-bold">
-            {gameState.winner === "you" ? "🎉 You Win!" : 
-             gameState.winner === "opp" ? "😢 You Lose" : "🤝 Draw"}
-          </h1>
-          <div className="flex gap-4 justify-center">
-            <Button variant="outline" onClick={() => router.push("/")}>
-              Back to Menu
-            </Button>
-            <Button onClick={() => window.location.reload()}>
-              Play Again
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // 게임 진행 중
   const { you, opp } = gameState;
 
   return (
     <div className="min-h-screen bg-background p-4">
+      {gameState.t === "end" && (
+        <div className="min-h-screen bg-background/50 flex items-center justify-center p-4 fixed inset-0 z-50">
+          <div className="text-center space-y-8 max-w-md">
+            {/* */}
+            <Trophy 
+              className={`h-32 w-32 mx-auto ${
+                gameState.winner === "you" ? "text-yellow-500" : 
+                gameState.winner === "draw" ? "text-gray-400" : "text-gray-500"
+              }`} 
+            />
+            
+            {/* */}
+            <div className="space-y-2">
+              <h1 className="text-6xl font-bold">
+                {gameState.winner === "you" ? " You Win!" : 
+                 gameState.winner === "draw" ? " Draw" : " You Lose"}
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                {getReasonText(gameState.reason)}
+              </p>
+            </div>
+
+            {/* */}
+            <div className="flex flex-col gap-3 mt-8">
+              <Button 
+                size="lg" 
+                onClick={() => router.push("/play/online")}
+                className="w-full"
+              >
+                Quick Play Again
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={() => router.push("/")}
+                className="w-full"
+              >
+                Back to Menu
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto mt-10">
+        <div className="flex justify-end items-center mb-6">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="sm">
+                <Flag className="mr-2 h-4 w-4" />
+                Surrender
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle> Surrender </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to surrender?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="h-12"> 
+                  Cancel 
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleSurrender} className="bg-destructive border-destructive hover:bg-destructive/80 hover:border-destructive/80 hover:text-white h-12">
+                  Surrender
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+
         {/* Game Boards */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-[1fr_1px_1fr] gap-8">
           {/* Your Board */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -196,7 +284,7 @@ export default function GamePage() {
                   <AvatarFallback>{player?.name?.[0] || "G"}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="text-xl font-bold">{player?.name || "You"}</h2>
+                  <h2 className="text-xl font-bold">{player?.name || "Guest"}</h2>
                   <p className="text-sm text-muted-foreground">Your Board</p>
                 </div>
               </div>
@@ -205,16 +293,12 @@ export default function GamePage() {
                 <p className="text-sm text-muted-foreground">Score</p>
               </div>
             </div>
-            <div className="p-6 bg-card border-2 border-primary rounded-lg">
+            <div className="p-6 bg-card border-2 border-primary rounded-lg items-center justify-center flex">
               <BoardView board={you.board} />
             </div>
-            <div className="flex justify-between text-sm">
-              <div>
-                <p className="text-muted-foreground">Max Tile</p>
-                <p className="text-lg font-bold text-primary">{you.maxTile}</p>
-              </div>
-            </div>
           </div>
+
+          <div className="w-[1px] h-full bg-primary/80" />
 
           {/* Opponent Board */}
           <div className="space-y-4">
@@ -233,23 +317,10 @@ export default function GamePage() {
                 <p className="text-sm text-muted-foreground">Score</p>
               </div>
             </div>
-            <div className="p-6 bg-card border-2 border-border rounded-lg opacity-80">
+            <div className="p-6 bg-card border-2 border-border rounded-lg items-center justify-center flex">
               <BoardView board={opp ? opp.board : []} />
             </div>
-            <div className="flex justify-between text-sm">
-              <div>
-                <p className="text-muted-foreground">Max Tile</p>
-                <p className="text-lg font-bold text-destructive">{opp ? opp.maxTile : 0}</p>
-              </div>
-            </div>
           </div>
-        </div>
-
-        {/* Leave button */}
-        <div className="mt-8 text-center">
-          <Button variant="outline" onClick={leaveRoom}>
-            Leave Game
-          </Button>
         </div>
       </div>
     </div>
