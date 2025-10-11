@@ -13,16 +13,17 @@ import {
 } from "./src/state";
 import { findMatch, cancelMatch } from "./src/matchmaking";
 import { createRoomWithCode, joinRoomWithCode } from "./src/rooms";
-import { joinRoom, handleInput } from "./src/game";
+import { joinRoom, handleInput, handleSurrender } from "./src/game";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: [
-      "https://www.2048duo.io",
-      "https://2048duo.io",
-      "http://localhost:3000",
-    ],
+    origin: "*",
+    // origin: [
+    //   "https://www.2048duo.io",
+    //   "https://2048duo.io",
+    //   "http://localhost:3000",
+    // ],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -39,7 +40,6 @@ io.on("connection", (socket) => {
     } catch {
       return;
     }
-    console.log(msg);
 
     // Matchmaking
     if (msg.t === "findMatch") {
@@ -68,6 +68,10 @@ io.on("connection", (socket) => {
     }
     if (msg.t === "input") {
       handleInput(pid, msg.dir, io);
+      return;
+    }
+    if (msg.t === "surrender") {
+      handleSurrender(pid, io);
       return;
     }
   });
@@ -101,7 +105,13 @@ io.on("connection", (socket) => {
       room.open = false;
       const opp = room.players.find((p) => p !== pid);
       if (opp) {
-        const packet: S2C = { t: "end", winner: "you" };
+        const packet: S2C = { 
+          t: "end", 
+          winner: "you", 
+          reason: "opponent_disconnected",
+          you: room.state[opp],
+          opp: room.state[pid]
+        };
         io.to(opp).emit("message", packet);
       }
       rooms.delete(rid);

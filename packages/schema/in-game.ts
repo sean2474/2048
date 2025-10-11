@@ -8,10 +8,12 @@ export type Dir = z.infer<typeof DirSchema>;
 export const C2S = {
   joinRoom: z.object({ t: z.literal("joinRoom"), roomId: z.string() }),
   input: z.object({ t: z.literal("input"), dir: DirSchema }),
+  surrender: z.object({ t: z.literal("surrender") }),
 };
 export type JoinRoom = z.infer<typeof C2S.joinRoom>;
 export type InputMsg = z.infer<typeof C2S.input>;
-export type ClientMsg = JoinRoom | InputMsg;
+export type SurrenderMsg = z.infer<typeof C2S.surrender>;
+export type ClientMsg = JoinRoom | InputMsg | SurrenderMsg;
 
 export type Effect =
   | { type: "none" }
@@ -42,6 +44,20 @@ export type ServerState = {
 };
 
 export type Reject = { t: "reject"; reason: "stale_turn" | "room_closed" | "invalid" | "not_in_room" | "room_not_found" };
-export type End = { t: "end"; winner: "you" | "opp" | "draw" };
+
+export type EndReason = 
+  | "reached_2048"           // 2048 타일 달성
+  | "opponent_locked"        // 상대방 못 움직임
+  | "surrender"              // 항복
+  | "opponent_disconnected"  // 상대방 연결 끊김 (30초 타임아웃)
+  | "draw";                  // 무승부 (예외 상황)
+
+export type End = { 
+  t: "end"; 
+  winner: "you" | "opp" | "draw"; 
+  reason: EndReason;
+  you: { board: Board; score: number; maxTile: number };
+  opp?: { board: Board; score: number; maxTile: number };
+};
 
 export type S2C = ServerState | Reject | End;

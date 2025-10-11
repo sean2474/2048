@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import { applyMove, emitDebuffEvents, applyEffects } from "game-core";
-import type { S2C, Effect } from "schema/in-game";
+import { applyMove, emitDebuffEvents, applyEffects, hasMoves } from "game-core";
+import type { S2C, Effect, EndReason } from "schema/in-game";
 import type { PlayerId, UserId, RoomId, Room } from "./types";
 import { rooms, playerRoom, disconnectTimers, userIdToPlayerId, playerIdToUserId } from "./state";
 
@@ -78,9 +78,95 @@ export function handleInput(pid: PlayerId, dir: "up" | "down" | "left" | "right"
   }
 
   room.turnId += 1;
+
+  // 승리 조건 체크
+  const endResult = checkWinCondition(room, pid);
+  if (endResult) {
+    endGame(room, endResult.winner, endResult.reason, io);
+    return;
+  }
+
+  // 상태 전송 후 다시 한 번 체크 (상대방이 움직일 수 있는지)
   for (const p of room.players) {
     io.to(p).emit("message", snapshot(room, p, effects));
   }
+
+  // 모든 플레이어가 움직일 수 있는지 최종 체크
+  const finalCheck = checkAllPlayersLocked(room);
+  if (finalCheck) {
+    endGame(room, finalCheck.winner, finalCheck.reason, io);
+    return;
+  }
+}
+
+// 항복 처리
+export function handleSurrender(pid: PlayerId, io: Server) {
+  const rid = playerRoom.get(pid);
+  if (!rid) return;
+  const room = rooms.get(rid);
+  if (!room || !room.open) return;
+
+  const oppId = room.players.find(p => p !== pid);
+  if (!oppId) return;
+
+  endGame(room, oppId, "surrender", io);
+}
+
+// 승리 조건 체크
+function checkWinCondition(room: Room, lastPlayer: PlayerId): { winner: PlayerId; reason: EndReason } | null {
+  const oppId = room.players.find(p => p !== lastPlayer);
+  if (!oppId) return null;
+
+  const myState = room.state[lastPlayer];
+  const oppState = room.state[oppId];
+
+  // 1. 2048 타일 달성 (본인)
+  if (myState.maxTile >= 2048) {
+    return { winner: lastPlayer, reason: "reached_2048" };
+  }
+
+  // 2. 상대방이 움직일 수 없음
+  if (!hasMoves(oppState.board)) {
+    return { winner: lastPlayer, reason: "opponent_locked" };
+  }
+
+  return null;
+}
+
+// 모든 플레이어 체크 (누군가 못 움직이면 상대방 승리)
+function checkAllPlayersLocked(room: Room): { winner: PlayerId; reason: EndReason } | null {
+  for (const pid of room.players) {
+    const playerState = room.state[pid];
+    if (!hasMoves(playerState.board)) {
+      // 이 플레이어가 못 움직임 → 상대방 승리
+      const oppId = room.players.find(p => p !== pid);
+      if (oppId) {
+        return { winner: oppId, reason: "opponent_locked" };
+      }
+    }
+  }
+  return null;
+}
+
+// 게임 종료 처리
+function endGame(room: Room, winner: PlayerId, reason: EndReason, io: Server) {
+  room.open = false;
+
+  for (const pid of room.players) {
+    const isWinner = pid === winner;
+    const oppId = room.players.find(p => p !== pid);
+    const opp = oppId ? room.state[oppId] : undefined;
+    const endMsg: S2C = {
+      t: "end",
+      winner: isWinner ? "you" : "opp",
+      reason,
+      you: room.state[pid],
+      opp: opp
+    };
+    io.to(pid).emit("message", endMsg);
+  }
+
+  console.log(`Game ended in room ${room.id}: winner=${winner}, reason=${reason}`);
 }
 
 export function snapshot(room: Room, viewer: PlayerId, effects?: Effect[]): S2C {

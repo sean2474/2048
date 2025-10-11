@@ -35,28 +35,6 @@ function getHardblockPositions(b: Board): Set<string> {
   );
 }
 
-function getLine(b: Board, dir: Dir, index: number): Cell[] {
-  // hardblock은 라인에서 제외 (움직이지 않음)
-  const line = active(b).filter(t => {
-    const inLine = (dir === "left" || dir === "right") ? t.row === index : t.col === index;
-    return inLine && getBlockType(t) !== "hardblock";
-  });
-  if (dir === "left") line.sort((a, b) => a.col - b.col);
-  if (dir === "right") line.sort((a, b) => b.col - a.col);
-  if (dir === "up") line.sort((a, b) => a.row - b.row);
-  if (dir === "down") line.sort((a, b) => b.row - a.row);
-  return line;
-}
-
-function targetCoord(dir: Dir, lineIndex: number, offset: number) {
-  switch (dir) {
-    case "left":  return { row: lineIndex, col: offset };
-    case "right": return { row: lineIndex, col: SIZE - 1 - offset };
-    case "up":    return { row: offset,      col: lineIndex };
-    case "down":  return { row: SIZE - 1 - offset, col: lineIndex };
-  }
-}
-
 // ========== 공개 함수 ==========
 export function initBoard(range?: number, numTiles?: number): Board {
   let b: Board = [];
@@ -72,7 +50,7 @@ export function spawnRandom(board: Board, range?: number, blockType?: BlockType)
   const spot = empties[Math.floor(Math.random() * empties.length)];
 
   let value = 0;
-  if (range) value = Math.pow(2, Math.round(Math.random() * range + 1));
+  if (range) value = Math.pow(2, Math.round(range - Math.log2(Math.random() * Math.pow(2, range - 1))));
   else value = Math.random() < 0.9 ? 2 : 4;
   if (blockType) value = blockType === "xblock" ? -1 : blockType === "hardblock" ? -2 : value;
 
