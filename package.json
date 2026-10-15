@@ -6,17 +6,23 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:web": "pnpm --filter web dev",
+    "dev:web": "pnpm --filter 2048-duo dev --port 3001",
     "dev:socket": "pnpm --filter socket dev",
-    "dev": "concurrently -n WEB,SOCKET -c green,cyan \"pnpm dev:web\" \"pnpm dev:socket\"",
-    "build": "pnpm -r build"
+    "dev": "concurrently -k -n WEB,SOCKET,ADMIN -c green,cyan,magenta \"pnpm dev:web\" \"pnpm --filter socket start\" \"pnpm dev:admin\"",
+    "build": "pnpm -r build",
+    "test": "pnpm --filter socket test && pnpm --filter socket exec tsx --test ../../packages/ui/src/locale.test.ts",
+    "test:remote": "pnpm --filter socket test:remote",
+    "typecheck": "tsc --noEmit --incremental false -p apps/web/tsconfig.json && tsc --noEmit -p apps/socket/tsconfig.json && pnpm --filter 2048-admin typecheck",
+    "lint": "pnpm --filter 2048-duo lint && pnpm --filter 2048-admin lint",
+    "dev:admin": "pnpm --filter 2048-admin dev"
   },
   "devDependencies": {
     "@types/node": "^24.6.2",
     "concurrently": "^9.0.0",
     "typescript": "^5.5.0"
   },
-  "dependencies": {
-    "zod": "^4.1.11"
+  "packageManager": "pnpm@11.1.3",
+  "engines": {
+    "node": ">=22"
   }
 }

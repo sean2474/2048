@@ -1,22 +1,17 @@
-import { LoginBtn } from '@/components/ui/login-button';
-import { SignupForm } from '@/components/widget/signup-form';
-
+import { getI18n } from "@/lib/i18n/server";
+import { redirect } from "next/navigation";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { SignupForm } from "@/components/widget/signup-form";
+import { LoginBtn } from "@/components/ui/login-button";
+import Link from "next/link";
+import { PageHeading } from "@/components/widget/page-heading";
+import { ArrowLeft } from "lucide-react";
 export default async function Page() {
-
-  return ( 
-    <main className='absolute top-1/2 left-1/2 -translate-1/2 flex justify-center items-center border border-primary/30 max-w-xl mx-auto w-full bg-white shadow-sm rounded'>
-      <div className='flex flex-col justify-center items-center py-16 px-3 md:px-10 w-[400px]'>
-        <div className='flex items-center justify-start w-full'>
-          <div className='text-2xl font-bold'>
-            Sign Up
-          </div>
-        </div>
-        <SignupForm />
-        <div className="border border-primary/30 w-[99%] mt-6" />
-        <div className="flex flex-col space-y-2 w-full mt-6">
-          <LoginBtn type="google" />
-        </div>
-      </div>
-    </main>
-  );
+  const { t } = await getI18n();
+  if (!isSupabaseConfigured()) redirect("/");
+  return <main className="mx-auto w-full max-w-[480px] px-4 py-6 sm:py-10">
+    <Link href="/" className="mb-5 inline-flex min-h-11 items-center gap-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4"><ArrowLeft aria-hidden="true" className="size-4" />{t("Back to game")}</Link>
+    <div className="mb-6"><PageHeading icon="crown" title={t("Create an account")} /></div>
+    <section aria-label={t("Create an account")} className="space-y-6 game-panel bg-card p-6 sm:p-8"><SignupForm /><LoginBtn type="google" /></section>
+  </main>;
 }

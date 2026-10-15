@@ -1,30 +1,33 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/widget/header";
+import { I18nProvider } from "ui/i18n";
+import { getI18n } from "@/lib/i18n/server";
+import { SettingsProvider } from "@/hooks/settings-provider";
+import { AudioProvider } from "@/hooks/audio-provider";
 
 export const metadata: Metadata = {
   title: "2048 Duo",
-  description: "Play 2048 with friends! Challenge yourself in single-player mode or compete with others in real-time multiplayer. Create rooms, join games, and experience the classic puzzle game in a whole new way.",
+  description: "Race your friends to 2048 in real-time multiplayer. Merge tiles to send obstacles, create a private room, or find a quick match.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { locale, guestLocale, messages } = await getI18n();
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang={locale}>
       <body className={`antialiased`}>
-        <Header />
-        {children}
+        <I18nProvider initialLocale={locale} messages={messages}>
+          <SettingsProvider initialGuestLocale={guestLocale}>
+          <AudioProvider>
+          <Header />
+          {children}
+          </AudioProvider>
+          </SettingsProvider>
+        </I18nProvider>
       </body>
     </html>
   );

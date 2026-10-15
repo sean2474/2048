@@ -1,0 +1,365 @@
+{
+  "measurements": [
+    {
+      "route": "/",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/find-match",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 4
+    },
+    {
+      "route": "/loadout",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 2
+    },
+    {
+      "route": "/history",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/settings",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 6
+    },
+    {
+      "route": "/how-to-play",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 5
+    },
+    {
+      "route": "/feedback",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/login",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/signup",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/auth/error",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/join",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/create",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/online",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/ranked",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/tutorial",
+      "viewport": "1440x900",
+      "width": 1440,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/find-match",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 4
+    },
+    {
+      "route": "/loadout",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 2
+    },
+    {
+      "route": "/history",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/settings",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 5
+    },
+    {
+      "route": "/how-to-play",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 5
+    },
+    {
+      "route": "/feedback",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/login",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/signup",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/auth/error",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/join",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/create",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/online",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/ranked",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/tutorial",
+      "viewport": "768x1024",
+      "width": 768,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/find-match",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 4
+    },
+    {
+      "route": "/loadout",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 2
+    },
+    {
+      "route": "/history",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/settings",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 6
+    },
+    {
+      "route": "/how-to-play",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 5
+    },
+    {
+      "route": "/feedback",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/login",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/signup",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/auth/error",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/join",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/create",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/online",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/play/ranked",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    },
+    {
+      "route": "/tutorial",
+      "viewport": "375x812",
+      "width": 375,
+      "background": "rgb(246, 243, 235)",
+      "primary": "#a4432d",
+      "emblems": 1
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,66 @@
+{
+  "previews": [
+    {
+      "skin": "클래식",
+      "boardRadius": "16px",
+      "tileRadius": "8px",
+      "padding": "8px"
+    },
+    {
+      "skin": "슬레이트",
+      "boardRadius": "14px",
+      "tileRadius": "6px",
+      "padding": "8px"
+    },
+    {
+      "skin": "페이퍼",
+      "boardRadius": "10px",
+      "tileRadius": "2px",
+      "padding": "8px"
+    }
+  ],
+  "boards": [
+    {
+      "skin": "페이퍼",
+      "width": 375,
+      "boardRadius": 8,
+      "tileRadius": 2,
+      "padding": 6
+    },
+    {
+      "skin": "페이퍼",
+      "width": 1440,
+      "boardRadius": 12,
+      "tileRadius": 2,
+      "padding": 10
+    },
+    {
+      "skin": "슬레이트",
+      "width": 375,
+      "boardRadius": 12,
+      "tileRadius": 6,
+      "padding": 6
+    },
+    {
+      "skin": "슬레이트",
+      "width": 1440,
+      "boardRadius": 16,
+      "tileRadius": 6,
+      "padding": 10
+    },
+    {
+      "skin": "클래식",
+      "width": 375,
+      "boardRadius": 14,
+      "tileRadius": 8,
+      "padding": 6
+    },
+    {
+      "skin": "클래식",
+      "width": 1440,
+      "boardRadius": 18,
+      "tileRadius": 8,
+      "padding": 10
+    }
+  ]
+}

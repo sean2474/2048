@@ -1,0 +1,50 @@
+{
+  "measurements": [
+    {
+      "skin": "kitty",
+      "animation": "legendary-soft",
+      "frequencies": [
+        520,
+        1040
+      ]
+    },
+    {
+      "skin": "bunny",
+      "animation": "legendary-soft",
+      "frequencies": [
+        620,
+        1240
+      ]
+    },
+    {
+      "skin": "sentinel",
+      "animation": "legendary-forge",
+      "frequencies": [
+        170,
+        860,
+        1290
+      ]
+    },
+    {
+      "skin": "runeknight",
+      "animation": "legendary-forge",
+      "frequencies": [
+        294,
+        587,
+        881
+      ]
+    },
+    {
+      "skin": "arcanist",
+      "animation": "legendary-spell",
+      "frequencies": [
+        523,
+        784,
+        1568
+      ]
+    }
+  ],
+  "muted": true,
+  "reducedMotion": true,
+  "errors": []
+}

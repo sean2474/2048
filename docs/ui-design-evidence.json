@@ -1,0 +1,19 @@
+{
+  "contract": "apps/admin/design-contract.md and docs/browser-qa.md",
+  "targetViewports": ["375x812", "768x1024", "1440x900"],
+  "accessibility": { "status": "untested", "evidence": "Labels, keyboard confirmation, Escape and restored focus were checked. Full contrast, axe and screen-reader checks were not performed." },
+  "responsive": { "status": "pass", "evidence": "Admin overview document width matched 375, 768 and 1440px; the mobile table scrolls within its container. Signup measurements are saved separately." },
+  "contentStates": {
+    "loading": { "status": "untested", "evidence": "Slow-network loading was not deliberately held for inspection." },
+    "empty": { "status": "untested", "evidence": "Empty-result journeys were not explicitly recorded." },
+    "error": { "status": "untested", "evidence": "Final QA did not inject RPC or network failure." },
+    "partial": { "status": "untested", "evidence": "SQL tests distinguish absent telemetry from zero; a mixed-history browser fixture was not created." },
+    "success": { "status": "pass", "evidence": "Casual and friend results agreed; fixture suspension and restoration displayed both audit records." },
+    "permission": { "status": "pass", "evidence": "Guest redirected to login; ordinary account received the admin access boundary without console navigation." }
+  },
+  "renderedEvidence": [
+    { "viewport": "375x812", "artifact": "browser-qa.md", "observation": "Mobile admin overview has no page overflow; confirmation fits 343px with 16px side margins. Inline screenshot inspected; export rejected." },
+    { "viewport": "768x1024", "artifact": "browser-qa.md", "observation": "Admin overview has no page overflow. Inline screenshot inspected; export rejected." },
+    { "viewport": "1440x900", "artifact": "browser-qa.md", "observation": "Admin overview remains readable with fixed sidebar and no page overflow. Inline screenshot inspected; export rejected." }
+  ]
+}

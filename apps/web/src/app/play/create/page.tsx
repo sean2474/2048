@@ -1,174 +1,36 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { io, Socket } from "socket.io-client";
-import { createClient } from "@/lib/supabase/client";
+import { useI18n } from "ui/i18n";
+import Link from "next/link";
+import { GameEmblem } from "@/components/widget/game-emblem";
+import { useState } from "react";
+import { ArrowLeft, Copy, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Loader2 } from "lucide-react";
-import { usePlayer } from "@/hooks/use-player";
-
+import { MatchIntro } from "@/components/widget/match-intro";
+import { useLobby } from "@/hooks/use-lobby";
 export default function CreateRoomPage() {
-  const router = useRouter();
-  const supabase = createClient();
-  const { user } = usePlayer();
-
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [joinCode, setJoinCode] = useState<string>("");
-  const [copied, setCopied] = useState(false);
-  const [connecting, setConnecting] = useState(true);
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    // 이미 게임 중인지 체크
-    const currentGameRoom = localStorage.getItem("currentGameRoomId");
-    if (currentGameRoom) {
-      console.log("Already in game, redirecting to:", currentGameRoom);
-      router.push(`/play/${currentGameRoom}`);
-      return;
-    }
-
-    async function init() {
-      if (user === undefined) return;
-      
-      if (user === null) {
-        // 기존 세션 확인
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          // 세션 있으면 재사용
-          setUserId(session.user.id);
-        } else {
-          // 세션 없으면 익명 로그인
-          const { data: { user }, error } = await supabase.auth.signInAnonymously();
-          if (error) throw error;
-          setUserId(user?.id);
-        }
-      } else {
-        setUserId(user.id);
-      }
-    }
-    init();
-  }, [user, supabase]);
-
-  useEffect(() => {
-    if (!userId) return;
-
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL!);
-    setSocket(newSocket);
-
-    newSocket.on("connect", () => {
-      console.log("Connected:", newSocket.id);
-      
-      // 랜덤 6자리 join code 생성
-      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-      setJoinCode(code);
-      setConnecting(false);
-      
-      // 서버에 join code로 대기 등록
-      newSocket.emit("message", {
-        t: "createRoomWithCode",
-        userId,
-        joinCode: code
-      });
-    });
-
-    newSocket.on("message", (data) => {
-      console.log("Received:", data);
-      
-      if (data.t === "waitingForPlayer") {
-        console.log("Waiting for another player...");
-      }
-
-      if (data.t === "roomReady") {
-        // 서버에서 실제 roomId 받음 → 매칭 소켓 disconnect 후 게임 페이지로 이동
-        console.log("Room ready! Redirecting to:", `/play/${data.roomId}`);
-        newSocket.disconnect();
-        router.push(`/play/${data.roomId}`);
-      }
-
-      if (data.t === "error") {
-        console.error("Error:", data.reason);
-        alert(`Error: ${data.reason}`);
-      }
-    });
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [router, userId, supabase]);
-
-  const copyJoinCode = () => {
-    navigator.clipboard.writeText(joinCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const cancel = () => {
-    if (socket) {
-      socket.disconnect();
-    }
-    router.push("/");
-  };
-
-  if (connecting) {
-    return (
-      <div className="bg-background flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-          <h1 className="text-2xl font-bold">Creating Room...</h1>
-        </div>
-      </div>
-    );
+  const { t } = useI18n();
+  const { joinCode, status, error, retry, match, enterMatch } = useLobby("createRoomWithCode");
+  const [copyStatus, setCopyStatus] = useState("");
+  async function copy() {
+    try { await navigator.clipboard.writeText(joinCode); setCopyStatus("Code copied!"); }
+    catch { setCopyStatus("Copy unavailable. Select the code and copy it manually."); }
   }
-
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold">Room Created!</h1>
-          <p className="text-muted-foreground">
-            Waiting for your friend to join...
-          </p>
-        </div>
-
-        <div className="p-6 bg-card border-2 border-border rounded-lg space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              Share this join code:
-            </label>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 px-4 py-3 bg-muted rounded-lg font-mono text-3xl font-bold text-center tracking-wider">
-                {joinCode}
-              </div>
-              <Button size="icon" onClick={copyJoinCode} className="h-12 w-12">
-                {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
-              </Button>
-            </div>
-            {copied && (
-              <p className="text-sm text-green-600 text-center">
-                ✓ Copied to clipboard!
-              </p>
-            )}
-          </div>
-
-          <div className="pt-4 border-t border-border">
-            <p className="text-sm text-muted-foreground text-center">
-              Your friend can join by clicking &quot;Join Room&quot; on the main menu
-              and entering this code.
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground animate-pulse">
-            <div className="h-2 w-2 bg-primary rounded-full" />
-            <span>Waiting for opponent...</span>
-          </div>
-          <Button variant="outline" onClick={cancel} className="w-full">
-            Cancel
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+  return <main className="mx-auto w-full max-w-[520px] px-4 py-8 sm:py-12">
+    <section className="game-panel bg-card p-6 sm:p-8">
+      <GameEmblem kind="friend" className="mb-6 size-20" />
+      <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{t("Friend match · No Elo changes")}</p>
+      <h1 className="text-3xl font-extrabold tracking-tight">{t("Play with a friend")}</h1>
+      <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("Share the room code with your friend.")}</p>
+      {joinCode && !error ? <div className="my-6 space-y-4 border-y py-6 text-center">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("Your room code")}</p>
+        <p data-testid="join-code" className="font-mono text-4xl font-bold tracking-[0.16em] select-all sm:text-5xl">{joinCode}</p>
+        <Button variant="outline" onClick={copy}><Copy aria-hidden="true" />{t("Copy code")}</Button>
+        {copyStatus && <p role="status" className="text-sm leading-6">{t(copyStatus)}</p>}
+      </div> : null}
+      <div className="my-6 flex min-h-11 items-center gap-3">{!error && <Loader2 aria-hidden="true" className="size-5 shrink-0 animate-spin text-primary motion-reduce:animate-none" />}<p className={`text-sm leading-6 ${error ? "text-destructive" : "text-muted-foreground"}`} role={error ? "alert" : "status"}>{error || status}</p></div>
+      {joinCode && !error && <p className="mb-6 text-sm leading-6 text-muted-foreground">{t("Ask your friend to choose Join Room and enter this code. Keep this page open.")}</p>}
+      <div className="space-y-3">{error && <Button className="w-full" onClick={retry}>{t("Try again")}</Button>}
+      <Button asChild variant="outline" className="w-full"><Link href="/find-match"><ArrowLeft aria-hidden="true" />{t("Cancel")}</Link></Button></div>
+    </section>
+  <MatchIntro match={match} onEnter={enterMatch} /></main>;
 }

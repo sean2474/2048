@@ -1,0 +1,21 @@
+{
+  "contract": "Nine free skins with four rarity levels, optional cat/rabbit character tiles with readable numbers, shared preview/game renderer, filters and six-card paging. Keep saved IDs and obstacle identity. Follow-up: metallic competitive tier emblems and restrained slate/gold leaderboard, with existing rating rules unchanged. See contract.md.",
+  "targetViewports": ["1440x900", "768x1024", "375x812"],
+  "accessibility": { "status": "pass", "evidence": "Rarity controls are named toggle buttons with pressed state, result-count status and >=44px targets. Keyboard Enter activates filters with a visible outline. Tabs retain arrow/Home/End navigation. Decorative art is hidden from assistive technology; real tile position/value/obstacle labels remain. Legendary numbers use #493b40 on a cream face. No screen-reader certification claimed." },
+  "responsive": { "status": "pass", "evidence": "All five filters rendered at 1440, 768 and 375 pixels without horizontal document overflow. Two-column mobile cards, three-column tablet/desktop cards, maximum six per page. Real Tile fixtures exercise 2 through 32768 at board widths 500, 343 and 210; numeric text bounds fit every skin. Visually reviewed legendary, epic and rank captures." },
+  "contentStates": {
+    "loading": { "status": "pass", "evidence": "Existing loadout regression confirms SSR pending selection labels and disabled equip buttons; loading.png. Ranking loading/retry regression also passes." },
+    "empty": { "status": "not-applicable", "reason": "The static skin catalog has no empty rarity: 3 common, 2 rare, 2 epic, 2 legendary. Ranking empty state is covered by leaderboard.browser.mjs." },
+    "error": { "status": "pass", "evidence": "Blocked guest cookie writes retain the prior selection and show a retryable save error. A later successful write clears it; save-error.png. Rank API error/retry checks also pass." },
+    "partial": { "status": "pass", "evidence": "All-skins page two contains three cards; rarity changes reset its page. Switching category preserves the ability page and equipped summary. Rank one/two-player responses remain supported." },
+    "success": { "status": "pass", "evidence": "All rarity filters, both legendary equip actions, reload persistence, Korean/English and keyboard checks pass. Real tutorial BoardView renders the equipped rabbit. All nine IDs round-trip through cookie/row validation and pass SQL constraints. Remote additive allow-list migration applied and inspected." },
+    "permission": { "status": "pass", "evidence": "Guest catalog remains usable without login. PGlite preference tests verify authenticated ownership isolation, unknown-ID rejection and denied anonymous writes. Remote constraint was inspected; no live signed-in browser save or user-data write was performed." }
+  },
+  "renderedEvidence": [
+    { "viewport": "1440x900", "artifact": "epic-1440x900.png", "observation": "Coordinated board/tile themes, text rarity badges and compact filters in the existing warm shell." },
+    { "viewport": "768x1024", "artifact": "legendary-768x1024.png", "observation": "Two available legendary choices remain in the three-column catalog grid, with large numeric characters." },
+    { "viewport": "375x812", "artifact": "legendary-375x812.png", "observation": "Two mobile cards fit side by side; filters wrap; equipped summary remains visible." },
+    { "viewport": "375x812", "artifact": "ranks-375x812.png", "observation": "Metallic shields replace faces; restrained hero, six-tier guide, podium and compact standings retain readable mobile layout." },
+    { "viewport": "768x1024", "artifact": "kitty-board-210.png", "observation": "Real tile fixture at the smallest own-board width: five-digit values remain within the tile and obstacles retain their identity." }
+  ]
+}

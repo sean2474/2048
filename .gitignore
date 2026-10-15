@@ -50,3 +50,7 @@ next-env.d.ts
 # Misc
 .turbo
 .cache
+
+# Durable server result outbox (contains account identifiers)
+.data/
+supabase/.temp/

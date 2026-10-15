@@ -1,0 +1,153 @@
+"use client";
+
+import Link from "next/link";
+import { PageHeading } from "@/components/widget/page-heading";
+import { GameEmblem } from "@/components/widget/game-emblem";
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, LockKeyhole, Palette, UserRound } from "lucide-react";
+import { SKINS, SKIN_RARITIES, type PlayerWallet, type Skin, type SkinId, type SkinRarity } from "schema/loadout";
+import { GUEST_PROFILE_ICON, PROFILE_ICONS, type PlayerIconId } from "schema/profile-icons";
+import { ProfileIcon } from "@/components/widget/profile-icon";
+import { useI18n } from "ui/i18n";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { usePlayer } from "@/hooks/use-player";
+import { useLoadout } from "@/hooks/use-loadout";
+import { createClient } from "@/lib/supabase/client";
+import { NumberTile } from "@/components/2048/number-tile";
+import { SkinMergePreview } from "@/components/2048/skin-merge-preview";
+
+const PAGE_SIZE = 12;
+type Category = "skins" | "icons";
+type Detail = { category: "skins"; id: SkinId } | { category: "icons"; id: PlayerIconId };
+
+function SkinPreview({ skin, large = false }: { skin: Skin; large?: boolean }) {
+  return <span aria-hidden="true" className={`grid max-w-full grid-cols-3 gap-0.5 p-1.5 ${large ? "w-36" : "w-[72px] sm:w-20"}`} style={{ background: skin.tokens.boardBackground, borderRadius: `calc(${skin.tokens.tileRadius} + 0.375rem)` }}>{[2, 4, null, 8, null, 16, null, 32, null].map((value, index) => <span key={index} className="grid aspect-square place-items-center text-[9px] font-bold" style={{ borderRadius: skin.tokens.tileRadius, background: skin.tokens.emptyBackground }}>{value !== null && <NumberTile value={value} tokens={skin.tokens} />}</span>)}</span>;
+}
+
+function CatalogCard({ name, selected, locked, disabled, onClick, children }: { name: string; selected: boolean; locked: boolean; disabled: boolean; onClick: (event: MouseEvent<HTMLButtonElement>) => void; children: ReactNode }) {
+  const { t } = useI18n();
+  return <button type="button" aria-label={t(locked ? "{item} · Locked · View unlock conditions" : "{item} · View details", { item: name })} aria-describedby={selected ? "equipped-label" : undefined} aria-haspopup="dialog" disabled={disabled} onClick={onClick} className={`relative flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl border bg-card px-2 py-4 text-center transition-colors hover:border-primary/60 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected ? "border-primary bg-primary/5" : ""}`}>
+    {selected ? <Check aria-label={t("Equipped")} className="absolute right-2 top-2 size-3.5 text-primary" /> : locked && <LockKeyhole aria-hidden="true" className="absolute right-2 top-2 size-3.5 text-muted-foreground" />}
+    {children}<span className="flex min-h-8 items-center justify-center text-xs font-bold leading-4 sm:text-sm">{name}</span>
+  </button>;
+}
+
+export default function LoadoutPage() {
+  const { t, locale } = useI18n();
+  const { user } = usePlayer();
+  const userId = user && !user.is_anonymous ? user.id : undefined;
+  const { skin, icon, selectSkin, selectIcon, storageError, ready, saving, scope } = useLoadout();
+  const [wallet, setWallet] = useState<PlayerWallet | null>(null);
+  const [walletError, setWalletError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [attempt, setAttempt] = useState(0);
+  const [category, setCategory] = useState<Category>("skins");
+  const [skinPage, setSkinPage] = useState(0);
+  const [rarity, setRarity] = useState<SkinRarity | "all">("all");
+  const [ownedOnly, setOwnedOnly] = useState(false);
+  const [detail, setDetail] = useState<Detail | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const detailTrigger = useRef<HTMLButtonElement | null>(null);
+  const guest = scope === "guest";
+
+  useEffect(() => {
+    let active = true;
+    setWallet(null); setWalletError(false);
+    if (!userId) { setLoading(false); return; }
+    setLoading(true);
+    const read = async () => {
+      try {
+        const { data, error } = await createClient().from("player_wallets").select("player_id,balance,created_at").eq("player_id", userId).maybeSingle();
+        if (error || !data || !Number.isSafeInteger(data.balance) || data.balance < 0) throw new Error("Wallet unavailable");
+        if (active) setWallet(data as PlayerWallet);
+      } catch { if (active) setWalletError(true); }
+      finally { if (active) setLoading(false); }
+    };
+    void read();
+    return () => { active = false; };
+  }, [userId, attempt]);
+
+  const balance = wallet && wallet.player_id === userId ? wallet.balance : undefined;
+  const filteredSkins = SKINS.filter(item => (rarity === "all" || item.rarity === rarity) && (!ownedOnly || !guest || item.id === "classic"));
+  const pageCount = Math.ceil(filteredSkins.length / PAGE_SIZE);
+  const currentPage = Math.min(skinPage, Math.max(0, pageCount - 1));
+  const icons = guest ? [GUEST_PROFILE_ICON, ...PROFILE_ICONS] : PROFILE_ICONS;
+  const detailSkin = detail?.category === "skins" ? SKINS.find(item => item.id === detail.id) : undefined;
+  const detailIcon = detail?.category === "icons" ? [GUEST_PROFILE_ICON, ...PROFILE_ICONS].find(item => item.id === detail.id) : undefined;
+  const detailName = detailSkin?.name ?? detailIcon?.name ?? "My loadout";
+  const detailOwned = !guest || detail?.category === "skins" && detail.id === "classic" || detail?.category === "icons" && detail.id === "guest";
+  const detailSelected = detail?.category === "skins" ? detail.id === skin.id : detail?.id === icon.id;
+
+  function openDetail(event: MouseEvent<HTMLButtonElement>, next: Detail) {
+    detailTrigger.current = event.currentTarget;
+    setDetail(next);
+    setDetailOpen(true);
+  }
+  async function equipDetail() {
+    if (!detail || guest) return;
+    const success = detail.category === "skins" ? await selectSkin(detail.id) : detail.id !== "guest" && await selectIcon(detail.id);
+    if (success) setDetailOpen(false);
+  }
+
+  return <main className="mx-auto max-w-[1040px] space-y-4 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <span id="equipped-label" className="sr-only">{t("Equipped")}</span>
+    <PageHeading icon="loadout" title={t("My loadout")}><Button asChild variant="outline"><Link href="/find-match"><ArrowLeft aria-hidden="true" />{t("Find match")}</Link></Button></PageHeading>
+
+    <section aria-labelledby="wallet-title" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card px-4 py-2">
+      <div className="flex items-center gap-2"><GameEmblem kind="coin" className="size-8" /><h2 id="wallet-title" className="text-xs text-muted-foreground">{t("My coins")}</h2>{user === undefined || userId && loading ? <p role="status" className="text-xs">{t("Loading balance…")}</p> : !userId ? <Link href="/login" aria-label={t("Sign in to view your balance")} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2">{t("Log in")}</Link> : walletError || balance === undefined ? <div role="alert" className="flex flex-wrap items-center gap-2"><p className="text-xs text-destructive">{t("Could not load your coin balance.")}</p><Button variant="outline" size="sm" onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</Button></div> : <p className="text-lg font-extrabold tabular-nums">{balance.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}</p>}</div>
+      <Button variant="ghost" size="sm" className="text-xs" disabled>{t("Coin shop · Coming soon")}</Button>
+    </section>
+
+    {saving && <p role="status" className="text-sm text-muted-foreground">{t("Saving…")}</p>}
+    {storageError && !detailOpen && <p role="alert" className="text-sm text-destructive">{t(storageError)}</p>}
+
+    <section aria-label={t("Current loadout")} className="flex items-center gap-3 rounded-xl bg-secondary/40 px-3 py-3">
+      <ProfileIcon iconId={icon.id} className="size-10" />
+      <div className="min-w-0 text-xs leading-5"><p className="font-bold">{ready ? t(icon.name) : t("Loading selection…")}</p><p className="text-muted-foreground">{ready ? t(skin.name) : t("Loading selection…")}</p></div>
+    </section>
+
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <div role="tablist" aria-label={t("Loadout categories")} className="inline-flex gap-1 rounded-xl bg-muted p-1" onKeyDown={event => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const categories = ["skins", "icons"] as const;
+        const next = event.key === "Home" ? "skins" : event.key === "End" ? "icons" : categories[(categories.indexOf(category) + (event.key === "ArrowRight" ? 1 : categories.length - 1)) % categories.length];
+        setCategory(next);
+        event.currentTarget.querySelector<HTMLButtonElement>(`#${next}-tab`)?.focus();
+      }}>
+        {([{ id: "skins", label: "Board skins", icon: Palette }, { id: "icons", label: "Icons", icon: UserRound }] as const).map(item => <Button key={item.id} id={`${item.id}-tab`} role="tab" aria-selected={category === item.id} aria-controls={`${item.id}-panel`} tabIndex={category === item.id ? 0 : -1} variant="ghost" className={`px-3 text-xs ${category === item.id ? "bg-card text-foreground shadow-sm hover:bg-card" : "text-muted-foreground"}`} onClick={() => setCategory(item.id)}><item.icon aria-hidden="true" className="size-3.5" />{t(item.label)}</Button>)}
+      </div>
+      <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md px-1 text-xs font-medium"><input type="checkbox" className="size-4 accent-primary" checked={ownedOnly} onChange={event => { setOwnedOnly(event.target.checked); setSkinPage(0); }} />{t("Owned only")}</label>
+    </div>
+
+    <section id="skins-panel" role="tabpanel" aria-labelledby="skins-tab" tabIndex={0} hidden={category !== "skins"} className="space-y-3 rounded-xl">
+      <div role="group" aria-label={t("Filter by rarity")} className="flex flex-wrap gap-1">{(["all", ...Object.keys(SKIN_RARITIES)] as Array<SkinRarity | "all">).map(value => <Button key={value} variant="ghost" aria-pressed={rarity === value} aria-controls="skin-results" className={`px-3 text-xs ${rarity === value ? "bg-primary/10 text-primary" : "text-muted-foreground"}`} onClick={() => { setRarity(value); setSkinPage(0); }}>{t(value === "all" ? "All skins" : SKIN_RARITIES[value].name)}</Button>)}</div>
+      <div id="skin-results" className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">{filteredSkins.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(item => <CatalogCard key={item.id} name={t(item.name)} selected={skin.id === item.id} locked={guest && item.id !== "classic"} disabled={!ready || saving} onClick={event => openDetail(event, { category: "skins", id: item.id })}><SkinPreview skin={item} /></CatalogCard>)}</div>
+      {filteredSkins.length === 0 && <p role="status" className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t("No owned items in this filter.")}</p>}
+      {pageCount > 1 && <nav aria-label={t("Catalog pages")} className="flex items-center justify-center gap-4">
+        <Button variant="outline" size="icon" aria-label={t("Previous page")} disabled={currentPage === 0} onClick={() => { setSkinPage(currentPage - 1); document.getElementById("skins-panel")?.focus({ preventScroll: true }); }}><ChevronLeft aria-hidden="true" /></Button>
+        <p role="status" className="text-xs tabular-nums text-muted-foreground">{t("Page {page} of {count}", { page: currentPage + 1, count: pageCount })}</p>
+        <Button variant="outline" size="icon" aria-label={t("Next page")} disabled={currentPage + 1 >= pageCount} onClick={() => { setSkinPage(currentPage + 1); document.getElementById("skins-panel")?.focus({ preventScroll: true }); }}><ChevronRight aria-hidden="true" /></Button>
+      </nav>}
+    </section>
+
+    <section id="icons-panel" role="tabpanel" aria-labelledby="icons-tab" tabIndex={0} hidden={category !== "icons"} className="rounded-xl">
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">{icons.filter(item => !ownedOnly || !guest || item.id === "guest").map(item => <CatalogCard key={item.id} name={t(item.name)} selected={icon.id === item.id} locked={guest && item.id !== "guest"} disabled={!ready || saving} onClick={event => openDetail(event, { category: "icons", id: item.id })}><ProfileIcon iconId={item.id} className="size-[72px] sm:size-20" /></CatalogCard>)}</div>
+    </section>
+
+    <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+      <DialogContent onCloseAutoFocus={event => { event.preventDefault(); detailTrigger.current?.focus(); }}>
+        {detailSkin?.rarity !== "legendary" && <div className="flex justify-center py-2">{detailSkin ? <SkinPreview skin={detailSkin} large /> : detailIcon ? <ProfileIcon iconId={detailIcon.id} className="size-32" /> : null}</div>}
+        <DialogHeader>
+          <DialogTitle>{t(detailName)}</DialogTitle>
+          <DialogDescription className="leading-6">{t(detailSkin ? "Skins change appearance only." : detailIcon?.id === "guest" ? "Guests always use this icon." : "Shown on your profile and match intro.")}</DialogDescription>
+        </DialogHeader>
+        {detailOpen && detailSkin?.rarity === "legendary" && <SkinMergePreview key={detailSkin.id} skin={detailSkin} />}
+        <div className="space-y-1 border-t pt-3"><h3 className="flex items-center gap-2 text-sm font-bold">{detailOwned ? <Check aria-hidden="true" className="size-4" /> : <LockKeyhole aria-hidden="true" className="size-4" />}{t("Unlock conditions")}</h3><p className="text-sm text-muted-foreground">{t(detailOwned ? guest ? "Included by default" : "Unlocked with your account" : "Log in to unlock this item.")}</p>{detail?.category === "icons" && detail.id !== "guest" && <p className="pt-1 text-xs leading-5 text-muted-foreground">{t("Achievement unlocks are planned. Conditions are not set yet.")}</p>}</div>
+        {storageError && <p role="alert" className="text-sm text-destructive">{t(storageError)}</p>}
+        <DialogFooter>{!detailOwned ? <Button asChild><Link href="/login">{t("Log in")}</Link></Button> : <Button disabled={!ready || saving || detailSelected || guest} onClick={() => { void equipDetail(); }}>{t(detailSelected ? "Equipped" : "Equip")}</Button>}</DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </main>;
+}

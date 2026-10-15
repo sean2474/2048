@@ -1,4 +1,4 @@
-import { InGame } from "schema";
+import * as InGame from "schema/in-game";
 
 export const SIZE = InGame.SIZE;
 export type Dir = InGame.Dir;

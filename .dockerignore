@@ -51,4 +51,8 @@
 # Misc
 **/.turbo
 **/.cache
+**/.data
+.git
+docs
+supabase/.temp
 fly.toml

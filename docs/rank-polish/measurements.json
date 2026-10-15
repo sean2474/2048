@@ -1,0 +1,34 @@
+{
+  "measures": [
+    {
+      "width": 1440,
+      "documentWidth": 1440,
+      "tableWidth": 1054
+    },
+    {
+      "width": 768,
+      "documentWidth": 768,
+      "tableWidth": 718
+    },
+    {
+      "width": 375,
+      "documentWidth": 375,
+      "tableWidth": 341
+    }
+  ],
+  "errors": [],
+  "states": [
+    "loading",
+    "empty",
+    "error",
+    "retry",
+    "one-player",
+    "two-players",
+    "six-players",
+    "guest-ranked-gate"
+  ],
+  "languages": [
+    "ko",
+    "en"
+  ]
+}

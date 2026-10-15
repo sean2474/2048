@@ -1,0 +1,81 @@
+{
+  "contract": "Account catalog: select and persist one of six local portraits. Match intro: show both portraits, names, tiers and Elo, then enter after 3.2 seconds or Enter now. Reuse SettingsStore, TierBadge and Dialog; support 375x812 and 1440x900 with reduced motion.",
+  "targetViewports": [
+    "375x812",
+    "1440x900"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Browser assertions verified tab arrows/Home, visible keyboard outlines, 44px-or-larger actions, labeled Radix dialog, Escape-to-enter, and animation:none under reduced motion. Text contrast reviewed on rendered overlay (now matched to the site’s warm palette). Screen-reader audio was not tested."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Verified zero horizontal overflow at 320/375/1440 widths in the catalog and exact fullscreen bounds at 375x812 and 1440x900 in the overlay. Long opponent names ellipsize and retain title text; portraits and ranks fit."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Match entry progress is visible, with an Enter now action; automatic navigation is checked at 3.2 seconds."
+    },
+    "empty": {
+      "status": "not-applicable",
+      "reason": "This addition uses a fixed, nonempty local catalog; no empty remote result is loaded."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "A mocked account PATCH failure keeps the prior selected icon and displays a retryable error; matchmaking errors show the existing lobby alert without opening the overlay."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Guest packets have null ratings; both sides display Unranked and a fixed guest portrait with stable square bounds."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Account fixture saves persist after reload; match packets show supplied portraits, translated tiers and Elo; automatic entry, skip and reload-without-replay pass. Two browser tabs also entered the same friend room through a real isolated Socket.IO server, both saw the intro and both enabled game controls afterward."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "SQL integration verifies own-account RLS, allowed icon IDs and update grants; socket integration verifies account icons override client claims and guests retain their fixed icon."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "375x812",
+      "artifact": "match-375x812.png",
+      "observation": "Mobile match overlay with long opponent nickname and reduced motion, square portraits and stacked ratings."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "match-1440x900.png",
+      "observation": "Desktop match overlay showing two character portraits, Platinum/Diamond badges, Elo and focused entry button."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "icons-375x812.png",
+      "observation": "Browser-only account fixture with six catalog portraits; selected dragon persists. SSR header is intentionally a guest because the fixture never reaches the server."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "live-guest-match.png",
+      "observation": "Real two-tab friend match on an isolated socket server with no database writer; both profiles are guest defaults."
+    }
+  ],
+  "limits": [
+    "Authenticated browser data was fixture-backed; live authenticated multiplayer and production deployment were not tested."
+  ],
+  "contractDetails": {
+    "surface": "Account icon selection and match-found overlay",
+    "job": "Pick a predefined portrait, then recognize both players before entering a match.",
+    "primaryAction": "Equip a portrait; match entry happens automatically or with Enter now.",
+    "hierarchy": "Match found → portraits and names → tiers and Elo → entry progress.",
+    "references": "Existing loadout SettingsStore, ProfileIcon assets, TierBadge, and Radix Dialog components.",
+    "constraints": "Korean/English, same-origin SVGs, server-authoritative ratings, no private IDs in lobby messages, keyboard support and reduced motion."
+  },
+  "validation": {
+    "socketTests": 36,
+    "browserTests": 3,
+    "typecheck": "Web and socket passed",
+    "lint": "Changed web files and browser tests passed",
+    "database": "profile_icons migration applied and icon_id column verified"
+  }
+}

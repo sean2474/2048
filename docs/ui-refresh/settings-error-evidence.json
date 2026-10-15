@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-16",
+  "note": "Own isolated guest context only. Guest cookie writes temporarily threw to exercise UI errors; native access restored and Retry clicked after each observation. No authentication cookie values were read or recorded.",
+  "observations": [
+    {
+      "label": "settings-save-error-375x812x1,mobile,touch",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"ko\",\"viewport\":[375,812],\"page\":[375,1330],\"headings\":[\"설정\",\"게임 환경\",\"내 계정\",\"다른 설정과 도움말\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo 홈\",\"rect\":[16,8,78.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대시보드\",\"rect\":[8,56,57.53125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대전 찾기\",\"rect\":[69.53125,56,60.8125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"순위\",\"rect\":[134.34375,56,36.765625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 방법\",\"rect\":[175.109375,56,60.8125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"설정\",\"rect\":[239.921875,56,36.765625,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[130.203125,8,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[29,117,44.71875,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"로그인\",\"rect\":[216.203125,8,60.34375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"회원가입\",\"rect\":[284.546875,8,74.453125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"홈으로\",\"rect\":[16,213,94.34375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[37,442,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[29,117,44.71875,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"꺼짐\",\"rect\":[274,537,64,44],\"disabled\":false,\"checked\":\"false\"},{\"tag\":\"BUTTON\",\"name\":\"키 설정\",\"rect\":[238.09375,619,87.90625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[50,744,94.015625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign in\",\"rect\":[37,967,87.640625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"보드 스킨·능력 미리보기\",\"rect\":[37,1117,301,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"직접 해보는 튜토리얼\",\"rect\":[37,1173,301,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 규칙·조작법\",\"rect\":[37,1229,301,56],\"checked\":null}],\"alerts\":[{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[16,80,343,94]},{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[16,80,343,94]},{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[37,695,301,106]}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "settings-save-error-768x1024x1",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"ko\",\"viewport\":[768,1024],\"page\":[768,1186],\"headings\":[\"설정\",\"게임 환경\",\"내 계정\",\"다른 설정과 도움말\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo 홈\",\"rect\":[24,8,144.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대시보드\",\"rect\":[16,56,72.453125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대전 찾기\",\"rect\":[92.453125,56,76.125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"순위\",\"rect\":[172.578125,56,48.234375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 방법\",\"rect\":[224.8125,56,76.125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"설정\",\"rect\":[304.9375,56,48.234375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[515.203125,8,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[350.203125,97,44.71875,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"로그인\",\"rect\":[601.203125,8,60.34375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"회원가입\",\"rect\":[669.546875,8,74.453125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"홈으로\",\"rect\":[649.65625,159,94.34375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[641,342,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[476,431,44.71875,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"꺼짐\",\"rect\":[655,427,64,44],\"disabled\":false,\"checked\":\"false\"},{\"tag\":\"BUTTON\",\"name\":\"키 설정\",\"rect\":[619.09375,499,87.90625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[611.984375,588,94.015625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign in\",\"rect\":[49,795,87.640625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"보드 스킨·능력 미리보기\",\"rect\":[49,953,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"직접 해보는 튜토리얼\",\"rect\":[49,1009,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 규칙·조작법\",\"rect\":[49,1065,670,56],\"checked\":null}],\"alerts\":[{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[337.203125,60,256,94]},{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[463,394,256,94]},{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[49,575,670,70]}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "settings-save-error-1440x900x1",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"ko\",\"viewport\":[1440,900],\"page\":[1440,1138],\"headings\":[\"설정\",\"게임 환경\",\"내 계정\",\"다른 설정과 도움말\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo 홈\",\"rect\":[232,8,144.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대시보드\",\"rect\":[392.203125,8,72.453125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대전 찾기\",\"rect\":[468.65625,8,76.125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"순위\",\"rect\":[548.78125,8,48.234375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 방법\",\"rect\":[601.015625,8,76.125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"설정\",\"rect\":[681.140625,8,48.234375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[979.203125,8,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[814.203125,97,44.71875,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"로그인\",\"rect\":[1065.203125,8,60.34375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"회원가입\",\"rect\":[1133.546875,8,74.453125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"홈으로\",\"rect\":[985.65625,111,94.34375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[977,294,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[812,383,44.71875,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"꺼짐\",\"rect\":[991,379,64,44],\"disabled\":false,\"checked\":\"false\"},{\"tag\":\"BUTTON\",\"name\":\"키 설정\",\"rect\":[955.09375,451,87.90625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"다시 시도\",\"rect\":[947.984375,540,94.015625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign in\",\"rect\":[385,747,87.640625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"보드 스킨·능력 미리보기\",\"rect\":[385,905,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"직접 해보는 튜토리얼\",\"rect\":[385,961,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 규칙·조작법\",\"rect\":[385,1017,670,56],\"checked\":null}],\"alerts\":[{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[801.203125,60,256,94]},{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[799,346,256,94]},{\"text\":\"설정을 저장하지 못했습니다. 다시 시도하세요.다시 시도\",\"rect\":[385,527,670,70]}]}\n```"
+          }
+        ]
+      }
+    }
+  ]
+}

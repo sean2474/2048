@@ -1,32 +1,18 @@
-import { LoginForm } from '@/components/widget/login-form';
-import Link from 'next/link';
-import { LoginBtn } from '@/components/ui/login-button';
-
-export default async function LoginPage() {
-  return ( 
-    <main className='absolute top-1/2 left-1/2 -translate-1/2 flex justify-center items-center border border-primary/30 max-w-xl mx-auto w-full bg-white shadow-sm rounded'>
-      <div className='flex flex-col justify-center items-center py-16 px-3 md:px-10 w-[400px]'>
-        <div className='flex items-center justify-start w-full'>
-          <div className='text-2xl font-bold'>
-            Welcome Back
-          </div>
-        </div>
-
-        <LoginForm />
-
-        <div className='mt-6'>
-          No account?
-          <Link href={'/auth/signup'} className='font-bold ml-1'>
-            Sign Up
-          </Link>
-        </div>
-
-        <div className="border border-primary/30 w-[99%] mt-6" />
-
-        <div className="flex flex-col space-y-2 w-full mt-6">
-          <LoginBtn type="google" />
-        </div>
-      </div>
-    </main>
-  );
+import { getI18n } from "@/lib/i18n/server";
+import { redirect } from "next/navigation";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { LoginForm } from "@/components/widget/login-form";
+import { LoginBtn } from "@/components/ui/login-button";
+import Link from "next/link";
+import { PageHeading } from "@/components/widget/page-heading";
+import { ArrowLeft } from "lucide-react";
+export default async function Page() {
+  const { t } = await getI18n();
+  if (!isSupabaseConfigured()) redirect("/");
+  return <main className="mx-auto w-full max-w-[480px] px-4 py-6 sm:py-10">
+    <Link href="/" className="mb-5 inline-flex min-h-11 items-center gap-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4"><ArrowLeft aria-hidden="true" className="size-4" />{t("Back to game")}</Link>
+    <div className="mb-6"><PageHeading icon="profile" title={t("Log in")} description={t("Log in to save your games and play ranked.")} /></div>
+    <section aria-label={t("Log in")} className="space-y-6 game-panel bg-card p-6 sm:p-8"><LoginForm /><LoginBtn type="google" /></section>
+    <p className="mt-4 text-center text-xs leading-5 text-muted-foreground"><Link href="/play/online" className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">{t("Play as a guest")}</Link></p>
+  </main>;
 }

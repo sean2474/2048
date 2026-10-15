@@ -17,3 +17,97 @@
     100% { transform: translateY(0); }
   }
 }
+
+[data-merge-effect] {
+  --merge-aura: #a45c40;
+  animation: legendary-cat .42s ease-out both;
+}
+.legendary-merge-flair {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  pointer-events: none;
+  color: var(--merge-aura);
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  animation: merge-paws .42s ease-out both;
+}
+[data-merge-effect="bunny"] { --merge-aura: #9974b5; animation-name: legendary-bunny; transform-origin: center bottom; }
+[data-merge-effect="bunny"] .legendary-merge-flair { animation-name: merge-petals; }
+[data-merge-effect="sentinel"] { --merge-aura: #83e1e5; animation-name: legendary-sentinel; }
+[data-merge-effect="sentinel"] .legendary-merge-flair { animation-name: merge-lock; }
+[data-merge-effect="runeknight"] { --merge-aura: #e5bc62; animation-name: legendary-runeknight; }
+[data-merge-effect="runeknight"] .legendary-merge-flair { animation-name: merge-runes; }
+[data-merge-effect="arcanist"] { --merge-aura: #c6b4f5; animation-name: legendary-arcanist; }
+[data-merge-effect="arcanist"] .legendary-merge-flair { animation-name: merge-orbit; }
+@keyframes legendary-cat {
+  0% { transform: scale(1.14, .84); }
+  32% { transform: scale(.94, 1.09) rotate(-3deg); }
+  65% { transform: scale(1.03, .97) rotate(2deg); }
+  100% { transform: none; }
+}
+@keyframes legendary-bunny {
+  0% { transform: scale(1.08, .88); }
+  35% { transform: translateY(-12%) scale(.97, 1.05); }
+  70% { transform: translateY(0) scale(1.04, .96); }
+  100% { transform: none; }
+}
+@keyframes legendary-sentinel {
+  0% { transform: scale(.9); }
+  24% { transform: scale(1.06); }
+  40% { transform: translateX(-2%); }
+  52% { transform: translateX(2%); }
+  68%, 100% { transform: none; }
+}
+@keyframes legendary-runeknight {
+  0% { transform: translateY(-6%) scale(.94); }
+  28% { transform: translateY(3%) scale(1.07, .94); }
+  55% { transform: translateY(-2%) scale(.99, 1.02); }
+  100% { transform: none; }
+}
+@keyframes legendary-arcanist {
+  0% { transform: scale(.9) rotate(-4deg); }
+  45% { transform: translateY(-5%) scale(1.06) rotate(3deg); }
+  100% { transform: none; }
+}
+@keyframes merge-paws {
+  0% { transform: translateY(7%) scale(.9); opacity: 0; }
+  25% { opacity: .9; }
+  100% { transform: translateY(-9%) scale(1.05); opacity: 0; }
+}
+@keyframes merge-petals {
+  0% { transform: translateY(5%) scale(.85) rotate(-12deg); opacity: 0; }
+  25% { opacity: .9; }
+  100% { transform: translateY(-12%) scale(1.08) rotate(12deg); opacity: 0; }
+}
+@keyframes merge-lock {
+  0% { transform: scale(1.12); opacity: 0; }
+  28% { transform: scale(.88); opacity: 1; }
+  60% { transform: scale(.92); opacity: .8; }
+  100% { transform: scale(1); opacity: 0; }
+}
+@keyframes merge-runes {
+  0% { transform: scale(.88) rotate(-12deg); opacity: 0; }
+  30% { transform: scale(1) rotate(0); opacity: 1; }
+  100% { transform: scale(1.1) rotate(6deg); opacity: 0; }
+}
+@keyframes merge-orbit {
+  0% { transform: scale(.86) rotate(-30deg); opacity: 0; }
+  25% { opacity: .95; }
+  100% { transform: scale(1.08) rotate(35deg); opacity: 0; }
+}
+[data-skin-preview][data-phase="moving"] .skin-preview-source {
+  animation: skin-preview-slide .3s cubic-bezier(.32, 0, .2, 1) both;
+}
+@keyframes skin-preview-slide {
+  to { transform: translateX(calc(-100% - .5rem)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-skin-preview] .skin-preview-source { animation: none !important; }
+  [data-merge-effect] { animation: none !important; }
+  .legendary-merge-flair { display: none; animation: none !important; }
+}

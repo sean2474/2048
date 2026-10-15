@@ -1,0 +1,61 @@
+{
+  "measurements": [
+    {
+      "skin": "kitty",
+      "effect": "cat",
+      "animation": "legendary-cat",
+      "frequencies": [
+        520,
+        1040
+      ],
+      "replay": true
+    },
+    {
+      "skin": "bunny",
+      "effect": "bunny",
+      "animation": "legendary-bunny",
+      "frequencies": [
+        620,
+        1240
+      ],
+      "replay": true
+    },
+    {
+      "skin": "sentinel",
+      "effect": "sentinel",
+      "animation": "legendary-sentinel",
+      "frequencies": [
+        170,
+        860,
+        1290
+      ],
+      "replay": true
+    },
+    {
+      "skin": "runeknight",
+      "effect": "runeknight",
+      "animation": "legendary-runeknight",
+      "frequencies": [
+        294,
+        587,
+        881
+      ],
+      "replay": true
+    },
+    {
+      "skin": "arcanist",
+      "effect": "arcanist",
+      "animation": "legendary-arcanist",
+      "frequencies": [
+        523,
+        784,
+        1568
+      ],
+      "replay": true
+    }
+  ],
+  "cancelled": true,
+  "muted": true,
+  "reducedMotion": true,
+  "errors": []
+}

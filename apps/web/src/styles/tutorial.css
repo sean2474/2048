@@ -1,0 +1,26 @@
+.tutorial-screen .game-stage { position: relative; isolation: isolate; }
+.tutorial-screen:focus { outline: none; }
+.tutorial-screen[data-focus="xblock"] [data-attack-control="xblock"],
+.tutorial-screen[data-focus="hardblock"] [data-attack-control="hardblock"],
+.tutorial-screen[data-focus="stock"] .attack-trigger:not(:disabled) { outline: 2px solid var(--primary); outline-offset: 2px; }
+.tutorial-screen .game-stage::before { content: ""; position: absolute; inset: -4px; z-index: 45; border-radius: 20px; background: rgb(0 0 0 / 62%); pointer-events: none; }
+.tutorial-coach { position: absolute; z-index: 50; top: 24px; right: 24px; width: min(360px, calc(50% - 24px)); padding: 20px; border: 1px solid var(--primary); border-radius: 16px; background: var(--card); box-shadow: 0 16px 48px -16px #0008; }
+.tutorial-coach::after { content: ""; position: absolute; left: -6px; top: 32px; width: 10px; height: 10px; border-left: 1px solid var(--primary); border-bottom: 1px solid var(--primary); background: var(--card); transform: rotate(45deg); }
+.tutorial-screen[data-focus="opponent"] .tutorial-coach { right: auto; left: 80px; }
+.tutorial-screen[data-focus="opponent"] .tutorial-coach::after { left: auto; right: -6px; transform: rotate(225deg); }
+.tutorial-screen[data-focus="board"] .game-you,
+.tutorial-screen[data-focus="xblock"] [data-attack="xblock"],
+.tutorial-screen[data-focus="hardblock"] [data-attack="hardblock"],
+.tutorial-screen[data-focus="stock"] .charge-rail,
+.tutorial-screen[data-focus="opponent"] .game-opponent { position: relative; z-index: 46; background: var(--background); box-shadow: 0 0 0 6px var(--background); outline: 3px solid var(--primary); outline-offset: 6px; border-radius: 12px; }
+@media (max-width: 699px) {
+  .tutorial-screen { display: flex; flex: 0 0 auto; flex-direction: column; min-height: 100dvh; }
+  .tutorial-screen .game-stage { display: grid; grid-template-rows: auto auto; align-content: start; gap: 24px; container-type: inline-size; padding: 12px 0; }
+  .tutorial-screen .game-stage-grid { --board-size: min(calc(100cqw - 64px), 280px); grid-row: 2; height: auto; padding: 0 8px 8px; }
+  .tutorial-screen[data-focus] .tutorial-coach { position: relative; grid-row: 1; top: auto; right: auto; left: auto; width: calc(100% - 24px); margin-inline: auto; padding: 16px; }
+  .tutorial-screen[data-focus] .tutorial-coach::after { top: auto; bottom: -6px; right: auto; left: 50%; transform: rotate(-45deg); }
+  .tutorial-screen[data-focus="xblock"] .tutorial-coach::after,
+  .tutorial-screen[data-focus="hardblock"] .tutorial-coach::after,
+  .tutorial-screen[data-focus="stock"] .tutorial-coach::after { left: 20px; }
+  .tutorial-screen[data-focus="opponent"] .tutorial-coach::after { left: auto; right: 32px; }
+}

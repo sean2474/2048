@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-16",
+  "timezone": "Asia/Seoul",
+  "source": "Chrome DevTools evaluate_script on rendered local pages",
+  "observations": [
+    {
+      "route": "/signup",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "heading": "Create an account",
+      "cardPadding": "32px",
+      "labels": [
+        {
+          "text": "Display name",
+          "gap": "8px",
+          "inputHeight": 44
+        },
+        {
+          "text": "Email",
+          "gap": "8px",
+          "inputHeight": 44
+        },
+        {
+          "text": "Password (at least 10 characters)",
+          "gap": "8px",
+          "inputHeight": 44
+        },
+        {
+          "text": "Confirm password",
+          "gap": "8px",
+          "inputHeight": 44
+        }
+      ],
+      "submitHeight": 44
+    },
+    {
+      "route": "/signup",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "scrollWidth": 375,
+      "heading": "Create an account",
+      "cardPadding": "24px",
+      "labels": [
+        {
+          "text": "Display name",
+          "gap": "8px",
+          "inputHeight": 44
+        },
+        {
+          "text": "Email",
+          "gap": "8px",
+          "inputHeight": 44
+        },
+        {
+          "text": "Password (at least 10 characters)",
+          "gap": "8px",
+          "inputHeight": 44
+        },
+        {
+          "text": "Confirm password",
+          "gap": "8px",
+          "inputHeight": 44
+        }
+      ],
+      "submitHeight": 44
+    }
+  ]
+}

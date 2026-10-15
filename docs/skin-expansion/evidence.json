@@ -1,0 +1,79 @@
+{
+  "contract": "contract.md",
+  "targetViewports": [
+    "1440x900",
+    "768x1024",
+    "375x812"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Original SVGs are decorative with visible text labels; rarity controls retain pressed state, 44px targets and keyboard focus. Five legendary effects stop visual motion under prefers-reduced-motion, and mute suppresses their audio. See measurements.json and legendary-effects.json."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "15 pages at three target widths have no horizontal overflow; 2–32768 numeral bounds fit all 20 skins, including 210px boards. Numeral plates were widened and long character-tile labels scaled after visual inspection."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Lobby connection states render inside the same frame; guest/account checks retain their pending feedback. Test sockets for page screenshots were aborted to avoid public matchmaking."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "History guest/empty guidance and owned-only rarity empty state retain readable text and actions; covered by loadout.browser.mjs."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "Account save failure leaves the previous selection intact; retry succeeds. Locale-cookie failure also preserves the previous choice; covered by profile-icons.browser.mjs and settings-language.browser.mjs."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Filtering to another rarity leaves the equipped selection visible; two clients can have different themes. Shared snapshots preserve each participant skin through reconnect and end."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "All eleven newly added skins save and survive reload; each rarity contains five; legendary merge animation/audio run in the actual tutorial."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Guest locked cards still show sign-in unlock guidance and owned-only filtering retains defaults; ranked lobby retains sign-in action. Authenticated account behavior uses isolated fixtures."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "1440x900",
+      "artifact": "page--loadout-1440x900.png",
+      "observation": "Original line logo, board-and-brush customization icon and stacked-coin icon fit the compact skin catalog; background and primary palette unchanged."
+    },
+    {
+      "viewport": "768x1024",
+      "artifact": "page--loadout-768x1024.png",
+      "observation": "Original line logo, board-and-brush customization icon and stacked-coin icon fit the compact skin catalog; background and primary palette unchanged."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "page--loadout-375x812.png",
+      "observation": "Original line logo, board-and-brush customization icon and stacked-coin icon fit the compact skin catalog; background and primary palette unchanged."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "match-magic.png",
+      "observation": "Own Arcane Order board and opponent Classic board shown separately by the live game component."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "match-classic.png",
+      "observation": "Other participant sees own Classic board and the opponent Arcane Order skin."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "merge-arcanist.png",
+      "observation": "Captured the short magic merge effect at 100ms; the number remains on a clear central plate."
+    },
+    {
+      "viewport": "210px board",
+      "artifact": "sentinel-board-210.png",
+      "observation": "Long values fit the armored numeric plates at small board sizes; obstacles keep their red/black identities."
+    }
+  ]
+}

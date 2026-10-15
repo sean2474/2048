@@ -1,0 +1,49 @@
+.duel-preview { container-type: inline-size; }
+.duel-motion { animation-duration: 5.6s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.duel-preview[data-paused="true"] .duel-motion { animation-play-state: paused; }
+.duel-tile-left { animation-name: duel-left; transform: rotate(-7deg); }
+.duel-tile-right { animation-name: duel-right; transform: rotate(7deg); }
+.duel-projectile-x { animation-name: duel-x; }
+.duel-projectile-hard { animation-name: duel-hard; }
+.duel-spark { animation-name: duel-spark; }
+.duel-spark-left { animation-delay: 2.8s; }
+
+@keyframes duel-left {
+  0%, 100% { transform: translateY(0) rotate(-7deg); }
+  12% { transform: translate(-3%, -8%) rotate(-13deg); }
+  21% { transform: translate(6%, -3%) rotate(2deg); }
+  34%, 65% { transform: translateY(-4%) rotate(-7deg); }
+  83% { transform: translate(-5%, 3%) rotate(-12deg); }
+  90% { transform: translate(2%, -2%) rotate(-3deg); }
+}
+@keyframes duel-right {
+  0%, 100% { transform: translateY(-4%) rotate(7deg); }
+  33% { transform: translate(5%, 3%) rotate(12deg); }
+  40% { transform: translate(-2%, -2%) rotate(3deg); }
+  54% { transform: translateY(0) rotate(7deg); }
+  62% { transform: translate(3%, -8%) rotate(13deg); }
+  71% { transform: translate(-6%, -3%) rotate(-2deg); }
+  84% { transform: translateY(-4%) rotate(7deg); }
+}
+@keyframes duel-x {
+  0%, 12% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.6); }
+  16% { opacity: 1; transform: translate(3cqw, -3cqw) rotate(25deg) scale(1); }
+  25% { opacity: 1; transform: translate(17cqw, -9cqw) rotate(135deg) scale(1.1); }
+  33% { opacity: 1; transform: translate(32cqw, 0) rotate(260deg) scale(1); }
+  37%, 100% { opacity: 0; transform: translate(34cqw, 2cqw) rotate(300deg) scale(.3); }
+}
+@keyframes duel-hard {
+  0%, 62% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.6); }
+  66% { opacity: 1; transform: translate(-3cqw, -3cqw) rotate(-25deg) scale(1); }
+  75% { opacity: 1; transform: translate(-17cqw, -9cqw) rotate(-135deg) scale(1.1); }
+  83% { opacity: 1; transform: translate(-32cqw, 0) rotate(-260deg) scale(1); }
+  87%, 100% { opacity: 0; transform: translate(-34cqw, 2cqw) rotate(-300deg) scale(.3); }
+}
+@keyframes duel-spark {
+  0%, 30%, 45%, 100% { opacity: 0; transform: scale(.3) rotate(-15deg); }
+  35% { opacity: 1; transform: scale(1.1) rotate(8deg); }
+  40% { opacity: .6; transform: scale(.8) rotate(20deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .duel-motion { animation: none !important; }
+}

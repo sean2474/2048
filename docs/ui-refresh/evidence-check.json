@@ -1,0 +1,22 @@
+{
+  "contract": "../ui-redesign-contract.md",
+  "targetViewports": ["375x812", "768x1024", "1440x900"],
+  "accessibility": {
+    "status": "partial",
+    "evidence": "Keyboard focus, dialog escape/restore, labelled controls, 44px primary targets, translated tile names, disabled custom shortcuts and pause control were checked. Original numeric tile colors were restored at the user's explicit request and do not all meet text contrast. No screen-reader or axe pass is claimed."
+  },
+  "responsive": { "status": "pass", "evidence": "Actual isolated Chrome viewport measurements at 320, 375, 692, 768 and 1440px; match boards and controls fit tested viewport heights. See report and rendered-evidence.json." },
+  "contentStates": {
+    "loading": { "status": "pass", "evidence": "Lobby waiting/connection states and asynchronous account/rating loading were observed with status text and relevant cancellation." },
+    "empty": { "status": "pass", "evidence": "Guest dashboard has no fabricated record; disposable empty account shows Unrated/no completed games; admin empty search has a no-results message." },
+    "error": { "status": "pass", "evidence": "Invalid friend code, failed login, signup password mismatch and browser storage failures displayed errors with retry or correction." },
+    "partial": { "status": "pass", "evidence": "Admin fixture mixing measured and old unmeasured telemetry displayed Not measured instead of zero." },
+    "success": { "status": "pass", "evidence": "Casual and friend matches synchronized moves and reciprocal surrender outcomes; key remapping and three-step tutorial were verified before the later four-step extension." },
+    "permission": { "status": "pass", "evidence": "Ordinary fixture denied admin access; guest ranked entry gated; real wallet/preferences RLS isolated identities and rejected unauthorized writes." }
+  },
+  "renderedEvidence": [
+    { "viewport": "375x812", "artifact": "rendered-evidence.json", "observation": "Dashboard/forms/history and live-match measurements have no document horizontal overflow; signed/guest header and coin placement checked." },
+    { "viewport": "768x1024", "artifact": "rendered-evidence.json", "observation": "Dashboard and match layouts fit; admin tables use internal labelled scrolling." },
+    { "viewport": "1440x900", "artifact": "rendered-evidence.json", "observation": "Profile, duel animation and recent matches render; two match boards and controls remain in viewport." }
+  ]
+}

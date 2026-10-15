@@ -1,7 +1,7 @@
 "use client";
+import { useI18n } from "ui/i18n";
 
-import { ChangeEventHandler, FocusEventHandler, PropsWithChildren, useState } from "react";
-import Image from "next/image";
+import { ChangeEventHandler, FocusEventHandler, PropsWithChildren } from "react";
 
 interface InputProps {
   label: string;
@@ -11,6 +11,7 @@ interface InputProps {
   type: string;
   className?: string;
   defaultValue?: string;
+  maxLength?: number;
   onFocus?: FocusEventHandler<HTMLInputElement>;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -18,9 +19,10 @@ interface InputProps {
 }
 
 export const Input = (props : InputProps & PropsWithChildren) => {
-  const bgColor = props.bgColor || "background"
+  const { t } = useI18n();
   return (
-    <div className={`relative mt-4 flex ${props.className}`}>
+    <div className={`relative grid gap-2 ${props.className || ""}`}>
+      <label htmlFor={props.name} className="text-sm font-semibold">{t(props.label)}</label>
       <input
         onChange={props.onChange}
         type={props.type}
@@ -28,69 +30,14 @@ export const Input = (props : InputProps & PropsWithChildren) => {
         name={props.name}
         onFocus={props.onFocus}
         onBlur={props.onBlur}
-        className="block px-3 py-2 h-14 w-full text-sm text-foreground bg-transparent border border-primary rounded focus:outline-none focus:ring-0 peer"
+        className={`h-12 w-full rounded-xl border bg-background/40 px-4 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 ${props.children ? "pr-14" : ""}`}
+        style={props.bgColor ? { backgroundColor: props.bgColor } : undefined}
         value={props.value}
         defaultValue={props.defaultValue}
-        placeholder=" "
+        maxLength={props.maxLength}
         readOnly={props.readOnly}
       />
-      <label
-        htmlFor={props.name}
-        className={`absolute text-md text-foreground duration-200 transform 
-                  -translate-y-[160%] scale-75 top-1/2 z-10 origin-[0] left-3 
-                  peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2
-                  peer-focus:scale-75 peer-focus:-translate-y-[160%] px-1`}
-        style={{
-          backgroundColor: bgColor
-        }}
-      >
-        {props.label}
-      </label>
       {props.children}
     </div>
-  );
-}
-
-export const EmailInput = ({ defaultValue, readOnly = false, bgColor } : { defaultValue?: string, readOnly?: boolean, bgColor?: string }) => {
-
-  return (
-    <Input label={"Email"} name={"email"} type={"email"} readOnly={readOnly} defaultValue={defaultValue} bgColor={bgColor} />
-  );
-}
-
-export const PasswordConfirmInput = ({bgColor}: {bgColor?: string}) => {
-
-  return (
-    <Input label={"Password Confirm"} name={"passwordConfirm"} type={"password"} bgColor={bgColor} />
-  );
-}
-
-export const PasswordInput = (
-  {onChange, value, onFocus, onBlur, bgColor}: 
-  {onChange?: ChangeEventHandler<HTMLInputElement>, value?: string, onFocus?: FocusEventHandler<HTMLInputElement>, onBlur?: FocusEventHandler<HTMLInputElement>, bgColor?: string}
-) => {
-  const [ showPassword, setShowPassword ] = useState<boolean>(false);
-
-  return (
-    <Input label={"Password"} name={"password"} type={showPassword ? "text" : "password"} onChange={onChange} value={value} onFocus={onFocus} onBlur={onBlur} bgColor={bgColor}>
-      <button type="button" className="absolute w-5 h-4 p-1 top-1/2 -translate-y-1/2 right-4 text-font" onClick={() => setShowPassword((v) => !v)} tabIndex={-1}>
-        <Image src={`/icons/${showPassword ? "hide_pw" : "show_pw"}.svg`} alt={""} fill />
-      </button>
-    </Input>
-  );
-}
-
-export const NewPasswordInput = (
-  {onChange, value, onFocus, onBlur, bgColor}: 
-  {onChange?: ChangeEventHandler<HTMLInputElement>, value?: string, onFocus?: FocusEventHandler<HTMLInputElement>, onBlur?: FocusEventHandler<HTMLInputElement>, bgColor?: string}
-) => {
-  const [ showPassword, setShowPassword ] = useState<boolean>(false);
-
-  return (
-    <Input label={"New Password"} name={"newPassword"} type={showPassword ? "text" : "password"} onChange={onChange} value={value} onFocus={onFocus} onBlur={onBlur} bgColor={bgColor}>
-      <button type="button" className="absolute w-5 h-4 p-1 top-1/2 -translate-y-1/2 right-4 text-font" onClick={() => setShowPassword((v) => !v)} tabIndex={-1}>
-        <Image src={`/icons/${showPassword ? "hide_pw" : "show_pw"}.svg`} alt={""} fill />
-      </button>
-    </Input>
   );
 }

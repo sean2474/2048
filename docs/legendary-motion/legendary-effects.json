@@ -1,0 +1,55 @@
+{
+  "measurements": [
+    {
+      "skin": "kitty",
+      "animation": "legendary-cat",
+      "flair": "merge-paws",
+      "frequencies": [
+        520,
+        1040
+      ]
+    },
+    {
+      "skin": "bunny",
+      "animation": "legendary-bunny",
+      "flair": "merge-petals",
+      "frequencies": [
+        620,
+        1240
+      ]
+    },
+    {
+      "skin": "sentinel",
+      "animation": "legendary-sentinel",
+      "flair": "merge-lock",
+      "frequencies": [
+        170,
+        860,
+        1290
+      ]
+    },
+    {
+      "skin": "runeknight",
+      "animation": "legendary-runeknight",
+      "flair": "merge-runes",
+      "frequencies": [
+        294,
+        587,
+        881
+      ]
+    },
+    {
+      "skin": "arcanist",
+      "animation": "legendary-arcanist",
+      "flair": "merge-orbit",
+      "frequencies": [
+        523,
+        784,
+        1568
+      ]
+    }
+  ],
+  "muted": true,
+  "reducedMotion": true,
+  "errors": []
+}

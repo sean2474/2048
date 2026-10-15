@@ -1,0 +1,59 @@
+{
+  "contract": "Public /leaderboard: retain the real top-50 Elo ordering, live query, retry and ranked entry. Make six existing tiers recognizable as metallic shield emblems, reused in dashboard/history; emphasize the leading players with a podium. Reuse the warm shell with a restrained slate/gold arena, shared buttons, schema ratingTier and Korean/English dictionaries. No rank rules, data writes, new dependencies or invented live standings. Priorities: ranked entry, tier progression, top three, full player standings. Loading/empty/error keep useful feedback and recovery. Target desktop, tablet and phone with full accessible tier labels and long nicknames contained.",
+  "targetViewports": [
+    "1440x900",
+    "768x1024",
+    "375x812"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Browser assertions: decorative SVGs accompany visible tier names, table has caption/column and row headers and a named focusable region. Ranked CTA is at least 44px high. Keyboard focus revealed a shared outline-style issue, repaired with focus-visible:outline-solid; the dark arena uses a contrasting pale-gold 2px outline (keyboard-focus.png). Reduced-motion emulation disables the icon transition. Player markup renders as text. Text uses dark tier colors on pale backgrounds. No full WCAG certification or screen-reader session."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Rendered and visually reviewed all three targets. Document widths equal 1440, 768 and 375; table widths are 1054, 718 and 341. Long names truncate while retaining full DOM text/title. Mobile places tier below player name and retains wins/played below win rate. English phone and tablet labels fit; one- and two-player podiums contain only available players."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Delayed intercepted read after retry displays Loading leaderboard… with status semantics; loading.png."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "Empty intercepted ranking response shows the bronze shield, first-match explanation and ranked link; no podium; empty.png."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "HTTP 500 fixture shows an alert and Try again. Clicking retry transitions through loading and restores all six ranking rows; error.png."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "One- and two-player responses show exactly one/two podium places and rows, without fabricated empty ranks; live-desktop.png also captures two actual available records."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Six fixture ranks cover every badge and display correct first-place player, Elo and win counts. Both locales render correctly. Updated metallic revision passes the browser suite without page errors. Historical live-* images document a prior unmocked public read, not a new authenticated verification."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Guest can view rankings. Following the ranked CTA reaches the existing Sign in for ranked gate, without creating an account or starting a match."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "1440x900",
+      "artifact": "1440x900.png",
+      "observation": "Six browser-only fixtures, three-place podium, all table columns and six distinct badge silhouettes."
+    },
+    {
+      "viewport": "768x1024",
+      "artifact": "768x1024.png",
+      "observation": "Tablet shows the six-tier trail and readable podium/table; secondary numeric columns collapse into the record label."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "375x812.png",
+      "observation": "Phone uses a 3-by-2 tier guide, three-place podium and compact standings with no horizontal document or table overflow."
+    }
+  ]
+}

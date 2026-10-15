@@ -1,0 +1,89 @@
+{
+  "contract": "Refresh matchmaking waiting, match-found and end-of-match presentations using the existing ivory, olive, bronze and terracotta theme. Show the selected portrait, actual queue/error/auth status and authoritative results. Remove loadout and alternate-mode links from the queue and remove promotional catchphrases throughout Korean and English UI.",
+  "targetViewports": [
+    "375x812",
+    "1440x900"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Keyboard cancel, 44px actions, labeled Radix dialogs, Escape/dismiss and return focus to the result summary passed. Reduced motion disables lobby and result animations. Darkened small accent/muted text against tinted panels. Screen-reader audio was not tested."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Queue checked at 320, 375 and 1440px without horizontal overflow. Match and result overlays occupy exact viewport bounds. Long names truncate; result actions wrap on mobile."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Real queue displays scanning ring and current connection status; saving status transitions after result messages."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "Unmatched opponent remains an explicitly labeled waiting slot with no fabricated opponent/rating or waiting-time estimate."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "Network failure displays an alert, stops scanning, and retry reconnects successfully."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Missing opponent score displays an em dash. Guests use the guest portrait. Long names and delayed record confirmation remain readable."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Two browser tabs match on an isolated real socket server, enter the game, surrender and see victory/defeat results; result actions and replay work. Draw, 2048, blocked-board and disconnect results verified with server fixtures. Duplicate end and record updates do not reopen dismissed results."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Guest ranked view presents login and does not enter the queue. Fictional account browser fixture displays its selected dragon icon; no remote account is written."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "375x812",
+      "artifact": "waiting-375x812.png",
+      "observation": "Ivory arena with olive searching slot and one cancel action. No tagline or secondary navigation."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "account-waiting.png",
+      "observation": "Selected dragon portrait and player name appear in the waiting arena."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "match-found-1440x900.png",
+      "observation": "Match-found VS animation now uses the site palette and factual entry status."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "victory-1440.png",
+      "observation": "Victory result from a real local match, authoritative scores and replay/board actions."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "defeat-375.png",
+      "observation": "Muted terracotta defeat presentation, readable mobile result and controls."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "result-draw.png",
+      "observation": "Reduced-motion draw, long name, three actions and recording status."
+    }
+  ],
+  "validation": {
+    "browserTests": 4,
+    "copyPageChecks": 18,
+    "typecheck": "Web passed",
+    "lint": "Changed web files and new browser test passed",
+    "sourceAudit": "Removed flagged copy from callers and translation dictionaries; catalog prose rewritten as factual descriptions."
+  },
+  "limits": [
+    "Production deployment, live authenticated multiplayer and non-Chromium browsers were not tested."
+  ],
+  "contractDetails": {
+    "references": "Existing CSS theme tokens, GameEmblem, ProfileIcon, Radix Dialog and Button.",
+    "primaryAction": "Cancel while searching; replay or view final board after a result.",
+    "motion": "CSS-only scan and finite emblem/title reveal, with reduced-motion support.",
+    "data": "No new network/API, schema migration or dependency. Server match logic and recording semantics retained."
+  }
+}

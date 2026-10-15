@@ -1,0 +1,30 @@
+{
+  "contract": "contract.md",
+  "targetViewports": ["1440x900", "768x1024", "375x812"],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "All five decorative SVGs are aria-hidden. Reduced-motion removes tile movement and flair; muted previews emit no notes. Enter plays the preview, Escape returns card focus, and the replay target remains at least 44px. See legendary-effects.json and preview.json."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Inspected all five mid-merge tutorial captures and detail previews at three viewports. Number plates stay legible. Dialogs fit without horizontal overflow and settle to at most 512px wide. Browser captures wait for the existing dialog size transition after viewport changes."
+  },
+  "contentStates": {
+    "loading": {"status": "pass", "evidence": "Preview shows a busy state during travel and the merge; closing it cancels pending audio and reopening restores idle."},
+    "empty": {"status": "pass", "evidence": "An ordinary Classic merge has no legendary flair and still produces a score of 4. Ghost tiles have no flair. Each completed legendary effect returns to an identity transform and zero decoration opacity."},
+    "error": {"status": "pass", "evidence": "A guest browser without AudioContext displays the sound-unavailable message and completes the visual merge."},
+    "partial": {"status": "pass", "evidence": "Mute retains the visual result; reduced motion retains the merged number without ornamentation. Previewing another skin does not change the equipped Classic skin."},
+    "success": {"status": "pass", "evidence": "All five live tile motions and distinct decorative animations run, and each preserves its existing audio frequencies. All five detail previews replay successfully. Web TypeScript and targeted ESLint pass; 16 guide references and the README link resolve."},
+    "permission": {"status": "pass", "evidence": "Locked legendary skins remain previewable by guests while retaining sign-in unlock guidance. Tests use isolated account fixtures; no real account writes occur."}
+  },
+  "renderedEvidence": [
+    {"viewport": "1440x900", "artifact": "preview-arcanist-1440x900.png", "observation": "The rotation and magic circle remain around a clear numeric plate in the centered detail dialog."},
+    {"viewport": "768x1024", "artifact": "preview-arcanist-768x1024.png", "observation": "The tablet dialog keeps replay, audio and equip actions visible; art is paused at 100ms for inspection."},
+    {"viewport": "375x812", "artifact": "preview-arcanist-375x812.png", "observation": "The mobile dialog fits the viewport and preserves its numeric plate, focus outline and audio controls."},
+    {"viewport": "375x812", "artifact": "merge-kitty.png", "observation": "Cat squash and paw accents appear around the live result tile."},
+    {"viewport": "375x812", "artifact": "merge-bunny.png", "observation": "The rabbit hops with drifting petal outlines."},
+    {"viewport": "375x812", "artifact": "merge-sentinel.png", "observation": "Mechanical rebound uses cyan corner brackets."},
+    {"viewport": "375x812", "artifact": "merge-runeknight.png", "observation": "A downward strike is accompanied by an amber diamond rune."},
+    {"viewport": "375x812", "artifact": "merge-arcanist.png", "observation": "The wizard has a brief rise and rotating dotted magic circle."}
+  ]
+}

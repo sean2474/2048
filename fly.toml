@@ -5,18 +5,32 @@
 
 app = '2048-socket'
 primary_region = 'dfw'
+kill_signal = 'SIGTERM'
+kill_timeout = 30
 
 [build]
   dockerfile = './Dockerfile'
 
 [env]
   PORT = '4000'
+  RESULT_OUTBOX_DIR = '/data/results'
+
+[[mounts]]
+  source = 'results'
+  destination = '/data'
 
 [[services]]
   protocol = 'tcp'
   internal_port = 4000
-  auto_stop_machines = 'stop'
+  auto_stop_machines = 'off'
   auto_start_machines = true
+
+  [[services.http_checks]]
+    interval = '15s'
+    timeout = '2s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/health'
 
   [[services.ports]]
     port = 80

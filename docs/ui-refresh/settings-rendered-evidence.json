@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-16",
+  "baseUrl": "http://localhost:3001",
+  "contexts": "Isolated browser contexts only",
+  "scope": "Final settings DB/cookie, profile/deletion, tutorial and guest multiplayer",
+  "observations": [
+    {
+      "label": "settings-guest-ko-320",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"ko\",\"viewport\":[320,740],\"page\":[320,1288],\"headings\":[\"설정\",\"게임 환경\",\"내 계정\",\"다른 설정과 도움말\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo 홈\",\"rect\":[16,8,78.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대시보드\",\"rect\":[8,100,57.53125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"대전 찾기\",\"rect\":[69.53125,100,60.8125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"순위\",\"rect\":[134.34375,100,36.765625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 방법\",\"rect\":[175.109375,100,60.8125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"설정\",\"rect\":[239.921875,100,36.765625,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[16,52,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"로그인\",\"rect\":[102,52,60.34375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"회원가입\",\"rect\":[170.34375,52,74.453125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"홈으로\",\"rect\":[16,257,94.34375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"언어\",\"rect\":[37,486,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"켜짐\",\"rect\":[219,591,64,44],\"disabled\":false,\"checked\":\"true\"},{\"tag\":\"BUTTON\",\"name\":\"키 설정\",\"rect\":[183.09375,683,87.90625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign in\",\"rect\":[37,925,87.640625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"보드 스킨·능력 미리보기\",\"rect\":[37,1075,246,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"직접 해보는 튜토리얼\",\"rect\":[37,1131,246,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"게임 규칙·조작법\",\"rect\":[37,1187,246,56],\"checked\":null}],\"alerts\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "settings-cookie-save-error-320",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"en\",\"viewport\":[320,740],\"page\":[320,1563],\"headings\":[\"Settings\",\"Game preferences\",\"Your account\",\"More ways to play\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo home\",\"rect\":[16,8,78.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Dashboard\",\"rect\":[8,100,78.890625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Find match\",\"rect\":[90.890625,100,80.078125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Ranks\",\"rect\":[174.96875,100,50.90625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"How to play\",\"rect\":[8,144,83.84375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Settings\",\"rect\":[95.84375,144,64.125,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[16,52,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Try again\",\"rect\":[29,117,54.40625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Login\",\"rect\":[102,52,60.9375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign Up\",\"rect\":[170.9375,52,78.65625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Back to home\",\"rect\":[16,301,149.734375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[37,574,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Try again\",\"rect\":[29,117,54.40625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Off\",\"rect\":[219,689,64,44],\"disabled\":false,\"checked\":\"false\"},{\"tag\":\"BUTTON\",\"name\":\"Keybindings\",\"rect\":[49,819,131,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Try again\",\"rect\":[50,968,104.125,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign in\",\"rect\":[37,1191,87.640625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Board skins and ability previews\",\"rect\":[37,1341,246,65],\"checked\":null},{\"tag\":\"A\",\"name\":\"Interactive tutorial\",\"rect\":[37,1406,246,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"Game rules and controls\",\"rect\":[37,1462,246,56],\"checked\":null}],\"alerts\":[{\"text\":\"Could not save your settings. Please try again.Try again\",\"rect\":[16,80,288,94]},{\"text\":\"Could not save your settings. Please try again.Try again\",\"rect\":[16,80,288,94]},{\"text\":\"Could not save your settings. Please try again.Try again\",\"rect\":[37,895,246,130]}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "settings-account-en-1440",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"en\",\"viewport\":[1440,900],\"page\":[1440,1591],\"headings\":[\"Settings\",\"Game preferences\",\"Profile\",\"Delete account\",\"More ways to play\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo home\",\"rect\":[232,8,144.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Dashboard\",\"rect\":[392.203125,8,96.015625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Find match\",\"rect\":[492.21875,8,97.265625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Ranks\",\"rect\":[593.484375,8,63.96875,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"How to play\",\"rect\":[661.453125,8,101.5,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Settings\",\"rect\":[766.953125,8,78.9375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[946.6875,8,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"My loadout · 0 coins\",\"rect\":[1108.9375,8,47.0625,44],\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Account menu\",\"rect\":[1164,8,44,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Back to home\",\"rect\":[930.265625,111,149.734375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[977,294,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Off\",\"rect\":[991,379,64,44],\"disabled\":false,\"checked\":\"false\"},{\"tag\":\"BUTTON\",\"name\":\"Keybindings\",\"rect\":[912,451,131,44],\"disabled\":false,\"checked\":null},{\"tag\":\"INPUT\",\"name\":\"settings-nickname\",\"rect\":[385,709,670,50],\"disabled\":false,\"checked\":null},{\"tag\":\"INPUT\",\"name\":\"settings-email\",\"rect\":[385,827,670,50],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Save nickname\",\"rect\":[385,921,143.125,44],\"disabled\":true,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Log out\",\"rect\":[385,1010,108.59375,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Delete my account\",\"rect\":[385,1200,167.625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Board skins and ability previews\",\"rect\":[385,1358,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"Interactive tutorial\",\"rect\":[385,1414,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"Game rules and controls\",\"rect\":[385,1470,670,56],\"checked\":null}],\"alerts\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "settings-guest-en-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"en\",\"viewport\":[375,812],\"page\":[375,1336],\"headings\":[\"Settings\",\"Game preferences\",\"Your account\",\"More ways to play\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo home\",\"rect\":[16,8,78.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Dashboard\",\"rect\":[8,56,78.890625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Find match\",\"rect\":[90.890625,56,80.078125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Ranks\",\"rect\":[174.96875,56,50.90625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"How to play\",\"rect\":[229.875,56,83.84375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Settings\",\"rect\":[8,100,64.125,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[125.40625,8,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Login\",\"rect\":[211.40625,8,60.9375,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign Up\",\"rect\":[280.34375,8,78.65625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Back to home\",\"rect\":[16,257,149.734375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[37,506,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Off\",\"rect\":[274,611,64,44],\"disabled\":false,\"checked\":\"false\"},{\"tag\":\"BUTTON\",\"name\":\"Keybindings\",\"rect\":[49,731,131,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Sign in\",\"rect\":[37,973,87.640625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Board skins and ability previews\",\"rect\":[37,1123,301,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"Interactive tutorial\",\"rect\":[37,1179,301,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"Game rules and controls\",\"rect\":[37,1235,301,56],\"checked\":null}],\"alerts\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "settings-account-en-768",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/settings\",\"lang\":\"en\",\"viewport\":[768,1024],\"page\":[768,1639],\"headings\":[\"Settings\",\"Game preferences\",\"Profile\",\"Delete account\",\"More ways to play\"],\"controls\":[{\"tag\":\"A\",\"name\":\"2048 Duo home\",\"rect\":[24,8,144.203125,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Dashboard\",\"rect\":[16,56,96.015625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Find match\",\"rect\":[116.015625,56,97.265625,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Ranks\",\"rect\":[217.28125,56,63.96875,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"How to play\",\"rect\":[285.25,56,101.5,44],\"checked\":null},{\"tag\":\"A\",\"name\":\"Settings\",\"rect\":[390.75,56,78.9375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[558.9375,8,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"My loadout · 0 coins\",\"rect\":[644.9375,8,47.0625,44],\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Account menu\",\"rect\":[700,8,44,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Back to home\",\"rect\":[594.265625,159,149.734375,44],\"checked\":null},{\"tag\":\"SELECT\",\"name\":\"Language\",\"rect\":[641,342,78,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Off\",\"rect\":[655,427,64,44],\"disabled\":false,\"checked\":\"false\"},{\"tag\":\"BUTTON\",\"name\":\"Keybindings\",\"rect\":[576,499,131,44],\"disabled\":false,\"checked\":null},{\"tag\":\"INPUT\",\"name\":\"settings-nickname\",\"rect\":[49,757,670,50],\"disabled\":false,\"checked\":null},{\"tag\":\"INPUT\",\"name\":\"settings-email\",\"rect\":[49,875,670,50],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Save nickname\",\"rect\":[49,969,143.125,44],\"disabled\":true,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Log out\",\"rect\":[49,1058,108.59375,44],\"disabled\":false,\"checked\":null},{\"tag\":\"BUTTON\",\"name\":\"Delete my account\",\"rect\":[49,1248,167.625,44],\"disabled\":false,\"checked\":null},{\"tag\":\"A\",\"name\":\"Board skins and ability previews\",\"rect\":[49,1406,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"Interactive tutorial\",\"rect\":[49,1462,670,56],\"checked\":null},{\"tag\":\"A\",\"name\":\"Game rules and controls\",\"rect\":[49,1518,670,56],\"checked\":null}],\"alerts\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "tutorial-fivesteps-complete-en-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/tutorial\",\"locale\":\"en\",\"viewport\":[375,812],\"page\":[375,1084],\"heading\":\"Ready for a real match\",\"focus\":\"Find a match\",\"boards\":[],\"controls\":[{\"name\":\"Language\",\"rect\":[12,60,78,44]},{\"name\":\"Exit tutorial\",\"rect\":[98,60,123.421875,44]},{\"name\":\"Send hard block, 0 tickets\",\"rect\":[20,541.5,48,122]},{\"name\":\"Send X block, 0 tickets\",\"rect\":[20,671.5,48,122]},{\"name\":\"Find a match\",\"rect\":[41,417,298,44]},{\"name\":\"Restart this step\",\"rect\":[12,1032,157.390625,44]},{\"name\":\"Move up\",\"rect\":[271,976,44,44]},{\"name\":\"Move left\",\"rect\":[223,1024,44,44]},{\"name\":\"Move down\",\"rect\":[271,1024,44,44]},{\"name\":\"Move right\",\"rect\":[319,1024,44,44]}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "tutorial-ko-768",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/tutorial\",\"locale\":\"ko\",\"viewport\":[768,1024],\"page\":[768,1024],\"heading\":\"먼저, 타일을 움직여 보세요\",\"focus\":\"연습 모드게임 화면에서 배워보기한국어English나가기하드0/3512X0/3256내 보드나점수022상대 보드연습 상대점수024상대 공격권 · X 0/3 · 하드 0/31기본 조작2X 블록3하드블록4공격 받기5모아 쓰기먼저, 타일을 움직여 보세요왼쪽이나 오른쪽으로 움직여 2 타일 두 개를 4로 합쳐 보세요.방향키, 보드 스와이프 또는 아래 방향 버튼으로 움직이세요.유효한 이동마다 새 2 또는 4 타일이 나타납니다. 같은 숫자의 타일은 한 번의 이동에 한 번만 합쳐집니다.이 단계 다시 시작\",\"boards\":[],\"controls\":[{\"name\":\"언어\",\"rect\":[583.65625,12,78,44]},{\"name\":\"나가기\",\"rect\":[669.65625,12,82.34375,44]},{\"name\":\"하드블록 보내기, 공격권 0개\",\"rect\":[16,339.5,56,140]},{\"name\":\"X 블록 보내기, 공격권 0개\",\"rect\":[16,487.5,56,140]},{\"name\":\"이 단계 다시 시작\",\"rect\":[16,956,141.484375,44]},{\"name\":\"위로 이동\",\"rect\":[660,920,44,44]},{\"name\":\"왼쪽으로 이동\",\"rect\":[612,968,44,44]},{\"name\":\"아래로 이동\",\"rect\":[660,968,44,44]},{\"name\":\"오른쪽으로 이동\",\"rect\":[708,968,44,44]}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "tutorial-ko-1440",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/tutorial\",\"locale\":\"ko\",\"viewport\":[1440,900],\"page\":[1440,900],\"heading\":\"먼저, 타일을 움직여 보세요\",\"focus\":\"연습 모드게임 화면에서 배워보기한국어English나가기하드0/32X0/31내 보드나점수022상대 보드연습 상대점수024상대 공격권 · X 0/3 · 하드 0/31기본 조작2X 블록3하드블록4공격 받기5모아 쓰기먼저, 타일을 움직여 보세요왼쪽이나 오른쪽으로 움직여 2 타일 두 개를 4로 합쳐 보세요.방향키 또는 W / A / S / D · 보드를 스와이프하거나 아래 방향 버튼을 눌러도 돼요.유효한 이동마다 새 2 또는 4 타일이 나타납니다. 같은 숫자의 타일은 한 번의 이동에 한 번만 합쳐집니다.이 단계 다시 시작\",\"boards\":[],\"controls\":[{\"name\":\"언어\",\"rect\":[1175.65625,12,78,44]},{\"name\":\"나가기\",\"rect\":[1261.65625,12,82.34375,44]},{\"name\":\"하드블록 보내기, 공격권 0개\",\"rect\":[168,277.5,56,140]},{\"name\":\"X 블록 보내기, 공격권 0개\",\"rect\":[168,425.5,56,140]},{\"name\":\"이 단계 다시 시작\",\"rect\":[96,832,141.484375,44]},{\"name\":\"위로 이동\",\"rect\":[1252,796,44,44]},{\"name\":\"왼쪽으로 이동\",\"rect\":[1204,844,44,44]},{\"name\":\"아래로 이동\",\"rect\":[1252,844,44,44]},{\"name\":\"오른쪽으로 이동\",\"rect\":[1300,844,44,44]}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "final-guest-game-ko-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/play/8aeeb115-6b70-4a41-bef9-e48db530a3da\",\"locale\":\"ko\",\"viewport\":[375,812],\"page\":[375,812],\"boards\":[{\"label\":\"내 화면\",\"rect\":[74,159.5,287,338],\"board\":[{\"background\":\"rgb(129, 139, 153)\",\"rect\":[74,210.5,287,287]}]},{\"label\":\"상대 화면\",\"rect\":[14,507.5,347,88],\"board\":[{\"background\":\"rgb(129, 139, 153)\",\"rect\":[273,507.5,88,88]}]}],\"controls\":[{\"name\":\"언어\",\"rect\":[108.859375,8,78,44],\"disabled\":false},{\"name\":\"키 설정\",\"rect\":[194.859375,8,87.90625,44],\"disabled\":false},{\"name\":\"기권\",\"rect\":[290.765625,8,72.234375,44],\"disabled\":false},{\"name\":\"하드블록 보내기, 공격권 0개\",\"rect\":[14,202.5,48,122],\"disabled\":true},{\"name\":\"X 블록 보내기, 공격권 0개\",\"rect\":[14,332.5,48,122],\"disabled\":true},{\"name\":\"위로 이동\",\"rect\":[271,712,44,44],\"disabled\":false},{\"name\":\"왼쪽으로 이동\",\"rect\":[223,760,44,44],\"disabled\":false},{\"name\":\"아래로 이동\",\"rect\":[271,760,44,44],\"disabled\":false},{\"name\":\"오른쪽으로 이동\",\"rect\":[319,760,44,44],\"disabled\":false}],\"shortcuts\":false}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "final-guest-game-ko-320",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/play/8aeeb115-6b70-4a41-bef9-e48db530a3da\",\"locale\":\"ko\",\"viewport\":[320,740],\"page\":[320,740],\"boards\":[{\"label\":\"내 화면\",\"rect\":[74,177,232,283],\"board\":[{\"background\":\"rgb(129, 139, 153)\",\"rect\":[74,228,232,232]}]},{\"label\":\"상대 화면\",\"rect\":[14,470,292,88],\"board\":[{\"background\":\"rgb(129, 139, 153)\",\"rect\":[218,470,88,88]}]}],\"controls\":[{\"name\":\"언어\",\"rect\":[12,60,78,44],\"disabled\":false},{\"name\":\"키 설정\",\"rect\":[98,60,87.90625,44],\"disabled\":false},{\"name\":\"기권\",\"rect\":[193.90625,60,72.234375,44],\"disabled\":false},{\"name\":\"하드블록 보내기, 공격권 0개\",\"rect\":[14,192.5,48,122],\"disabled\":true},{\"name\":\"X 블록 보내기, 공격권 0개\",\"rect\":[14,322.5,48,122],\"disabled\":true},{\"name\":\"위로 이동\",\"rect\":[216,640,44,44],\"disabled\":false},{\"name\":\"왼쪽으로 이동\",\"rect\":[168,688,44,44],\"disabled\":false},{\"name\":\"아래로 이동\",\"rect\":[216,688,44,44],\"disabled\":false},{\"name\":\"오른쪽으로 이동\",\"rect\":[264,688,44,44],\"disabled\":false}],\"shortcuts\":false}\n```"
+          }
+        ]
+      }
+    }
+  ]
+}

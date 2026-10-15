@@ -1,328 +1,205 @@
 "use client";
-
-import { useEffect, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { io, Socket } from "socket.io-client";
-import { BoardView } from "@/components/2048/board";
+import Link from "next/link";
+import { GameEmblem } from "@/components/widget/game-emblem";
+import { useI18n } from "ui/i18n";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
+import { Flag, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import type { Dir, S2C } from "schema/in-game";
+import type { Socket } from "socket.io-client";
+import { GameArena } from "@/components/2048/game-arena";
+import { MatchResult } from "@/components/widget/match-result";
+import { AttackControls } from "@/components/2048/attack-controls";
+import { AbilityControls } from "@/components/2048/ability-controls";
+import { ABILITY_CHARGE } from "schema/in-game";
+import { DEFAULT_ABILITY_ID } from "schema/loadout";
 import { Button } from "@/components/ui/button";
-import type { Dir, S2C } from "@/types";
-import { Trophy, Flag } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePlayer } from "@/hooks/use-player";
-import { createClient } from "@/lib/supabase/client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { useKeybindings } from "@/hooks/use-keybindings";
+import { useSettings } from "@/hooks/settings-provider";
+import { KeybindingSettings } from "@/components/widget/keybinding-settings";
+import { SoundToggle } from "@/components/widget/audio-controls";
+import { useAudio } from "@/hooks/audio-provider";
+import { matchSound } from "@/lib/game-audio";
+import { resolveKeyAction } from "@/lib/keybindings";
+import "@/styles/match-screen.css";
+import { createGameSocket, CURRENT_ROOM_KEY, matchModeLabel, reasonMessage } from "@/lib/multiplayer";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
+type GameState = Extract<S2C, { t: "state" | "end" }>;
 export default function GamePage() {
-  const params = useParams();
-  const router = useRouter();
-  const roomId = params.id as string;
-  const supabase = createClient();
-
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const { t } = useI18n();
+  const { play } = useAudio();
+  const { id: roomId } = useParams<{ id: string }>();
+  const socketRef = useRef<Socket | null>(null);
+  const lastMove = useRef(0);
+  const serverOffset = useRef(0);
   const [connected, setConnected] = useState(false);
-  const [gameState, setGameState] = useState<S2C | null>(null);
-  const { user, player } = usePlayer();
+  const [game, setGame] = useState<GameState | null>(null);
+  const [names, setNames] = useState({ you: "Guest", opp: "Opponent" });
+  const [error, setError] = useState("");
+  const [actionMessage, setActionMessage] = useState("");
+  const [rejected, setRejected] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [confirming, setConfirming] = useState(false);
+  const { settings, ready: settingsReady, saving: settingsSaving, saveSettings, error: settingsError } = useSettings();
+  const settingsResolved = settingsReady || !!settingsError;
+  const characterShortcuts = settingsReady && settings.customShortcuts;
+  const [now, setNow] = useState(0);
+  const { player } = usePlayer();
+  const { bindings, saveBindings, storageError } = useKeybindings();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
-  // 소켓 연결
   useEffect(() => {
-    console.log("[GamePage] Socket connection effect triggered, user:", user);
-    
-    // user 로딩 중이면 대기
-    if (user === undefined) {
-      console.log("[GamePage] User is undefined, waiting...");
-      return;
-    }
-
-    // user가 null이면 세션 확인 후 익명 로그인
-    if (user === null) {
-      console.log("[GamePage] User is null, checking session...");
-      const checkSession = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          console.log("[GamePage] No session, signing in anonymously...");
-          await supabase.auth.signInAnonymously();
-        } else {
-          console.log("[GamePage] Session found, using existing session");
+    if (!settingsResolved) return;
+    setError(""); setActionMessage(""); setRejected(false); setConnected(false);
+    let socket: Socket;
+    try { socket = createGameSocket(); sessionStorage.setItem(CURRENT_ROOM_KEY, roomId); }
+    catch { setError("Browser storage is unavailable. Enable it and reload this page."); return; }
+    socketRef.current = socket;
+    let finished = false;
+    let previousGame: GameState | null = null;
+    let started = false;
+    socket.on("connect", () => {
+      setConnected(true); setError("");
+      if (!finished) socket.emit("message", { t: "joinRoom", roomId, skinId: settings.skinId, abilityId: settings.abilityId ?? DEFAULT_ABILITY_ID });
+    });
+    socket.on("disconnect", () => { setConnected(false); previousGame = null; });
+    socket.on("connect_error", () => setError("Connection lost. Reconnecting automatically; you can also try again below."));
+    socket.on("message", (message: S2C) => {
+      if (message.t === "recordStatus") {
+        setGame(current => current?.t === "end" && current.matchId === message.matchId ? { ...current, recording: message.status } : current);
+        return;
+      }
+      if (finished) return;
+      if (message.t === "actionRejected") {
+        setActionMessage(reasonMessage(message.reason));
+        return;
+      }
+      if (message.t === "state" || message.t === "end") {
+        const sound = message.t === "state" && !message.paused && !started ? "start" : matchSound(previousGame, message);
+        if (sound && (sound !== "start" || !started)) play(sound, message.you.skinId);
+        if (message.t === "state" && !message.paused) started = true;
+        previousGame = message;
+        setError(""); setGame(message);
+        if (message.t === "state") {
+          setNames(message.names);
+          // During a pause, serverTime is frozen for ability effects only.
+          if (!message.paused) serverOffset.current = message.serverTime - Date.now();
+          setNow(Date.now() + serverOffset.current);
         }
-      };
-      checkSession();
-      return;
-    }
-
-    const userId = user.id;
-    console.log("[GamePage] Connecting with userId:", userId);
-    
-    // 게임 시작 - roomId 저장
-    localStorage.setItem("currentGameRoomId", roomId);
-    
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL!);
-    setSocket(newSocket);
-
-    newSocket.on("connect", () => {
-      setConnected(true);
-      console.log("Connected:", newSocket.id);
-      
-      // 방 참가 시도 (userId 포함)
-      newSocket.emit("message", {
-        t: "joinRoom",
-        roomId: roomId,
-        userId: userId
-      });
-    });
-
-    newSocket.on("disconnect", () => {
-      setConnected(false);
-    });
-
-    newSocket.on("message", (data: S2C) => {
-      console.log("Received:", data);
-      
-      if (data.t === "state") {
-        setGameState(data);
-      } else if (data.t === "end") {
-        setGameState(data);
-        // 게임 종료 - roomId 제거
-        localStorage.removeItem("currentGameRoomId");
-      } else if (data.t === "reject") {
-        // 방에 접속할 수 없음 - roomId 제거하고 메인으로 리다이렉트
-        console.error("Cannot join room:", data.reason);
-        localStorage.removeItem("currentGameRoomId");
-        router.push("/");
+        if (message.t === "end") { finished = true; sessionStorage.removeItem(CURRENT_ROOM_KEY); }
+      } else if (message.t === "reject") {
+        sessionStorage.removeItem(CURRENT_ROOM_KEY);
+        setRejected(true); setError(reasonMessage(message.reason)); socket.disconnect();
       }
     });
+    socket.connect();
+    return () => { socket.removeAllListeners(); socket.disconnect(); socketRef.current = null; };
+  }, [roomId, attempt, settingsResolved, settings.skinId, settings.abilityId, play]);
 
-    return () => {
-      newSocket.disconnect();
-      // 컴포넌트 언마운트 시에도 제거 (뒤로가기 등)
-      // 단, 게임이 진행 중이면 유지
-      if (gameState?.t === "end" || !gameState) {
-        localStorage.removeItem("currentGameRoomId");
-      }
-    };
-  }, [roomId, router, user, gameState]);
-
-  // 키보드 입력
-  const handleMove = useCallback((dir: Dir) => {
-    if (!socket || !connected || !gameState || gameState.t !== "state") return;
-    
-    console.log("Sending input:", dir);
-    socket.emit("message", {
-      t: "input",
-      dir: dir
-    });
-  }, [socket, connected, gameState]);
-
+  const deadline = game?.t === "state" ? game.reconnectDeadline : undefined;
+  const slowDeadline = game?.t === "state" && !game.paused ? Math.max(game.you.ability.slowEndsAt, game.opp?.ability.slowEndsAt ?? 0) : 0;
   useEffect(() => {
-    // 게임이 종료되었으면 키보드 입력 무시
-    if (gameState?.t === "end") return;
+    if (!deadline && slowDeadline <= Date.now() + serverOffset.current) return;
+    const timer = setInterval(() => {
+      const current = Date.now() + serverOffset.current;
+      setNow(current);
+      if (!deadline && current >= slowDeadline) clearInterval(timer);
+    }, 100);
+    return () => clearInterval(timer);
+  }, [deadline, slowDeadline]);
 
-    const onKey = (e: KeyboardEvent) => {
-      const map: Record<string, Dir> = {
-        ArrowLeft: "left",
-        ArrowRight: "right",
-        ArrowUp: "up",
-        ArrowDown: "down",
-        a: "left",
-        d: "right",
-        w: "up",
-        s: "down",
-      };
-      const dir = map[e.key];
-      if (dir) {
-        e.preventDefault();
-        handleMove(dir);
-      }
+  const canMove = connected && !rejected && !confirming && !settingsOpen && game?.t === "state" && !game.paused;
+  const slowing = game?.you.ability;
+  const movementDelayed = !!slowing && now >= slowing.slowStartsAt && now < slowing.slowEndsAt && now < slowing.nextMoveAt;
+  const handleMove = useCallback((dir: Dir) => {
+    if (!canMove || movementDelayed || !socketRef.current?.connected || Date.now() - lastMove.current < 70) return;
+    lastMove.current = Date.now();
+    setActionMessage("");
+    socketRef.current.volatile.emit("message", { t: "input", dir });
+  }, [canMove, movementDelayed]);
+  const handleAttack = useCallback((blockType: "xblock" | "hardblock") => {
+    if (!canMove || !socketRef.current?.connected || game?.t !== "state" || game.you.attacks[blockType] < 1) return;
+    setActionMessage("");
+    socketRef.current.emit("message", { t: "attack", blockType });
+  }, [canMove, game]);
+  const handleAbility = useCallback(() => {
+    if (!canMove || !socketRef.current?.connected || game?.t !== "state" || game.you.ability.charge < ABILITY_CHARGE) return;
+    setActionMessage("");
+    socketRef.current.emit("message", { t: "ability" });
+  }, [canMove, game]);
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!canMove || event.ctrlKey || event.metaKey || event.altKey || event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog]")) return;
+      const action = resolveKeyAction(event, bindings, characterShortcuts);
+      if (!action) return;
+      event.preventDefault();
+      if (action === "xblock" || action === "hardblock") handleAttack(action);
+      else handleMove(action);
     };
-
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [handleMove, gameState]);
+  }, [handleMove, handleAttack, canMove, characterShortcuts, bindings]);
 
-  const handleSurrender = () => {
-    if (!socket || !connected) return;
-    
-    socket.emit("message", { t: "surrender" });
-  };
-
-  // 승리 이유 텍스트
-  const getReasonText = (reason: string) => {
-    switch (reason) {
-      case "reached_2048":
-        return " 2048 ";
-      case "opponent_locked":
-        return " ";
-      case "surrender":
-        return " ";
-      case "opponent_disconnected":
-        return " ";
-      case "draw":
-        return " ";
-      default:
-        return "";
-    }
-  };
-
-  // 게임 상태가 아직 없으면 로딩
-  if (!gameState) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="text-center space-y-6 max-w-md">
-          <h1 className="text-4xl font-bold">Connecting...</h1>
-        </div>
+  if (!game || rejected) return <main className="mx-auto max-w-lg px-4 py-12 sm:py-20">
+    <section className="game-panel bg-card p-8 text-center shadow-sm sm:p-10">
+      <GameEmblem kind="duel" className="mx-auto mb-6 size-20" />
+      <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">{t("The arena")}</p>
+      <h1 className="text-3xl font-bold tracking-tight">{t(error ? "Unable to join" : "Joining your game…")}</h1>
+      <p className="mt-4 text-sm leading-6 text-muted-foreground" role={error ? "alert" : "status"}>{t(error || "Getting your board ready. One moment.")}</p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        {!rejected && error && <Button onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</Button>}
+        <Button asChild variant="outline"><Link href="/find-match">{t("Back to menu")}</Link></Button>
       </div>
-    );
-  }
+    </section>
+  </main>;
 
-  if (gameState.t === "reject") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="text-center space-y-6">
-          <h1 className="text-4xl font-bold">Connection Error</h1>
-          <p className="text-muted-foreground">Reason: {gameState.reason}</p>
-          <Button onClick={() => router.push("/")}>
-            Back to Menu
-          </Button>
-        </div>
+  const ended = game.t === "end";
+  const abilityNow = game.t === "state" && game.paused ? game.serverTime : now;
+  const slowRemaining = Math.max(0, Math.ceil((game.you.ability.slowEndsAt - abilityNow) / 1000));
+  return <main className="match-screen">
+    <section className="match-toolbar">
+      <div className="min-w-0" role="status">
+        <p className="text-xs font-semibold text-muted-foreground">{t(matchModeLabel[game.mode])}</p>
+        <h1 className="text-lg font-extrabold tracking-tight">{ended ? t(game.winner === "you" ? "You win!" : game.winner === "draw" ? "Draw" : "You lose.") : t(!connected ? "Reconnecting…" : game.paused ? "Waiting for opponent…" : "Match in progress")}</h1>
+        {!ended && game.paused && deadline && <p className="text-xs text-primary">{t("Game paused · {seconds}s to reconnect", { seconds: Math.max(0, Math.ceil((deadline - now) / 1000)) })}</p>}
       </div>
-    );
-  }
-
-  // 게임 진행 중
-  const { you, opp } = gameState;
-
-  return (
-    <div className="min-h-screen bg-background p-4">
-      {gameState.t === "end" && (
-        <div className="min-h-screen bg-background/50 flex items-center justify-center p-4 fixed inset-0 z-50">
-          <div className="text-center space-y-8 max-w-md">
-            {/* */}
-            <Trophy 
-              className={`h-32 w-32 mx-auto ${
-                gameState.winner === "you" ? "text-yellow-500" : 
-                gameState.winner === "draw" ? "text-gray-400" : "text-gray-500"
-              }`} 
-            />
-            
-            {/* */}
-            <div className="space-y-2">
-              <h1 className="text-6xl font-bold">
-                {gameState.winner === "you" ? " You Win!" : 
-                 gameState.winner === "draw" ? " Draw" : " You Lose"}
-              </h1>
-              <p className="text-xl text-muted-foreground">
-                {getReasonText(gameState.reason)}
-              </p>
-            </div>
-
-            {/* */}
-            <div className="flex flex-col gap-3 mt-8">
-              <Button 
-                size="lg" 
-                onClick={() => router.push("/play/online")}
-                className="w-full"
-              >
-                Quick Play Again
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                onClick={() => router.push("/")}
-                className="w-full"
-              >
-                Back to Menu
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="max-w-7xl mx-auto mt-10">
-        <div className="flex justify-end items-center mb-6">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="sm">
-                <Flag className="mr-2 h-4 w-4" />
-                Surrender
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle> Surrender </AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to surrender?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="h-12"> 
-                  Cancel 
-                </AlertDialogCancel>
-                <AlertDialogAction onClick={handleSurrender} className="bg-destructive border-destructive hover:bg-destructive/80 hover:border-destructive/80 hover:text-white h-12">
-                  Surrender
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-
-        {/* Game Boards */}
-        <div className="grid md:grid-cols-[1fr_1px_1fr] gap-8">
-          {/* Your Board */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={player?.image_path || ""} />
-                  <AvatarFallback>{player?.name?.[0] || "G"}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <h2 className="text-xl font-bold">{player?.name || "Guest"}</h2>
-                  <p className="text-sm text-muted-foreground">Your Board</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-primary">{you.score}</p>
-                <p className="text-sm text-muted-foreground">Score</p>
-              </div>
-            </div>
-            <div className="p-6 bg-card border-2 border-primary rounded-lg items-center justify-center flex">
-              <BoardView board={you.board} />
-            </div>
-          </div>
-
-          <div className="w-[1px] h-full bg-primary/80" />
-
-          {/* Opponent Board */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12 bg-destructive">
-                  <AvatarFallback>OP</AvatarFallback>
-                </Avatar>
-                <div>
-                  <h2 className="text-xl font-bold">Opponent</h2>
-                  <p className="text-sm text-muted-foreground">Enemy Board</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-destructive">{opp ? opp.score : 0}</p>
-                <p className="text-sm text-muted-foreground">Score</p>
-              </div>
-            </div>
-            <div className="p-6 bg-card border-2 border-border rounded-lg items-center justify-center flex">
-              <BoardView board={opp ? opp.board : []} />
-            </div>
-          </div>
-        </div>
+      <div className="flex max-w-full flex-wrap items-center gap-2">
+        <SoundToggle />
+        {!ended && <KeybindingSettings bindings={bindings} saveBindings={saveBindings} storageError={storageError} onOpenChange={setSettingsOpen} />}
+        {ended ? <GameEmblem kind="crown" className="size-10" /> : <AlertDialog open={confirming} onOpenChange={setConfirming}>
+          <AlertDialogTrigger asChild><Button variant="outline" size="sm" disabled={!connected}><Flag className="size-4" aria-hidden="true" />{t("Surrender")}</Button></AlertDialogTrigger>
+          <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>{t("Surrender this round?")}</AlertDialogTitle><AlertDialogDescription>{t("Your opponent will win. You can start a new game afterwards.")}</AlertDialogDescription></AlertDialogHeader>
+            <AlertDialogFooter><AlertDialogCancel>{t("Keep playing")}</AlertDialogCancel><AlertDialogAction onClick={() => { if (socketRef.current?.connected) socketRef.current.emit("message", { t: "surrender" }); }}>{t("Surrender")}</AlertDialogAction></AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>}
       </div>
+    </section>
+    <div className="game-stage">
+      <GameArena you={game.you} opponent={game.opp} names={{ you: player?.name || names.you, opp: names.opp }} bindings={bindings} characterShortcuts={characterShortcuts} onMove={canMove && !movementDelayed ? handleMove : undefined} onAttack={canMove ? handleAttack : undefined} />
     </div>
-  );
+    {ended ? <MatchResult key={game.matchId} game={game} names={{ you: player?.name || names.you, opp: names.opp }} /> : <section className="match-controls">
+      <div className="match-controls-info min-w-0 space-y-1">
+        {error ? <p role="alert" className="text-xs text-destructive">{t(error)} <button className="min-h-11 px-2 font-semibold underline" onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</button></p> : <p role="status" className="text-xs leading-5 text-muted-foreground">{t(actionMessage || (game.paused ? "Attacks paused while reconnecting." : game.you.attacks.xblock + game.you.attacks.hardblock > 0 ? "Attack ready. Choose when to send it." : "Merge 256 or 512 to charge an attack."))}</p>}
+        {game.pendingAttacks > 0 && <p role="status" className="text-xs font-semibold text-primary">{t("Incoming: X {x} · Hard {hard}", { x: game.incomingAttacks.xblock, hard: game.incomingAttacks.hardblock })}</p>}
+        <p className="text-[11px] text-muted-foreground">{t("Merge points charge your ability: {points}. Hold one use.", { points: ABILITY_CHARGE })}</p>
+        <div role="status" className="text-xs font-semibold text-primary">
+          {game.you.ability.spawnPauseMoves > 0 && <p>{t("No number spawns: {moves} moves left", { moves: game.you.ability.spawnPauseMoves })}</p>}
+          {game.you.ability.anchorMoves > 0 && <p>{t("Tile anchored: {moves} moves left", { moves: game.you.ability.anchorMoves })}</p>}
+          {slowRemaining > 0 && <p>{t(abilityNow < game.you.ability.slowStartsAt ? "Slowdown incoming!" : "Slowed: {seconds}s · one move every 0.4s", { seconds: slowRemaining })}</p>}
+        </div>
+        <label className="flex min-h-11 items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" className="size-4 accent-primary" checked={characterShortcuts} disabled={!settingsReady || settingsSaving} onChange={event => void saveSettings({ customShortcuts: event.target.checked })} aria-describedby="shortcut-help" />{t("Enable custom shortcuts")}</label>
+        {settingsError && <p role="alert" className="text-xs text-destructive">{t(settingsError)}</p>}
+        <p id="shortcut-help" className="sr-only">{t("Arrow keys and on-screen buttons remain available when shortcuts are off.")}</p>
+      </div>
+      <div className="space-y-1.5"><AbilityControls ability={game.you.ability} onUse={canMove ? handleAbility : undefined} /><AttackControls attacks={game.you.attacks} onAttack={canMove ? handleAttack : undefined} /></div>
+      <div className="direction-pad grid shrink-0 grid-cols-3 gap-1" role="group" aria-label={t("Direction controls")}>
+        <div /><Button variant="outline" size="icon" aria-label={t("Move up")} disabled={!canMove || movementDelayed} onClick={() => handleMove("up")}><ArrowUp /></Button><div />
+        <Button variant="outline" size="icon" aria-label={t("Move left")} disabled={!canMove || movementDelayed} onClick={() => handleMove("left")}><ArrowLeft /></Button>
+        <Button variant="outline" size="icon" aria-label={t("Move down")} disabled={!canMove || movementDelayed} onClick={() => handleMove("down")}><ArrowDown /></Button>
+        <Button variant="outline" size="icon" aria-label={t("Move right")} disabled={!canMove || movementDelayed} onClick={() => handleMove("right")}><ArrowRight /></Button>
+      </div>
+    </section>}
+  </main>;
 }

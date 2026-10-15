@@ -1,39 +1,18 @@
-'use client';
-
-import Image from "next/image";
+"use client";
+import { useI18n } from "ui/i18n";
+import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-
+import { Button } from "./button";
 export const LoginBtn = ({ type }: { type: "google" }) => {
-
-  const handleLogin = async () => {
-    console.log("login");
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
-    if (error) {
-      console.error("Error signing in:", error);
-    }
-    if (data) {
-      console.log("User signed in:", data);
-    }
-  }
-
-  let buttonStyle;
-  switch (type) {
-    case "google":
-      buttonStyle = "border-[#8e8e8e] bg-white";
-      break;
-  }
-
-  return (
-    <div className={`relative flex items-center cursor-pointer w-full h-14 pl-14 border-[1.5px] border-solid font-GowunBatang font-bold rounded-md hover:brightness-90 transition duration-300 ${buttonStyle}`} onClick={handleLogin}>
-      <div className="absolute w-5 h-5 left-7 top-1/2 -translate-1/2">
-        <Image src={`/icons/${type}_icon.svg`} alt={""} fill />
-      </div>
-      <div>
-        Continue with {type}
-      </div>
-    </div>
-  );
-}
+  const { t } = useI18n();
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  if (process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED !== "true") return null;
+  return <div className="space-y-4"><div className="flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />{t("or continue with")}<span className="h-px flex-1 bg-border" /></div><Button className="h-12 w-full" variant="outline" disabled={busy} onClick={async () => {
+    setBusy(true); setError("");
+    try {
+      const { error } = await createClient().auth.signInWithOAuth({ provider: type, options: { redirectTo: `${window.location.origin}/auth/callback` } });
+      if (error) throw error;
+    } catch (error) { setError(error instanceof Error ? error.message : "Unable to sign in."); setBusy(false); }
+  }}>{busy ? t("Connecting…") : t("Continue with Google")}</Button>{error && <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm leading-6 text-destructive">{t(error)}</p>}</div>;
+};

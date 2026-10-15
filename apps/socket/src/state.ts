@@ -1,19 +1,11 @@
-import type { PlayerId, UserId, RoomId, JoinCode, Room } from "./types";
-
-// 게임 방 관리
+import type { Account } from "schema/results";
+import type { PlayerId, RoomId, JoinCode, Room, QueueEntry } from "./types";
 export const rooms = new Map<RoomId, Room>();
 export const playerRoom = new Map<PlayerId, RoomId>();
-
-// userId 매핑 (재연결용)
-export const userIdToPlayerId = new Map<UserId, PlayerId>();
-export const playerIdToUserId = new Map<PlayerId, UserId>();
-
-// 매칭 큐
-export const matchmakingQueue: PlayerId[] = [];
-
-// Join code 관련
+export const playerSockets = new Map<PlayerId, string>();
+export const matchmakingQueue: QueueEntry[] = [];
 export const waitingByCode = new Map<JoinCode, PlayerId>();
-export const codeToRoom = new Map<JoinCode, RoomId>();
+export const disconnectTimers = new Map<PlayerId, ReturnType<typeof setTimeout>>();
+export const disconnectDeadlines = new Map<PlayerId, number>();
 
-// 재연결 타이머
-export const disconnectTimers = new Map<PlayerId, NodeJS.Timeout>();
+export const playerAccounts = new Map<PlayerId, Account | null>();

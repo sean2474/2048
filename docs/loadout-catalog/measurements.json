@@ -1,0 +1,52 @@
+{
+  "measurements": [
+    {
+      "category": "skins",
+      "width": 1440,
+      "documentWidth": 1440,
+      "height": 1387
+    },
+    {
+      "category": "abilities",
+      "width": 1440,
+      "documentWidth": 1440,
+      "height": 989
+    },
+    {
+      "category": "skins",
+      "width": 768,
+      "documentWidth": 768,
+      "height": 1455
+    },
+    {
+      "category": "abilities",
+      "width": 768,
+      "documentWidth": 768,
+      "height": 1037
+    },
+    {
+      "category": "skins",
+      "width": 375,
+      "documentWidth": 375,
+      "height": 1662
+    },
+    {
+      "category": "abilities",
+      "width": 375,
+      "documentWidth": 375,
+      "height": 1217
+    }
+  ],
+  "errors": [],
+  "checks": [
+    "keyboard tabs",
+    "6/4 paging boundaries",
+    "off-page selection",
+    "category page retention",
+    "cookie persistence",
+    "clear selection",
+    "en/ko",
+    "failed save and retry",
+    "SSR pending state"
+  ]
+}

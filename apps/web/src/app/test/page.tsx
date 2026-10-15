@@ -3,51 +3,49 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { initBoard, move, spawnRandom, hasMoves } from "@/lib/2048";
 import { Board, Dir } from "@/types";
-import { useSwipe } from "@/hooks/use-swipe";
 import { Button } from "@/components/ui/button";
 import { BoardView } from "@/components/2048/board";
+import { useLoadout } from "@/hooks/use-loadout";
+import { SoundToggle } from "@/components/widget/audio-controls";
+import { useAudio } from "@/hooks/audio-provider";
 
 export default function SoloPage() {
-  const [board, setBoard] = useState<Board>(() => initBoard());
+  const { skin } = useLoadout();
+  const { play } = useAudio();
+  const [board, setBoard] = useState<Board>([]);
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState<number>(() => (typeof window === "undefined" ? 0 : Number(localStorage.getItem("best2048") || 0)));
+  const [best, setBest] = useState(0);
+  const [storageError, setStorageError] = useState(false);
 
   const prevRef = useRef<{ board: Board; score: number } | null>(null);
-  const gameOver = useMemo(() => !hasMoves(board), [board]);
-  
-  // 빈 칸 찾기
-  const getEmptyPositions = useCallback(() => {
-    const SIZE = 5;
-    const occupied = new Set(board.map(t => `${t.row},${t.col}`));
-    const empty: Array<{ row: number; col: number }> = [];
-    for (let r = 0; r < SIZE; r++) {
-      for (let c = 0; c < SIZE; c++) {
-        const key = `${r},${c}`;
-        if (!occupied.has(key)) {
-          empty.push({ row: r, col: c });
-        }
-      }
-    }
-    return empty;
-  }, [board]);
+  const gameOver = useMemo(() => board.length > 0 && !hasMoves(board), [board]);
+
+  useEffect(() => {
+    setBoard(initBoard());
+    try {
+      const saved = Number(localStorage.getItem("best2048"));
+      if (Number.isSafeInteger(saved) && saved >= 0) setBest(saved);
+    } catch { setStorageError(true); }
+  }, []);
   
   // 장애물 추가 함수
   const addObstacle = useCallback((type: "xblock" | "hardblock") => {
-    const empty = getEmptyPositions();
-    if (empty.length === 0) {
+    const withSpawn = spawnRandom(board, undefined, type);
+    if (withSpawn === board) {
       alert("빈 공간이 없습니다!");
       return;
     }
     
-    const withSpawn = spawnRandom(board, 1, type);
+    play("impact");
     setBoard(withSpawn);
     
-  }, [getEmptyPositions]);
+  }, [board, play]);
 
   useEffect(() => {
     if (score > best) {
       setBest(score);
-      if (typeof window !== "undefined") localStorage.setItem("best2048", String(score));
+      try { localStorage.setItem("best2048", String(score)); }
+      catch { setStorageError(true); }
     }
   }, [score, best]);
 
@@ -58,13 +56,15 @@ export default function SoloPage() {
 
     prevRef.current = { board: board.map(t => ({ ...t })), score };
     const withSpawn = spawnRandom(slid);
+    play(!hasMoves(withSpawn) ? "lose" : gain > 0 ? "merge" : "move", skin.id);
     setBoard(withSpawn);
     setScore((s) => s + gain);
-  }, [board, score, gameOver]);
+  }, [board, score, gameOver, play, skin.id]);
 
   // keyboard
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.target instanceof HTMLElement && e.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog], [role=menu]")) return;
       const map: Record<string, Dir> = {
         ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down",
         a: "left", d: "right", w: "up", s: "down",
@@ -76,8 +76,6 @@ export default function SoloPage() {
     window.addEventListener("keydown", onKey, { passive: false });
     return () => window.removeEventListener("keydown", onKey);
   }, [doMove]);
-
-  useSwipe((dir) => doMove(dir));
 
   const newGame = () => { setBoard(initBoard()); setScore(0); prevRef.current = null; };
   const undo = () => {
@@ -103,9 +101,11 @@ export default function SoloPage() {
         </div>
       </header>
 
-      <BoardView board={board} />
+      <BoardView board={board} skinId={skin.id} onMove={doMove} />
 
       <div className="mt-4 space-y-3">
+        {storageError && <p role="status" className="text-sm text-muted-foreground">Best score cannot be saved in this browser.</p>}
+        <SoundToggle />
         {/* 기본 컨트롤 */}
         <div className="flex gap-2">
           <Button

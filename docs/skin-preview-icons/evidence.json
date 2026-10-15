@@ -1,0 +1,29 @@
+{
+  "contract": "contract.md",
+  "targetViewports": ["1440x900", "768x1024", "375x812"],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Preview plays with Enter, remains focusable while busy, has a 44px target, and Escape restores the original card focus. Decorative line icons retain adjacent labels and aria-hidden. Reduced-motion removes both tile travel and merge effects. Muted previews create no audio notes. See skin-merge-preview.browser.mjs and preview.json."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "15 pages at all three viewports retain the original background/primary colors without horizontal overflow. Legendary dialogs fit within each viewport with no internal horizontal overflow. Settings, guide, matchmaking, loadout and feedback screenshots were visually inspected, along with mobile and desktop legendary dialogs."
+  },
+  "contentStates": {
+    "loading": {"status": "pass", "evidence": "During the 300ms merge travel and 420ms effect, the preview button reports Playing merge and aria-disabled; pending playback is cancelled on dialog close."},
+    "empty": {"status": "pass", "evidence": "Existing loadout browser test confirms owned-only rarity filters show the empty-state explanation and can return to the full catalog."},
+    "error": {"status": "pass", "evidence": "With AudioContext unavailable, the Korean guest detail shows sound-unavailable feedback and still completes the visual merge. No new remote save operation is introduced by previewing."},
+    "partial": {"status": "pass", "evidence": "Muted previews preserve motion and show motion-only feedback. Reduced-motion preferences suppress travel and halos while preserving the 2 + 2 = 4 result."},
+    "success": {"status": "pass", "evidence": "All five legendary skins produce their matching animation and exact audio voice frequencies; replay works and the equipped Classic skin remains unchanged. Existing account equip and reload behavior also passes."},
+    "permission": {"status": "pass", "evidence": "Guests can preview a locked legendary skin, retain Classic as their selection and see the existing sign-in unlock action. Browser account fixtures intercept profile operations; no real account writes occur."}
+  },
+  "renderedEvidence": [
+    {"viewport": "1440x900", "artifact": "page--settings-1440x900.png", "observation": "Settings, account, customization, book and feedback use simple monochrome line artwork; octagonal metal frames are gone."},
+    {"viewport": "768x1024", "artifact": "page--how-to-play-768x1024.png", "observation": "Book, tiles, swords, crown and friend outlines share the same stroke style at heading and section sizes."},
+    {"viewport": "375x812", "artifact": "page--loadout-375x812.png", "observation": "New tile-and-spark customization icon and circular coin fit the compact catalog without changing the color scheme."},
+    {"viewport": "1440x900", "artifact": "preview-arcanist-1440x900.png", "observation": "Legendary details expose repeatable merge motion and sound independently of the equip action."},
+    {"viewport": "768x1024", "artifact": "preview-arcanist-768x1024.png", "observation": "The dialog preserves readable numeric plates, audio controls and unlock guidance."},
+    {"viewport": "375x812", "artifact": "preview-sentinel-375x812.png", "observation": "The 72px character tiles and full-width replay button fit the mobile dialog; keyboard focus remains visible."},
+    {"viewport": "375x812", "artifact": "guest-silent-preview-375x812.png", "observation": "A locked skin still previews without audio hardware and explains the audio limitation alongside sign-in access."}
+  ]
+}

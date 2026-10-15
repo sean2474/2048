@@ -1,5 +1,5 @@
 export function tileBg(v: number) {
-  if (v === 0) return "var(--color-bg)";
+  if (v === 0) return "#e1dccf";
   const map: Record<number, string> = {
     2: "#eee4da", 4: "#ede0c8",
     8: "#f2b179", 16: "#f59563",

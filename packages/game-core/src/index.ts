@@ -1,11 +1,13 @@
-import type { BlockType, Board, Cell, Dir, Effect } from "schema/in-game";
-import { SIZE } from "schema/in-game";
+import type { AbilityState, AttackInventory, BlockType, Board, Cell, Dir, Effect } from "schema/in-game";
+import { MAX_ATTACK_STOCK, SIZE } from "schema/in-game";
+import { DEFAULT_ABILITY_ID } from "schema/loadout";
 
 export type ApplyResult = {
   board: Board;
   scoreDelta: number;
   mergedMaxTile: number;   // 이번 턴에 만들어진 가장 큰 타일(공격 트리거용)
   moved: boolean;          // 유효한 이동 여부
+  pendingEffects: Effect[];
 };
 
 // ========== 내부 상태 ==========
@@ -15,6 +17,31 @@ let nextId = 1;
 const clone = (b: Board): Board => b.map(t => ({ ...t }));
 const active = (b: Board): Board => b.filter(t => !t.ghost); // 로직은 고스트 제외
 const getBlockType = (cell: Cell): string => cell.blockType || "normal";
+const isFixed = (cell: Cell) => getBlockType(cell) === "hardblock" || !!cell.anchored;
+
+export function createAbilityState(): AbilityState {
+  return { id: DEFAULT_ABILITY_ID, charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 };
+}
+
+export function clearOldestX(board: Board): Board {
+  const oldest = active(board).filter(tile => getBlockType(tile) === "xblock").sort((a, b) => a.id - b.id)[0];
+  return oldest ? board.filter(tile => tile.id !== oldest.id) : board;
+}
+
+export function swap32(board: Board, rng: () => number): Board {
+  const numbers = active(board).filter(tile => getBlockType(tile) === "normal" && !tile.anchored);
+  const big = numbers.filter(tile => tile.value === 32);
+  const small = numbers.filter(tile => [2, 4, 8, 16].includes(tile.value));
+  if (!big.length || !small.length) return board;
+  const a = big[Math.floor(rng() * big.length)], b = small[Math.floor(rng() * small.length)];
+  return active(board).map(tile => tile.id === a.id ? { ...tile, row: b.row, col: b.col, spawned: false, merged: false }
+    : tile.id === b.id ? { ...tile, row: a.row, col: a.col, spawned: false, merged: false } : tile);
+}
+
+export function anchorHighest(board: Board): Board {
+  const highest = active(board).filter(tile => getBlockType(tile) === "normal").sort((a, b) => b.value - a.value || a.id - b.id)[0];
+  return highest ? board.map(tile => tile.id === highest.id ? { ...tile, anchored: true } : tile) : board;
+}
 
 function emptyCoords(b: Board): Array<{ row: number; col: number }> {
   const occ = new Set(active(b).map(t => `${t.row},${t.col}`));
@@ -26,11 +53,11 @@ function emptyCoords(b: Board): Array<{ row: number; col: number }> {
   return out;
 }
 
-// hardblock 위치 가져오기
-function getHardblockPositions(b: Board): Set<string> {
+// Anchored number tiles split movement lanes but can receive a matching merge.
+function getFixedPositions(b: Board): Set<string> {
   return new Set(
     active(b)
-      .filter(t => getBlockType(t) === "hardblock")
+      .filter(isFixed)
       .map(t => `${t.row},${t.col}`)
   );
 }
@@ -44,14 +71,14 @@ export function initBoard(range?: number, numTiles?: number): Board {
   return b;
 }
 
-export function spawnRandom(board: Board, range?: number, blockType?: BlockType): Board {
+export function spawnRandom(board: Board, range?: number, blockType?: BlockType, rng: () => number = Math.random): Board {
   const empties = emptyCoords(board);
   if (!empties.length) return board;
-  const spot = empties[Math.floor(Math.random() * empties.length)];
+  const spot = empties[Math.floor(rng() * empties.length)];
 
   let value = 0;
-  if (range) value = Math.pow(2, Math.round(range - Math.log2(Math.random() * Math.pow(2, range - 1))));
-  else value = Math.random() < 0.9 ? 2 : 4;
+  if (range) value = Math.pow(2, Math.round(range - Math.log2(rng() * Math.pow(2, range - 1))));
+  else value = rng() < 0.9 ? 2 : 4;
   if (blockType) value = blockType === "xblock" ? -1 : blockType === "hardblock" ? -2 : value;
 
   return [
@@ -61,32 +88,16 @@ export function spawnRandom(board: Board, range?: number, blockType?: BlockType)
 }
 
 export function hasMoves(board: Board): boolean {
-  const act = active(board);
-  const normalTiles = act.filter(t => getBlockType(t) === "normal");
-  
-  // 빈 공간이 있으면 이동 가능
-  if (act.length < SIZE * SIZE) return true;
-  
-  // 인접한 같은 값의 normal 타일이 있는지 확인
-  const grid = Array.from({ length: SIZE }, () => Array<Cell | null>(SIZE).fill(null));
-  for (const t of act) grid[t.row][t.col] = t;
-  
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      const cell = grid[r][c];
-      if (!cell || getBlockType(cell) !== "normal") continue;
-      
-      const v = cell.value;
-      // 오른쪽 확인
-      if (c + 1 < SIZE) {
-        const right = grid[r][c + 1];
-        if (right && getBlockType(right) === "normal" && right.value === v) return true;
-      }
-      // 아래 확인
-      if (r + 1 < SIZE) {
-        const down = grid[r + 1][c];
-        if (down && getBlockType(down) === "normal" && down.value === v) return true;
-      }
+  const grid = Array.from({ length: SIZE }, () => Array<Cell | undefined>(SIZE));
+  for (const tile of active(board)) grid[tile.row][tile.col] = tile;
+  for (const tile of active(board)) {
+    if (isFixed(tile)) continue;
+    for (const [dr, dc] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
+      const row = tile.row + dr, col = tile.col + dc;
+      if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) continue;
+      const other = grid[row][col];
+      if (!other) return true;
+      if (getBlockType(tile) === "normal" && getBlockType(other) === "normal" && tile.value === other.value) return true;
     }
   }
   return false;
@@ -96,9 +107,9 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
   // 고스트 제거 + 플래그 리셋
   const src = clone(active(board)).map(t => ({ ...t, spawned: false, merged: false }));
 
-  // hardblock은 별도로 보관(위치 불변)
-  const hardblocks = src.filter(t => getBlockType(t) === "hardblock");
-  const hardPos = getHardblockPositions(src);
+  const fixed = src.filter(isFixed);
+  const hardPos = getFixedPositions(src);
+  const handledAnchors = new Set<number>();
 
   let moved = false;
   let gain = 0;
@@ -132,7 +143,7 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
 
     // 3) 이 라인의 non-hardblock 타일 수집(원래 pos 함께)
     const lineTiles = src
-      .filter(t => (isHorizontal ? t.row === i : t.col === i) && getBlockType(t) !== "hardblock")
+      .filter(t => (isHorizontal ? t.row === i : t.col === i) && !isFixed(t))
       .map(t => ({ tile: t, pos: isHorizontal ? t.col : t.row }))
       .sort((a, b) => (forward ? a.pos - b.pos : b.pos - a.pos)); // 이동 방향 기준 정렬
 
@@ -145,7 +156,10 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
       if (segTiles.length === 0) continue;
 
       let write = forward ? segStart : segEnd; // 다음에 채울 칸
-      const placed: Cell[] = [];
+      const boundary = coordOf(i, write - step);
+      const anchor = fixed.find(tile => tile.anchored && tile.row === boundary.row && tile.col === boundary.col);
+      const placed: Cell[] = anchor ? [anchor] : [];
+      if (anchor) handledAnchors.add(anchor.id);
       const visuals: Cell[] = [];
 
       for (const cur of segTiles) {
@@ -177,6 +191,7 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
             col: target.col,
             blockType: "normal",
             merged: true,
+            ...(prev.anchored ? { anchored: true } : {}),
           };
           placed.push(mergedTile);
 
@@ -197,8 +212,7 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
     }
   }
 
-  // 5) hardblock은 원래 위치 그대로 추가
-  out.push(...hardblocks);
+  out.push(...fixed.filter(tile => !handledAnchors.has(tile.id)));
 
   // (선택) 안정된 순서
   out.sort((a, b) => a.id - b.id);
@@ -207,7 +221,7 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
 }
 
 
-export function applyMove(board: Board, dir: Dir, rng: () => number): ApplyResult {
+export function applyMove(board: Board, dir: Dir, rng: () => number, pending: Effect[] = [], spawnNumber = true): ApplyResult {
   const moveResult = move(board, dir);
   
   if (!moveResult.moved) {
@@ -215,19 +229,21 @@ export function applyMove(board: Board, dir: Dir, rng: () => number): ApplyResul
       board: moveResult.board,
       scoreDelta: 0,
       mergedMaxTile: 0,
-      moved: false
+      moved: false,
+      pendingEffects: pending
     };
   }
 
   // 새 타일 스폰 (rng 사용)
-  const empties = emptyCoords(moveResult.board);
-  let newBoard = moveResult.board;
+  const applied = applyPendingEffects(moveResult.board, pending, rng);
+  let newBoard = applied.board;
+  const empties = emptyCoords(newBoard);
   
-  if (empties.length > 0) {
+  if (spawnNumber && empties.length > 0) {
     const spot = empties[Math.floor(rng() * empties.length)];
     const value = rng() < 0.9 ? 2 : 4;
     newBoard = [
-      ...moveResult.board,
+      ...newBoard,
       { id: nextId++, value, row: spot.row, col: spot.col, spawned: true }
     ];
   }
@@ -242,14 +258,19 @@ export function applyMove(board: Board, dir: Dir, rng: () => number): ApplyResul
     board: newBoard,
     scoreDelta: moveResult.gain,
     mergedMaxTile,
-    moved: true
+    moved: true,
+    pendingEffects: applied.pending
   };
 }
 
-export function emitDebuffEvents(mergedMaxTile: number): Effect[] {
-  if (mergedMaxTile === 512) return [{ type: "addBlock", blockType: "hardblock" }];
-  if (mergedMaxTile === 128) return [{ type: "addBlock", blockType: "xblock" }];
-  return [{ type: "none" }];
+export function chargeAttacks(board: Board, attacks: AttackInventory): AttackInventory {
+  const charged = { ...attacks };
+  for (const tile of board) {
+    if (!tile.merged || tile.ghost || getBlockType(tile) !== "normal") continue;
+    if (tile.value === 256) charged.xblock = Math.min(MAX_ATTACK_STOCK, charged.xblock + 1);
+    if (tile.value === 512) charged.hardblock = Math.min(MAX_ATTACK_STOCK, charged.hardblock + 1);
+  }
+  return charged;
 }
 
 export function applyEffects(board: Board, effects: Effect[], rng: () => number): Board {
@@ -262,17 +283,15 @@ export function applyEffects(board: Board, effects: Effect[], rng: () => number)
       // 상대방 보드에 방해 블록 추가
       const blockType = effect.blockType || "xblock"; // xblock 또는 hardblock
       
-      newBoard = spawnRandom(newBoard, undefined, blockType as BlockType);
+      newBoard = spawnRandom(newBoard, undefined, blockType, rng);
     }
     
     if (effect.type === "removeBlock") {
       // X블록 제거 로직 (나중에 구현 가능)
-      const xblocks = active(newBoard).filter(t => getBlockType(t) === "xblock");
-      
-      // 랜덤하게 xblock 제거
-      const shuffled = [...xblocks].sort(() => rng() - 0.5);
-      const removeIds = new Set(shuffled.slice(0, 1).map(t => t.id));
-      
+      const blocks = active(newBoard).filter(t => getBlockType(t) === effect.blockType);
+      const chosen = blocks[Math.floor(rng() * blocks.length)];
+      const removeIds = new Set(chosen ? [chosen.id] : []);
+
       newBoard = newBoard.filter(t => !removeIds.has(t.id));
     }
   }
@@ -294,4 +313,15 @@ export function newBoard(rng: () => number): Board {
     ];
   }
   return b;
+}
+
+// Pending attacks take the first available cells before the normal tile spawn.
+export function applyPendingEffects(board: Board, effects: Effect[], rng: () => number): { board: Board; pending: Effect[] } {
+  let result = board;
+  const pending: Effect[] = [];
+  for (const effect of effects) {
+    if (effect.type === "addBlock" && emptyCoords(result).length === 0) pending.push(effect);
+    else result = applyEffects(result, [effect], rng);
+  }
+  return { board: result, pending };
 }

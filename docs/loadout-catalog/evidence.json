@@ -1,0 +1,19 @@
+{
+  "contract": "contract.md: compact /loadout with a current-selection summary, accessible skin/ability tabs, six items per page, 2-column mobile and 3-column desktop grids. Preserve save/error semantics and ability preview-only status; no new catalog entries, ownership, effects or dependencies.",
+  "targetViewports": ["375x812", "768x1024", "1440x900"],
+  "accessibility": { "status": "pass", "evidence": "Keyboard End/Home/Left/Right switches and focuses tabs; only the selected tab is in the tab sequence, and each tab controls an existing panel. Only one panel is exposed. Pagination focuses the active panel and announces its page through status text. Ability controls retain descriptions through aria-describedby. Keyboard outlines and 44px pagination targets were checked. Reduced-motion emulation gives a 0.00001s transition. Existing text/background colors retained. No full screen-reader audit." },
+  "responsive": { "status": "pass", "evidence": "Both categories rendered at 375, 768 and 1440px; document widths matched each viewport. Visually reviewed phone, tablet and desktop captures, including English phone labels and the selected summary with the clear button wrapping to its own mobile row. Shortened header/wallet and compact previews bring cards earlier on the phone page." },
+  "contentStates": {
+    "loading": { "status": "pass", "evidence": "SSR-before-hydration capture in a JavaScript-disabled guest context shows Loading selection and disabled equip controls; normal context becomes interactive and selects successfully. loading.png." },
+    "empty": { "status": "not-applicable", "reason": "Skin and ability catalogs are nonempty compile-time constants; this change adds no empty/search result source. The separate no-ability-selection state was checked after clearing." },
+    "error": { "status": "pass", "evidence": "Blocked guest-cookie writes display the existing save error and leave the selection unchanged. Restoring cookie writes and repeating selection succeeds; save-error.png." },
+    "partial": { "status": "pass", "evidence": "Abilities paginate as six and four items. The last page disables Next, the first disables Previous, and skins with only three entries have no pager. No blank filler cards; last-page-mobile.png." },
+    "success": { "status": "pass", "evidence": "Equipping Paper and selecting an ability updates the summary. Off-page selection and per-category page positions survive tab switching; selection survives reload. Clear selection removes the preview. Korean/English and all browser assertions pass without page errors." },
+    "permission": { "status": "pass", "evidence": "Disposable guest context can change its own cookie settings and sees an accessible login link for balance; no authenticated account or wallet write used. Existing account storage was unchanged and not separately exercised." }
+  },
+  "renderedEvidence": [
+    { "viewport": "375x812", "artifact": "abilities-375x812.png", "observation": "Two columns, six ability cards, complete descriptions, visible pagination; no horizontal overflow." },
+    { "viewport": "768x1024", "artifact": "abilities-768x1024.png", "observation": "Three columns and two rows with independent wallet and selection summaries." },
+    { "viewport": "1440x900", "artifact": "skins-1440x900.png", "observation": "Compact skin previews fit in the desktop viewport; hidden ability panel does not extend the document." }
+  ]
+}

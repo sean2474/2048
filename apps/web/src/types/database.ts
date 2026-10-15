@@ -1,5 +1,3 @@
-import { Database } from "schema";
+import type * as Database from "schema/database";
 
 export type Player = Database.Player
-export type PlayerRating = Database.PlayerRating
-export type PlayerRatingInsert = Database.PlayerRatingInsert

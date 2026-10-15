@@ -1,0 +1,308 @@
+{
+  "capturedAt": "2026-10-16",
+  "source": "Chrome DevTools actual rendered DOM; disposable fixture accounts only",
+  "screenshots": "Inspected inline; connector denied workspace file export",
+  "checks": [
+    {
+      "label": "dashboard-signed-ko-1440",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/\",\"locale\":\"ko\",\"viewport\":\"1440x900\",\"documentWidth\":1440,\"headings\":[\"대시보드\",\"Design QA Player\",\"최근 대전\"],\"visibleText\":\"대시보드\\n대전 찾기\\n\\n나의 플레이어 프로필\\n\\nDesign QA Player\\n\\n골드\\n\\n1,216Elo\\n\\n랭크 전적\\n1경기\\n\\n승리\\n1\\n패배\\n0\\n무승부\\n0\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\n가볍게, 한 판 승부.\\n일시정지\\n최근 대전\\n전체 기록 보기\\n승리\\n친구전\\n상대 Design QA Admin\\n\\n내 점수\\n720—\\n상대 점수\\n384\\n\\n2026. 10. 16.\\n승리\\n친구전\\n상대 Design QA Admin\\n\\n내 점수\\n820—\\n상대 점수\\n532\\n\\n2026. 10. 15.\\n승리\\n랭크전\\n상대 Design QA Admin\\n\\n내 점수\\n920—\\n상대 점수\\n680\\n\\n2026. 10. 14.\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":232,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"대시보드\",\"x\":392,\"y\":8,\"width\":72,\"height\":44},{\"label\":\"대전 찾기\",\"x\":469,\"y\":8,\"width\":76,\"height\":44},{\"label\":\"순위\",\"x\":549,\"y\":8,\"width\":48,\"height\":44},{\"label\":\"게임 방법\",\"x\":601,\"y\":8,\"width\":76,\"height\":44},{\"label\":\"언어\",\"x\":974,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":1164,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대전 찾기\",\"x\":1098,\"y\":101,\"width\":110,\"height\":44},{\"label\":\"대전 애니메이션 일시정지\",\"x\":1114,\"y\":417,\"width\":94,\"height\":44},{\"label\":\"전체 기록 보기\",\"x\":1104,\"y\":517,\"width\":104,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":922,\"y\":246,\"width\":96,\"height\":96},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":1078,\"y\":243,\"width\":96,\"height\":96},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":990,\"y\":288,\"width\":17,\"height\":17},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":1089,\"y\":288,\"width\":17,\"height\":17},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":1148,\"y\":243,\"width\":8,\"height\":9},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":940,\"y\":243,\"width\":8,\"height\":9}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "dashboard-empty-ko-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/\",\"locale\":\"ko\",\"viewport\":\"375x812\",\"documentWidth\":375,\"headings\":[\"대시보드\",\"DesignQAEmpty\",\"최근 대전\"],\"visibleText\":\"대시보드\\n대전 찾기\\n\\n나의 플레이어 프로필\\n\\nDesignQAEmpty\\n\\n미배정\\n\\n첫 랭크전을 완료하면 티어와 랭크 전적이 표시됩니다.\\n\\n랭크전 시작\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\n가볍게, 한 판 승부.\\n일시정지\\n최근 대전\\n전체 기록 보기\\n\\n아직 완료한 대전이 없습니다.\\n\\n최근 대전 3개가 여기에 표시됩니다.\\n\\n첫 대전 찾기\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":16,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"대시보드\",\"x\":8,\"y\":56,\"width\":58,\"height\":44},{\"label\":\"대전 찾기\",\"x\":70,\"y\":56,\"width\":61,\"height\":44},{\"label\":\"순위\",\"x\":134,\"y\":56,\"width\":37,\"height\":44},{\"label\":\"게임 방법\",\"x\":175,\"y\":56,\"width\":61,\"height\":44},{\"label\":\"언어\",\"x\":229,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":315,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대전 찾기\",\"x\":249,\"y\":133,\"width\":110,\"height\":44},{\"label\":\"랭크전 시작\",\"x\":41,\"y\":423,\"width\":122,\"height\":44},{\"label\":\"대전 애니메이션 일시정지\",\"x\":265,\"y\":781,\"width\":94,\"height\":44},{\"label\":\"전체 기록 보기\",\"x\":255,\"y\":849,\"width\":104,\"height\":44},{\"label\":\"첫 대전 찾기\",\"x\":41,\"y\":1006,\"width\":126,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":57,\"y\":600,\"width\":97,\"height\":97},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":220,\"y\":595,\"width\":103,\"height\":103},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":245,\"y\":653,\"width\":13,\"height\":13},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":117,\"y\":653,\"width\":13,\"height\":13},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":295,\"y\":595,\"width\":8,\"height\":10},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":63,\"y\":586,\"width\":24,\"height\":27}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "findmatch-en-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/find-match\",\"locale\":\"en\",\"viewport\":\"375x812\",\"documentWidth\":375,\"headings\":[\"Find match\",\"Choose a match\"],\"visibleText\":\"Find match\\n1 vs 1\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\nA little friendly rivalry.\\nPause\\nChoose a match\\nCasual match\\nRanked match\\n\\nSign in to play ranked. Guests can play casual or friend matches.\\n\\nWITH A FRIEND\\nCreate\\nJoin\\nMatch history\",\"controls\":[{\"label\":\"2048 Duo home\",\"x\":16,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"Dashboard\",\"x\":8,\"y\":56,\"width\":79,\"height\":44},{\"label\":\"Find match\",\"x\":91,\"y\":56,\"width\":80,\"height\":44},{\"label\":\"Ranks\",\"x\":175,\"y\":56,\"width\":51,\"height\":44},{\"label\":\"How to play\",\"x\":230,\"y\":56,\"width\":84,\"height\":44},{\"label\":\"Language\",\"x\":229,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Account menu\",\"x\":315,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"Pause duel animation\",\"x\":272,\"y\":446,\"width\":87,\"height\":44},{\"label\":\"Casual match\",\"x\":37,\"y\":583,\"width\":301,\"height\":56},{\"label\":\"Ranked match\",\"x\":37,\"y\":651,\"width\":301,\"height\":56},{\"label\":\"Create\",\"x\":37,\"y\":828,\"width\":147,\"height\":44},{\"label\":\"Join\",\"x\":192,\"y\":828,\"width\":147,\"height\":44},{\"label\":\"Match history\",\"x\":37,\"y\":884,\"width\":301,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":50,\"y\":259,\"width\":106,\"height\":106},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":220,\"y\":260,\"width\":103,\"height\":103},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":125,\"y\":308,\"width\":18,\"height\":18},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":231,\"y\":308,\"width\":18,\"height\":18},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":295,\"y\":260,\"width\":8,\"height\":10},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":71,\"y\":260,\"width\":8,\"height\":10}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "dashboard-empty-ko-768",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/\",\"locale\":\"ko\",\"viewport\":\"768x1024\",\"documentWidth\":768,\"headings\":[\"대시보드\",\"DesignQAEmpty\",\"최근 대전\"],\"visibleText\":\"대시보드\\n대전 찾기\\n\\n나의 플레이어 프로필\\n\\nDesignQAEmpty\\n\\n미배정\\n\\n첫 랭크전을 완료하면 티어와 랭크 전적이 표시됩니다.\\n\\n랭크전 시작\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\n가볍게, 한 판 승부.\\n일시정지\\n최근 대전\\n전체 기록 보기\\n\\n아직 완료한 대전이 없습니다.\\n\\n최근 대전 3개가 여기에 표시됩니다.\\n\\n첫 대전 찾기\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":24,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"대시보드\",\"x\":16,\"y\":56,\"width\":72,\"height\":44},{\"label\":\"대전 찾기\",\"x\":92,\"y\":56,\"width\":76,\"height\":44},{\"label\":\"순위\",\"x\":173,\"y\":56,\"width\":48,\"height\":44},{\"label\":\"게임 방법\",\"x\":225,\"y\":56,\"width\":76,\"height\":44},{\"label\":\"언어\",\"x\":614,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":700,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대전 찾기\",\"x\":634,\"y\":149,\"width\":110,\"height\":44},{\"label\":\"랭크전 시작\",\"x\":57,\"y\":423,\"width\":122,\"height\":44},{\"label\":\"대전 애니메이션 일시정지\",\"x\":650,\"y\":465,\"width\":94,\"height\":44},{\"label\":\"전체 기록 보기\",\"x\":640,\"y\":533,\"width\":104,\"height\":44},{\"label\":\"첫 대전 찾기\",\"x\":49,\"y\":690,\"width\":126,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":459,\"y\":291,\"width\":95,\"height\":95},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":615,\"y\":293,\"width\":102,\"height\":102},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":614,\"y\":323,\"width\":37,\"height\":37},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":625,\"y\":336,\"width\":17,\"height\":17},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":683,\"y\":289,\"width\":10,\"height\":12},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":476,\"y\":291,\"width\":8,\"height\":9}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "dashboard-en-692",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/\",\"locale\":\"en\",\"viewport\":\"692x900\",\"documentWidth\":692,\"headings\":[\"Dashboard\",\"Design QA Player\",\"Recent matches\"],\"visibleText\":\"Dashboard\\nFind match\\n\\nYOUR PLAYER PROFILE\\n\\nDesign QA Player\\n\\nGold\\n\\n1,216Elo\\n\\nRanked record\\n1 match\\n\\nWins\\n1\\nLosses\\n0\\nDraws\\n0\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\nA little friendly rivalry.\\nPause\\nRecent matches\\nView all history\\nVictory\\nFriend match\\nvs Design QA Admin\\n\\nYour score\\n720—\\nOpponent score\\n384\\n\\n10/16/2026\\nVictory\\nFriend match\\nvs Design QA Admin\\n\\nYour score\\n820—\\nOpponent score\\n532\\n\\n10/15/2026\\nVictory\\nRanked match\\nvs Design QA Admin\\n\\nYour score\\n920—\\nOpponent score\\n680\\n\\n10/14/2026\",\"controls\":[{\"label\":\"2048 Duo home\",\"x\":24,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"Dashboard\",\"x\":16,\"y\":56,\"width\":96,\"height\":44},{\"label\":\"Find match\",\"x\":116,\"y\":56,\"width\":97,\"height\":44},{\"label\":\"Ranks\",\"x\":217,\"y\":56,\"width\":64,\"height\":44},{\"label\":\"How to play\",\"x\":285,\"y\":56,\"width\":102,\"height\":44},{\"label\":\"Language\",\"x\":538,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Account menu\",\"x\":624,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"Find match\",\"x\":535,\"y\":149,\"width\":133,\"height\":44},{\"label\":\"Pause duel animation\",\"x\":449,\"y\":858,\"width\":87,\"height\":44},{\"label\":\"View all history\",\"x\":544,\"y\":926,\"width\":124,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":197,\"y\":652,\"width\":114,\"height\":114},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":382,\"y\":657,\"width\":110,\"height\":110},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":410,\"y\":717,\"width\":14,\"height\":14},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":394,\"y\":706,\"width\":20,\"height\":20},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":465,\"y\":652,\"width\":9,\"height\":11},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":217,\"y\":652,\"width\":9,\"height\":11}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "dashboard-guest-ko-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/\",\"locale\":\"ko\",\"viewport\":\"375x812\",\"documentWidth\":375,\"headings\":[\"대시보드\",\"게스트\"],\"visibleText\":\"대시보드\\n대전 찾기\\n게스트\\n\\n대결을 시작해 볼까요? 일반전과 친구 대전은 누구나 참여할 수 있습니다.\\n\\n로그인하면 대전 기록과 Elo, 티어, 랭크 전적을 저장할 수 있습니다.\\n\\n로그인\\n계정 만들기\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\n가볍게, 한 판 승부.\\n일시정지\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":16,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"대시보드\",\"x\":8,\"y\":100,\"width\":58,\"height\":44},{\"label\":\"대전 찾기\",\"x\":70,\"y\":100,\"width\":61,\"height\":44},{\"label\":\"순위\",\"x\":134,\"y\":100,\"width\":37,\"height\":44},{\"label\":\"게임 방법\",\"x\":175,\"y\":100,\"width\":61,\"height\":44},{\"label\":\"언어\",\"x\":16,\"y\":52,\"width\":78,\"height\":44},{\"label\":\"로그인\",\"x\":102,\"y\":52,\"width\":60,\"height\":44},{\"label\":\"회원가입\",\"x\":170,\"y\":52,\"width\":74,\"height\":44},{\"label\":\"대전 찾기\",\"x\":249,\"y\":177,\"width\":110,\"height\":44},{\"label\":\"로그인\",\"x\":41,\"y\":499,\"width\":78,\"height\":44},{\"label\":\"계정 만들기\",\"x\":131,\"y\":499,\"width\":104,\"height\":44},{\"label\":\"대전 애니메이션 일시정지\",\"x\":265,\"y\":857,\"width\":94,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":53,\"y\":671,\"width\":103,\"height\":103},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":221,\"y\":674,\"width\":107,\"height\":107},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":236,\"y\":720,\"width\":24,\"height\":24},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":231,\"y\":719,\"width\":18,\"height\":18},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":285,\"y\":659,\"width\":28,\"height\":33},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":71,\"y\":671,\"width\":8,\"height\":10}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "findmatch-ko-768",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/find-match\",\"locale\":\"ko\",\"viewport\":\"768x1024\",\"documentWidth\":768,\"headings\":[\"Find match\",\"Choose a match\"],\"visibleText\":\"Find match\\n1 vs 1\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\n가볍게, 한 판 승부.\\n일시정지\\nChoose a match\\n일반전\\n랭크전\\n\\nSign in to play ranked. Guests can play casual or friend matches.\\n\\nWITH A FRIEND\\nCreate\\nJoin\\n경기 기록\",\"controls\":[{\"label\":\"2048 Duo home\",\"x\":24,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"Dashboard\",\"x\":16,\"y\":56,\"width\":96,\"height\":44},{\"label\":\"Find match\",\"x\":116,\"y\":56,\"width\":97,\"height\":44},{\"label\":\"Ranks\",\"x\":217,\"y\":56,\"width\":64,\"height\":44},{\"label\":\"How to play\",\"x\":285,\"y\":56,\"width\":102,\"height\":44},{\"label\":\"언어\",\"x\":614,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Account menu\",\"x\":700,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대전 애니메이션 일시정지\",\"x\":338,\"y\":558,\"width\":94,\"height\":44},{\"label\":\"일반전\",\"x\":489,\"y\":274,\"width\":230,\"height\":56},{\"label\":\"랭크전\",\"x\":489,\"y\":342,\"width\":230,\"height\":56},{\"label\":\"Create\",\"x\":489,\"y\":519,\"width\":111,\"height\":44},{\"label\":\"Join\",\"x\":608,\"y\":519,\"width\":111,\"height\":44},{\"label\":\"경기 기록\",\"x\":489,\"y\":575,\"width\":230,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":60,\"y\":328,\"width\":131,\"height\":131},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":267,\"y\":338,\"width\":124,\"height\":124},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":154,\"y\":395,\"width\":22,\"height\":22},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":280,\"y\":395,\"width\":22,\"height\":22},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":356,\"y\":337,\"width\":10,\"height\":11},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":90,\"y\":337,\"width\":10,\"height\":11}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "history-ko-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/history\",\"locale\":\"ko\",\"viewport\":\"375x812\",\"documentWidth\":375,\"headings\":[\"나의 대전 기록\",\"상대 Design QA Admin\",\"상대 Design QA Admin\",\"상대 Design QA Admin\"],\"visibleText\":\"한 수씩 쌓이는 기록\\n\\n나의 대전 기록\\n\\n대결과 점수, 랭크의 변화를 한눈에 확인하세요.\\n\\n최근 20경기 · 실시간 업데이트\\n\\n승리\\n2026. 10. 16. 오전 12:34:00\\n\\n친구전\\n\\n상대 Design QA Admin\\n\\n내 점수\\n720—\\n상대 점수\\n384\\n\\n최고 타일 256\\n기권\\n승리\\n2026. 10. 15. 오전 12:34:01\\n\\n친구전\\n\\n상대 Design QA Admin\\n\\n내 점수\\n820—\\n상대 점수\\n532\\n\\n최고 타일 256\\n기권\\n승리\\n2026. 10. 14. 오전 12:34:01\\n\\n랭크전\\n\\n상대 Design QA Admin\\n\\n내 점수\\n920—\\n상대 점수\\n680\\n\\n최고 타일 256\\n기권\\n\\n골드 · Elo 1200 → 1216 (+16)\\n\\n대시보드로 돌아가기\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":16,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"대시보드\",\"x\":8,\"y\":56,\"width\":58,\"height\":44},{\"label\":\"대전 찾기\",\"x\":70,\"y\":56,\"width\":61,\"height\":44},{\"label\":\"순위\",\"x\":134,\"y\":56,\"width\":37,\"height\":44},{\"label\":\"게임 방법\",\"x\":175,\"y\":56,\"width\":61,\"height\":44},{\"label\":\"언어\",\"x\":229,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":315,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대시보드로 돌아가기\",\"x\":16,\"y\":1071,\"width\":169,\"height\":44}],\"animation\":[],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "leaderboard-ko-692",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/leaderboard\",\"locale\":\"ko\",\"viewport\":\"692x900\",\"documentWidth\":692,\"headings\":[\"Ranked leaderboard\"],\"visibleText\":\"THE STANDINGS\\n\\nRanked leaderboard\\n\\nTop 50 by Elo, then ranked matches played. Casual and friend matches never change your rating.\\n\\nPlay ranked\\nBronze\\nBelow 1,000\\nSilver\\n1,000+\\nGold\\n1,200+\\nPlatinum\\n1,400+\\nDiamond\\n1,600+\\nMaster\\n1,800+\\nPLAYER STANDINGS\\nLive updates\\n2048 Duo ranked player standings\\nRank\\tPlayer\\tTier\\tElo\\tWins\\tPlayed\\tWin rate\\n01\\tDesign QA Player\\tGold\\t1,216\\t1\\t1\\t100%\\n02\\tDesign QA Admin\\tSilver\\t1,184\\t0\\t1\\t0%\\nBack to dashboard\",\"controls\":[{\"label\":\"2048 Duo home\",\"x\":24,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"Dashboard\",\"x\":16,\"y\":56,\"width\":96,\"height\":44},{\"label\":\"Find match\",\"x\":116,\"y\":56,\"width\":97,\"height\":44},{\"label\":\"Ranks\",\"x\":217,\"y\":56,\"width\":64,\"height\":44},{\"label\":\"How to play\",\"x\":285,\"y\":56,\"width\":102,\"height\":44},{\"label\":\"언어\",\"x\":538,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Account menu\",\"x\":624,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"Play ranked\",\"x\":24,\"y\":305,\"width\":137,\"height\":44},{\"label\":\"Back to dashboard\",\"x\":24,\"y\":723,\"width\":182,\"height\":44}],\"animation\":[],\"table\":[{\"width\":642,\"scrollWidth\":645,\"label\":\"Ranked player standings\"}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "findmatch-ko-1440-after-restart",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/find-match\",\"locale\":\"ko\",\"viewport\":\"1440x900\",\"documentWidth\":1440,\"headings\":[\"대전 찾기\",\"대전 선택\"],\"visibleText\":\"대전 찾기\\n1 대 1\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\n가볍게, 한 판 승부.\\n일시정지\\n대전 선택\\n일반전\\n랭크전\\n\\n랭크전은 로그인이 필요합니다. 게스트는 일반전과 친구 대전을 즐길 수 있습니다.\\n\\n친구와 함께\\n방 만들기\\n방 참가\\n경기 기록\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":232,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"대시보드\",\"x\":392,\"y\":8,\"width\":72,\"height\":44},{\"label\":\"대전 찾기\",\"x\":469,\"y\":8,\"width\":76,\"height\":44},{\"label\":\"순위\",\"x\":549,\"y\":8,\"width\":48,\"height\":44},{\"label\":\"게임 방법\",\"x\":601,\"y\":8,\"width\":76,\"height\":44},{\"label\":\"언어\",\"x\":974,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":1164,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대전 애니메이션 일시정지\",\"x\":686,\"y\":522,\"width\":94,\"height\":44},{\"label\":\"일반전\",\"x\":913,\"y\":226,\"width\":230,\"height\":56},{\"label\":\"랭크전\",\"x\":913,\"y\":294,\"width\":230,\"height\":56},{\"label\":\"방 만들기\",\"x\":913,\"y\":471,\"width\":111,\"height\":44},{\"label\":\"방 참가\",\"x\":1032,\"y\":471,\"width\":111,\"height\":44},{\"label\":\"경기 기록\",\"x\":913,\"y\":527,\"width\":230,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":387,\"y\":285,\"width\":132,\"height\":132},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":602,\"y\":290,\"width\":127,\"height\":127},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":634,\"y\":359,\"width\":16,\"height\":16},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":616,\"y\":347,\"width\":24,\"height\":24},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":698,\"y\":284,\"width\":11,\"height\":12},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":411,\"y\":284,\"width\":11,\"height\":12}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "leaderboard-ko-375-after-restart",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/leaderboard\",\"locale\":\"en\",\"viewport\":\"375x812\",\"documentWidth\":375,\"headings\":[\"Ranked leaderboard\"],\"visibleText\":\"THE STANDINGS\\n\\nRanked leaderboard\\n\\nTop 50 by Elo, then ranked matches played. Casual and friend matches never change your rating.\\n\\nPlay ranked\\nBronze\\nBelow 1,000\\nSilver\\n1,000+\\nGold\\n1,200+\\nPlatinum\\n1,400+\\nDiamond\\n1,600+\\nMaster\\n1,800+\\nPLAYER STANDINGS\\nLive updates\\n2048 Duo ranked player standings\\nRank\\tPlayer\\tTier\\tElo\\tWins\\tPlayed\\tWin rate\\n01\\tDesign QA Player\\tGold\\t1,216\\t1\\t1\\t100%\\n02\\tDesign QA Admin\\tSilver\\t1,184\\t0\\t1\\t0%\\nBack to dashboard\",\"controls\":[{\"label\":\"2048 Duo home\",\"x\":16,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Dashboard\",\"x\":8,\"y\":56,\"width\":79,\"height\":44},{\"label\":\"Find match\",\"x\":91,\"y\":56,\"width\":80,\"height\":44},{\"label\":\"Ranks\",\"x\":175,\"y\":56,\"width\":51,\"height\":44},{\"label\":\"How to play\",\"x\":230,\"y\":56,\"width\":84,\"height\":44},{\"label\":\"Language\",\"x\":229,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Account menu\",\"x\":315,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"Play ranked\",\"x\":16,\"y\":285,\"width\":137,\"height\":44},{\"label\":\"Back to dashboard\",\"x\":16,\"y\":759,\"width\":182,\"height\":44}],\"animation\":[],\"table\":[{\"width\":341,\"scrollWidth\":645,\"label\":\"Ranked player standings\"}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "findmatch-ko-768-after-restart",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/find-match\",\"locale\":\"ko\",\"viewport\":\"768x1024\",\"documentWidth\":768,\"headings\":[\"대전 찾기\",\"대전 선택\"],\"visibleText\":\"대전 찾기\\n1 대 1\\n2048 DUO\\n256\\n512\\nVS\\n✖\\n✦\\n✦\\n가볍게, 한 판 승부.\\n일시정지\\n대전 선택\\n일반전\\n랭크전\\n\\n랭크전은 로그인이 필요합니다. 게스트는 일반전과 친구 대전을 즐길 수 있습니다.\\n\\n친구와 함께\\n방 만들기\\n방 참가\\n경기 기록\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":24,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"대시보드\",\"x\":16,\"y\":56,\"width\":72,\"height\":44},{\"label\":\"대전 찾기\",\"x\":92,\"y\":56,\"width\":76,\"height\":44},{\"label\":\"순위\",\"x\":173,\"y\":56,\"width\":48,\"height\":44},{\"label\":\"게임 방법\",\"x\":225,\"y\":56,\"width\":76,\"height\":44},{\"label\":\"언어\",\"x\":614,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":700,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대전 애니메이션 일시정지\",\"x\":338,\"y\":558,\"width\":94,\"height\":44},{\"label\":\"일반전\",\"x\":489,\"y\":274,\"width\":230,\"height\":56},{\"label\":\"랭크전\",\"x\":489,\"y\":342,\"width\":230,\"height\":56},{\"label\":\"방 만들기\",\"x\":489,\"y\":519,\"width\":111,\"height\":44},{\"label\":\"방 참가\",\"x\":608,\"y\":519,\"width\":111,\"height\":44},{\"label\":\"경기 기록\",\"x\":489,\"y\":575,\"width\":230,\"height\":44}],\"animation\":[{\"name\":\"duel-left\",\"playState\":\"running\",\"x\":72,\"y\":343,\"width\":116,\"height\":116},{\"name\":\"duel-right\",\"playState\":\"running\",\"x\":266,\"y\":337,\"width\":122,\"height\":122},{\"name\":\"duel-x\",\"playState\":\"running\",\"x\":296,\"y\":406,\"width\":15,\"height\":15},{\"name\":\"duel-hard\",\"playState\":\"running\",\"x\":145,\"y\":406,\"width\":15,\"height\":15},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":356,\"y\":337,\"width\":10,\"height\":11},{\"name\":\"duel-spark\",\"playState\":\"running\",\"x\":88,\"y\":334,\"width\":14,\"height\":17}],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "help-en-375",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/how-to-play\",\"locale\":\"en\",\"viewport\":\"375x812\",\"documentWidth\":375,\"headings\":[\"How to play\",\"01. Make your move\",\"02. Choose your moment\",\"03. Win the duel\",\"Find your kind of match\"],\"visibleText\":\"THE RULEBOOK\\n\\nHow to play\\n\\nA familiar puzzle. A rival on the other side.\\n\\nTry the tutorial\\nPlay casual\\n01. Make your move\\n2\\n+\\n2\\n4\\n\\nUse the arrow keys or WASD on a 5 × 5 board. On mobile, swipe your board or tap the direction buttons. Equal tiles merge once per move, and a new 2 or 4 appears after a valid move.\\n\\nMove\\n↑\\n←\\n↓\\n→\\nor WASD\\n\\nYou can turn off letter and number shortcuts in the game. Arrow keys and on-screen controls stay available.\\n\\n02. Choose your moment\\n\\nBig merges charge attacks. Hold your tickets until the moment is right.\\n\\n256\\n✖\\nX block ticket\\n\\nX blocks slide, but cannot merge.\\n\\n512\\nHard block ticket\\n\\nHard blocks stay fixed and split a row or column.\\n\\nStore up to 3 tickets of each type. Further tickets of that type are lost while full.\\nChoose Send X or Send hard, or use keys 1 and 2. Each attack spends one ticket. Make a valid move before sending another attack.\\nYour opponent sees incoming attacks before moving. They land after the next valid move, before a normal tile spawns. If there is no space, they keep waiting.\\nA player can have up to 6 incoming attacks. If their queue is full, your attack ticket is kept.\\nThere is no automatic defense or obstacle removal. Plan around the obstacles already on your board.\\n03. Win the duel\\n\\nReach 2048 or leave your opponent with no legal moves. You can surrender at any time. If both boards become stuck together, the game is a draw.\\n\\nIf someone disconnects, play pauses for up to 30 seconds. Reloading the same tab restores the game. If they do not return, their opponent wins.\\n\\nFind your kind of match\\nCasual\\nGuests welcome. The same duel rules, without changing your rank.\\nRanked\\nSign in and meet players near your Elo rating. Wins, losses and draws adjust your Elo; your tier follows that rating.\\nWith a friend\\nCreate a room and share its six-character code. Your friend chooses Join Room and enters it. Keep the waiting page open. Friend matches never affect Elo.\\n\\nCompleted matches, including guest games, contribute to balance statistics. Sign in before a match to keep a personal match history.\\n\\nBack to dashboard\",\"controls\":[{\"label\":\"2048 Duo home\",\"x\":16,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Dashboard\",\"x\":8,\"y\":56,\"width\":79,\"height\":44},{\"label\":\"Find match\",\"x\":91,\"y\":56,\"width\":80,\"height\":44},{\"label\":\"Ranks\",\"x\":175,\"y\":56,\"width\":51,\"height\":44},{\"label\":\"How to play\",\"x\":230,\"y\":56,\"width\":84,\"height\":44},{\"label\":\"Language\",\"x\":125,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Login\",\"x\":211,\"y\":8,\"width\":61,\"height\":44},{\"label\":\"Sign Up\",\"x\":280,\"y\":8,\"width\":79,\"height\":44},{\"label\":\"Try the tutorial\",\"x\":16,\"y\":261,\"width\":142,\"height\":44},{\"label\":\"Play casual\",\"x\":166,\"y\":261,\"width\":134,\"height\":44},{\"label\":\"Back to dashboard\",\"x\":16,\"y\":2758,\"width\":182,\"height\":44}],\"animation\":[],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "loadout-ko-375-wallet-error",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/loadout\",\"locale\":\"ko\",\"viewport\":\"375x812\",\"documentWidth\":375,\"headings\":[\"내 꾸미기\",\"내 코인\",\"보드 스킨\",\"준비 중인 능력\"],\"visibleText\":\"내 꾸미기\\n\\n보드 스타일을 고르고 준비 중인 능력을 살펴보세요.\\n\\n대전 찾기\\n내 코인\\n\\n잔액 불러오는 중…\\n\\n코인 보상과 구매는 아직 준비 중입니다. 현재 보드 스킨은 모두 무료입니다.\\n\\n코인 상점 · 준비 중\\n보드 스킨\\n\\n선택은 이 브라우저에 저장됩니다. 숫자 타일 색과 장애물 디자인은 그대로 유지됩니다.\\n\\n2\\n4\\n8\\n16\\n32\\n클래식\\n무료\\n\\n따뜻한 기본 보드와 익숙한 타일.\\n\\n장착 중\\n2\\n4\\n8\\n16\\n32\\n슬레이트\\n무료\\n\\n차분한 회색 보드에 기존 타일 색을 그대로.\\n\\n장착하기\\n2\\n4\\n8\\n16\\n32\\n페이퍼\\n무료\\n\\n부드러운 종이색 보드와 각진 타일 모서리.\\n\\n장착하기\\n준비 중인 능력\\n\\n원하는 능력을 하나 선택해 보세요. 아직 기획 단계로 실제 대전에는 효과가 적용되지 않습니다. 가격과 밸런스도 확정되지 않았습니다.\\n\\n01\\n준비 중\\n방어막\\n도착할 장애물 한 개를 막습니다.\\n02\\n준비 중\\nX 제거\\n내 보드의 X 블록 한 개를 제거합니다.\\n03\\n준비 중\\n하드 파괴\\n내 보드의 하드 블록 한 개를 제거합니다.\\n04\\n준비 중\\n내 보드 섞기\\n내 보드에서 움직일 수 있는 타일을 섞습니다.\\n05\\n준비 중\\n상대 보드 섞기\\n상대 보드에서 움직일 수 있는 타일을 섞습니다.\\n06\\n준비 중\\n공격 지연\\n도착할 장애물을 몇 턴 동안 미룹니다.\\n07\\n준비 중\\n다음 타일 보기\\n다음에 생길 숫자 타일을 미리 봅니다.\\n08\\n준비 중\\n다음 타일 선택\\n다음 숫자 타일을 두 가지 중에서 고릅니다.\\n09\\n준비 중\\n공격권 전환\\n공격권을 다른 종류의 장애물 공격권으로 바꿉니다.\\n10\\n준비 중\\n장애물 밀기\\n장애물 한 개를 가까운 빈칸으로 옮깁니다.\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":16,\"y\":-844,\"width\":78,\"height\":44},{\"label\":\"대시보드\",\"x\":8,\"y\":-796,\"width\":58,\"height\":44},{\"label\":\"대전 찾기\",\"x\":70,\"y\":-796,\"width\":61,\"height\":44},{\"label\":\"순위\",\"x\":134,\"y\":-796,\"width\":37,\"height\":44},{\"label\":\"게임 방법\",\"x\":175,\"y\":-796,\"width\":61,\"height\":44},{\"label\":\"내 꾸미기\",\"x\":240,\"y\":-796,\"width\":46,\"height\":44},{\"label\":\"언어\",\"x\":229,\"y\":-844,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":315,\"y\":-844,\"width\":44,\"height\":44},{\"label\":\"대전 찾기\",\"x\":16,\"y\":-639,\"width\":110,\"height\":44},{\"label\":\"코인 상점 · 준비 중\",\"x\":37,\"y\":-434,\"width\":146,\"height\":44},{\"label\":\"장착 중\",\"x\":33,\"y\":193,\"width\":309,\"height\":44},{\"label\":\"장착하기\",\"x\":33,\"y\":708,\"width\":309,\"height\":44},{\"label\":\"장착하기\",\"x\":33,\"y\":1223,\"width\":309,\"height\":44},{\"label\":\"01준비 중방어막도착할 장애물 한 개를 막습니다.\",\"x\":16,\"y\":1432,\"width\":343,\"height\":160},{\"label\":\"02준비 중X 제거내 보드의 X 블록 한 개를 제거합니다.\",\"x\":16,\"y\":1604,\"width\":343,\"height\":160},{\"label\":\"03준비 중하드 파괴내 보드의 하드 블록 한 개를 제거합니다.\",\"x\":16,\"y\":1776,\"width\":343,\"height\":160},{\"label\":\"04준비 중내 보드 섞기내 보드에서 움직일 수 있는 타일을 섞습니다.\",\"x\":16,\"y\":1948,\"width\":343,\"height\":160},{\"label\":\"05준비 중상대 보드 섞기상대 보드에서 움직일 수 있는 타일을 섞습니다.\",\"x\":16,\"y\":2120,\"width\":343,\"height\":160},{\"label\":\"06준비 중공격 지연도착할 장애물을 몇 턴 동안 미룹니다.\",\"x\":16,\"y\":2292,\"width\":343,\"height\":160},{\"label\":\"07준비 중다음 타일 보기다음에 생길 숫자 타일을 미리 봅니다.\",\"x\":16,\"y\":2464,\"width\":343,\"height\":160},{\"label\":\"08준비 중다음 타일 선택다음 숫자 타일을 두 가지 중에서 고릅니다.\",\"x\":16,\"y\":2636,\"width\":343,\"height\":160},{\"label\":\"09준비 중공격권 전환공격권을 다른 종류의 장애물 공격권으로 바꿉니다.\",\"x\":16,\"y\":2808,\"width\":343,\"height\":160},{\"label\":\"10준비 중장애물 밀기장애물 한 개를 가까운 빈칸으로 옮깁니다.\",\"x\":16,\"y\":2980,\"width\":343,\"height\":160}],\"animation\":[],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "loadout-ko-1440-wallet-zero",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/loadout\",\"locale\":\"ko\",\"viewport\":\"1440x900\",\"documentWidth\":1440,\"headings\":[\"내 꾸미기\",\"내 코인\",\"보드 스킨\",\"준비 중인 능력\"],\"visibleText\":\"내 꾸미기\\n\\n보드 스타일을 고르고 준비 중인 능력을 살펴보세요.\\n\\n대전 찾기\\n내 코인\\n\\n0\\n\\n코인 보상과 구매는 아직 준비 중입니다. 현재 보드 스킨은 모두 무료입니다.\\n\\n코인 상점 · 준비 중\\n보드 스킨\\n\\n선택은 이 브라우저에 저장됩니다. 숫자 타일 색과 장애물 디자인은 그대로 유지됩니다.\\n\\n2\\n4\\n8\\n16\\n32\\n클래식\\n무료\\n\\n따뜻한 기본 보드와 익숙한 타일.\\n\\n장착하기\\n2\\n4\\n8\\n16\\n32\\n슬레이트\\n무료\\n\\n차분한 회색 보드에 기존 타일 색을 그대로.\\n\\n장착 중\\n2\\n4\\n8\\n16\\n32\\n페이퍼\\n무료\\n\\n부드러운 종이색 보드와 각진 타일 모서리.\\n\\n장착하기\\n준비 중인 능력\\n\\n원하는 능력을 하나 선택해 보세요. 아직 기획 단계로 실제 대전에는 효과가 적용되지 않습니다. 가격과 밸런스도 확정되지 않았습니다.\\n\\n선택 해제\\n01\\n준비 중\\n방어막\\n도착할 장애물 한 개를 막습니다.\\n02\\n준비 중\\nX 제거\\n내 보드의 X 블록 한 개를 제거합니다.\\n03\\n준비 중\\n하드 파괴\\n내 보드의 하드 블록 한 개를 제거합니다.\\n04\\n준비 중\\n내 보드 섞기\\n내 보드에서 움직일 수 있는 타일을 섞습니다.\\n05\\n선택됨 · 미리보기\\n상대 보드 섞기\\n상대 보드에서 움직일 수 있는 타일을 섞습니다.\\n06\\n준비 중\\n공격 지연\\n도착할 장애물을 몇 턴 동안 미룹니다.\\n07\\n준비 중\\n다음 타일 보기\\n다음에 생길 숫자 타일을 미리 봅니다.\\n08\\n준비 중\\n다음 타일 선택\\n다음 숫자 타일을 두 가지 중에서 고릅니다.\\n09\\n준비 중\\n공격권 전환\\n공격권을 다른 종류의 장애물 공격권으로 바꿉니다.\\n10\\n준비 중\\n장애물 밀기\\n장애물 한 개를 가까운 빈칸으로 옮깁니다.\",\"controls\":[{\"label\":\"2048 Duo 홈\",\"x\":232,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"대시보드\",\"x\":392,\"y\":8,\"width\":72,\"height\":44},{\"label\":\"대전 찾기\",\"x\":469,\"y\":8,\"width\":76,\"height\":44},{\"label\":\"순위\",\"x\":549,\"y\":8,\"width\":48,\"height\":44},{\"label\":\"게임 방법\",\"x\":601,\"y\":8,\"width\":76,\"height\":44},{\"label\":\"내 꾸미기\",\"x\":681,\"y\":8,\"width\":55,\"height\":44},{\"label\":\"언어\",\"x\":974,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"계정 메뉴\",\"x\":1164,\"y\":8,\"width\":44,\"height\":44},{\"label\":\"대전 찾기\",\"x\":1098,\"y\":111,\"width\":110,\"height\":44},{\"label\":\"코인 상점 · 준비 중\",\"x\":831,\"y\":242,\"width\":146,\"height\":44},{\"label\":\"클래식 장착하기\",\"x\":249,\"y\":720,\"width\":281,\"height\":44},{\"label\":\"슬레이트 장착 중\",\"x\":580,\"y\":720,\"width\":281,\"height\":44},{\"label\":\"페이퍼 장착하기\",\"x\":910,\"y\":720,\"width\":281,\"height\":44},{\"label\":\"선택 해제\",\"x\":1116,\"y\":845,\"width\":92,\"height\":44},{\"label\":\"01준비 중방어막도착할 장애물 한 개를 막습니다.\",\"x\":232,\"y\":905,\"width\":317,\"height\":160},{\"label\":\"02준비 중X 제거내 보드의 X 블록 한 개를 제거합니다.\",\"x\":561,\"y\":905,\"width\":317,\"height\":160},{\"label\":\"03준비 중하드 파괴내 보드의 하드 블록 한 개를 제거합니다.\",\"x\":891,\"y\":905,\"width\":317,\"height\":160},{\"label\":\"04준비 중내 보드 섞기내 보드에서 움직일 수 있는 타일을 섞습니다.\",\"x\":232,\"y\":1077,\"width\":317,\"height\":160},{\"label\":\"05선택됨 · 미리보기상대 보드 섞기상대 보드에서 움직일 수 있는 타일을 섞습니다.\",\"x\":561,\"y\":1077,\"width\":317,\"height\":160},{\"label\":\"06준비 중공격 지연도착할 장애물을 몇 턴 동안 미룹니다.\",\"x\":891,\"y\":1077,\"width\":317,\"height\":160},{\"label\":\"07준비 중다음 타일 보기다음에 생길 숫자 타일을 미리 봅니다.\",\"x\":232,\"y\":1249,\"width\":317,\"height\":160},{\"label\":\"08준비 중다음 타일 선택다음 숫자 타일을 두 가지 중에서 고릅니다.\",\"x\":561,\"y\":1249,\"width\":317,\"height\":160},{\"label\":\"09준비 중공격권 전환공격권을 다른 종류의 장애물 공격권으로 바꿉니다.\",\"x\":891,\"y\":1249,\"width\":317,\"height\":160},{\"label\":\"10준비 중장애물 밀기장애물 한 개를 가까운 빈칸으로 옮깁니다.\",\"x\":232,\"y\":1421,\"width\":317,\"height\":160}],\"animation\":[],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "tutorial-en-1440",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"path\":\"/tutorial\",\"locale\":\"en\",\"viewport\":\"1440x900\",\"documentWidth\":1440,\"headings\":[\"Your first three moves\",\"Your practice board\",\"Merge two matching tiles\"],\"visibleText\":\"Back to home\\nSkip to matchmaking\\n\\nLEARN BY PLAYING\\n\\nYour first three moves\\n\\nA short practice session. No account or opponent needed.\\n\\nStep 1 of 3\\n1\\nMerge\\n2\\nCharge\\n3\\nAttack\\nYour practice board\\nLocal practice\\n2\\n2\\n\\nUse the arrow keys or W / A / S / D. You can also swipe or tap a direction.\\n\\nTRY IT YOURSELF\\n\\nMerge two matching tiles\\n\\nMove left or right to merge the two 2 tiles into a 4.\\n\\n2\\n+\\n2\\n4\\n\\nEvery valid move adds a new 2 or 4. Matching tiles merge once per move.\\n\\nFollow the instruction above. You can restart this step at any time.\\nNext step\\nRestart this step\",\"controls\":[{\"label\":\"2048 Duo home\",\"x\":232,\"y\":8,\"width\":144,\"height\":44},{\"label\":\"Dashboard\",\"x\":392,\"y\":8,\"width\":96,\"height\":44},{\"label\":\"Find match\",\"x\":492,\"y\":8,\"width\":97,\"height\":44},{\"label\":\"Ranks\",\"x\":593,\"y\":8,\"width\":64,\"height\":44},{\"label\":\"How to play\",\"x\":661,\"y\":8,\"width\":102,\"height\":44},{\"label\":\"My loadout\",\"x\":767,\"y\":8,\"width\":152,\"height\":44},{\"label\":\"Language\",\"x\":974,\"y\":8,\"width\":78,\"height\":44},{\"label\":\"Login\",\"x\":1060,\"y\":8,\"width\":61,\"height\":44},{\"label\":\"Sign Up\",\"x\":1129,\"y\":8,\"width\":79,\"height\":44},{\"label\":\"Back to home\",\"x\":232,\"y\":93,\"width\":138,\"height\":44},{\"label\":\"Skip to matchmaking\",\"x\":1060,\"y\":93,\"width\":148,\"height\":44},{\"label\":\"Move up\",\"x\":725,\"y\":794,\"width\":44,\"height\":44},{\"label\":\"Move left\",\"x\":675,\"y\":844,\"width\":44,\"height\":44},{\"label\":\"Move down\",\"x\":725,\"y\":844,\"width\":44,\"height\":44},{\"label\":\"Move right\",\"x\":775,\"y\":844,\"width\":44,\"height\":44},{\"label\":\"Next step\",\"x\":893,\"y\":788,\"width\":290,\"height\":44},{\"label\":\"Restart this step\",\"x\":893,\"y\":844,\"width\":290,\"height\":44}],\"animation\":[],\"table\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "header-final-page-6",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"viewport\":\"1440x900\",\"doc\":1440,\"lang\":\"ko\",\"coin\":[{\"text\":\"0\",\"nav\":false,\"besideAvatar\":true}],\"links\":[{\"label\":\"2048 Duo 홈\",\"x\":232,\"right\":376},{\"label\":\"대시보드\",\"x\":392,\"right\":465},{\"label\":\"대전 찾기\",\"x\":469,\"right\":545},{\"label\":\"순위\",\"x\":549,\"right\":597},{\"label\":\"게임 방법\",\"x\":601,\"right\":677},{\"label\":\"언어\",\"x\":919,\"right\":997},{\"label\":\"내 꾸미기 · 코인 0개\",\"x\":1109,\"right\":1156},{\"label\":\"계정 메뉴\",\"x\":1164,\"right\":1208}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "header-final-page-7",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"viewport\":\"320x740\",\"doc\":320,\"lang\":\"ko\",\"coin\":[{\"text\":\"0\",\"nav\":false,\"besideAvatar\":true}],\"links\":[{\"label\":\"2048 Duo 홈\",\"x\":16,\"right\":94},{\"label\":\"대시보드\",\"x\":8,\"right\":66},{\"label\":\"대전 찾기\",\"x\":70,\"right\":130},{\"label\":\"순위\",\"x\":134,\"right\":171},{\"label\":\"게임 방법\",\"x\":175,\"right\":236},{\"label\":\"설정\",\"x\":240,\"right\":277},{\"label\":\"언어\",\"x\":119,\"right\":197},{\"label\":\"다시 시도\",\"x\":-46,\"right\":-1},{\"label\":\"내 꾸미기 · 코인 0개\",\"x\":205,\"right\":252},{\"label\":\"계정 메뉴\",\"x\":260,\"right\":304}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "header-final-page-8",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"viewport\":\"1440x900\",\"doc\":1440,\"lang\":\"ko\",\"coin\":[],\"links\":[{\"label\":\"2048 Duo 홈\",\"x\":232,\"right\":376},{\"label\":\"대시보드\",\"x\":392,\"right\":465},{\"label\":\"대전 찾기\",\"x\":469,\"right\":545},{\"label\":\"순위\",\"x\":549,\"right\":597},{\"label\":\"게임 방법\",\"x\":601,\"right\":677},{\"label\":\"설정\",\"x\":681,\"right\":729},{\"label\":\"언어\",\"x\":979,\"right\":1057},{\"label\":\"로그인\",\"x\":1065,\"right\":1126},{\"label\":\"회원가입\",\"x\":1134,\"right\":1208}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "header-final-page-9",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"viewport\":\"692x900\",\"doc\":692,\"lang\":\"en\",\"coin\":[{\"text\":\"0\",\"nav\":false,\"besideAvatar\":true}],\"links\":[{\"label\":\"2048 Duo home\",\"x\":24,\"right\":168},{\"label\":\"Dashboard\",\"x\":16,\"right\":112},{\"label\":\"Find match\",\"x\":116,\"right\":213},{\"label\":\"Ranks\",\"x\":217,\"right\":281},{\"label\":\"How to play\",\"x\":285,\"right\":387},{\"label\":\"Settings\",\"x\":391,\"right\":470},{\"label\":\"Language\",\"x\":483,\"right\":561},{\"label\":\"Try again\",\"x\":318,\"right\":372},{\"label\":\"My loadout · 0 coins\",\"x\":569,\"right\":616},{\"label\":\"Account menu\",\"x\":624,\"right\":668}]}\n```"
+          }
+        ]
+      }
+    }
+  ],
+  "game": [
+    {
+      "label": "game-en-1440",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/play/dd5b4cea-f8a5-46f9-940b-412aa58fc288\",\"viewport\":[1440,900],\"document\":[1440,900],\"headerHidden\":true,\"boards\":[{\"label\":\"Your game board. Swipe or use the arrow keys to move.\",\"background\":\"rgb(203, 197, 182)\",\"x\":248,\"y\":183,\"width\":500,\"height\":500,\"bottom\":683,\"tiles\":[{\"label\":\"4 tile, row 4, column 1\",\"font\":\"42.5px\",\"dimensions\":{\"x\":258,\"y\":487,\"width\":88,\"height\":88,\"bottom\":575}},{\"label\":\"2 tile, row 1, column 5\",\"font\":\"42.5px\",\"dimensions\":{\"x\":650,\"y\":193,\"width\":88,\"height\":88,\"bottom\":281}}]},{\"label\":\"Opponent’s game board\",\"background\":\"rgb(203, 197, 182)\",\"x\":772,\"y\":183,\"width\":500,\"height\":500,\"bottom\":683,\"tiles\":[{\"label\":\"4 tile, row 4, column 1\",\"font\":\"42.5px\",\"dimensions\":{\"x\":782,\"y\":487,\"width\":88,\"height\":88,\"bottom\":575}},{\"label\":\"2 tile, row 1, column 5\",\"font\":\"42.5px\",\"dimensions\":{\"x\":1174,\"y\":193,\"width\":88,\"height\":88,\"bottom\":281}}]}],\"tickets\":[{\"label\":\"Send hard block, 0 tickets\",\"x\":168,\"y\":278,\"width\":56,\"height\":140,\"bottom\":418,\"slots\":7},{\"label\":\"Send X block, 0 tickets\",\"x\":168,\"y\":426,\"width\":56,\"height\":140,\"bottom\":566,\"slots\":7}],\"controls\":[{\"label\":\"Language\",\"x\":1003,\"y\":12,\"width\":78,\"height\":44,\"bottom\":56},{\"label\":\"Keybindings\",\"x\":1089,\"y\":12,\"width\":131,\"height\":44,\"bottom\":56},{\"label\":\"Surrender\",\"x\":1228,\"y\":12,\"width\":116,\"height\":44,\"bottom\":56},{\"label\":\"Send hard block, 0 tickets\",\"x\":168,\"y\":278,\"width\":56,\"height\":140,\"bottom\":418},{\"label\":\"Send X block, 0 tickets\",\"x\":168,\"y\":426,\"width\":56,\"height\":140,\"bottom\":566},{\"label\":\"Move up\",\"x\":1252,\"y\":796,\"width\":44,\"height\":44,\"bottom\":840},{\"label\":\"Move left\",\"x\":1204,\"y\":844,\"width\":44,\"height\":44,\"bottom\":888},{\"label\":\"Move down\",\"x\":1252,\"y\":844,\"width\":44,\"height\":44,\"bottom\":888},{\"label\":\"Move right\",\"x\":1300,\"y\":844,\"width\":44,\"height\":44,\"bottom\":888}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "game-ko-375-slate",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/play/dd5b4cea-f8a5-46f9-940b-412aa58fc288\",\"viewport\":[375,812],\"document\":[375,812],\"headerHidden\":true,\"boards\":[{\"label\":\"내 게임 보드. 스와이프하거나 방향키로 이동하세요.\",\"background\":\"rgb(129, 139, 153)\",\"x\":74,\"y\":211,\"width\":287,\"height\":287,\"bottom\":498,\"tiles\":[{\"label\":\"숫자 4 타일, 4행 1열\",\"font\":\"24.395px\",\"dimensions\":{\"x\":80,\"y\":385,\"width\":50,\"height\":50,\"bottom\":435}},{\"label\":\"숫자 2 타일, 1행 5열\",\"font\":\"24.395px\",\"dimensions\":{\"x\":305,\"y\":217,\"width\":50,\"height\":50,\"bottom\":267}}]},{\"label\":\"상대 게임 보드\",\"background\":\"rgb(129, 139, 153)\",\"x\":273,\"y\":508,\"width\":88,\"height\":88,\"bottom\":596,\"tiles\":[{\"label\":\"숫자 4 타일, 4행 1열\",\"font\":\"7.48px\",\"dimensions\":{\"x\":275,\"y\":561,\"width\":15,\"height\":15,\"bottom\":576}},{\"label\":\"숫자 2 타일, 1행 5열\",\"font\":\"7.48px\",\"dimensions\":{\"x\":344,\"y\":510,\"width\":15,\"height\":15,\"bottom\":525}}]}],\"tickets\":[{\"label\":\"하드블록 보내기, 공격권 0개\",\"x\":14,\"y\":203,\"width\":48,\"height\":122,\"bottom\":325,\"slots\":7},{\"label\":\"X 블록 보내기, 공격권 0개\",\"x\":14,\"y\":333,\"width\":48,\"height\":122,\"bottom\":455,\"slots\":7}],\"controls\":[{\"label\":\"언어\",\"x\":109,\"y\":8,\"width\":78,\"height\":44,\"bottom\":52},{\"label\":\"키 설정\",\"x\":195,\"y\":8,\"width\":88,\"height\":44,\"bottom\":52},{\"label\":\"기권\",\"x\":291,\"y\":8,\"width\":72,\"height\":44,\"bottom\":52},{\"label\":\"하드블록 보내기, 공격권 0개\",\"x\":14,\"y\":203,\"width\":48,\"height\":122,\"bottom\":325},{\"label\":\"X 블록 보내기, 공격권 0개\",\"x\":14,\"y\":333,\"width\":48,\"height\":122,\"bottom\":455},{\"label\":\"위로 이동\",\"x\":271,\"y\":712,\"width\":44,\"height\":44,\"bottom\":756},{\"label\":\"왼쪽으로 이동\",\"x\":223,\"y\":760,\"width\":44,\"height\":44,\"bottom\":804},{\"label\":\"아래로 이동\",\"x\":271,\"y\":760,\"width\":44,\"height\":44,\"bottom\":804},{\"label\":\"오른쪽으로 이동\",\"x\":319,\"y\":760,\"width\":44,\"height\":44,\"bottom\":804}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "game-ko-768-slate",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/play/dd5b4cea-f8a5-46f9-940b-412aa58fc288\",\"viewport\":[768,1024],\"document\":[768,1024],\"headerHidden\":false,\"boards\":[],\"tickets\":[],\"controls\":[]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "game-ko-768-loaded",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/play/dd5b4cea-f8a5-46f9-940b-412aa58fc288\",\"viewport\":[768,1024],\"document\":[768,1024],\"headerHidden\":true,\"boards\":[{\"label\":\"내 게임 보드. 스와이프하거나 방향키로 이동하세요.\",\"background\":\"rgb(129, 139, 153)\",\"x\":96,\"y\":337,\"width\":316,\"height\":316,\"bottom\":653,\"tiles\":[{\"label\":\"숫자 4 타일, 5행 1열\",\"font\":\"26.86px\",\"dimensions\":{\"x\":106,\"y\":592,\"width\":51,\"height\":51,\"bottom\":643}},{\"label\":\"숫자 2 타일, 5행 5열\",\"font\":\"26.86px\",\"dimensions\":{\"x\":351,\"y\":592,\"width\":51,\"height\":51,\"bottom\":643}},{\"label\":\"숫자 2 타일, 5행 4열\",\"font\":\"26.86px\",\"dimensions\":{\"x\":290,\"y\":592,\"width\":51,\"height\":51,\"bottom\":643}}]},{\"label\":\"상대 게임 보드\",\"background\":\"rgb(129, 139, 153)\",\"x\":436,\"y\":337,\"width\":316,\"height\":316,\"bottom\":653,\"tiles\":[{\"label\":\"숫자 4 타일, 2행 1열\",\"font\":\"26.86px\",\"dimensions\":{\"x\":446,\"y\":408,\"width\":51,\"height\":51,\"bottom\":459}},{\"label\":\"숫자 2 타일, 1행 1열\",\"font\":\"26.86px\",\"dimensions\":{\"x\":446,\"y\":347,\"width\":51,\"height\":51,\"bottom\":398}},{\"label\":\"숫자 2 타일, 1행 4열\",\"font\":\"26.86px\",\"dimensions\":{\"x\":630,\"y\":347,\"width\":51,\"height\":51,\"bottom\":398}},{\"label\":\"숫자 2 타일, 3행 4열\",\"font\":\"26.86px\",\"dimensions\":{\"x\":630,\"y\":469,\"width\":51,\"height\":51,\"bottom\":521}}]}],\"tickets\":[{\"label\":\"하드블록 보내기, 공격권 0개\",\"x\":16,\"y\":340,\"width\":56,\"height\":140,\"bottom\":480,\"slots\":7},{\"label\":\"X 블록 보내기, 공격권 0개\",\"x\":16,\"y\":488,\"width\":56,\"height\":140,\"bottom\":628,\"slots\":7}],\"controls\":[{\"label\":\"언어\",\"x\":498,\"y\":12,\"width\":78,\"height\":44,\"bottom\":56},{\"label\":\"키 설정\",\"x\":584,\"y\":12,\"width\":88,\"height\":44,\"bottom\":56},{\"label\":\"기권\",\"x\":680,\"y\":12,\"width\":72,\"height\":44,\"bottom\":56},{\"label\":\"하드블록 보내기, 공격권 0개\",\"x\":16,\"y\":340,\"width\":56,\"height\":140,\"bottom\":480},{\"label\":\"X 블록 보내기, 공격권 0개\",\"x\":16,\"y\":488,\"width\":56,\"height\":140,\"bottom\":628},{\"label\":\"위로 이동\",\"x\":660,\"y\":920,\"width\":44,\"height\":44,\"bottom\":964},{\"label\":\"왼쪽으로 이동\",\"x\":612,\"y\":968,\"width\":44,\"height\":44,\"bottom\":1012},{\"label\":\"아래로 이동\",\"x\":660,\"y\":968,\"width\":44,\"height\":44,\"bottom\":1012},{\"label\":\"오른쪽으로 이동\",\"x\":708,\"y\":968,\"width\":44,\"height\":44,\"bottom\":1012}]}\n```"
+          }
+        ]
+      }
+    },
+    {
+      "label": "game-ko-320",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Script ran on page and returned:\n```json\n{\"url\":\"/play/dd5b4cea-f8a5-46f9-940b-412aa58fc288\",\"viewport\":[320,740],\"document\":[320,740],\"headerHidden\":true,\"boards\":[{\"label\":\"내 게임 보드. 스와이프하거나 방향키로 이동하세요.\",\"background\":\"rgb(129, 139, 153)\",\"x\":74,\"y\":228,\"width\":232,\"height\":232,\"bottom\":460,\"tiles\":[{\"label\":\"숫자 4 타일, 5행 1열\",\"font\":\"19.72px\",\"dimensions\":{\"x\":80,\"y\":427,\"width\":39,\"height\":39,\"bottom\":466}},{\"label\":\"숫자 2 타일, 5행 5열\",\"font\":\"19.72px\",\"dimensions\":{\"x\":273,\"y\":427,\"width\":39,\"height\":39,\"bottom\":466}},{\"label\":\"숫자 2 타일, 5행 4열\",\"font\":\"19.72px\",\"dimensions\":{\"x\":225,\"y\":427,\"width\":39,\"height\":39,\"bottom\":466}}]},{\"label\":\"상대 게임 보드\",\"background\":\"rgb(129, 139, 153)\",\"x\":218,\"y\":470,\"width\":88,\"height\":88,\"bottom\":558,\"tiles\":[{\"label\":\"숫자 4 타일, 2행 1열\",\"font\":\"7.48px\",\"dimensions\":{\"x\":220,\"y\":495,\"width\":15,\"height\":15,\"bottom\":511}},{\"label\":\"숫자 2 타일, 1행 1열\",\"font\":\"7.48px\",\"dimensions\":{\"x\":220,\"y\":472,\"width\":15,\"height\":15,\"bottom\":487}},{\"label\":\"숫자 2 타일, 1행 4열\",\"font\":\"7.48px\",\"dimensions\":{\"x\":290,\"y\":472,\"width\":15,\"height\":15,\"bottom\":487}},{\"label\":\"숫자 2 타일, 3행 4열\",\"font\":\"7.48px\",\"dimensions\":{\"x\":290,\"y\":519,\"width\":15,\"height\":15,\"bottom\":534}}]}],\"tickets\":[{\"label\":\"하드블록 보내기, 공격권 0개\",\"x\":14,\"y\":193,\"width\":48,\"height\":122,\"bottom\":315,\"slots\":7},{\"label\":\"X 블록 보내기, 공격권 0개\",\"x\":14,\"y\":323,\"width\":48,\"height\":122,\"bottom\":445,\"slots\":7}],\"controls\":[{\"label\":\"언어\",\"x\":12,\"y\":60,\"width\":78,\"height\":44,\"bottom\":104},{\"label\":\"키 설정\",\"x\":98,\"y\":60,\"width\":88,\"height\":44,\"bottom\":104},{\"label\":\"기권\",\"x\":194,\"y\":60,\"width\":72,\"height\":44,\"bottom\":104},{\"label\":\"하드블록 보내기, 공격권 0개\",\"x\":14,\"y\":193,\"width\":48,\"height\":122,\"bottom\":315},{\"label\":\"X 블록 보내기, 공격권 0개\",\"x\":14,\"y\":323,\"width\":48,\"height\":122,\"bottom\":445},{\"label\":\"위로 이동\",\"x\":216,\"y\":640,\"width\":44,\"height\":44,\"bottom\":684},{\"label\":\"왼쪽으로 이동\",\"x\":168,\"y\":688,\"width\":44,\"height\":44,\"bottom\":732},{\"label\":\"아래로 이동\",\"x\":216,\"y\":688,\"width\":44,\"height\":44,\"bottom\":732},{\"label\":\"오른쪽으로 이동\",\"x\":264,\"y\":688,\"width\":44,\"height\":44,\"bottom\":732}]}\n```"
+          }
+        ]
+      }
+    }
+  ],
+  "lobbyLanguage": {
+    "before": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"code\":\"0FQ2EO\",\"status\":\"Waiting for your friend...\",\"locale\":\"en\"}\n```"
+        }
+      ]
+    },
+    "after": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"code\":\"0FQ2EO\",\"status\":\"친구 기다리는 중…\",\"locale\":\"ko\"}\n```"
+        }
+      ]
+    }
+  },
+  "notes": [
+    "Earlier observations with English headings and locale ko capture a development HMR stale dictionary; after-restart observations supersede these.",
+    "Some post-emulation results show loading or an in-progress CSS transition. Loaded/stable followups are identified separately.",
+    "Initial localStorage loadout persistence assertions passed before DB/cookie settings replacement; new persistence is pending validation.",
+    "Latest 320px header error state shows a Retry control outside the viewport. Reported to root; shared LanguageSwitcher owner to fix."
+  ]
+}

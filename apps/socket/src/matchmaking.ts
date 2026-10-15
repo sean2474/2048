@@ -1,77 +1,121 @@
-import { Server } from "socket.io";
-import { v4 as uuid } from "uuid";
+import type { MatchWriter } from "./result-store";
+import type { Server } from "socket.io";
+import { randomUUID } from "node:crypto";
 import seedrandom from "seedrandom";
-import { newBoard } from "game-core";
-import type { PlayerId, UserId, Room } from "./types";
-import { matchmakingQueue, rooms, playerRoom, userIdToPlayerId, playerIdToUserId } from "./state";
-import { snapshot } from "./game";
-
-export function findMatch(pid: PlayerId, userId: UserId, socket: any, io: Server) {
-  if (matchmakingQueue.includes(pid) || playerRoom.has(pid)) {
-    return;
-  }
-
-  console.log(`Player ${pid} (userId: ${userId}) entered matchmaking queue`);
-  
-  // userId 매핑 저장
-  userIdToPlayerId.set(userId, pid);
-  playerIdToUserId.set(pid, userId);
-  
-  matchmakingQueue.push(pid);
-
-  if (matchmakingQueue.length >= 2) {
-    const p1 = matchmakingQueue.shift()!;
-    const p2 = matchmakingQueue.shift()!;
-    console.log(`Matching ${p1} with ${p2}`);
-    createMatch(p1, p2, io);
-  }
-}
+import { createAbilityState, newBoard } from "game-core";
+import type { MatchFound, MatchMode, MatchProfile } from "schema/in-game";
+import { DEFAULT_PROFILE_ICON } from "schema/profile-icons";
+import { playerChannel, type PlayerId, type Room } from "./types";
+import { matchmakingQueue, waitingByCode, rooms, playerRoom, playerSockets, playerAccounts } from "./state";
+import { waitForPlayer } from "./game";
 
 export function cancelMatch(pid: PlayerId) {
-  const index = matchmakingQueue.indexOf(pid);
-  if (index > -1) {
-    matchmakingQueue.splice(index, 1);
-    console.log(`Player ${pid} cancelled matchmaking`);
+  const index = matchmakingQueue.findIndex(entry => entry.pid === pid);
+  if (index >= 0) matchmakingQueue.splice(index, 1);
+  for (const [code, player] of waitingByCode) if (player === pid) waitingByCode.delete(code);
+}
+export function canQueue(pid: PlayerId, io: Server) {
+  if (!playerRoom.has(pid)) return true;
+  io.to(playerChannel(pid)).emit("message", { t: "error", reason: "already_in_game" });
+  return false;
+}
+export type MatchAccessResult = "allowed" | "suspended" | "unavailable" | "stale";
+export type MatchAccess = (players: PlayerId[], current: () => boolean) => Promise<MatchAccessResult>;
+const guestAccess: MatchAccess = async (players, current) => !current() ? "stale" : players.every(pid => !playerAccounts.get(pid)) ? "allowed" : "unavailable";
+const matching = new WeakMap<Server, Promise<void>>();
+
+export function findMatch(pid: PlayerId, io: Server, persistResult?: MatchWriter, mode: "casual" | "ranked" = "casual", rating = 1200, checkAccess: MatchAccess = guestAccess) {
+  if (!canQueue(pid, io)) return;
+  if (mode === "ranked") {
+    const account = playerAccounts.get(pid);
+    if (!account || !persistResult) {
+      io.to(playerChannel(pid)).emit("message", { t: "error", reason: !account ? "login_required" : "ranked_unavailable" });
+      return;
+    }
+    const queued = matchmakingQueue.some(entry => entry.pid !== pid && entry.mode === "ranked" && playerAccounts.get(entry.pid)?.id === account.id);
+    const playing = [...rooms.values()].some(room => room.mode === "ranked" && room.players.some(player => room.accounts[player]?.id === account.id));
+    if (queued || playing) {
+      io.to(playerChannel(pid)).emit("message", { t: "error", reason: "already_in_game" });
+      return;
+    }
   }
+  cancelMatch(pid);
+  matchmakingQueue.push({ pid, mode, rating, joinedAt: Date.now() });
+  void matchWaitingPlayers(io, persistResult, Date.now(), checkAccess);
 }
 
-function createMatch(p1: PlayerId, p2: PlayerId, io: Server) {
-  const roomId = uuid();
-  const seed = `${roomId}-${Date.now()}`;
-  const rng = seedrandom(seed);
-  
-  const u1 = playerIdToUserId.get(p1)!;
-  const u2 = playerIdToUserId.get(p2)!;
+export function matchWaitingPlayers(io: Server, persistResult?: MatchWriter, now = Date.now(), checkAccess: MatchAccess = guestAccess): Promise<void> {
+  const running = matching.get(io);
+  if (running) return running;
+  const job = pairWaitingPlayers(io, persistResult, now, checkAccess);
+  matching.set(io, job);
+  void job.finally(() => matching.delete(io)).catch(() => {});
+  return job;
+}
 
+async function pairWaitingPlayers(io: Server, persistResult: MatchWriter | undefined, now: number, checkAccess: MatchAccess) {
+  for (let i = matchmakingQueue.length - 1; i >= 0; i--) {
+    if (!playerSockets.has(matchmakingQueue[i].pid)) matchmakingQueue.splice(i, 1);
+  }
+  let matched = true;
+  while (matched) {
+    matched = false;
+    for (let i = 0; i < matchmakingQueue.length && !matched; i++) {
+      const first = matchmakingQueue[i];
+      let best = -1, distance = Infinity;
+      for (let j = i + 1; j < matchmakingQueue.length; j++) {
+        const candidate = matchmakingQueue[j];
+        if (candidate.mode !== first.mode) continue;
+        const gap = Math.abs(first.rating - candidate.rating);
+        if (first.mode === "ranked") {
+          if (!persistResult || playerAccounts.get(first.pid)?.id === playerAccounts.get(candidate.pid)?.id) continue;
+          const waited = Math.max(now - first.joinedAt, now - candidate.joinedAt);
+          if (gap > 150 + Math.floor(waited / 10_000) * 100) continue;
+        }
+        if (best < 0 || first.mode === "ranked" && gap < distance) { best = j; distance = gap; }
+      }
+      if (best >= 0) {
+        const second = matchmakingQueue[best];
+        const sockets = [playerSockets.get(first.pid), playerSockets.get(second.pid)];
+        const current = () => matchmakingQueue.includes(first) && matchmakingQueue.includes(second)
+          && playerSockets.get(first.pid) === sockets[0] && playerSockets.get(second.pid) === sockets[1]
+          && !playerRoom.has(first.pid) && !playerRoom.has(second.pid);
+        const allowed = await checkAccess([first.pid, second.pid], current) === "allowed";
+        if (allowed && current()) createMatch(first.pid, second.pid, io, "matchFound", persistResult, first.mode);
+        // Re-scan after an await because canceling or suspending a player changes queue indices.
+        matched = allowed || !current();
+        if (!matched) return;
+      }
+    }
+  }
+}
+export function createMatch(p1: PlayerId, p2: PlayerId, io: Server, event: "matchFound" | "roomReady", persistResult?: MatchWriter, mode: MatchMode = "casual") {
+  const profiles = Object.fromEntries([p1, p2].map(pid => {
+    const account = playerAccounts.get(pid);
+    const queued = matchmakingQueue.find(entry => entry.pid === pid);
+    const profile: MatchProfile = {
+      name: account?.name ?? "Guest",
+      iconId: account ? account.iconId ?? DEFAULT_PROFILE_ICON : "guest",
+      rating: mode === "ranked" && queued ? queued.rating : account?.rating ?? null,
+    };
+    return [pid, profile];
+  }));
+  cancelMatch(p1); cancelMatch(p2);
+  const id = randomUUID(), rng = seedrandom(id);
+  const first = newBoard(rng), second = first.map(t => ({ ...t }));
   const room: Room = {
-    id: roomId,
-    players: [p1, p2],
-    userIds: [u1, u2],
+    startedAt: new Date().toISOString(), persistResult,
+    accounts: { [p1]: playerAccounts.get(p1) ?? null, [p2]: playerAccounts.get(p2) ?? null },
+    id, mode, players: [p1, p2], ready: new Set(), rng, open: true,
     state: {
-      [p1]: { board: newBoard(rng), score: 0, maxTile: 0, userId: u1 },
-      [p2]: { board: newBoard(rng), score: 0, maxTile: 0, userId: u2 },
+      [p1]: { board: first, score: 0, maxTile: Math.max(...first.map(t => t.value)), pending: [], attacks: { xblock: 0, hardblock: 0 }, ability: createAbilityState(), telemetry: { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 } } },
+      [p2]: { board: second, score: 0, maxTile: Math.max(...second.map(t => t.value)), pending: [], attacks: { xblock: 0, hardblock: 0 }, ability: createAbilityState(), telemetry: { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 } } },
     },
-    turnId: 0,
-    rng,
-    open: true,
   };
-
-  rooms.set(roomId, room);
-  playerRoom.set(p1, roomId);
-  playerRoom.set(p2, roomId);
-
-  const socket1 = io.sockets.sockets.get(p1);
-  const socket2 = io.sockets.sockets.get(p2);
-  
-  if (socket1) socket1.join(roomId);
-  if (socket2) socket2.join(roomId);
-
-  console.log(`Match created: ${roomId}`);
-
-  io.to(p1).emit("message", { t: "matchFound", roomId });
-  io.to(p2).emit("message", { t: "matchFound", roomId });
-
-  for (const p of room.players) {
-    io.to(p).emit("message", snapshot(room, p));
+  rooms.set(id, room);
+  for (const pid of room.players) {
+    playerRoom.set(pid, id);
+    io.to(playerChannel(pid)).emit("message", { t: event, roomId: id, mode, players: { you: profiles[pid], opp: profiles[pid === p1 ? p2 : p1] } } satisfies MatchFound);
+    waitForPlayer(pid, io);
   }
 }
