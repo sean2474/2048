@@ -2,7 +2,7 @@ export const messages: Record<string, string> = {
   "03. Abilities": "03. 특수 능력",
   "04. Win conditions": "04. 승리 조건",
   "There is no automatic defense. Use Clear X to remove one X block when your ability is ready.": "자동 방어는 없어요. X 제거 능력이 충전되면 직접 사용해 X 블록 1개를 없앨 수 있어요.",
-  "Choose one ability before a match. Merge points fill a 1024-point charge; hold one use and press the ability button when ready. Guests use Clear X.": "대전 전에 능력을 하나 선택하세요. 병합 점수 1024마다 1회 충전되며, 최대 1회분을 보관하고 능력 버튼으로 사용합니다. 게스트의 기본 능력은 X 제거예요.",
+  "Choose one ability before a match. Merge points fill a 1024-point charge; hold one use and press 3 or the ability button when ready. Change the ability key in Keybindings. Guests use Clear X.": "대전 전에 능력을 하나 선택하세요. 병합 점수 1024마다 1회 충전되며, 최대 1회분을 보관하고 3번 키나 능력 버튼으로 사용합니다. 키 설정에서 능력 키를 바꿀 수 있어요. 게스트의 기본 능력은 X 제거예요.",
   "Choose one ability for your next match. Clear X is the default.": "다음 대전에서 쓸 능력을 하나 고르세요. 기본 능력은 X 제거예요.",
   "Use {ability}": "{ability} 사용",
   "Ability ready": "사용 가능",

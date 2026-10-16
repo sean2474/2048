@@ -4,8 +4,8 @@ import { bindingCodeFromEvent, DEFAULT_KEYBINDINGS, isKeybindings, keyLabel, par
 
 const key = (code: string, options = {}) => ({ code, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, isComposing: false, repeat: false, defaultPrevented: false, ...options });
 
-test("stored bindings require six unique letter or number codes and recover from corruption", () => {
-  const custom = { ...DEFAULT_KEYBINDINGS, up: "KeyI", xblock: "Digit8" };
+test("stored bindings require seven unique letter or number codes and recover from corruption", () => {
+  const custom = { ...DEFAULT_KEYBINDINGS, up: "KeyI", xblock: "Digit8", ability: "KeyF" };
   assert.equal(isKeybindings(custom), true);
   assert.deepEqual(parseKeybindings(JSON.stringify(custom)), custom);
   for (const value of [null, [], {}, { ...custom, up: "ArrowUp" }, { ...custom, up: custom.down }, { ...custom, down: "Enter" }, { ...custom, extra: "KeyZ" }]) {
@@ -17,14 +17,16 @@ test("stored bindings require six unique letter or number codes and recover from
 });
 
 test("all arrows remain available when character shortcuts are off; remaps replace defaults", () => {
-  const custom = { ...DEFAULT_KEYBINDINGS, up: "KeyI", xblock: "Digit8" };
+  const custom = { ...DEFAULT_KEYBINDINGS, up: "KeyI", xblock: "Digit8", ability: "KeyF" };
   for (const [code, action] of [["ArrowUp", "up"], ["ArrowDown", "down"], ["ArrowLeft", "left"], ["ArrowRight", "right"]]) {
     assert.equal(resolveKeyAction(key(code), custom, false), action);
   }
   assert.equal(resolveKeyAction(key("KeyI"), custom, true), "up");
   assert.equal(resolveKeyAction(key("Digit8"), custom, true), "xblock");
-  for (const code of ["KeyW", "Digit1", "toString", "Enter"]) assert.equal(resolveKeyAction(key(code), custom, true), null);
-  for (const code of ["KeyI", "Digit8"]) assert.equal(resolveKeyAction(key(code), custom, false), null);
+  assert.equal(resolveKeyAction(key("Digit3"), DEFAULT_KEYBINDINGS, true), "ability");
+  assert.equal(resolveKeyAction(key("KeyF"), custom, true), "ability");
+  for (const code of ["KeyW", "Digit1", "Digit3", "toString", "Enter"]) assert.equal(resolveKeyAction(key(code), custom, true), null);
+  for (const code of ["KeyI", "Digit8", "KeyF"]) assert.equal(resolveKeyAction(key(code), custom, false), null);
 });
 
 test("modifiers, composing and prevented events never trigger controls or key capture", () => {
@@ -43,8 +45,19 @@ test("modifiers, composing and prevented events never trigger controls or key ca
 test("held movement repeats but attacks fire only once per press", () => {
   assert.equal(resolveKeyAction(key("KeyW", { repeat: true }), DEFAULT_KEYBINDINGS, true), "up");
   assert.equal(resolveKeyAction(key("ArrowUp", { repeat: true }), DEFAULT_KEYBINDINGS, false), "up");
-  for (const code of ["Digit1", "Digit2"]) {
+  for (const code of ["Digit1", "Digit2", "Digit3"]) {
     assert.equal(resolveKeyAction(key(code, { repeat: true }), DEFAULT_KEYBINDINGS, true), null);
     assert.notEqual(resolveKeyAction(key(code), DEFAULT_KEYBINDINGS, true), null);
+  }
+});
+
+test("legacy bindings keep every custom key and gain the first unused ability digit", () => {
+  const old = { up: "KeyI", down: "KeyK", left: "KeyJ", right: "KeyL", xblock: "Digit1", hardblock: "Digit2" };
+  assert.equal(isKeybindings(old), false);
+  assert.deepEqual(parseKeybindings(JSON.stringify(old)), { ...old, ability: "Digit3" });
+  const occupied = { up: "Digit3", down: "Digit4", left: "Digit5", right: "Digit6", xblock: "Digit7", hardblock: "Digit8" };
+  assert.deepEqual(parseKeybindings(JSON.stringify(occupied)), { ...occupied, ability: "Digit9" });
+  for (const bad of [{ ...old, up: "KeyK" }, { ...old, up: "ArrowUp" }, { ...old, ability: null }, { ...old, extra: "KeyZ" }, { down: "KeyK", left: "KeyJ", right: "KeyL", xblock: "Digit1", hardblock: "Digit2" }]) {
+    assert.deepEqual(parseKeybindings(JSON.stringify(bad)), DEFAULT_KEYBINDINGS);
   }
 });

@@ -275,3 +275,31 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
     await assert.rejects(db.query("insert into public.player_preferences(player_id) values($1)", [A]), /foreign key constraint/);
   });
 });
+
+test("legacy account and guest bindings upgrade without losing saved keys or locale", () => {
+  const old = { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", xblock: "Digit1", hardblock: "Digit2" };
+  const saved = { ...defaults(), locale: "en" as const, keybindings: old, customShortcuts: false };
+  const expected = { ...saved, keybindings: { ...old, ability: "Digit4" } };
+  assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(saved))), expected);
+  assert.deepEqual(settingsFromRow({ ...settingsToRow(defaults()), locale: "en", keybindings: old, custom_shortcuts: false }), expected);
+  assert.equal(isSettingsPatch({ keybindings: old }), false);
+  assert.throws(() => settingsFromRow({ ...settingsToRow(defaults()), keybindings: { ...old, ability: null } }), /Invalid saved settings/);
+});
+
+test("ability-key migration preserves old rows, permits old clients and strictly validates new bindings", async t => {
+  const db = new PGlite();
+  t.after(() => db.close());
+  const old = { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", xblock: "Digit1", hardblock: "Digit2" };
+  await db.exec("create schema private; create role anon; create role authenticated; create role service_role; create table public.player_preferences(id int primary key, keybindings jsonb not null);");
+  await db.query("insert into public.player_preferences values (1,$1::jsonb)", [JSON.stringify(old)]);
+  await db.exec(await readFile(new URL("../../../supabase/migrations/20261016175755_ability_keybinding.sql", import.meta.url), "utf8"));
+  assert.deepEqual((await db.query("select keybindings from public.player_preferences where id=1")).rows, [{ keybindings: old }]);
+  await db.exec("insert into public.player_preferences(id) values (2)");
+  assert.deepEqual((await db.query("select keybindings from public.player_preferences where id=2")).rows, [{ keybindings: DEFAULT_SETTINGS.keybindings }]);
+  for (const value of [old, DEFAULT_SETTINGS.keybindings, { ...old, ability: "KeyF" }]) {
+    assert.deepEqual((await db.query("select private.valid_player_keybindings($1::jsonb) as valid", [JSON.stringify(value)])).rows, [{ valid: true }]);
+  }
+  for (const value of [null, [], {}, { ...old, extra: "KeyF" }, { ...old, ability: "Digit3" }, { ...old, ability: null }, { ...old, ability: "Enter" }, { ...DEFAULT_SETTINGS.keybindings, extra: "KeyF" }]) {
+    assert.deepEqual((await db.query("select private.valid_player_keybindings($1::jsonb) as valid", [JSON.stringify(value)])).rows, [{ valid: false }]);
+  }
+});

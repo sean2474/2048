@@ -17,12 +17,15 @@ test("six tutorial steps teach exactly one X removal, restart and completion in 
   try {
     for (const english of [false, true]) {
       const context = await browser.newContext({ locale: english ? "en-US" : "ko-KR", viewport: { width: english ? 1440 : 375, height: 900 }, extraHTTPHeaders: { "x-vercel-ip-country": english ? "US" : "KR" } });
+      if (english) await context.addCookies([{ name: "duo.guest-settings", value: encodeURIComponent(JSON.stringify({ locale: "en", skinId: "classic", iconId: "fox", abilityId: null, customShortcuts: true, keybindings: { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD", xblock: "Digit1", hardblock: "Digit2", ability: "KeyF" } })), url: origin }]);
       const page = await context.newPage(), errors = [];
       page.on("pageerror", error => errors.push(error.message));
       await page.goto(`${origin}/tutorial`);
       const direction = dir => page.getByRole("button", { name: english ? `Move ${dir}` : { left: "왼쪽으로 이동", down: "아래로 이동" }[dir], exact: true });
       const advance = async (ko, en) => page.getByRole("button", { name: english ? en : ko, exact: true }).click();
       const attack = type => page.locator(`[data-attack-control=${type}]`);
+      await page.keyboard.press(english ? "KeyF" : "Digit3");
+      assert.equal(await page.getByTestId("your-score").innerText(), "0");
       await direction("left").click();
       await advance("128 두 개로 건너뛰기", "Skip ahead to 128 + 128");
       await direction("left").click();
@@ -41,7 +44,9 @@ test("six tutorial steps teach exactly one X removal, restart and completion in 
       assert.equal(await xs.count(), 2);
       const clear = page.getByRole("button", { name: english ? "Clear one X" : "X 1개 제거", exact: true });
       await clear.focus();
-      await page.keyboard.press("Enter");
+      assert.equal(await clear.getAttribute("aria-keyshortcuts"), english ? "F" : "3");
+      if (english) { await page.keyboard.press("Digit3"); assert.equal(await xs.count(), 2); }
+      await page.keyboard.press(english ? "KeyF" : "Digit3");
       await page.getByRole("heading", { name: english ? "One X cleared. One space recovered." : "X 하나를 없애고 빈칸을 만들었어요!", exact: true }).waitFor();
       assert.equal(await xs.count(), 1);
       assert.equal(await page.getByRole("button", { name: english ? "Ability used" : "능력 사용 완료", exact: true }).isDisabled(), true);
@@ -53,6 +58,10 @@ test("six tutorial steps teach exactly one X removal, restart and completion in 
       await page.getByRole("button", { name: english ? "Restart this step" : "이 단계 다시 시작", exact: true }).click();
       assert.equal(await xs.count(), 2);
       assert.equal(await clear.isEnabled(), true);
+      await clear.focus();
+      await page.keyboard.press("Enter");
+      await page.getByRole("heading", { name: english ? "One X cleared. One space recovered." : "X 하나를 없애고 빈칸을 만들었어요!", exact: true }).waitFor();
+      assert.equal(await xs.count(), 1);
       assert.deepEqual(errors, []);
       await context.close();
     }
@@ -105,7 +114,7 @@ test("all five equipped abilities activate over real sockets and fit desktop and
       await a.getByRole("button", { name: "왼쪽으로 이동", exact: true }).click();
       const activate = a.locator(`[data-ability-control="${ability}"]`);
       await activate.filter({ hasText: "사용 가능" }).waitFor();
-      await activate.click();
+      await a.keyboard.press("Digit3");
       await activate.filter({ hasText: ability === "spawn-pause" || ability === "anchor-tile" ? "사용 중" : "0 / 1024" }).waitFor();
       assert.equal(me.ability.charge, 0);
       if (ability === "clear-x") {

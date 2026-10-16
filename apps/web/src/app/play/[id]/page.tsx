@@ -125,22 +125,23 @@ export default function GamePage() {
     socketRef.current.emit("message", { t: "attack", blockType });
   }, [canMove, game]);
   const handleAbility = useCallback(() => {
-    if (!canMove || !socketRef.current?.connected || game?.t !== "state" || game.you.ability.charge < ABILITY_CHARGE) return;
+    if (!canMove || !socketRef.current?.connected || game?.t !== "state" || game.you.ability.charge < ABILITY_CHARGE || game.you.ability.spawnPauseMoves > 0 || game.you.ability.anchorMoves > 0) return;
     setActionMessage("");
     socketRef.current.emit("message", { t: "ability" });
   }, [canMove, game]);
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (!canMove || event.ctrlKey || event.metaKey || event.altKey || event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog]")) return;
+      if (!canMove || event.ctrlKey || event.metaKey || event.altKey || event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog], [role=menu]")) return;
       const action = resolveKeyAction(event, bindings, characterShortcuts);
       if (!action) return;
       event.preventDefault();
       if (action === "xblock" || action === "hardblock") handleAttack(action);
+      else if (action === "ability") handleAbility();
       else handleMove(action);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [handleMove, handleAttack, canMove, characterShortcuts, bindings]);
+  }, [handleMove, handleAttack, handleAbility, canMove, characterShortcuts, bindings]);
 
   if (!game || rejected) return <main className="mx-auto max-w-lg px-4 py-12 sm:py-20">
     <section className="game-panel bg-card p-8 text-center shadow-sm sm:p-10">
@@ -193,7 +194,7 @@ export default function GamePage() {
         {settingsError && <p role="alert" className="text-xs text-destructive">{t(settingsError)}</p>}
         <p id="shortcut-help" className="sr-only">{t("Arrow keys and on-screen buttons remain available when shortcuts are off.")}</p>
       </div>
-      <div className="space-y-1.5"><AbilityControls ability={game.you.ability} onUse={canMove ? handleAbility : undefined} /><AttackControls attacks={game.you.attacks} onAttack={canMove ? handleAttack : undefined} /></div>
+      <div className="space-y-1.5"><AbilityControls ability={game.you.ability} binding={characterShortcuts ? bindings.ability : undefined} onUse={canMove ? handleAbility : undefined} /><AttackControls attacks={game.you.attacks} onAttack={canMove ? handleAttack : undefined} /></div>
       <div className="direction-pad grid shrink-0 grid-cols-3 gap-1" role="group" aria-label={t("Direction controls")}>
         <div /><Button variant="outline" size="icon" aria-label={t("Move up")} disabled={!canMove || movementDelayed} onClick={() => handleMove("up")}><ArrowUp /></Button><div />
         <Button variant="outline" size="icon" aria-label={t("Move left")} disabled={!canMove || movementDelayed} onClick={() => handleMove("left")}><ArrowLeft /></Button>

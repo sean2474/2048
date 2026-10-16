@@ -1,4 +1,5 @@
 export const tutorialMessages: Record<string, string> = {
+  "Press {key} to use your ability.": "{key} 키를 눌러 특수 능력을 사용하세요.",
   "In a match, merge points charge your ability. At 1024 points, one use is ready.": "실전에서는 병합 점수 1024마다 능력을 1회 충전해요. 최대 1회분을 보관하고 원하는 때 사용하세요.",
   "All four attacks delivered": "공격 4개를 모두 보냈어요",
   "Try the default ability": "기본 능력 써보기",

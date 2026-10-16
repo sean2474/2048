@@ -9,7 +9,7 @@ import { bindingCodeFromEvent, DEFAULT_KEYBINDINGS, KEY_ACTIONS, keyLabel, type 
 import { useSettings } from "@/hooks/settings-provider";
 
 const ACTION_LABELS: Record<KeyAction, string> = {
-  up: "Move up", down: "Move down", left: "Move left", right: "Move right", xblock: "Send X block", hardblock: "Send hard block",
+  up: "Move up", down: "Move down", left: "Move left", right: "Move right", xblock: "Send X block", hardblock: "Send hard block", ability: "Use special ability",
 };
 
 export function KeybindingSettings({ bindings, saveBindings, storageError, onOpenChange }: {
@@ -76,7 +76,7 @@ export function KeybindingSettings({ bindings, saveBindings, storageError, onOpe
     }}>
       <DialogHeader>
         <DialogTitle>{t("Keybindings")}</DialogTitle>
-        <DialogDescription className="leading-6">{t("Choose your extra movement and attack keys. Arrow keys always work.")}</DialogDescription>
+        <DialogDescription className="leading-6">{t("Choose your extra movement, attack and ability keys. Arrow keys always work.")}</DialogDescription>
       </DialogHeader>
       <p className="text-xs leading-5 text-muted-foreground">{t("Keys use their physical A–Z / 0–9 positions, even with Korean input enabled.")}</p>
       <div className="divide-y divide-border rounded-xl border px-4">

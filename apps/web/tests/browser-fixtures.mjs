@@ -2,6 +2,7 @@ const origin = "http://[::1]:3001";
 
 // Fictional account responses stay inside the browser; no remote profile is read or written.
 export async function mockAccount(page, id = "10000000-0000-4000-8000-000000000099") {
+  // Keep a legacy six-key row to exercise upgrades without silently overwriting saved preferences.
   const row = { player_id: id, locale: "ko", skin_id: "classic", icon_id: "fox", ability_id: null, custom_shortcuts: true,
     keybindings: { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD", xblock: "Digit1", hardblock: "Digit2" } };
   const user = { id, aud: "authenticated", role: "authenticated", email: "fixture@example.invalid", is_anonymous: false, app_metadata: {}, user_metadata: {}, created_at: "2026-01-01T00:00:00Z" };

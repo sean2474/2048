@@ -65,7 +65,9 @@ export default function TutorialPage() {
   function onKeyDown(event: KeyboardEvent<HTMLElement>) {
     if (event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog], [role=menu]")) return;
     const action = resolveKeyAction(event.nativeEvent, bindings, characterShortcuts);
-    if ((action === "xblock" || action === "hardblock") && canAttack) {
+    if (action === "ability") {
+      if (lesson.step === 5 && !lesson.complete) { event.preventDefault(); dispatch({ type: "ability" }); }
+    } else if ((action === "xblock" || action === "hardblock") && canAttack) {
       event.preventDefault(); dispatch({ type: "attack", blockType: action });
     } else if (action && action !== "xblock" && action !== "hardblock" && canMove) {
       event.preventDefault(); dispatch({ type: "move", dir: action });
@@ -93,9 +95,11 @@ export default function TutorialPage() {
           <details className="mt-3 text-xs leading-5"><summary className="min-h-8 cursor-pointer font-semibold">{t("What if the opponent’s board is full?")}</summary><p className="mt-2">{t("No empty cells? Sent attacks wait for space after a valid move. If 6 attacks are already waiting, you cannot send more and keep your ticket.")}</p></details>
         </>}
         {lesson.step === 5 && <>
-          <Button className="mt-4 min-h-14 w-full gap-3" variant="outline" disabled={lesson.complete} onClick={() => dispatch({ type: "ability" })}>
+          <Button className="mt-4 min-h-14 w-full gap-3" variant="outline" aria-keyshortcuts={characterShortcuts ? keyLabel(bindings.ability) : undefined} disabled={lesson.complete} onClick={() => dispatch({ type: "ability" })}>
             <AbilityIcon abilityId={DEFAULT_ABILITY_ID} className="size-10" />{t(lesson.complete ? "Ability used" : "Clear one X")}
+            {characterShortcuts && <kbd aria-hidden="true" className="rounded border px-1.5 py-0.5 text-xs">{keyLabel(bindings.ability)}</kbd>}
           </Button>
+          {characterShortcuts && !lesson.complete && <p className="mt-2 text-xs text-muted-foreground">{t("Press {key} to use your ability.", { key: keyLabel(bindings.ability) })}</p>}
           <p className="mt-3 text-xs leading-5 text-muted-foreground">{t("In a match, merge points charge your ability. At 1024 points, one use is ready.")}</p>
         </>}
         {lesson.complete && !finished && <Button ref={nextStepButton} className="mt-4 w-full" onClick={() => dispatch({ type: "advance" })}><FastForward aria-hidden="true" />{t(nextLabel)}</Button>}

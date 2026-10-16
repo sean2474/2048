@@ -1,7 +1,7 @@
 import { ABILITIES, RETIRED_ABILITY_IDS, SKINS, type AbilityId, type SkinId } from "schema/loadout";
 import { DEFAULT_PROFILE_ICON, isProfileIconId, type ProfileIconId } from "schema/profile-icons";
 import type { Locale } from "ui/locale";
-import { DEFAULT_KEYBINDINGS, isKeybindings, type Keybindings } from "./keybindings";
+import { DEFAULT_KEYBINDINGS, isKeybindings, upgradeKeybindings, type Keybindings } from "./keybindings";
 
 export type Settings = { locale: Locale; keybindings: Keybindings; skinId: SkinId; iconId: ProfileIconId; abilityId: AbilityId | null; customShortcuts: boolean };
 export type SettingsPatch = Partial<Settings>;
@@ -32,7 +32,7 @@ function upgradeSettings(value: unknown): unknown {
   if (!value || typeof value !== "object" || Array.isArray(value)) return value;
   const settings = value as Record<string, unknown>;
   // Retiring a preview must not reset language, controls or the equipped skin.
-  return { iconId: DEFAULT_PROFILE_ICON, ...settings,
+  return { iconId: DEFAULT_PROFILE_ICON, ...settings, keybindings: upgradeKeybindings(settings.keybindings),
     ...(typeof settings.abilityId === "string" && RETIRED_ABILITY_IDS.includes(settings.abilityId) ? { abilityId: null } : {}) };
 }
 
