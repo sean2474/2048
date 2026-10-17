@@ -32,3 +32,48 @@ test("server preferences hydrate once and a failed server read still retries in 
   }
   assert.deepEqual(errors, []);
 });
+
+
+test("live queries coalesce updates and refresh once on return from a hidden tab", { timeout: 120000 }, async t => {
+  let release, requested;
+  const hold = new Promise(resolve => { release = resolve; });
+  const started = new Promise(resolve => { requested = resolve; });
+  let count = 0;
+  const fixture = await startServerFixture({ handle: async url => {
+    if (url.pathname.endsWith("/player_preferences")) return { data: [preferences] };
+    if (url.pathname.endsWith("/rpc/social_players")) {
+      count++;
+      if (count === 1) { requested(); await hold; }
+      return { data: [] };
+    }
+  } });
+  t.after(() => { release(); return fixture.close(); });
+  const browser = await chromium.launch({ channel: "chrome", headless: true });
+  t.after(() => browser.close());
+  const context = await browser.newContext({ locale: "en-US" });
+  await context.addCookies([fixture.cookie()]);
+  const page = await context.newPage();
+  await page.goto(fixture.origin + "/friends");
+  await started;
+  await page.evaluate(() => { for (let i = 0; i < 5; i++) window.dispatchEvent(new Event("online")); });
+  await new Promise(resolve => setTimeout(resolve, 250));
+  assert.equal(count, 1, "a pending query is not sent again");
+  release();
+  await page.waitForResponse(response => response.url().includes("/rpc/social_players"));
+  await new Promise(resolve => setTimeout(resolve, 350));
+  assert.equal(count, 2, "one catch-up query preserves updates received while pending");
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { configurable: true, value: "hidden" });
+    document.dispatchEvent(new Event("visibilitychange"));
+    window.dispatchEvent(new Event("online"));
+  });
+  await new Promise(resolve => setTimeout(resolve, 250));
+  assert.equal(count, 2);
+  const refreshed = page.waitForResponse(response => response.url().includes("/rpc/social_players"));
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await refreshed;
+  assert.equal(count, 3);
+});
