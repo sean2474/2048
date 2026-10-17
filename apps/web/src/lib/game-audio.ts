@@ -131,6 +131,20 @@ const sounds: Record<GameSound, readonly Voice[]> = {
 };
 
 const legendaryMerges: Record<NonNullable<SkinTokens["character"]>, readonly Voice[]> = {
+  fox: [
+    { frequency: 740, to: 1109, duration: .07, wave: "triangle" },
+    { frequency: 1480, to: 1175, at: .04, duration: .13, wave: "triangle" },
+  ],
+  dragon: [
+    { frequency: 196, to: 392, duration: .1, wave: "triangle" },
+    { frequency: 587, to: 784, at: .04, duration: .17, wave: "triangle" },
+    { frequency: 1175, to: 1568, at: .09, duration: .18, wave: "triangle" },
+  ],
+  phoenix: [
+    { frequency: 659, to: 988, duration: .12 },
+    { frequency: 1319, to: 1760, at: .06, duration: .17 },
+    { frequency: 1976, to: 1568, at: .12, duration: .2 },
+  ],
   cat: [
     { frequency: 520, to: 390, duration: .18, wave: "triangle", gain: .07, attack: .025, cutoff: 1200 },
     { frequency: 1040, to: 780, duration: .09, at: .025, gain: .025 },

@@ -1,4 +1,4 @@
-import { createSoloService, type SoloWriter } from "./solo";
+import { createSoloService, type SoloWriter, type SoloProgressStore } from "./solo";
 import { attachSpectator, type SpectateAccess } from "./spectate";
 import { attachFriendPresence, type FriendsReader } from "./friend-presence";
 import { createFriendChallenges } from "./friend-challenges";
@@ -19,7 +19,7 @@ import { joinRoom, handleInput, handleAbility, handleSurrender, waitForPlayer } 
 import { accountDeletionHandler, type DeleteAccount } from "./account-deletion";
 import { feedbackHandler, type FeedbackWriter } from "./feedback";
 
-export function createGameServer(options: { readFriends?: FriendsReader; canSpectate?: SpectateAccess; checkAdmin?: (token: string) => Promise<boolean>; readStore?: () => ResultStoreDiagnostics; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; writeSolo?: SoloWriter; readRating?: (userId: string) => Promise<number | RankSnapshot>; hasPendingRanked?: (userId: string) => boolean; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount; hasPendingAccount?: (userId: string) => boolean } = {}) {
+export function createGameServer(options: { readFriends?: FriendsReader; canSpectate?: SpectateAccess; checkAdmin?: (token: string) => Promise<boolean>; readStore?: () => ResultStoreDiagnostics; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; writeSolo?: SoloWriter; soloProgress?: SoloProgressStore; readRating?: (userId: string) => Promise<number | RankSnapshot>; hasPendingRanked?: (userId: string) => boolean; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount; hasPendingAccount?: (userId: string) => boolean } = {}) {
   const solo = createSoloService(options);
   const pendingWrites = new Set<Promise<void>>();
   const ratingLookups = new Map<string, Promise<number | RankSnapshot>>();
@@ -51,6 +51,7 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
     isPlaying: id => [...rooms.values()].some(room => room.open && Object.values(room.accounts).some(account => account?.id === id)),
     hasPending: id => solo.hasPending(id) || (options.hasPendingAccount?.(id) ?? options.hasPendingRanked?.(id) ?? false),
     disconnect: id => {
+      solo.forget(id);
       for (const [pid, account] of playerAccounts) if (account?.id === id) {
         cancelMatch(pid);
         io.sockets.sockets.get(playerSockets.get(pid) ?? "")?.disconnect(true);
@@ -116,6 +117,9 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
       const token: unknown = socket.handshake.auth?.sessionToken;
       if (typeof token !== "string" || !/^[a-f0-9]{64}$/.test(token)) throw new Error("invalid_session");
       if (socket.handshake.auth?.authError) throw new Error("authentication_unavailable");
+      const soloToken: unknown = socket.handshake.auth?.soloToken;
+      if (soloToken !== undefined && (typeof soloToken !== "string" || !/^[a-f0-9]{64}$/.test(soloToken))) throw new Error("invalid_solo_session");
+      socket.data.soloId = typeof soloToken === "string" ? createHash("sha256").update(soloToken).digest("hex") : undefined;
       const accessToken: unknown = socket.handshake.auth?.accessToken;
       if (accessToken !== undefined && (typeof accessToken !== "string" || accessToken.length > 8192)) throw new Error("invalid_account");
       let account = null;
@@ -149,7 +153,7 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
       if (++soloMessages > 30) { ack({ state: null, error: "rate_limited" }); return; }
       const accountId: string | null = socket.data.account?.id ?? null;
       if (accountId && deletingAccounts.has(accountId)) { ack({ state: null, error: "account_deleting" }); return; }
-      void solo.handle(pid, accountId, raw, () => !closing && socket.connected && !playerRoom.has(pid) && (!accountId || !deletingAccounts.has(accountId))).then(reply => ack(reply));
+      void solo.handle(pid, accountId, raw, () => !closing && socket.connected && !playerRoom.has(pid) && (!accountId || !deletingAccounts.has(accountId)), socket.data.soloId).then(reply => ack(reply));
     });
     let windowStart = Date.now(), messages = 0, queueRequest = 0;
     socket.on("message", (raw: unknown) => {
@@ -217,7 +221,7 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
     socket.on("disconnect", () => {
       queueRequest++;
       if (playerSockets.get(pid) !== socket.id) return;
-      solo.disconnect(pid);
+      void solo.disconnect(pid, socket.data.account?.id ?? null, socket.data.soloId);
       playerSockets.delete(pid);
       playerAccounts.delete(pid);
       cancelMatch(pid);

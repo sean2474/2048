@@ -18,7 +18,7 @@ export function useSolo(account: string | null | undefined) {
     const client = socket.current;
     if (!client?.connected || pending.current) return;
     pending.current = true;
-    if (command.t === "start" || command.t === "save") setWorking(true);
+    if (command.t === "start" || command.t === "save" || !current.current) setWorking(true);
     client.timeout(10_000).emit("solo", command, (failure: Error | null, reply: SoloReply) => {
       if (socket.current !== client) return;
       pending.current = false; setWorking(false);
@@ -34,20 +34,31 @@ export function useSolo(account: string | null | undefined) {
     if (account === undefined) return;
     current.current = null; setState(null); setElapsed(0); setError(null); setConnected(false); setWorking(false);
     let client: Socket;
-    try { client = createGameSocket(); }
+    try {
+      let token = localStorage.getItem("duo.soloToken");
+      if (!token || !/^[a-f0-9]{64}$/.test(token)) {
+        token = Array.from(crypto.getRandomValues(new Uint8Array(32)), byte => byte.toString(16).padStart(2, "0")).join("");
+        localStorage.setItem("duo.soloToken", token);
+      }
+      client = createGameSocket(false, token);
+    }
     catch { setError("solo_connection"); return; }
     socket.current = client;
     client.on("connect", () => { pending.current = false; setConnected(true); send({ t: "state" }); });
     client.on("disconnect", () => { pending.current = false; setConnected(false); setWorking(false); setError("solo_connection"); });
     client.on("connect_error", () => { setConnected(false); setError("solo_connection"); });
     client.connect();
+    const checkpoint = () => {
+      if (document.visibilityState === "hidden" && current.current) send({ t: "save", id: current.current.id });
+    };
+    document.addEventListener("visibilitychange", checkpoint);
     const sync = window.setInterval(() => send({ t: "state" }), 10_000);
-    return () => { socket.current = null; pending.current = false; window.clearInterval(sync); client.disconnect(); };
+    return () => { socket.current = null; pending.current = false; window.clearInterval(sync); document.removeEventListener("visibilitychange", checkpoint); client.disconnect(); };
   }, [account, send]);
   useEffect(() => {
-    if (state?.status !== "playing") return;
-    const timer = window.setInterval(() => setElapsed(state.elapsedMs + performance.now() - received.current), 50);
-    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
+    if (!state) return;
+    const timer = state.status === "playing" ? window.setInterval(() => setElapsed(state.elapsedMs + performance.now() - received.current), 50) : undefined;
+    const warn = (event: BeforeUnloadEvent) => { if (state.progress === "error" || state.progress === "unavailable") event.preventDefault(); };
     window.addEventListener("beforeunload", warn);
     return () => { window.clearInterval(timer); window.removeEventListener("beforeunload", warn); };
   }, [state]);

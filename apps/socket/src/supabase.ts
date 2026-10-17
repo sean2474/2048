@@ -1,4 +1,5 @@
-import type { SoloWriter } from "./solo";
+import { SoloCheckpointSchema } from "schema/solo";
+import type { SoloWriter, SoloProgressStore } from "./solo";
 import type { SpectateAccess } from "./spectate";
 import type { FriendsReader } from "./friend-presence";
 import type { SocialPlayer } from "schema/social";
@@ -12,7 +13,7 @@ import type { DeleteAccount } from "./account-deletion";
 import type { FeedbackWriter } from "./feedback";
 export type AccountResolver = (accessToken: string) => Promise<Account>;
 export type SuspensionReader = (userIds: string[]) => Promise<string[]>;
-export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { readFriends?: FriendsReader; canSpectate?: SpectateAccess; checkAdmin?: (token: string) => Promise<boolean>; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; writeSolo?: SoloWriter; readRating?: (userId: string) => Promise<number | RankSnapshot>; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount } {
+export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { readFriends?: FriendsReader; canSpectate?: SpectateAccess; checkAdmin?: (token: string) => Promise<boolean>; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; writeSolo?: SoloWriter; soloProgress?: SoloProgressStore; readRating?: (userId: string) => Promise<number | RankSnapshot>; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount } {
   const url = env.SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL;
   const publicKey = env.SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const secret = env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
@@ -62,6 +63,18 @@ export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { 
     if (error) throw new Error("spectate_unavailable");
     return data === true;
   };
+  const soloProgress: SoloProgressStore = {
+    async read(key) {
+      const { data, error } = await admin.from("solo_progress").select("checkpoint").eq("owner_key", key).maybeSingle();
+      if (error) throw new Error(`Solo progress lookup failed (${error.code || "network"})`);
+      return data ? SoloCheckpointSchema.parse(data.checkpoint) : null;
+    },
+    async write(key, playerId, checkpoint) {
+      const { error } = await admin.from("solo_progress").upsert({ owner_key: key, player_id: playerId,
+        checkpoint: SoloCheckpointSchema.parse(checkpoint), updated_at: new Date().toISOString() }, { onConflict: "owner_key" });
+      if (error) throw new Error(`Solo progress storage failed (${error.code || "network"})`);
+    },
+  };
   const writeSolo: SoloWriter = async record => {
     const { error } = record.mode === "endless"
       ? await admin.rpc("record_solo_endless", { p_run: record.id, p_player: record.playerId, p_tile: record.maxTile })
@@ -103,7 +116,7 @@ export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { 
     const { error: deleteError } = await admin.auth.admin.deleteUser(userId);
     if (deleteError) throw new Error("deletion_failed");
   };
-  return { resolveAccount, readFriends, canSpectate, checkAdmin, writeMatch, writeFeedback, writeSolo, readRating, readSuspensions, deleteAccount };
+  return { resolveAccount, readFriends, canSpectate, checkAdmin, writeMatch, writeFeedback, writeSolo, soloProgress, readRating, readSuspensions, deleteAccount };
 }
 
 function rankProgress(row: Partial<RankProgress> | null): RankProgress {

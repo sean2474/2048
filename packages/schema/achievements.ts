@@ -39,8 +39,6 @@ export type AchievementState = {
   soloBestMs?: number | null;
   soloHighestTile?: number;
   highestRank?: number;
-  soloBestMs?: number | null;
-  soloHighestTile?: number;
   unlocks: { achievementId: AchievementId; unlockedAt: string }[];
 };
 

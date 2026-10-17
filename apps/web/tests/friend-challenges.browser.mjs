@@ -9,7 +9,7 @@ const { chromium } = require("playwright");
 const { createGameServer } = require("../../socket/src/server.ts");
 const { rooms } = require("../../socket/src/state.ts");
 const { broadcast, endGame } = require("../../socket/src/game.ts");
-const origin = process.env.SOCIAL_TEST_ORIGIN || "http://[::1]:3001";
+const origin = "http://[::1]:3001";
 const artifacts = new URL("../../../docs/social/", import.meta.url).pathname;
 const ids = ["10000000-0000-4000-8000-000000000001", "10000000-0000-4000-8000-000000000002"];
 const names = ["신청친구", "응답친구"];
@@ -51,11 +51,10 @@ test("online friends can decline, then accept a request and immediately play tog
     await incoming.getByText("신청친구님이 대전을 신청했어요.").waitFor();
     assert.equal(rooms.size, 0);
     assert.equal(await b.evaluate(() => document.documentElement.scrollWidth), 375);
-    await b.waitForTimeout(250);
     await b.screenshot({ path: `${artifacts}/challenge-incoming-mobile.png`, fullPage: true });
     await incoming.getByRole("button", { name: "대전 거절" }).click();
     await a.getByText("대전 신청이 거절됐어요.").waitFor();
-    await a.getByRole("dialog").waitFor({ state: "hidden" });
+    assert.equal(await a.getByRole("dialog").count(), 0);
     assert.equal(rooms.size, 0);
 
     await a.getByRole("link", { name: "친구 전체 보기" }).click();
@@ -85,7 +84,6 @@ test("online friends can decline, then accept a request and immediately play tog
     assert.deepEqual(errors, []);
   } finally {
     for (const context of browser.contexts()) await context.unrouteAll({ behavior: "ignoreErrors" });
-    await browser.close();
-    const closed = server.close(); server.httpServer.closeAllConnections(); await closed;
+    await browser.close(); await server.close();
   }
 });

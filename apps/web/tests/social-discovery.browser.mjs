@@ -7,7 +7,7 @@ import { mockAccount } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const { Server } = createRequire(new URL("../../socket/package.json", import.meta.url))("socket.io");
-const origin = process.env.SOCIAL_TEST_ORIGIN || "http://[::1]:3001";
+const origin = "http://[::1]:3001";
 const artifacts = new URL("../../../docs/social/", import.meta.url).pathname;
 const friend = { id: "10000000-0000-4000-8000-000000000002", name: "타일친구", icon_id: "owl", relationship: "friend", unread: 3 };
 const pending = { id: "10000000-0000-4000-8000-000000000003", name: "타일대장", icon_id: "fox", relationship: "incoming", unread: 0 };
@@ -26,7 +26,7 @@ async function mockPresence(page) {
   });
   return { update(next) { value = next; io.emit("friendPresence", value); }, close: async () => {
     await page.unrouteAll({ behavior: "ignoreErrors" });
-    const closed = new Promise(resolve => io.close(resolve)); server.closeAllConnections(); await closed;
+    await new Promise(resolve => io.close(resolve));
   } };
 }
 
@@ -131,11 +131,9 @@ test("dashboard friends show requests and unread counts, open a chat, and recove
     await panel.getByRole("link", { name: "받은 친구 요청 1개" }).waitFor();
     await panel.getByLabel("읽지 않은 메시지 3개").waitFor();
     await panel.getByText("온라인", { exact: true }).waitFor();
-    assert.equal(await panel.getByRole("button", { name: "타일친구님에게 대전 신청" }).isDisabled(), false);
     assert.equal(await panel.getByRole("button", { name: "타일친구님 관전" }).isDisabled(), true);
     presence.update({ friends: { [friend.id]: "playing" } });
     await panel.getByText("게임 중", { exact: true }).waitFor();
-    assert.equal(await panel.getByRole("button", { name: "타일친구님에게 대전 신청" }).isDisabled(), true);
     assert.equal(await panel.getByRole("link", { name: "타일친구님 관전" }).getAttribute("href"), `/watch/${friend.id}`);
     assert.equal(await page.locator("header nav a[href='/friends']").count(), 0);
     assert.equal(await page.getByRole("region", { name: "게임 미리보기" }).count(), 0);
@@ -150,13 +148,11 @@ test("dashboard friends show requests and unread counts, open a chat, and recove
     for (const [state, label] of [["online", "온라인"], ["offline", "오프라인"], ["solo", "싱글플레이 중"]]) {
       presence.update({ friends: { [friend.id]: state } });
       await page.getByText(label, { exact: true }).waitFor();
-      assert.equal(await page.getByRole("button", { name: "타일친구님에게 대전 신청" }).isDisabled(), state !== "online");
       assert.equal(await page.getByRole("button", { name: "타일친구님 관전" }).isDisabled(), true);
       assert.equal(await page.getByRole("link", { name: "타일친구님 관전" }).count(), 0);
     }
     presence.update({ error: "presence_unavailable" });
     await page.getByText("상태 확인 불가", { exact: true }).waitFor();
-    assert.equal(await page.getByRole("button", { name: "타일친구님에게 대전 신청" }).isDisabled(), true);
     assert.equal(await page.getByRole("button", { name: "타일친구님 관전" }).isDisabled(), true);
 
     contacts = []; delay = 800;

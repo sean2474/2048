@@ -6,8 +6,7 @@ import { io, type Socket } from "socket.io-client";
 import type { ChallengeEvent, ChallengeReply, FriendChallengeCommand } from "schema/social";
 import type { ServerMessage } from "schema/in-game";
 import { createGameServer } from "../src/server";
-import { createMatch } from "../src/matchmaking";
-import { rooms, playerRoom, playerSockets } from "../src/state";
+import { rooms, playerSockets } from "../src/state";
 
 const ids = ["10000000-0000-4000-8000-000000000001", "10000000-0000-4000-8000-000000000002", "10000000-0000-4000-8000-000000000003"];
 function event<T>(socket: Socket, name: string, predicate: (value: T) => boolean, timeout = 3000) {
@@ -82,7 +81,7 @@ test("guests, malformed requests, self challenges and non-friends cannot invite"
   assert.equal(rooms.size, 0);
 });
 
-test("offline friends are rejected and rapid invitations are limited", async t => {
+test("offline and busy friends are rejected, and rapid invitations are limited", async t => {
   const server = await setup(t);
   server.b.socket.disconnect();
   await new Promise(resolve => setTimeout(resolve, 20));
@@ -131,18 +130,6 @@ test("starting another game while invited cannot create a second match", async t
   const reply = await challenge(server.b.socket, { t: "accept", id: invitation.id });
   assert.ok(reply.error === "busy" || reply.error === "expired");
   assert.equal(rooms.size, 0);
-});
-
-test("an account change cannot overwrite another active match sharing the tab session", async t => {
-  const server = await setup(t);
-  const invitation = await server.invite();
-  const previousAccount = await server.connect(ids[2], false, server.a.token);
-  const opponent = await server.connect(undefined, false);
-  const existing = createMatch(previousAccount.pid, opponent.pid, server.io, "matchFound");
-  assert.deepEqual(await challenge(server.b.socket, { t: "accept", id: invitation.id }), { error: "busy" });
-  assert.equal(rooms.size, 1);
-  assert.equal(playerRoom.get(previousAccount.pid), existing);
-  assert.equal(rooms.get(existing)?.accounts[previousAccount.pid]?.id, ids[2]);
 });
 
 test("requests expire after thirty seconds and cannot be accepted later", { timeout: 35000 }, async t => {

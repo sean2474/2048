@@ -11,7 +11,7 @@ const { createGameServer } = require("../../socket/src/server.ts");
 const { createMatch } = require("../../socket/src/matchmaking.ts");
 const { rooms, playerAccounts } = require("../../socket/src/state.ts");
 const { joinRoom, broadcast, endGame } = require("../../socket/src/game.ts");
-const origin=process.env.SOCIAL_TEST_ORIGIN || "http://[::1]:3001";
+const origin="http://[::1]:3001";
 const artifacts=new URL("../../../docs/social/",import.meta.url).pathname;
 const ids=["10000000-0000-4000-8000-000000000001","10000000-0000-4000-8000-000000000002"];
 
@@ -100,7 +100,6 @@ test("friend search, requests, persistent messages, retry and live spectating wo
   } finally {
     sockets.forEach(s=>s.disconnect());
     for (const context of browser.contexts()) await context.unrouteAll({ behavior: "ignoreErrors" });
-    await browser.close();
-    const closed = server.close(); server.httpServer.closeAllConnections(); await closed;
+    await browser.close(); await server.close();
   }
 });

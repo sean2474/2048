@@ -91,6 +91,7 @@ export function FriendPresenceProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false; clearTimeout(timeout); subscription.unsubscribe();
       socketRef.current = null;
+      request.current++;
       window.removeEventListener("online", reconnect); document.removeEventListener("visibilitychange", reconnect);
       socket.removeAllListeners(); socket.disconnect();
     };

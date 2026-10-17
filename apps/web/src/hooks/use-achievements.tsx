@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import type { AchievementState } from "schema/achievements";
 import { createClient } from "@/lib/supabase/client";
 import { usePlayer } from "./use-player";
@@ -10,6 +11,7 @@ const Context = createContext<ReturnType<typeof useAchievementState> | null>(nul
 
 function useAchievementState() {
   const { user } = usePlayer();
+  const pathname = usePathname();
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const [result, setResult] = useState<{ userId: string; data: AchievementState } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,8 @@ function useAchievementState() {
     const interval = window.setInterval(refresh, 60_000);
     return () => { generation.current++; window.clearInterval(interval); window.removeEventListener("focus", refresh); window.removeEventListener("online", refresh); document.removeEventListener("visibilitychange", refresh); };
   }, [reload]);
+
+  useEffect(() => { if (pathname === "/achievements") void reload(); }, [pathname, reload]);
 
   return { data, loading: user === undefined || Boolean(userId && !data && !error) || loading, error, checkingIn, checkInError, reload, newRewards: data ? newRewards : [] };
 }

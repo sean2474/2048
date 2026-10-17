@@ -21,7 +21,7 @@ async function main() {
   assert.ifError(created.error);
   const id = created.data.user!.id;
   const services = createSupabaseServices();
-  const server = createGameServer(services);
+  let server = createGameServer(services);
   let socket: ReturnType<typeof io> | undefined;
   try {
     await new Promise<void>(resolve => server.httpServer.listen(0, "127.0.0.1", resolve));
@@ -37,6 +37,18 @@ async function main() {
       const moved = await send({ t: "move", id: state.id, seq: 1, dir: "left" });
       assert.equal(moved.error, undefined); assert.equal(moved.state!.seq, 1);
     }
+    const before = (await send({ t: "state" })).state!;
+    socket.disconnect(); await server.close();
+    server = createGameServer(services);
+    await new Promise<void>(resolve => server.httpServer.listen(0, "127.0.0.1", resolve));
+    socket = io(`http://127.0.0.1:${(server.httpServer.address() as AddressInfo).port}`, { transports: ["websocket"], auth: { sessionToken: randomBytes(32).toString("hex"), accessToken: login.data.session!.access_token }, autoConnect: false });
+    await new Promise<void>((resolve,reject) => { socket!.once("connect",resolve); socket!.once("connect_error",reject); socket!.connect(); });
+    const resumed = (await send({ t: "state" })).state!;
+    const tiles = (state: typeof resumed) => state.board.filter(tile => !tile.ghost).map(({ value, row, col }) => ({ value, row, col }));
+    assert.equal(resumed.id, before.id); assert.equal(resumed.progress, "saved");
+    assert.equal(resumed.moves, before.moves); assert.equal(resumed.score, before.score);
+    assert.deepEqual(tiles(resumed), tiles(before));
+    console.log("Verified: database progress survives a server restart and a new device session.");
     // Seed only this disposable account's isolated runs; clients still cannot submit tiles or times.
     const sprint = createSoloRun(id, 0, "time-attack");
     sprint.state.board = [{id:1,value:1024,row:0,col:0},{id:2,value:1024,row:0,col:1}];

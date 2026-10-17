@@ -4,7 +4,7 @@ import { FriendChallengeCommandSchema, type ChallengeEvent, type ChallengeReply,
 import type { FriendsReader } from "./friend-presence";
 import type { MatchWriter } from "./result-store";
 import { createMatch } from "./matchmaking";
-import { matchmakingQueue, playerAccounts, playerRoom, rooms, waitingByCode } from "./state";
+import { matchmakingQueue, playerAccounts, rooms, waitingByCode } from "./state";
 
 type Pending = FriendChallenge & { senderSocketId: string };
 
@@ -74,7 +74,7 @@ export function createFriendChallenges(io: Server, options: {
           if (closed || !socket.connected) return;
           const target = command.t === "send" ? socialSockets(other)[0] : io.sockets.sockets.get(invitation!.senderSocketId);
           if (!target?.connected || target.data.account?.id !== other) { if (invitation) finish(invitation, "unavailable"); reply({ error: "offline" }); return; }
-          if (occupied(me) || occupied(other) || playerRoom.has(socket.data.playerId) || playerRoom.has(target.data.playerId) || socket.data.playerId === target.data.playerId) {
+          if (occupied(me) || occupied(other) || socket.data.playerId === target.data.playerId) {
             if (invitation) finish(invitation, "unavailable"); reply({ error: "busy" }); return;
           }
           if (command.t === "send") {

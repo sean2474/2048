@@ -9,6 +9,7 @@ export const PROFILE_ICONS = [
   { id: "robot", name: "Tile Bot", color: "#548da7" },
   { id: "attendance-king", name: "Attendance King", color: "#b68a43" },
   { id: "victory-vanguard", name: "Victory Vanguard", color: "#4c7e78" },
+  { id: "achievement-king", name: "Achievement King", color: "#9c7540" },
   { id: "rank-bronze", name: "Bronze Bastion", color: "#a76e49" },
   { id: "rank-silver", name: "Silver Crossguard", color: "#7e94af" },
   { id: "rank-gold", name: "Golden Laurel", color: "#b8953e" },
