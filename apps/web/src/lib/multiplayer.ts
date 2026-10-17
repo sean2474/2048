@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { io } from "socket.io-client";
 
 export const CURRENT_ROOM_KEY = "duo.currentRoom";
-export const matchModeLabel = { casual: "Casual match", ranked: "Ranked match", friend: "Friend match", legacy: "Previous rules" };
+export { matchModeLabel } from "./match-labels";
 // A private per-tab capability, independent of a public profile/user ID.
 // sessionStorage survives reloads but allows separate tabs to play each other.
 export function createGameSocket() {

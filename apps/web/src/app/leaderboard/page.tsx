@@ -1,35 +1,22 @@
-"use client";
-
-import { useI18n } from "ui/i18n";
+import { getI18n } from "@/lib/i18n/server";
 import Link from "next/link";
-import { useCallback, useState } from "react";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { LeaderboardRow } from "schema/results";
 import { ratingTier, SEASON_QUALIFYING_GAMES, type RankSeason } from "schema/ranking";
-import { useLiveQuery } from "@/hooks/use-live-query";
+import { LiveRecords, RefreshButton } from "@/components/widget/refresh-records";
+import { RecordsSkeleton } from "@/components/widget/records-skeleton";
+import { SeasonSelect } from "@/components/widget/season-select";
 import { Button } from "@/components/ui/button";
 import { TierBadge, TierIcon } from "@/components/widget/tier-badge";
-import { ArrowLeft, ArrowRight, Crown, Loader2, Swords, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Crown, Swords, Trophy } from "lucide-react";
 import "@/styles/leaderboard.css";
 
-export default function LeaderboardPage() {
-  const { t, locale } = useI18n();
-  const [selectedSeason, setSelectedSeason] = useState("current");
-  const load = useCallback(async (client: SupabaseClient) => {
-    const seasonsResult = await client.from("rank_seasons").select("id,name,starts_at,ends_at").order("starts_at", { ascending: false });
-    if (seasonsResult.error) throw seasonsResult.error;
-    const seasons = seasonsResult.data as RankSeason[];
-    const season = selectedSeason === "current" ? seasons.find(row => row.ends_at === null) : seasons.find(row => row.id === selectedSeason);
-    if (!season) throw new Error("Season unavailable");
-    const { data, error } = await client.from(season.ends_at === null ? "player_ratings" : "season_ratings").select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating").eq("season_id", season.id).gte("games_played", SEASON_QUALIFYING_GAMES).order("rating", { ascending: false }).order("games_played", { ascending: false }).order("player_id").limit(50);
-    if (error) throw error;
-    return [{ seasons, season, rows: data as LeaderboardRow[] }];
-  }, [selectedSeason]);
-  const query = useLiveQuery({ table: "player_ratings", load });
-  const { loading, error, live, reload } = query;
-  const data = query.data[0]?.rows ?? [], seasons = query.data[0]?.seasons ?? [], season = query.data[0]?.season;
+export default async function LeaderboardPage({ searchParams }: { searchParams: Promise<{ season?: string }> }) {
+  const [{ t, locale }, params] = await Promise.all([getI18n(), searchParams]);
+  const selectedSeason = typeof params.season === "string" ? params.season : "current";
   const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
-
   return <main className="mx-auto max-w-[1120px] space-y-7 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
     <section aria-labelledby="leaderboard-title" className="rank-arena relative isolate overflow-hidden rounded-xl px-6 py-7 sm:px-9 sm:py-8">
       <div className="relative z-10 max-w-2xl">
@@ -59,9 +46,37 @@ export default function LeaderboardPage() {
       </dl>
     </section>
 
-    <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-semibold">{season?.name ?? t("Season standings")}{season?.ends_at && <span className="ml-2 font-normal text-muted-foreground">{t("Archived season")}</span>}</p><label className="flex items-center gap-2 text-sm">{t("Season")}<select aria-label={t("Season")} value={selectedSeason} onChange={event => setSelectedSeason(event.target.value)} className="min-h-11 rounded-lg border bg-card px-3"><option value="current">{t("Current season")}</option>{seasons.filter(row => row.ends_at !== null).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label></div>
+    <Suspense key={selectedSeason} fallback={<RecordsSkeleton label={t("Loading leaderboard…")} rows={6} />}>
+      <Standings selectedSeason={selectedSeason} />
+    </Suspense>
+    <Button asChild variant="ghost"><Link href="/"><ArrowLeft aria-hidden="true" />{t("Back to dashboard")}</Link></Button>
+  </main>;
+}
 
-    {!error && !loading && data.length > 0 && <section aria-labelledby="podium-title">
+async function Standings({ selectedSeason }: { selectedSeason: string }) {
+  const { t, locale } = await getI18n();
+  const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
+  let seasons: RankSeason[] = [], season: RankSeason | undefined, data: LeaderboardRow[] = [];
+  let error = false;
+  try {
+    if (!isSupabaseConfigured()) throw new Error("Account services unavailable");
+    const client = await createClient();
+    const seasonResult = await client.from("rank_seasons").select("id,name,starts_at,ends_at").order("starts_at", { ascending: false });
+    if (seasonResult.error) throw seasonResult.error;
+    seasons = seasonResult.data as RankSeason[];
+    season = selectedSeason === "current" ? seasons.find(row => row.ends_at === null) : seasons.find(row => row.id === selectedSeason);
+    if (!season) throw new Error("Season unavailable");
+    const result = await client.from(season.ends_at === null ? "player_ratings" : "season_ratings")
+      .select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating")
+      .eq("season_id", season.id).gte("games_played", SEASON_QUALIFYING_GAMES)
+      .order("rating", { ascending: false }).order("games_played", { ascending: false }).order("player_id").limit(50);
+    if (result.error) throw result.error;
+    data = result.data as LeaderboardRow[];
+  } catch { error = true; }
+  return <>
+    <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-semibold">{season?.name ?? t("Season standings")}{season?.ends_at && <span className="ml-2 font-normal text-muted-foreground">{t("Archived season")}</span>}</p><SeasonSelect selected={selectedSeason} seasons={seasons} /></div>
+
+    {!error && data.length > 0 && <section aria-labelledby="podium-title">
       <h2 id="podium-title" className="mb-4 flex items-center gap-2 text-sm font-bold"><Crown aria-hidden="true" className="size-4 text-[#936a25]" />{t("Top 3 players")}</h2>
       <ol className={`rank-podium grid items-end gap-2 sm:gap-4 ${data.length === 1 ? "mx-auto max-w-sm grid-cols-1" : data.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
         {data.slice(0, 3).map((row, index) => <li key={row.player_id} className={`rank-podium-place min-w-0 text-center ${data.length >= 3 ? ["order-2", "order-1", "order-3"][index] : ""}`} data-place={index + 1}>
@@ -80,10 +95,9 @@ export default function LeaderboardPage() {
     <section aria-labelledby="standings-title" className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="standings-title" className="flex items-center gap-2 text-sm font-bold"><Trophy aria-hidden="true" className="size-4 text-[#52634b]" />{t("Player standings")}<span className="rounded-md border bg-card px-2 py-1 text-[10px] tracking-wide text-muted-foreground">TOP 50</span></h2>
-        <span role="status" className="inline-flex items-center gap-2 text-xs text-muted-foreground"><span aria-hidden="true" className={`size-1.5 rounded-full ${live ? "bg-[#52634b]" : "bg-muted-foreground"}`} />{live ? t("Live updates") : t("Connecting…")}</span>
+        {!season?.ends_at && <LiveRecords tables="player_ratings,rank_seasons" status />}
       </div>
-      {error ? <div role="alert" className="space-y-4 rounded-2xl border bg-card p-8"><p className="text-sm leading-6 text-destructive">{t(error)}</p><Button onClick={reload}>{t("Try again")}</Button></div>
-        : loading ? <div role="status" className="flex min-h-60 items-center justify-center gap-3 rounded-2xl border bg-card text-sm text-muted-foreground"><Loader2 aria-hidden="true" className="size-5 animate-spin motion-reduce:animate-none" />{t("Loading leaderboard…")}</div>
+      {error ? <div role="alert" className="space-y-4 rounded-2xl border bg-card p-8"><p className="text-sm leading-6 text-destructive">{t("Unable to load records. Please try again.")}</p><RefreshButton /></div>
         : !data.length ? <div className="space-y-4 rounded-2xl border border-dashed border-[#cfc5ae] bg-card px-6 py-10 text-center"><TierIcon tier="Bronze" className="mx-auto size-24" /><h2 className="text-xl font-bold tracking-tight">{t("No ranked players yet.")}</h2><p className="text-sm leading-6 text-muted-foreground">{t("Players appear here after completing 10 ranked matches in this season.")}</p><Button asChild><Link href="/play/ranked">{t("Play ranked")}<ArrowRight aria-hidden="true" /></Link></Button></div>
         : <div role="region" aria-label={t("Ranked player standings")} tabIndex={0} className="overflow-x-auto rounded-2xl border bg-card shadow-[0_4px_0_#e8e3d7] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
           <table className="rank-table w-full text-left text-sm">
@@ -107,6 +121,5 @@ export default function LeaderboardPage() {
         </div>}
       <p className="px-1 text-xs leading-6 text-muted-foreground">{t("Top 50 after 10 ranked matches this season, ordered by Elo then matches played. Tiers follow Elo automatically. Elo carries over between seasons. Casual and friend matches never change your rating.")}</p>
     </section>
-    <Button asChild variant="ghost"><Link href="/"><ArrowLeft aria-hidden="true" />{t("Back to dashboard")}</Link></Button>
-  </main>;
+  </>;
 }

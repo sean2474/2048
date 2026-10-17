@@ -1,8 +1,9 @@
 import { supabasePublicKey } from "./config";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
-export const createClient = async () => {
+export const createClient = cache(async () => {
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -27,4 +28,4 @@ export const createClient = async () => {
       },
     },
   );
-};
+});
