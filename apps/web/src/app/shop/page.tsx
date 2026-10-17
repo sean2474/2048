@@ -12,7 +12,10 @@ import { PageHeading } from "@/components/widget/page-heading";
 import { GameEmblem } from "@/components/widget/game-emblem";
 import { ProfileIcon } from "@/components/widget/profile-icon";
 import { SkinPreview } from "@/components/2048/skin-preview";
-import { SkinMergePreview } from "@/components/2048/skin-merge-preview";
+import dynamic from "next/dynamic";
+import { CatalogSkeleton } from "@/components/widget/catalog-skeleton";
+
+const SkinMergePreview = dynamic(() => import("@/components/2048/skin-merge-preview").then(module => module.SkinMergePreview));
 import { usePlayer } from "@/hooks/use-player";
 import { useCosmetics } from "@/hooks/use-cosmetics";
 import { trackGameEvent } from "@/lib/analytics";
@@ -54,6 +57,7 @@ export default function ShopPage() {
     </div>
     <section id="shop-panel" role="tabpanel" aria-labelledby={`shop-${category}-tab`} className="space-y-4">
       {category === "skin" && <div role="group" aria-label={t("Filter by rarity")} className="flex flex-wrap gap-1">{(["all", ...Object.keys(SKIN_RARITIES)] as Array<SkinRarity | "all">).map(value => <Button key={value} variant="ghost" aria-pressed={rarity === value} aria-controls="shop-items" onClick={() => { setRarity(value); setPage(0); trackGameEvent("skin_filter_changed", { rarity: value, source: "shop" }); }} className={rarity === value ? "bg-primary/10 text-primary" : "text-muted-foreground"}>{t(value === "all" ? "All skins" : SKIN_RARITIES[value].name)}</Button>)}</div>}
+      {catalogLoading && items.length === 0 && <CatalogSkeleton label={t("Loading collection…")} />}
       <ul id="shop-items" className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">{items.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(item => {
         const skin = item.kind === "skin" ? skins.find(skin => skin.id === item.id) : undefined;
         const icon = item.kind === "icon" ? profileIcons.find(icon => icon.id === item.id) : undefined;

@@ -38,6 +38,7 @@ test('admin P0 browser journey, URL filters, KST, failures, mobile and protected
   if(name==='admin_audit_entries')return send({entries:[{id:MATCH,createdAt:match.endedAt,actorId:ADMIN,playerId:PLAYER,actorExists:false,playerExists:true,action:'suspend',reason:'Fixture audit note'}],hasMore:false,nextCursor:null});
   if(name==='admin_players_filtered')return send({total:1,players:[player]});
   if(name==='admin_player')return send({player,matches:[],audit:[]});
+  if(name==='admin_set_suspension'){player.suspendedAt=args.p_suspended?new Date().toISOString():null;player.suspensionReason=args.p_reason;return send(null);}
   if(name==='admin_rank_seasons')return send(seasons);
   if(name==='admin_rollover_season'){
     if(state.seasonError)return send({code:'40001',message:'Season changed'},409);
@@ -50,7 +51,7 @@ test('admin P0 browser journey, URL filters, KST, failures, mobile and protected
  const backendURL=`http://127.0.0.1:${backend.address().port}`;
  const temp=await mkdtemp(join(tmpdir(),'2048-admin-browser-'));t.after(()=>rm(temp,{recursive:true,force:true}));
  const app=join(temp,'apps/admin');await mkdir(app,{recursive:true});await mkdir(join(temp,'packages'));
- for(const file of ['src','next.config.ts','next-env.d.ts','tsconfig.json','package.json','postcss.config.mjs'])await cp(join(ROOT,'apps/admin',file),join(app,file),{recursive:true});
+ for(const file of ['src','next.config.ts','tsconfig.json','package.json','postcss.config.mjs'])await cp(join(ROOT,'apps/admin',file),join(app,file),{recursive:true});
  await symlink(join(ROOT,'apps/admin/node_modules'),join(app,'node_modules'));await symlink(join(ROOT,'packages/ui'),join(temp,'packages/ui'));await symlink(join(ROOT,'packages/schema'),join(temp,'packages/schema'));
  // webpack can compile the disposable copy without modifying the active dev app's .next.
  const portServer=createServer();await new Promise(r=>portServer.listen(0,'127.0.0.1',r));const port=portServer.address().port;await new Promise(r=>portServer.close(r));
@@ -65,11 +66,22 @@ test('admin P0 browser journey, URL filters, KST, failures, mobile and protected
  const session={access_token:jwt,refresh_token:'fixture',expires_at:expires,expires_in:3600,token_type:'bearer',user};
  await context.addCookies([{name:'sb-2048-admin-auth',value:`base64-${Buffer.from(JSON.stringify(session)).toString('base64url')}`,url:origin},{name:'duo.locale',value:'en',url:origin}]);
  const evidence=join(ROOT,'docs/admin-p0');await mkdir(evidence,{recursive:true});
- const page=await context.newPage();const pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message)); page.on('console',m=>{if(m.type()==='error')logs+='\nBrowser: '+m.text();});
+ const page=await context.newPage();page.setDefaultTimeout(10000);const pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message)); page.on('console',m=>{if(m.type()==='error')logs+='\nBrowser: '+m.text();});
  await page.goto(`${origin}/matches?mode=legacy`);try { await page.getByRole('link',{name:MATCH,exact:true}).waitFor({timeout:10000}); } catch { throw Error((await page.locator('body').innerText())+'\n'+JSON.stringify(state.calls)+'\n'+logs.slice(-5000)); }
  assert.match(await page.locator('tbody').innerText(),/KST/);assert.match(await page.locator('tbody').innerText(),/10\/17\/2026/);
- await page.getByRole('button',{name:'Next',exact:true}).click();await page.waitForURL(/before=/);await page.getByRole('link',{name:MATCH,exact:true}).waitFor();
- const listURL=page.url();await page.getByRole('link',{name:MATCH,exact:true}).click();await page.getByRole('heading',{name:'Match detail'}).waitFor();await page.getByRole('heading',{name:'Deleted snapshot'}).waitFor();
+ await page.getByRole('link',{name:'Next',exact:true}).click();await page.waitForURL(/before=/);await page.getByRole('link',{name:MATCH,exact:true}).waitFor();
+ const listURL=page.url();
+ await page.getByLabel('Player UUID',{exact:true}).fill(PLAYER);
+ const previousCalls=state.calls.filter(c=>c.name==='admin_matches').length;
+ const [refreshed]=await Promise.all([
+  page.waitForResponse(response=>response.url().includes('/matches?')&&response.request().headers()['rsc']==='1'),
+  page.getByRole('button',{name:'Refresh',exact:true}).click(),
+ ]);
+ await refreshed.finished();
+ assert.equal(page.url(),listURL,'refresh preserves the current cursor and does not submit edited filters');
+ assert.ok(state.calls.filter(c=>c.name==='admin_matches').length>previousCalls);
+ assert.equal(state.calls.filter(c=>c.name==='admin_matches').at(-1).args.p_player_id,null,'refresh retains the active filter');
+ await page.getByRole('link',{name:MATCH,exact:true}).click();await page.getByRole('heading',{name:'Match detail'}).waitFor();await page.getByRole('heading',{name:'Deleted snapshot'}).waitFor();
  assert.match(await page.locator('main').innerText(),/Not measured/);assert.match(await page.locator('main').innerText(),/0 \/ 0 \/ 0/);
  await page.getByRole('link',{name:'Back to matches'}).click();await page.waitForURL(listURL);
  await page.goto(`${origin}/matches?match=invalid`);await page.locator('.admin-error[role="alert"]').waitFor();assert.match(await page.locator('.admin-error[role="alert"]').innerText(),/Check UUIDs/);
@@ -77,7 +89,13 @@ test('admin P0 browser journey, URL filters, KST, failures, mobile and protected
  state.matchError=true;await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.locator('.admin-error[role="alert"]').waitFor();assert.match(await page.locator('.admin-error[role="alert"]').innerText(),/Administrator access required/);state.matchError=false;
  await page.goto(`${origin}/audit?player=${PLAYER}`);await page.getByText('Fixture audit note').waitFor();assert.equal(await page.getByRole('link',{name:ADMIN,exact:true}).count(),0);
  await page.goto(`${origin}/players?q=Fixture&status=active&offset=0`);await page.getByRole('link',{name:/Fixture Player/}).waitFor();assert.equal(await page.locator('main select').inputValue(),'active');
- assert.match(await page.locator('tbody').innerText(),/Evaluating/);const playersURL=page.url();await page.getByRole('link',{name:/Fixture Player/}).click();await page.getByRole('link',{name:'View all matches'}).waitFor();await page.getByRole('link',{name:'Back to players'}).click();await page.waitForURL(playersURL);
+ assert.match(await page.locator('tbody').innerText(),/Evaluating/);const playersURL=page.url();await page.getByRole('link',{name:/Fixture Player/}).click();await page.getByRole('link',{name:'View all matches'}).waitFor();
+ await page.getByLabel('Reason for suspension').fill('Fixture access review');await page.getByRole('button',{name:'Suspend player…',exact:true}).click();
+ await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.waitForFunction(()=>document.activeElement?.tagName==='FORM');
+ await page.getByRole('button',{name:'Suspend player…',exact:true}).click();await page.getByRole('button',{name:'Confirm suspension',exact:true}).evaluate(button=>{button.click();button.click();});
+ await page.getByText('Player suspended from new matches. The reason was recorded in the audit log.').waitFor();await page.getByLabel('Reason for restoring access').waitFor();
+ assert.equal(state.calls.filter(c=>c.name==='admin_set_suspension').length,1);
+ await page.getByRole('link',{name:'Back to players'}).click();await page.waitForURL(playersURL);
  await page.goto(`${origin}/operations`);await page.getByText('A result has waited more than two minutes.').waitFor();assert.ok(state.opsCalls>0);
  state.opsError=true;await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.getByText(/Showing the last successful snapshot/).waitFor();await page.getByText(/Public health endpoint responded/).waitFor();await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.getByText(/Two or more refreshes failed/).waitFor();state.opsError=false;
  state.admin=false;const calls=state.opsCalls;assert.equal((await context.request.get(`${origin}/api/operations`)).status(),403);assert.equal(state.opsCalls,calls);state.admin=true;

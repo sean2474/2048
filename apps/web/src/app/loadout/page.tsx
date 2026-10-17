@@ -17,7 +17,10 @@ import { useAchievements } from "@/hooks/use-achievements";
 import { useCatalog } from "@/hooks/catalog-provider";
 import { useCosmetics } from "@/hooks/use-cosmetics";
 import { SkinPreview } from "@/components/2048/skin-preview";
-import { SkinMergePreview } from "@/components/2048/skin-merge-preview";
+import dynamic from "next/dynamic";
+import { CatalogSkeleton } from "@/components/widget/catalog-skeleton";
+
+const SkinMergePreview = dynamic(() => import("@/components/2048/skin-merge-preview").then(module => module.SkinMergePreview));
 import { trackGameEvent } from "@/lib/analytics";
 
 const PAGE_SIZE = 12;
@@ -91,6 +94,7 @@ export default function LoadoutPage() {
     <span id="equipped-label" className="sr-only">{t("Equipped")}</span>
     <PageHeading icon="loadout" title={t("My loadout")}><Button asChild variant="outline"><Link href="/find-match" data-analytics-link="/find-match"><ArrowLeft aria-hidden="true" />{t("Find match")}</Link></Button></PageHeading>
 
+    {catalog.loading && catalog.skins.length === 0 && <CatalogSkeleton label={t("Loading collection…")} />}
     <section aria-labelledby="wallet-title" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card px-4 py-2">
       <div className="flex items-center gap-2"><GameEmblem kind="coin" className="size-8" /><h2 id="wallet-title" className="text-xs text-muted-foreground">{t("My coins")}</h2>{user === undefined || userId && cosmetics.loading ? <p role="status" className="text-xs">{t("Loading balance…")}</p> : !userId ? <Link href="/login" data-analytics-link="/login" aria-label={t("Sign in to view your balance")} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2">{t("Log in")}</Link> : cosmetics.error || balance === undefined ? <div role="alert" className="flex flex-wrap items-center gap-2"><p className="text-xs text-destructive">{t("Could not load your cosmetics.")}</p><Button variant="outline" size="sm" onClick={() => void cosmetics.reload()}>{t("Try again")}</Button></div> : <p className="text-lg font-extrabold tabular-nums">{balance.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}</p>}</div>
       <div className="flex flex-wrap gap-2"><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/achievements" data-analytics-link="/achievements">{t("Achievements")}</Link></Button><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/shop" data-analytics-link="/shop">{t("Coin shop")}</Link></Button></div>

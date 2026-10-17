@@ -8,10 +8,12 @@ import { catalogAssetPlan, catalogTarget, uploadCatalogAssets, validateSeedSvg }
 
 test("asset plan validates every initial portrait and dry-run needs no credentials", async () => {
   const plan = await catalogAssetPlan();
-  assert.equal(plan.length, 14);
+  assert.equal(plan.length, 15);
   assert.equal(new Set(plan.map(asset => asset.path)).size, plan.length);
+  assert.ok(plan.some(asset => asset.path === "profile-icons/attendance-king-v2.svg"));
+  assert.ok(!plan.some(asset => asset.path === "profile-icons/attendance-king.svg"));
   for (const asset of plan) {
-    assert.match(asset.path, /^profile-icons\/[a-z][a-z-]+\.svg$/);
+    assert.match(asset.path, /^profile-icons\/[a-z][a-z0-9-]+\.svg$/);
     assert.equal(asset.sha256, createHash("sha256").update(asset.bytes).digest("hex"));
   }
   const output = execFileSync(process.execPath, ["--import", fileURLToPath(new URL("../node_modules/tsx/dist/loader.mjs", import.meta.url)), fileURLToPath(new URL("../scripts/seed-catalog-assets.ts", import.meta.url)), "--dry-run"], {

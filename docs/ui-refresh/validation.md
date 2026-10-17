@@ -1,5 +1,7 @@
 # 설정·게임 화면 최종 검증
 
+> UI 개편 당시 테스트·마이그레이션·제약 기록이다. 후속 검증은 [코드 점검](../code-audit-2026-10-16.md)·[기능 확장](../feature-expansion-2026-10-17.md), 현재 기능은 [README](../../README.md)를 따른다.
+
 2026-10-16, 로컬 게임 3001 / 관리자 3100 / 소켓 4000.
 
 - 전체 `pnpm typecheck`, `pnpm lint`, `pnpm test` 통과: socket/schema/UI설정/DB 테스트 73개 + 공통 locale 테스트 2개 = **75개**.

@@ -1,5 +1,7 @@
 # Browser QA — 2026-10-16 (Asia/Seoul)
 
+> 2026-10-16 관리자 QA 기록이다. 후속 기능과 검증 경로는 [관리자](admin.md)·[기능 확장](feature-expansion-2026-10-17.md)·[카탈로그](content-catalog.md)에 있다.
+
 Local public app: `http://localhost:3001`. Local admin app: `http://localhost:3100`. Chrome DevTools, separate disposable browser contexts. No real user session or account was changed.
 
 ## Design direction and public UI changes

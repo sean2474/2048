@@ -88,10 +88,11 @@ export function FriendPresenceProvider({ children }: { children: ReactNode }) {
     const reconnect = () => { if (document.visibilityState === "visible" && !socket.connected) socket.connect(); };
     window.addEventListener("online", reconnect);
     document.addEventListener("visibilitychange", reconnect);
+    const generation = request;
     return () => {
       active = false; clearTimeout(timeout); subscription.unsubscribe();
       socketRef.current = null;
-      request.current++;
+      generation.current++;
       window.removeEventListener("online", reconnect); document.removeEventListener("visibilitychange", reconnect);
       socket.removeAllListeners(); socket.disconnect();
     };

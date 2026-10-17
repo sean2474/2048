@@ -1,5 +1,7 @@
 # Skin rarities and competitive rank styling
 
+> 스킨 등급 도입 당시의 검증 기록이다. 현재 콘텐츠·가격·소유권은 [카탈로그](../content-catalog.md), 화면은 [꾸미기 가이드](../loadout-and-economy.md)를 따른다.
+
 Added six free skins alongside the three existing IDs: dotted/checkered rare tiles, meadow/tide epic themes, and cat/rabbit legendary characters. `NumberTile` is shared by catalog previews and playable `Tile`; numerical labels remain real text. Five-digit values scale to fit. X/hard block colors and semantics remain unchanged; X typography now also fits the minimum board size.
 
 Rarity filters reset only the skin page. Category-specific paging, equipped summary, persistence and ability preview behavior remain intact. The new skin allow-list migration was applied to the configured Supabase project, and its local filename matches remote version `20261015165552`. It changes no player data, balance or access policy.

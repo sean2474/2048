@@ -1,5 +1,7 @@
 # Public UI and admin browser QA
 
+> 2026-10-16 UI 작업의 검증 스냅샷이다. 아래 무료 장비·예정 능력·수동 공격과 테스트 수는 당시 상태다. 현재 [게임](../game-design.md)·[설정](../settings.md)·[꾸미기](../loadout-and-economy.md)를 따른다.
+
 Date: 2026-10-16. Local web `localhost:3001`, admin `localhost:3100`, socket `localhost:4000`. Chrome isolated contexts only; no user tabs or user accounts changed. This report records the verified UI revisions; newer settings and rule changes awaiting validation are listed at the end.
 
 ## Verified journeys

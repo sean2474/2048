@@ -4,9 +4,7 @@ import { rankMessages } from "./rank-messages";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { LOCALE_COOKIE, translate, type Values } from "ui/locale";
-import { createClient } from "@/lib/supabase/server";
-import { getUser } from "@/lib/supabase/account";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { getPreferences } from "@/lib/supabase/preferences";
 import { GUEST_SETTINGS_COOKIE, parseGuestSettings } from "@/lib/preferences";
 import { messages } from "./messages";
 import { gameMessages } from "./game-messages";
@@ -28,16 +26,8 @@ export const getI18n = cache(async () => {
   const detectedLocale = detectRequestLocale(requestHeaders.get("x-vercel-ip-country"), requestHeaders.get("accept-language"));
   const guestLocale = parseGuestSettings(guest, !guest && (legacyLocale === "ko" || legacyLocale === "en") ? legacyLocale : detectedLocale).locale;
   let locale = guestLocale;
-  if (isSupabaseConfigured()) {
-    try {
-      const client = await createClient();
-      const user = await getUser();
-      if (user && !user.is_anonymous) {
-        const { data } = await client.from("player_preferences").select("locale").eq("player_id", user.id).maybeSingle();
-        if (data?.locale === "ko" || data?.locale === "en") locale = data.locale;
-      }
-    } catch { /* Render with the guest locale while the client offers a retry. */ }
-  }
+  const preferences = await getPreferences();
+  if (preferences?.settings) locale = preferences.settings.locale;
   const dictionary = { ...messages, ...rankMessages, ...gameMessages, ...controlsMessages, ...tutorialMessages, ...settingsMessages, ...preferencesMessages, ...feedbackMessages, ...economyMessages, ...authMessages, ...achievementMessages, ...soloMessages, ...socialMessages };
   return { locale, guestLocale, messages: dictionary, t: (key: string, values?: Values) => translate(locale, dictionary, key, values) };
 });

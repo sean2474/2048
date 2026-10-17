@@ -1,5 +1,7 @@
 # Rank screen polish — 2026-10-16
 
+> 랭크 시각 개선 당시의 검증 기록이다. 현재 규칙은 [랭크 시즌](../ranked-seasons.md), 보상 아트는 [랭크 꾸미기](../rank-cosmetics.md)를 따른다.
+
 Six metallic shield emblems are shared by the leaderboard, player profile and match history. Following the user's revised direction, faces and playful ornaments were replaced by chevrons, a star, gems and a crown. The rank page uses a restrained slate/gold header, tier progression strip, actual top-three podium and responsive standings. Elo boundaries/query order and live-query behavior are unchanged. The schema infers its existing tier literal return types so the badge palette is checked exhaustively. One shared Button class restores visible keyboard outlines, discovered during rendered testing.
 
 Scope: `apps/web/src/components/widget/tier-badge.tsx`, leaderboard page/CSS, dashboard/history tier call sites, existing Korean dictionary, `packages/schema/ranking.ts` return type, shared Button focus style. No dependency/config/export or database migration needed. Existing unrelated workspace changes were preserved.

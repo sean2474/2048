@@ -1,2 +1,4 @@
-import { InvestigationList } from '@/components/investigation-list';
-export default function MatchesPage() { return <InvestigationList kind="matches" />; }
+import { InvestigationList } from "@/components/investigation-list";
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  return <InvestigationList kind="matches" search={await searchParams} />;
+}

@@ -24,7 +24,7 @@ Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루
 
 | 대상 | 필요한 값 |
 |---|---|
-| 게임 웹 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SOCKET_URL`, `NEXT_PUBLIC_ADMIN_URL`, `NEXT_PUBLIC_APP_ENV` |
+| 게임 웹 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SOCKET_URL`, `NEXT_PUBLIC_APP_ENV` |
 | 관리자 웹 | 해당 환경의 공개 Supabase URL·공개 키, 서버 전용 `ADMIN_SOCKET_URL` |
 | 소켓 | `APP_ENV`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `CORS_ORIGINS`, `PORT=4000`, `RESULT_OUTBOX_DIR=/data/results` |
 
@@ -48,8 +48,8 @@ Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루
 
 1. `pnpm test`, `pnpm typecheck`, `pnpm lint`와 변경에 해당하는 브라우저 검사를 통과시킨다.
 2. 대상 환경을 확인하고 필요한 DB 마이그레이션을 먼저 적용한다. DB 이력과 저장소 파일 목록을 비교한다.
-3. Vercel의 프로젝트·Root Directory·환경 변수·커밋을 확인하고 웹과 관리자를 배포한다. 새 결과 사유를 추가할 때는 기존·신규 사유를 모두 읽는 웹을 소켓보다 먼저 배포한다.
-4. Fly 앱의 리전, 머신 1개, 전용 볼륨, 환경별 secrets를 확인하고 소켓을 배포한다.
+3. 카탈로그를 처음 적용할 때 [초기 이미지 업로드](catalog-assets.md)를 완료한다. Fly 앱의 리전, 머신 1개, 전용 볼륨, 환경별 secrets를 확인하고 새 ID·프로토콜을 처리할 소켓을 먼저 배포한다.
+4. Vercel의 프로젝트·Root Directory·환경 변수·커밋을 확인하고 웹과 관리자를 배포한다. 새 결과 사유 등 클라이언트가 먼저 읽을 수 있어야 하는 변경은 예외로, 기존·신규 사유를 모두 읽는 호환 웹을 먼저 배포한 뒤 소켓을 바꾼다. 호환성을 확보하지 못하면 동시 기능 공개를 보류한다.
 5. staging 랭크 검사를 완료한 뒤 운영 페이지·연결·게스트 친구전을 확인한다. 자동 랭크 smoke는 staging 전용이다. 운영/테스트 주소와 실제 접속 DB가 일치해야 한다.
 
 저장소 루트에서 실행한다.
@@ -68,7 +68,9 @@ fly deploy --config fly.toml --depot=false --remote-only --ha=false
 
 ## 배포 검증
 
-### 2026-10-17 확인 결과
+### 2026-10-17 초기 배포 확인 기록
+
+아래 수치와 환경 상태는 당시 배포 스냅샷이다. 같은 날 추가된 구매·카탈로그나 이후 통합 커밋의 배포·검증 완료를 보증하지 않는다. 카탈로그의 별도 staging 검증은 [해당 기록](content-catalog.md)을 참고한다. 현재 대상은 실제 배포 커밋과 DB 이력으로 확인한다.
 
 | 항목 | 결과 |
 |---|---|
