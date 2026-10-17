@@ -2,16 +2,16 @@ export type SkinTokens = {
   boardBackground: string;
   emptyBackground: string;
   tileRadius: string;
-  tilePattern?: "dots" | "gingham" | "pinstripe" | "weave" | "runes" | "sunrise" | "magic-circle";
+  tilePattern?: "dots" | "gingham" | "pinstripe" | "weave" | "runes" | "sunrise" | "magic-circle" | "shield" | "crossguard" | "laurel" | "compass";
   tilePalette?: readonly string[];
-  character?: "cat" | "bunny" | "sentinel" | "runeknight" | "arcanist";
+  character?: "cat" | "bunny" | "sentinel" | "runeknight" | "arcanist" | "diamond" | "crown";
 };
 
 export const SKIN_RARITIES = {
   common: { name: "Common", description: "Board colors." },
   rare: { name: "Rare", description: "Tile patterns." },
   epic: { name: "Epic", description: "Board and tile themes." },
-  legendary: { name: "Legendary", description: "Character tiles." },
+  legendary: { name: "Legendary", description: "Signature tiles and merge effects." },
 } as const;
 export type SkinRarity = keyof typeof SKIN_RARITIES;
 export type Skin = { id: string; name: string; description: string; rarity: SkinRarity; price: 0; tokens: SkinTokens };
@@ -61,6 +61,18 @@ export const SKINS = [
     tokens: { boardBackground: "#cbc5b6", emptyBackground: "#e1dccf", tileRadius: "0.5rem", tilePattern: "sunrise" } },
   { id: "rune-sanctum", name: "Rune Sanctum", description: "Jade stone and engraved magic circles for a 1024 milestone.", rarity: "epic", price: 0,
     tokens: { boardBackground: "repeating-linear-gradient(90deg, transparent 0 23%, #b9d7ca12 23% 24%, transparent 24% 25%), radial-gradient(ellipse at top, #658a7f, #243e3d)", emptyBackground: "#52736a", tileRadius: "0.4rem", tilePattern: "magic-circle", tilePalette: ["#e7eee1", "#cddfcf", "#b4d8ca", "#b8d4da", "#cbcce1", "#e4d6aa"] } },
+  { id: "rank-bronze", name: "Bronze Bastion", description: "Copper shields and etched metal for Bronze rank.", rarity: "rare", price: 0,
+    tokens: { boardBackground: "linear-gradient(135deg, #a86e49, #5d3f32)", emptyBackground: "#bd9577", tileRadius: "0.3rem", tilePattern: "shield", tilePalette: ["#f3e4d1", "#ecd6bc", "#dfbf98", "#e7bd91", "#edc9ac", "#f0d3a4"] } },
+  { id: "rank-silver", name: "Silver Crossguard", description: "Crossed silver blades and engraved steel for Silver rank.", rarity: "rare", price: 0,
+    tokens: { boardBackground: "linear-gradient(145deg, #a4b1c0, #4b596b)", emptyBackground: "#bec9d4", tileRadius: "0.2rem", tilePattern: "crossguard", tilePalette: ["#edf1f4", "#dce5ed", "#cedde9", "#c1d0e3", "#d3d2e6", "#e1e4ed"] } },
+  { id: "rank-gold", name: "Golden Laurel", description: "Sunlit gold and laurel borders for Gold rank.", rarity: "epic", price: 0,
+    tokens: { boardBackground: "radial-gradient(ellipse at top, #c9a64b, #685229)", emptyBackground: "#bfaa6b", tileRadius: "0.65rem", tilePattern: "laurel", tilePalette: ["#faf0c8", "#f4e3aa", "#eed28d", "#f1cc82", "#f4d6a5", "#e9d99c"] } },
+  { id: "rank-platinum", name: "Platinum Compass", description: "Teal wings and compass markings for Platinum rank.", rarity: "epic", price: 0,
+    tokens: { boardBackground: "linear-gradient(150deg, #6bb2a7, #234d58)", emptyBackground: "#82b3b0", tileRadius: "0.4rem", tilePattern: "compass", tilePalette: ["#e7f2e8", "#cce8de", "#b3dcd6", "#acd2dd", "#c6d7e7", "#dfdfc7"] } },
+  { id: "rank-diamond", name: "Diamond Prism", description: "Faceted crystal tiles with a prismatic merge burst for Diamond rank.", rarity: "legendary", price: 0,
+    tokens: { boardBackground: "conic-gradient(from 30deg at 30% 25%, #365e89, #9abed2, #45648c, #526895, #365e89)", emptyBackground: "#94b7cd", tileRadius: "0.4rem", character: "diamond", tilePalette: ["#d7eaf5", "#c4e1f3", "#b9d8ee", "#c7d5ed", "#d8d4f1", "#e4dbef"] } },
+  { id: "rank-master", name: "Master Crown", description: "Violet and gold crown tiles with a regal merge crest for Master rank.", rarity: "legendary", price: 0,
+    tokens: { boardBackground: "radial-gradient(ellipse at top, #87719d, #392d54 75%)", emptyBackground: "#9b88ad", tileRadius: "0.5rem", character: "crown", tilePalette: ["#e8dcec", "#dccbec", "#d1c9eb", "#d9c4df", "#e6cdcd", "#eed9b0"] } },
 ] as const satisfies readonly Skin[];
 
 export type SkinId = (typeof SKINS)[number]["id"];

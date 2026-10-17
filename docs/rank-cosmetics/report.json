@@ -1,0 +1,65 @@
+{
+  "contract": "contract.md",
+  "targetViewports": [
+    "320x740",
+    "375x812",
+    "768x1024",
+    "1440x900"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Keyboard preview/equip, decorative SVG hidden, reduced motion hides flair; 210px board keeps five-digit values and X/hard blocks legible."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "No document overflow after layout settled across 320/375/768/1440 widths; decoded SVG assets."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Existing achievement and shop loading suites passed."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "New account sees locked tier sets and zero progress."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "Achievement read failure keeps tier items locked."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Platinum account owns four sets; Diamond/Master remain previewable."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Paired equipment persists through reload and appears in tutorial board."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Guest/forged ownership blocked; actual staging RPC and RLS tests passed."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "320x740",
+      "artifact": "collection-320.png",
+      "observation": "Paired rank cards with decoded icons, tier descriptions, readable text and no horizontal overflow."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "collection-375.png",
+      "observation": "Paired rank cards with decoded icons, tier descriptions, readable text and no horizontal overflow."
+    },
+    {
+      "viewport": "768x1024",
+      "artifact": "collection-768.png",
+      "observation": "Paired rank cards with decoded icons, tier descriptions, readable text and no horizontal overflow."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "collection-1440.png",
+      "observation": "Paired rank cards with decoded icons, tier descriptions, readable text and no horizontal overflow."
+    }
+  ]
+}

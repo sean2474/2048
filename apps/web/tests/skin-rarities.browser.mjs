@@ -25,12 +25,14 @@ test("rarity filters, persistence, paging and readable character tiles", async (
     await page.locator("#skin-results button:enabled").first().waitFor();
     assert.equal(await page.locator("#skin-results button").count(), 12);
     await page.getByRole("button", { name: "다음 페이지", exact: true }).click();
-    assert.equal(await page.locator("#skin-results button").count(), 10);
+    assert.equal(await page.locator("#skin-results button").count(), 12);
+    await page.getByRole("button", { name: "다음 페이지", exact: true }).click();
+    assert.equal(await page.locator("#skin-results button").count(), 4);
     assert.equal(await page.getByRole("button", { name: "다음 페이지", exact: true }).isDisabled(), true);
     const measurements = [];
     for (const [width, height] of [[1440, 900], [768, 1024], [375, 812]]) {
       await page.setViewportSize({ width, height });
-      for (const [rarity, name, count] of [["all", "전체", 12], ["common", "일반", 5], ["rare", "희귀", 6], ["epic", "에픽", 6], ["legendary", "레전더리", 5]]) {
+      for (const [rarity, name, count] of [["all", "전체", 12], ["common", "일반", 5], ["rare", "희귀", 8], ["epic", "에픽", 8], ["legendary", "레전더리", 7]]) {
         const filter = page.getByRole("group", { name: "스킨 등급 필터" }).getByRole("button", { name, exact: true });
         await filter.click();
         assert.equal(await filter.getAttribute("aria-pressed"), "true");
@@ -101,7 +103,7 @@ test("rarity filters, persistence, paging and readable character tiles", async (
         if (item.label.startsWith("Hard block")) { assert.equal(item.background, "rgb(44, 44, 44)"); assert.equal(item.characters, 0); }
         if (item.number && ["kitty", "bunny", "sentinel", "runeknight", "arcanist"].includes(item.skin)) { assert.equal(item.characters, 1); assert.equal(item.foreground, "rgb(73, 59, 64)"); }
       }
-      for (const skin of ["kitty", "bunny", "sentinel", "runeknight", "arcanist", "astral", "runes"]) await page.locator(`[data-skin="${skin}"]`).screenshot({ path: path.join(artifacts, `${skin}-board-${width}.png`), animations: "disabled" });
+      for (const skin of ["kitty", "bunny", "sentinel", "runeknight", "arcanist", "astral", "runes", "rank-bronze", "rank-silver", "rank-gold", "rank-platinum", "rank-diamond", "rank-master"]) await page.locator(`[data-skin="${skin}"]`).screenshot({ path: path.join(artifacts, `${skin}-board-${width}.png`), animations: "disabled" });
       tiles.push({ width, measurements });
     }
     fs.writeFileSync(path.join(artifacts, "measurements.json"), JSON.stringify({ measurements, tiles, errors }, null, 2));

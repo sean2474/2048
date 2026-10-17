@@ -5,7 +5,8 @@ import { useState } from "react";
 import { CalendarCheck, Check, LockKeyhole } from "lucide-react";
 import { ACHIEVEMENTS } from "schema/economy";
 import { ACHIEVEMENT_REWARDS } from "schema/achievements";
-import { SKINS } from "schema/loadout";
+import { TIERS } from "schema/ranking";
+import { SKINS, SKIN_RARITIES } from "schema/loadout";
 import { PROFILE_ICONS } from "schema/profile-icons";
 import { useI18n } from "ui/i18n";
 import { Button } from "@/components/ui/button";
@@ -54,15 +55,15 @@ export default function AchievementsPage() {
       <div><h2 id="rewards-title" className="font-bold">{t("Achievement exclusives")}</h2><p className="mt-1 text-xs leading-5 text-muted-foreground">{t("Play casual or ranked against another account. Friend matches and guest play do not count.")}</p></div>
       <ul id="achievement-rewards" className="grid gap-3 sm:grid-cols-2">{ACHIEVEMENT_REWARDS.map(item => {
         const unlocked = data?.unlocks.some(unlock => unlock.achievementId === item.id) ?? false;
-        const value = data ? item.metric === "attendance_streak" ? data.attendance.streak : item.metric === "wins" ? data.wins : data.highestTile : undefined;
+        const value = data ? item.metric === "attendance_streak" ? data.attendance.streak : item.metric === "wins" ? data.wins : item.metric === "rank_tier" ? data.highestRank ?? 0 : data.highestTile : undefined;
         const progress = unlocked ? item.target : Math.min(value ?? 0, item.target);
         const reward = item.reward;
-        const rewardSkin = reward.kind === "skin" ? SKINS.find(skin => skin.id === reward.skinId) : undefined;
-        const rewardIcon = reward.kind === "icon" ? PROFILE_ICONS.find(icon => icon.id === reward.iconId) : undefined;
+        const rewardSkin = reward.kind !== "icon" ? SKINS.find(skin => skin.id === reward.skinId) : undefined;
+        const rewardIcon = reward.kind !== "skin" ? PROFILE_ICONS.find(icon => icon.id === reward.iconId) : undefined;
         return <li key={item.id} id={item.id} className={`flex scroll-mt-6 flex-col rounded-xl border bg-card p-5 ${unlocked ? "border-primary/30" : ""}`}>
-          <div className="flex items-center gap-4"><div className="flex size-20 shrink-0 items-center justify-center">{rewardSkin ? <SkinPreview skin={rewardSkin} /> : rewardIcon ? <ProfileIcon iconId={rewardIcon.id} className="size-20" /> : null}</div><div className="min-w-0"><p className="text-[11px] text-muted-foreground">{t(rewardSkin ? "Exclusive board" : "Exclusive profile")}</p><h3 className="mt-1 text-lg font-bold">{t(rewardSkin?.name ?? rewardIcon?.name ?? item.name)}</h3>{reward.kind === "skin" && <p className="mt-1 text-xs text-muted-foreground">{t(item.name)}</p>}</div></div>
+          <div className="flex items-center gap-4"><div className="relative flex size-20 shrink-0 items-center justify-center">{rewardSkin && <SkinPreview skin={rewardSkin} />}{rewardIcon && <ProfileIcon iconId={rewardIcon.id} className={rewardSkin ? "absolute -bottom-1 -right-2 size-10 rounded-xl bg-card ring-2 ring-card" : "size-20"} />}</div><div className="min-w-0"><p className="text-[11px] text-muted-foreground">{t(reward.kind === "set" ? "Rank board + profile" : rewardSkin ? "Exclusive board" : "Exclusive profile")}</p><h3 className="mt-1 text-lg font-bold">{t(rewardSkin?.name ?? rewardIcon?.name ?? item.name)}</h3>{reward.kind === "set" && rewardSkin && <p className="mt-1 text-xs font-semibold text-primary">{t(SKIN_RARITIES[rewardSkin.rarity].name)}</p>}{reward.kind === "skin" && <p className="mt-1 text-xs text-muted-foreground">{t(item.name)}</p>}</div></div>
           <p className="mb-4 mt-5 text-sm">{t(item.description)}</p>
-          <div className="mt-auto">{data && !error && <><div className="mb-2 flex items-center justify-between gap-2 text-xs"><span className={`flex items-center gap-1.5 ${unlocked ? "font-semibold text-primary" : "text-muted-foreground"}`}>{unlocked ? <Check aria-hidden="true" className="size-3.5" /> : <LockKeyhole aria-hidden="true" className="size-3.5" />}{t(unlocked ? "Permanently unlocked" : "In progress")}</span><span className="tabular-nums text-muted-foreground">{progress} / {item.target}</span></div><progress aria-label={t(item.name)} max={item.target} value={progress} className="block h-1.5 w-full overflow-hidden rounded-full appearance-none [&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary" /></>}
+          <div className="mt-auto">{data && !error && <><div className="mb-2 flex items-center justify-between gap-2 text-xs"><span className={`flex items-center gap-1.5 ${unlocked ? "font-semibold text-primary" : "text-muted-foreground"}`}>{unlocked ? <Check aria-hidden="true" className="size-3.5" /> : <LockKeyhole aria-hidden="true" className="size-3.5" />}{t(unlocked ? "Permanently unlocked" : "In progress")}</span><span className="tabular-nums text-muted-foreground">{item.metric === "rank_tier" ? t(value ? TIERS[Math.min(value, TIERS.length) - 1] : "Placement") : `${progress} / ${item.target}`}</span></div><progress aria-label={t(item.name)} max={item.target} value={progress} className="block h-1.5 w-full overflow-hidden rounded-full appearance-none [&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary" /></>}
           <Button asChild variant="ghost" className="mt-3 w-full text-xs"><Link href={guest ? "/login" : "/loadout"}>{t(guest ? "Log in" : unlocked ? "My loadout" : "Preview in loadout")}</Link></Button></div>
         </li>;
       })}</ul>

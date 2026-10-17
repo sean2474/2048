@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs><linearGradient id="bg" x1="28" y1="8" x2="139" y2="154" gradientUnits="userSpaceOnUse"><stop stop-color="#fff0bf"/><stop offset="1" stop-color="#cba24e"/></linearGradient></defs>
+  <circle cx="80" cy="80" r="80" fill="url(#bg)"/>
+  <circle cx="80" cy="75" r="55" fill="#fae7a6" opacity=".6"/>
+  <path d="M65 137Q18 115 25 64m70 73q47-22 40-73" stroke="#795c30" stroke-width="4" stroke-linecap="round"/>
+  <g fill="#b28a37" stroke="#795c30" stroke-width="2.5" stroke-linejoin="round"><path d="M25 82Q9 72 16 56q17 7 9 26Zm4 20Q9 97 11 81q20 1 18 21Zm11 18q-21 2-26-14 19-6 26 14Zm17 13q-21 9-30-6 15-12 30 6Zm78-51q16-10 9-26-17 7-9 26Zm-4 20q20-5 18-21-20 1-18 21Zm-11 18q21 2 26-14-19-6-26 14Zm-17 13q21 9 30-6-15-12-30 6Z"/></g>
+  <path d="m80 16 8 18 18-9-1 20 20 1-10 17 17 10-17 9 9 19-20-1-2 21-17-11-11 18-8-19-18 9 1-21-20-1 10-17-17-10 18-9-10-19 21 1 1-21 17 11Z" fill="#e9bb53" stroke="#88652c" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="80" cy="73" r="31" fill="#fff0b9" stroke="#88652c" stroke-width="4"/>
+  <path d="m80 48 9 17 17 8-17 8-9 17-9-17-17-8 17-8Z" fill="#ca913b" stroke="#9b702e" stroke-width="2" stroke-linejoin="round"/>
+  <path d="m80 55 6 13 13 5-13 6-6 12Z" fill="#f7d77d"/>
+  <path d="m73 142 7-5 7 5" stroke="#795c30" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

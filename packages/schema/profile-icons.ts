@@ -7,6 +7,12 @@ export const PROFILE_ICONS = [
   { id: "robot", name: "Tile Bot", color: "#548da7" },
   { id: "attendance-king", name: "Attendance King", color: "#b68a43" },
   { id: "victory-vanguard", name: "Victory Vanguard", color: "#4c7e78" },
+  { id: "rank-bronze", name: "Bronze Bastion", color: "#a76e49" },
+  { id: "rank-silver", name: "Silver Crossguard", color: "#7e94af" },
+  { id: "rank-gold", name: "Golden Laurel", color: "#b8953e" },
+  { id: "rank-platinum", name: "Platinum Compass", color: "#4b968e" },
+  { id: "rank-diamond", name: "Diamond Prism", color: "#689ec3" },
+  { id: "rank-master", name: "Master Crown", color: "#8b69a7" },
 ] as const;
 
 export type ProfileIconId = (typeof PROFILE_ICONS)[number]["id"];
