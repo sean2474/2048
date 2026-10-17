@@ -40,7 +40,5 @@ export const CatalogAchievementSchema = AchievementInputSchema.innerType().exten
 export const CatalogSchema = z.object({ skins: z.array(CatalogSkinSchema), profileIcons: z.array(CatalogProfileIconSchema), achievements: z.array(CatalogAchievementSchema) });
 export type CosmeticInput = z.infer<typeof CosmeticInputSchema>;
 export type AchievementInput = z.infer<typeof AchievementInputSchema>;
-export type CatalogSkin = z.infer<typeof CatalogSkinSchema>;
-export type CatalogProfileIcon = z.infer<typeof CatalogProfileIconSchema>;
 export type CatalogAchievement = z.infer<typeof CatalogAchievementSchema>;
 export type ContentCatalog = z.infer<typeof CatalogSchema>;

@@ -69,6 +69,10 @@ test("preferences validate complete cookies, reject unknown values and map only 
     assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(value))), DEFAULT_SETTINGS);
   }
   for (const raw of [undefined, "%broken", "bad-json"]) assert.deepEqual(parseGuestSettings(raw), DEFAULT_SETTINGS);
+  for (const keybindings of [null, [], {}, { ...settings.keybindings, up: "ArrowUp" }, { ...settings.keybindings, up: settings.keybindings.down }, { ...settings.keybindings, down: "Enter" }, { ...settings.keybindings, extra: "KeyZ" }]) {
+    assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify({ ...settings, keybindings }))), DEFAULT_SETTINGS);
+    assert.throws(() => settingsFromRow({ ...settingsToRow(settings), keybindings }), /Invalid saved settings/);
+  }
 });
 
 test("new catalog IDs survive account settings without a client release", () => {

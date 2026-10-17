@@ -7,10 +7,9 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   name: string;
   type: string;
-  bgColor?: string;
 }
 
-export const Input = ({ label, className, children, bgColor, ...props }: InputProps) => {
+export const Input = ({ label, className, children, ...props }: InputProps) => {
   const { t } = useI18n();
   return (
     <div className={`relative grid gap-2 ${className || ""}`}>
@@ -19,7 +18,6 @@ export const Input = ({ label, className, children, bgColor, ...props }: InputPr
         {...props}
         id={props.id ?? props.name}
         className={`h-12 w-full rounded-xl border bg-background/40 px-4 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 ${children ? "pr-14" : ""}`}
-        style={{ ...props.style, ...(bgColor ? { backgroundColor: bgColor } : {}) }}
       />
       {children}
     </div>
