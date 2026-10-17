@@ -6,6 +6,7 @@ import { getAdminAccess } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { AdminNav } from "@/components/admin-nav";
 import { SignOut } from "@/components/sign-out";
+import { SidebarDrawer } from "@/components/sidebar-drawer";
 import { Button } from "ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
@@ -23,17 +24,27 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
     <p role="alert" className="text-sm leading-6 text-muted-foreground">{t(error ? "Please try again shortly." : "This account does not have access to game administration.")}</p>
     <div className="flex items-center gap-4"><Button asChild variant="outline"><Link href="/">{t("Try again")}</Link></Button><SignOut /></div>
   </div></main>;
+  const brand = <Link href="/" className="flex min-h-11 items-center gap-3"><span className="grid size-11 place-items-center rounded-xl bg-primary text-xs font-bold tracking-tight text-primary-foreground shadow-sm">2048</span><span><span className="block text-lg font-bold tracking-tight">duo</span><span className="admin-eyebrow text-[9px]">{t("Administration")}</span></span></Link>;
+  const account = <div className="flex min-w-0 items-center gap-3"><span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground">{user.email?.slice(0, 1).toUpperCase() || "A"}</span><div className="min-w-0"><p className="truncate text-xs font-semibold" title={user.email}>{user.email}</p><p className="mt-1 text-[10px] text-muted-foreground">{t("Administrator")}</p></div></div>;
   return <div className="min-h-screen md:grid md:grid-cols-[224px_minmax(0,1fr)]">
-    <aside className="border-b bg-card p-4 md:sticky md:top-0 md:flex md:h-screen md:flex-col md:border-b-0 md:border-r md:p-6">
-      <Link href="/" className="mb-4 flex min-h-11 items-center gap-3 md:mb-10"><span className="grid size-11 place-items-center rounded-xl bg-primary text-xs font-bold tracking-tight text-primary-foreground shadow-sm">2048</span><span><span className="block text-lg font-bold tracking-tight">duo</span><span className="admin-eyebrow text-[9px]">{t("Administration")}</span></span></Link>
-      <p className="admin-eyebrow mb-3 hidden px-4 md:block">{t("Workspace")}</p>
+    {/* Phones: compact bar with a drawer; md and up: the sidebar column. */}
+    <div className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b bg-card/95 px-4 py-2 backdrop-blur md:hidden">
+      {brand}
+      <SidebarDrawer>
+        <AdminNav />
+        <div className="mt-6 space-y-4 border-t pt-6">{account}<LanguageSwitcher /><SignOut /></div>
+      </SidebarDrawer>
+    </div>
+    <aside className="hidden bg-card p-6 md:sticky md:top-0 md:flex md:h-screen md:flex-col md:border-r">
+      <div className="mb-10">{brand}</div>
+      <p className="admin-eyebrow mb-3 px-4">{t("Workspace")}</p>
       <AdminNav />
-      <div className="mt-auto hidden border-t pt-6 md:block"><p className="text-xs font-semibold">{t("Game operations")}</p><p className="mt-2 text-xs leading-5 text-muted-foreground">{t("Balance insights and player administration.")}</p></div>
+      <div className="mt-auto border-t pt-6"><p className="text-xs font-semibold">{t("Game operations")}</p><p className="mt-2 text-xs leading-5 text-muted-foreground">{t("Balance insights and player administration.")}</p></div>
     </aside>
     <div className="min-w-0">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b bg-card/80 px-4 py-4 sm:px-8">
+      <header className="hidden flex-wrap items-center justify-between gap-4 border-b bg-card/80 px-4 py-4 sm:px-8 md:flex">
         <p className="admin-eyebrow hidden lg:block">{t("2048 Duo / Operations")}</p>
-        <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-3 sm:gap-4"><span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground">{user.email?.slice(0, 1).toUpperCase() || "A"}</span><div className="min-w-0"><p className="max-w-40 truncate text-xs font-semibold sm:max-w-xs" title={user.email}>{user.email}</p><p className="mt-1 text-[10px] text-muted-foreground">{t("Administrator")}</p></div><LanguageSwitcher /><SignOut /></div>
+        <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-3 sm:gap-4">{account}<LanguageSwitcher /><SignOut /></div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6 sm:p-8 lg:p-10">{children}</main>
     </div>

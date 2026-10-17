@@ -277,6 +277,8 @@ export const messages: Record<string, string> = {
   "Slowdown": "감속",
   "Anchor": "알박기",
   "32 Swap": "32 자리 바꾸기",
+  "Open menu": "메뉴 열기",
+  "Close menu": "메뉴 닫기",
   "Set up two-factor authentication": "2단계 인증 설정",
   "Two-factor verification": "2단계 인증",
   "Two-factor verification required": "2단계 인증이 필요합니다",

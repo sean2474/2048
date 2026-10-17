@@ -60,6 +60,10 @@
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   h1, h2, h3 { text-wrap: balance; }
+  p, li, dd { text-wrap: pretty; }
+  /* Every route renders one <main>; it settles in from 8px below so navigation reads as a change of place. */
+  main { animation: page-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @keyframes page-enter { from { opacity: 0; transform: translateY(8px); } }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
   :focus-visible { outline: 3px solid var(--ring); outline-offset: 4px; }
   button:not(:disabled), [role="button"]:not([aria-disabled="true"]), select { cursor: pointer; }

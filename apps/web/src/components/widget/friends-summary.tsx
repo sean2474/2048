@@ -17,7 +17,7 @@ export function FriendsSummary({ userId }: { userId: string | null | undefined }
     if (!userId) return [];
     const { data, error } = await client.rpc("social_players");
     if (error) throw error;
-    return data as SocialPlayer[];
+    return (data ?? []) as SocialPlayer[];
   }, [userId]);
   const contacts = useLiveQuery({ table: ["friendships", "direct_messages"], enabled: !!userId, load });
   const friends = contacts.data.filter(person => person.relationship === "friend");

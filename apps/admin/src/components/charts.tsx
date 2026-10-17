@@ -42,7 +42,7 @@ export function BarList({ rows, locale, color = SERIES_COLORS[0] }: { rows: { la
   const maximum = Math.max(1, ...rows.map(row => row.count));
   return <ul className="max-h-80 space-y-4 overflow-y-auto">{rows.map(row => <li key={row.label} className="text-xs">
     <div className="flex justify-between gap-4"><span className="text-muted-foreground">{row.label}</span><span className="font-semibold tabular-nums">{row.count.toLocaleString(locale)}</span></div>
-    <div aria-hidden="true" className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-1.5 rounded-full" style={{ width: `${row.count / maximum * 100}%`, backgroundColor: color }} /></div>
+    <div aria-hidden="true" className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted"><div className="admin-bar h-1.5 rounded-full" style={{ width: `${row.count / maximum * 100}%`, backgroundColor: color }} /></div>
   </li>)}</ul>;
 }
 
@@ -57,7 +57,7 @@ export function RateBars({ rows, locale, sampleLabel, lowSampleLabel, emptyLabel
       <div className="flex min-w-0 items-center gap-2"><span aria-hidden="true" className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: row.color }} /><span className="truncate font-semibold">{row.label}</span>{row.detail && <span className="truncate text-muted-foreground">{row.detail}</span>}</div>
       <div className="relative h-3 overflow-hidden rounded-full bg-muted" aria-hidden="true">
         <div className="absolute inset-y-0 left-1/2 w-px border-l border-dashed border-foreground/40" />
-        {rate !== null && <div className="h-3 rounded-full" style={{ width: `${rate * 100}%`, backgroundColor: row.color, opacity: thin ? 0.45 : 1 }} />}
+        {rate !== null && <div className="admin-bar h-3 rounded-full" style={{ width: `${rate * 100}%`, backgroundColor: row.color, opacity: thin ? 0.45 : 1 }} />}
       </div>
       <div className="tabular-nums sm:text-right">{rate === null ? <span className="text-muted-foreground">{emptyLabel}</span> : <><strong>{Math.round(rate * 100).toLocaleString(locale)}%</strong><span className="ml-2 text-muted-foreground">{sampleLabel(row.samples.toLocaleString(locale))}</span>{thin && <span className="ml-2 text-muted-foreground">· {lowSampleLabel}</span>}</>}</div>
     </li>;
