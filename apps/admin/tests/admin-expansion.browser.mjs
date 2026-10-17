@@ -66,17 +66,18 @@ test('admin P0 browser journey, URL filters, KST, failures, mobile and protected
  const session={access_token:jwt,refresh_token:'fixture',expires_at:expires,expires_in:3600,token_type:'bearer',user};
  await context.addCookies([{name:'sb-2048-admin-auth',value:`base64-${Buffer.from(JSON.stringify(session)).toString('base64url')}`,url:origin},{name:'duo.locale',value:'en',url:origin}]);
  const evidence=join(ROOT,'docs/admin-p0');await mkdir(evidence,{recursive:true});
- const page=await context.newPage();const pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message)); page.on('console',m=>{if(m.type()==='error')logs+='\nBrowser: '+m.text();});
+ const page=await context.newPage();page.setDefaultTimeout(10000);const pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message)); page.on('console',m=>{if(m.type()==='error')logs+='\nBrowser: '+m.text();});
  await page.goto(`${origin}/matches?mode=legacy`);try { await page.getByRole('link',{name:MATCH,exact:true}).waitFor({timeout:10000}); } catch { throw Error((await page.locator('body').innerText())+'\n'+JSON.stringify(state.calls)+'\n'+logs.slice(-5000)); }
  assert.match(await page.locator('tbody').innerText(),/KST/);assert.match(await page.locator('tbody').innerText(),/10\/17\/2026/);
  await page.getByRole('link',{name:'Next',exact:true}).click();await page.waitForURL(/before=/);await page.getByRole('link',{name:MATCH,exact:true}).waitFor();
  const listURL=page.url();
  await page.getByLabel('Player UUID',{exact:true}).fill(PLAYER);
  const previousCalls=state.calls.filter(c=>c.name==='admin_matches').length;
- await Promise.all([
+ const [refreshed]=await Promise.all([
   page.waitForResponse(response=>response.url().includes('/matches?')&&response.request().headers()['rsc']==='1'),
   page.getByRole('button',{name:'Refresh',exact:true}).click(),
  ]);
+ await refreshed.finished();
  assert.equal(page.url(),listURL,'refresh preserves the current cursor and does not submit edited filters');
  assert.ok(state.calls.filter(c=>c.name==='admin_matches').length>previousCalls);
  assert.equal(state.calls.filter(c=>c.name==='admin_matches').at(-1).args.p_player_id,null,'refresh retains the active filter');

@@ -2,11 +2,21 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { mkdir } from 'node:fs/promises';
-import { startServerFixture } from './server-fixture.mjs';
+import { fixturePlayer, startServerFixture } from './server-fixture.mjs';
 const { chromium } = createRequire(import.meta.url)('playwright');
 
 test('server route content and client controls stay functional after hydration', { timeout: 120000 }, async t => {
-  const app = await startServerFixture(); t.after(() => app.close());
+  const friendId = '20000000-0000-4000-8000-000000000099';
+  const messages = [];
+  const app = await startServerFixture({ handle: async (url, request) => {
+    if (url.pathname.endsWith('/rpc/social_players')) return { data: [{ id: friendId, name: 'Fixture Friend', icon_id: 'orb', relationship: 'friend', unread: 0 }] };
+    if (url.pathname.endsWith('/rpc/social_messages')) return { data: [...messages].reverse() };
+    if (url.pathname.endsWith('/rpc/send_direct_message')) {
+      let body = ''; for await (const chunk of request) body += chunk;
+      messages.push({ id: messages.length + 1, sender_id: fixturePlayer, body: JSON.parse(body).p_body, created_at: new Date().toISOString() });
+      return { data: null };
+    }
+  } }); t.after(() => app.close());
   const browser = await chromium.launch({ channel: 'chrome', headless: true }); t.after(() => browser.close());
   const guest = await browser.newContext({ locale: 'en-US', viewport: { width: 375, height: 812 } });
   await guest.addCookies([{ name: 'duo.locale', value: 'en', url: app.origin }]);
@@ -62,6 +72,18 @@ test('server route content and client controls stay functional after hydration',
   const authenticated = await account.newPage();
   authenticated.setDefaultTimeout(10000);
   authenticated.on('pageerror', error => errors.push(error.message));
+  await authenticated.goto(app.origin + '/friends');
+  await authenticated.getByRole('button', { name: 'Message Fixture Friend', exact: true }).click();
+  await authenticated.getByRole('heading', { name: 'Messages with Fixture Friend', exact: true }).waitFor();
+  await authenticated.getByRole('textbox', { name: 'Message', exact: true }).fill('A persisted fixture message');
+  await authenticated.getByRole('button', { name: 'Send message', exact: true }).click();
+  await authenticated.getByText('A persisted fixture message', { exact: true }).waitFor();
+  assert.equal(messages.length, 1);
+  await authenticated.goto(app.origin + `/watch/${friendId}`);
+  await authenticated.getByRole('alert').filter({ hasText: 'Could not connect to spectating. Please try again.' }).waitFor();
+  assert.equal(await authenticated.getByRole('main').getByRole('link', { name: 'Login', exact: true }).count(), 0, 'a verified account mounts the spectator instead of the guest gate');
+  await authenticated.getByRole('button', { name: 'Try again', exact: true }).click();
+  await authenticated.getByRole('alert').filter({ hasText: 'Could not connect to spectating. Please try again.' }).waitFor();
   const before = app.requests.length;
   response = await authenticated.goto(app.origin + '/settings');
   assert.match(await response.text(), /Fixture Challenger/);
