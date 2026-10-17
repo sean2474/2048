@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
-import { mockAccount } from "./browser-fixtures.mjs";
+import { authCookieName, mockAccount } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = "http://[::1]:3001";
@@ -16,10 +16,10 @@ const recoveryUserId = "10000000-0000-4000-8000-000000000099";
 const otherUserId = "10000000-0000-4000-8000-000000000088";
 
 function mainUser(page) {
-  return page.evaluate(() => {
-    const value = document.cookie.split("; ").find(cookie => cookie.startsWith("sb-rbfujqjvkfdgaofztrdq-auth-token="))?.split("=")[1];
+  return page.evaluate(name => {
+    const value = document.cookie.split("; ").find(cookie => cookie.startsWith(`${name}=`))?.split("=")[1];
     return value ? JSON.parse(atob(value.slice(7).replace(/-/g, "+").replace(/_/g, "/"))).user.id : null;
-  });
+  }, authCookieName);
 }
 
 async function fixture(browser, options = {}) {
@@ -66,7 +66,7 @@ async function fixture(browser, options = {}) {
       const otherId = "10000000-0000-4000-8000-000000000088", expires = Math.floor(Date.now() / 1000) + 3600;
       const otherToken = `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url")}.${Buffer.from(JSON.stringify({ sub: otherId, exp: expires, role: "authenticated" })).toString("base64url")}.fixture`;
       const other = { access_token: otherToken, refresh_token: "fixture-other-account", expires_at: expires, expires_in: 3600, token_type: "bearer", user: { ...user, id: otherId } };
-      await page.evaluate(value => { document.cookie = `sb-rbfujqjvkfdgaofztrdq-auth-token=base64-${value}; Path=/; SameSite=Lax`; }, Buffer.from(JSON.stringify(other)).toString("base64url"));
+      await page.evaluate(({ name, value }) => { document.cookie = `${name}=base64-${value}; Path=/; SameSite=Lax`; }, { name: authCookieName, value: Buffer.from(JSON.stringify(other)).toString("base64url") });
       return route.fulfill({ json: user });
     }
     if (url.pathname.endsWith("/user") && options.userId) return route.fulfill({ json: { ...user, id: options.userId } });
@@ -319,15 +319,15 @@ test("a main account change during recovery logout is preserved without any loca
     await page.goto(`${origin}/reset-password?recovery_code=fixture-code`);
     await page.getByLabel("New password", { exact: true }).fill("replacement-password");
     await page.getByLabel("Confirm password", { exact: true }).fill("replacement-password");
-    options.onLogout = () => page.evaluate(otherId => {
-      const cookie = document.cookie.split("; ").find(value => value.startsWith("sb-rbfujqjvkfdgaofztrdq-auth-token="));
+    options.onLogout = () => page.evaluate(({ name, otherId }) => {
+      const cookie = document.cookie.split("; ").find(value => value.startsWith(`${name}=`));
       const session = JSON.parse(atob(cookie.split("=")[1].slice(7).replace(/-/g, "+").replace(/_/g, "/")));
       const payload = JSON.parse(atob(session.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
       payload.sub = otherId; session.user.id = otherId;
       const encode = value => btoa(JSON.stringify(value)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
       session.access_token = `${session.access_token.split(".")[0]}.${encode(payload)}.fixture`;
-      document.cookie = `sb-rbfujqjvkfdgaofztrdq-auth-token=base64-${encode(session)}; Path=/; SameSite=Lax`;
-    }, otherUserId);
+      document.cookie = `${name}=base64-${encode(session)}; Path=/; SameSite=Lax`;
+    }, { name: authCookieName, otherId: otherUserId });
     await page.getByRole("button", { name: "Save new password" }).click();
     await page.getByRole("status").filter({ hasText: "Your password has been updated. Log in with your new password." }).waitFor();
     assert.equal(await mainUser(page), otherUserId);

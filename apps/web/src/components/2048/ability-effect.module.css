@@ -1,0 +1,66 @@
+.effect {
+  --effect-color: #63b994;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: inset 0 0 0 3px var(--effect-color), inset 0 0 32px -12px var(--effect-color);
+  animation: settle 2200ms ease-out both;
+}
+
+.halo, .trail, .mark { position: absolute; inset: 25%; display: grid; place-items: center; }
+.halo, .trail { border: 3px solid var(--effect-color); border-radius: 50%; }
+.halo { animation: burst 1000ms ease-out both; }
+.trail { animation: burst 1000ms 120ms ease-out both; }
+.mark { animation: mark 1100ms ease-out both; }
+.icon { width: clamp(44px, 18vw, 80px); height: auto; filter: drop-shadow(0 3px 8px #0004); }
+
+.effect[data-ability-effect="spawn-pause"] { --effect-color: #d69a31; }
+.effect[data-ability-effect="spawn-pause"] .halo { border-radius: 20%; animation-name: pause-ring; }
+.effect[data-ability-effect="spawn-pause"] .trail { border-radius: 20%; animation-name: pause-ring; animation-delay: 160ms; }
+.effect[data-ability-effect="frost-wave"] { --effect-color: #54a9d1; }
+.effect[data-ability-effect="frost-wave"] .halo { inset: -30%; border: 0; border-radius: 0; background: linear-gradient(115deg, transparent 35%, #b8ecff70 50%, transparent 65%); animation: frost-wave 1100ms ease-out both; }
+.effect[data-ability-effect="frost-wave"] .trail { border-style: dashed; }
+.effect[data-ability-effect="anchor-tile"] { --effect-color: #d79553; }
+.effect[data-ability-effect="anchor-tile"] .halo { border-radius: 12%; animation-name: anchor-lock; }
+.effect[data-ability-effect="anchor-tile"] .trail { border-radius: 12%; animation-name: anchor-lock; animation-delay: 140ms; }
+.effect[data-ability-effect="anchor-tile"] .mark { animation-name: anchor-mark; }
+.effect[data-ability-effect="swap-32"] { --effect-color: #ad8ee5; }
+.effect[data-ability-effect="swap-32"] .halo, .effect[data-ability-effect="swap-32"] .trail { border-left-color: transparent; border-right-color: transparent; animation: swap-arcs 1100ms ease-out both; }
+.effect[data-ability-effect="swap-32"] .trail { inset: 18%; animation-direction: reverse; }
+
+.notice {
+  position: absolute;
+  bottom: 12px;
+  left: 8px;
+  right: 8px;
+  z-index: 51;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: calc(100% - 16px);
+  border-radius: 8px;
+  background: #17232ff0;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  pointer-events: none;
+}
+.visible { padding: 6px 10px; }
+
+@keyframes settle { 0%, 65% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes burst { from { opacity: .85; transform: scale(.5); } to { opacity: 0; transform: scale(2); } }
+@keyframes mark { 0% { opacity: 0; transform: scale(.8); } 25%, 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.15); } }
+@keyframes pause-ring { from { opacity: .8; transform: scale(.8) rotate(-15deg); } to { opacity: 0; transform: scale(1.7) rotate(15deg); } }
+@keyframes frost-wave { from { transform: translateX(-50%); opacity: 0; } 25% { opacity: 1; } to { transform: translateX(50%); opacity: 0; } }
+@keyframes anchor-lock { from { opacity: 0; transform: scale(1.5); } 35%, 70% { opacity: .85; transform: scale(1); } to { opacity: 0; transform: scale(1); } }
+@keyframes anchor-mark { from { opacity: 0; transform: translateY(-20%); } 35%, 70% { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(0); } }
+@keyframes swap-arcs { from { opacity: .8; transform: rotate(-70deg); } to { opacity: 0; transform: rotate(110deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .effect, .effect * { animation: none !important; transform: none !important; }
+  .halo, .trail, .mark { display: none; }
+}

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { GameEmblem } from "@/components/widget/game-emblem";
 import { AbilityIcon } from "@/components/widget/ability-icon";
 import { DEFAULT_ABILITY_ID } from "schema/loadout";
-import { useEffect, useReducer, useRef, type KeyboardEvent } from "react";
+import { ABILITY_CHARGE } from "schema/in-game";
+import { useEffect, useReducer, useRef } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, FastForward, RotateCcw } from "lucide-react";
 import { useI18n } from "ui/i18n";
 import { GameArena } from "@/components/2048/game-arena";
@@ -15,7 +16,8 @@ import { useSettings } from "@/hooks/settings-provider";
 import { SoundToggle } from "@/components/widget/audio-controls";
 import { useAudio } from "@/hooks/audio-provider";
 import { playerSound } from "@/lib/game-audio";
-import { keyLabel, resolveKeyAction } from "@/lib/keybindings";
+import { keyLabel } from "@/lib/keybindings";
+import { useGameKeyboard } from "@/hooks/use-game-keyboard";
 import { createLesson, tutorialReducer } from "@/lib/tutorial";
 import "@/styles/match-screen.css";
 import "@/styles/tutorial.css";
@@ -62,25 +64,24 @@ export default function TutorialPage() {
     if (lesson.complete) (lesson.step === 5 ? findMatchLink.current : nextStepButton.current)?.focus({ preventScroll: true });
   }, [lesson.complete, lesson.step]);
 
-  function onKeyDown(event: KeyboardEvent<HTMLElement>) {
-    if (event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog], [role=menu]")) return;
-    const action = resolveKeyAction(event.nativeEvent, bindings, characterShortcuts);
-    if (action === "ability") {
-      if (lesson.step === 5 && !lesson.complete) { event.preventDefault(); dispatch({ type: "ability" }); }
-    } else if ((action === "xblock" || action === "hardblock") && canAttack) {
-      event.preventDefault(); dispatch({ type: "attack", blockType: action });
-    } else if (action && action !== "xblock" && action !== "hardblock" && canMove) {
-      event.preventDefault(); dispatch({ type: "move", dir: action });
-    }
-  }
+  useGameKeyboard({
+    enabled: !lesson.complete, bindings, characterShortcuts, target: controls,
+    onAction: action => {
+      if (action === "ability") {
+        if (lesson.step === 5) dispatch({ type: "ability" });
+      } else if (action === "xblock" || action === "hardblock") {
+        if (canAttack) dispatch({ type: "attack", blockType: action });
+      } else if (canMove) dispatch({ type: "move", dir: action });
+    },
+  });
 
-  return <main ref={controls} tabIndex={-1} onKeyDown={onKeyDown} aria-label={t("Tutorial controls")} aria-describedby="tutorial-instruction" className="match-screen tutorial-screen" data-focus={lesson.step === 0 || lesson.step === 3 || lesson.step === 5 ? "board" : focus}>
+  return <main ref={controls} tabIndex={-1} aria-label={t("Tutorial controls")} aria-describedby="tutorial-instruction" className="match-screen tutorial-screen" data-focus={lesson.step === 0 || lesson.step === 3 || lesson.step === 5 ? "board" : focus}>
     <header className="match-toolbar">
       <div className="flex min-w-0 items-center gap-3"><GameEmblem kind="guide" className="size-10" /><div><p className="text-xs font-semibold text-muted-foreground">{t("Local practice")}</p><h1 className="text-lg font-extrabold tracking-tight">{t("Learn on the battlefield")}</h1></div></div>
       <div className="flex max-w-full flex-wrap items-center gap-2"><SoundToggle /><Button asChild size="sm" variant="ghost"><Link href="/find-match">{t("Exit tutorial")}<ArrowRight aria-hidden="true" /></Link></Button></div>
     </header>
     <div className="game-stage" onPointerDown={event => { if (!(event.target instanceof HTMLElement && event.target.closest("button, a, summary"))) controls.current?.focus({ preventScroll: true }); }}>
-      <GameArena you={{ board: lesson.board, score: lesson.score, attacks: lesson.attacks }} opponent={{ board: lesson.opponent, score: 0, attacks: { xblock: 0, hardblock: 0 } }} names={{ you: t("You"), opp: t("Practice opponent") }} bindings={bindings} characterShortcuts={characterShortcuts} onMove={canMove ? dir => dispatch({ type: "move", dir }) : undefined} onAttack={canAttack ? blockType => dispatch({ type: "attack", blockType }) : undefined} />
+      <GameArena you={{ board: lesson.board, score: lesson.score, attacks: lesson.attacks, ability: lesson.step === 5 ? { id: DEFAULT_ABILITY_ID, charge: lesson.complete ? 0 : ABILITY_CHARGE, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } : undefined }} opponent={{ board: lesson.opponent, score: 0, attacks: { xblock: 0, hardblock: 0 } }} names={{ you: t("You"), opp: t("Practice opponent") }} bindings={bindings} characterShortcuts={characterShortcuts} onMove={canMove ? dir => dispatch({ type: "move", dir }) : undefined} onAttack={canAttack ? blockType => dispatch({ type: "attack", blockType }) : undefined} />
       <section className="tutorial-coach" aria-labelledby="tutorial-heading">
         <ol aria-label={t("Tutorial progress")} className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] font-semibold">
           {steps.map((step, index) => <li key={step} aria-current={index === lesson.step ? "step" : undefined} className={`flex items-center gap-1.5 ${index === lesson.step ? "text-primary" : "text-muted-foreground"}`}><span className={`grid size-5 place-items-center rounded-full ${index === lesson.step ? "bg-primary text-primary-foreground" : "bg-muted"}`}>{index < lesson.step || index === lesson.step && lesson.complete ? <Check aria-hidden="true" className="size-3" /> : index + 1}</span>{t(step)}</li>)}

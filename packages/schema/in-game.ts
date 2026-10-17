@@ -89,7 +89,8 @@ export type ServerState = {
 export type Reject = { t: "reject"; reason: "stale_turn" | "room_closed" | "invalid" | "not_in_room" | "room_not_found" };
 
 export type EndReason = 
-  | "reached_2048"           // 2048 타일 달성
+  | "reached_1024"           // 1024 타일 달성
+  | "reached_2048"           // 기존 경기 기록
   | "opponent_locked"        // 상대방 못 움직임
   | "surrender"              // 항복
   | "opponent_disconnected"  // 상대방 연결 끊김 (30초 타임아웃)

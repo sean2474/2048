@@ -22,7 +22,7 @@ import { SoundToggle } from "@/components/widget/audio-controls";
 import { useAudio } from "@/hooks/audio-provider";
 import { matchSound } from "@/lib/game-audio";
 import { trackMatchEvent } from "@/lib/analytics";
-import { resolveKeyAction } from "@/lib/keybindings";
+import { useGameKeyboard } from "@/hooks/use-game-keyboard";
 import "@/styles/match-screen.css";
 import { createGameSocket, CURRENT_ROOM_KEY, matchModeLabel, reasonMessage } from "@/lib/multiplayer";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -33,7 +33,6 @@ export default function GamePage() {
   const { play } = useAudio();
   const { id: roomId } = useParams<{ id: string }>();
   const socketRef = useRef<Socket | null>(null);
-  const lastMove = useRef(0);
   const serverOffset = useRef(0);
   const [connected, setConnected] = useState(false);
   const [game, setGame] = useState<GameState | null>(null);
@@ -121,10 +120,9 @@ export default function GamePage() {
   const slowing = game?.you.ability;
   const movementDelayed = !!slowing && now >= slowing.slowStartsAt && now < slowing.slowEndsAt && now < slowing.nextMoveAt;
   const handleMove = useCallback((dir: Dir) => {
-    if (!canMove || movementDelayed || !socketRef.current?.connected || Date.now() - lastMove.current < 70) return;
-    lastMove.current = Date.now();
+    if (!canMove || movementDelayed || !socketRef.current?.connected) return;
     setActionMessage("");
-    socketRef.current.volatile.emit("message", { t: "input", dir });
+    socketRef.current.emit("message", { t: "input", dir });
   }, [canMove, movementDelayed]);
   const handleAttack = useCallback((blockType: "xblock" | "hardblock") => {
     if (!canMove || !socketRef.current?.connected || game?.t !== "state" || game.you.attacks[blockType] < 1) return;
@@ -136,19 +134,14 @@ export default function GamePage() {
     setActionMessage("");
     socketRef.current.emit("message", { t: "ability" });
   }, [canMove, game]);
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (!canMove || event.ctrlKey || event.metaKey || event.altKey || event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog], [role=menu]")) return;
-      const action = resolveKeyAction(event, bindings, characterShortcuts);
-      if (!action) return;
-      event.preventDefault();
+  useGameKeyboard({
+    enabled: canMove, bindings, characterShortcuts,
+    onAction: action => {
       if (action === "xblock" || action === "hardblock") handleAttack(action);
       else if (action === "ability") handleAbility();
       else handleMove(action);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [handleMove, handleAttack, handleAbility, canMove, characterShortcuts, bindings]);
+    },
+  });
 
   if (!game || rejected) return <main className="mx-auto max-w-lg px-4 py-12 sm:py-20">
     <section className="game-panel bg-card p-8 text-center shadow-sm sm:p-10">
@@ -185,7 +178,7 @@ export default function GamePage() {
       </div>
     </section>
     <div className="game-stage">
-      <GameArena you={game.you} opponent={game.opp} names={{ you: player?.name || names.you, opp: names.opp }} bindings={bindings} characterShortcuts={characterShortcuts} onMove={canMove && !movementDelayed ? handleMove : undefined} onAttack={canMove ? handleAttack : undefined} />
+      <GameArena effectsEnabled={connected && game.t === "state" && !game.paused} you={game.you} opponent={game.opp} names={{ you: player?.name || names.you, opp: names.opp }} bindings={bindings} characterShortcuts={characterShortcuts} onMove={canMove && !movementDelayed ? handleMove : undefined} onAttack={canMove ? handleAttack : undefined} />
     </div>
     {ended ? <MatchResult key={game.matchId} game={game} names={{ you: player?.name || names.you, opp: names.opp }} /> : <section className="match-controls">
       <div className="match-controls-info min-w-0 space-y-1">

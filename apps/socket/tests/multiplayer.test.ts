@@ -217,15 +217,16 @@ test("a disconnected opponent forfeits and all room state is released", async t 
   assert.equal(result.t === "end" && result.winner, "you");
   assert.equal(rooms.size, 0); assert.equal(playerRoom.size, 0); assert.equal(disconnectTimers.size, 0);
 });
-test("a 2048 merge produces a terminal result and cannot be overwritten", async t => {
+test("a 1024 merge produces a terminal result and releases the room", async t => {
   const server = await setup(t), { a, b, roomId } = await server.pair();
   const room = rooms.get(roomId)!;
-  room.state[playerId(a.token)].board = [0, 1].map(col => ({ id: 200_000 + col, row: 0, col, value: 1024 }));
+  room.state[playerId(a.token)].board = [0, 1].map(col => ({ id: 200_000 + col, row: 0, col, value: 512 }));
   const endA = packet(a.socket, m => m.t === "end"), endB = packet(b.socket, m => m.t === "end");
   a.socket.emit("message", { t: "input", dir: "left" });
   const [result] = await Promise.all([endA, endB]);
-  assert.equal(result.t === "end" && result.reason, "reached_2048");
-  assert.equal(result.t === "end" && result.you.score, 2048);
+  assert.equal(result.t === "end" && result.reason, "reached_1024");
+  assert.equal(result.t === "end" && result.winner, "you");
+  assert.equal(result.t === "end" && result.you.score, 1024);
   assert.equal(rooms.size, 0);
 });
 
@@ -237,6 +238,8 @@ test("256 and 512 charge manual attacks; firing spends once and lands on the nex
   const changed = packet(a.socket, m => m.t === "state");
   a.socket.emit("message", { t: "input", dir: "left" });
   const result = await changed as ServerState;
+  assert.equal(result.you.maxTile, 512);
+  assert.equal(room.open, true);
   assert.deepEqual(result.you.attacks, { xblock: 1, hardblock: 1 });
   assert.deepEqual(room.state[playerId(b.token)].board, before);
   const warning = packet(b.socket, m => m.t === "state" && m.pendingAttacks === 1);
@@ -675,7 +678,7 @@ test("ability selection is frozen, guests use Clear X, and socket validation rej
 test("ability charge comes only from merges, caps at one use, and Clear X removes exactly one oldest obstacle", async t => {
   const server = await setup(t), { a, roomId } = await server.pair();
   const room = rooms.get(roomId)!, pid = playerId(a.token), me = room.state[pid];
-  me.board = [0, 1].map(col => ({ id: 800_000 + col, row: 0, col, value: 512 }));
+  me.board = [0, 1, 2, 3].map(col => ({ id: 800_000 + col, row: 0, col, value: 256 }));
   handleInput(pid, "left", server.io);
   assert.equal(me.ability.charge, ABILITY_CHARGE);
   const noTarget = packet(a.socket, m => m.t === "actionRejected");

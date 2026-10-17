@@ -10,7 +10,7 @@ import { GameAnalytics } from "@/components/widget/analytics";
 export const metadata: Metadata = {
   title: "2048 Duo",
   referrer: "origin",
-  description: "Race your friends to 2048 in real-time multiplayer. Merge tiles to send obstacles, create a private room, or find a quick match.",
+  description: "Race your friends to 1024 in real-time multiplayer. Merge tiles to send obstacles, create a private room, or find a quick match.",
 };
 
 export default async function RootLayout({

@@ -64,3 +64,29 @@ export function resolveKeyAction(event: KeyEvent, bindings: Keybindings, charact
   const action = KEY_ACTIONS.find(candidate => bindings[candidate] === event.code) ?? null;
   return event.repeat && (action === "xblock" || action === "hardblock" || action === "ability") ? null : action;
 }
+
+export function createMovementRepeater(move: (direction: "up" | "down" | "left" | "right") => void) {
+  let held: string | null = null;
+  let delay: ReturnType<typeof setTimeout> | undefined;
+  let interval: ReturnType<typeof setInterval> | undefined;
+  const stop = () => {
+    clearTimeout(delay);
+    clearInterval(interval);
+    held = null;
+  };
+  return {
+    press(code: string, direction: "up" | "down" | "left" | "right") {
+      if (held === code) return;
+      stop();
+      held = code;
+      move(direction);
+      // Keep taps single and held movement independent of OS character-key repeat.
+      delay = setTimeout(() => {
+        move(direction);
+        interval = setInterval(() => move(direction), 70);
+      }, 200);
+    },
+    release(code: string) { if (held === code) stop(); },
+    stop,
+  };
+}

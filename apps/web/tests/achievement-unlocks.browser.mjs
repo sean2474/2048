@@ -3,7 +3,7 @@ import test from "node:test";
 import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { mockAccount } from "./browser-fixtures.mjs";
+import { authCookieName, mockAccount } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = "http://[::1]:3001";
@@ -180,8 +180,7 @@ test("switching accounts discards delayed progress and check-in responses", asyn
         await page.screenshot({ path: `${artifacts}loading.png`, fullPage: true });
       }
       account.achievements.attendance = { ...account.achievements.attendance, streak: 0, bestStreak: 0 };
-      await page.evaluate(() => {
-        const name = "sb-rbfujqjvkfdgaofztrdq-auth-token";
+      await page.evaluate(name => {
         const value = document.cookie.split("; ").find(item => item.startsWith(`${name}=`)).split("=")[1];
         const session = JSON.parse(atob(value.slice(7).replace(/-/g, "+").replace(/_/g, "/")));
         const payload = JSON.parse(atob(session.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
@@ -192,7 +191,7 @@ test("switching accounts discards delayed progress and check-in responses", asyn
         const channel = new BroadcastChannel(name);
         channel.postMessage({ event: "SIGNED_IN", session });
         channel.close();
-      });
+      }, authCookieName);
       await page.locator('#checkin-30 progress[value="0"]').waitFor();
       const received = page.waitForResponse(response => response.url().includes(`/rpc/${pendingCall}`));
       release();

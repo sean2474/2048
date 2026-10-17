@@ -1,3 +1,11 @@
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
+const { loadEnvConfig } = createRequire(require.resolve("next/package.json"))("@next/env");
+const { combinedEnv } = loadEnvConfig(fileURLToPath(new URL("../", import.meta.url)), true);
+export const authCookieName = `sb-${new URL(combinedEnv.NEXT_PUBLIC_SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
+
 const origin = "http://[::1]:3001";
 
 // Fictional account responses stay inside the browser; no remote profile is read or written.
@@ -9,7 +17,7 @@ export async function mockAccount(page, id = "10000000-0000-4000-8000-0000000000
   const expires = Math.floor(Date.now() / 1000) + 3600;
   const token = `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url")}.${Buffer.from(JSON.stringify({ sub: id, exp: expires, role: "authenticated" })).toString("base64url")}.fixture`;
   const session = { access_token: token, refresh_token: "fixture-only", expires_at: expires, expires_in: 3600, token_type: "bearer", user };
-  const cookie = `sb-rbfujqjvkfdgaofztrdq-auth-token=base64-${Buffer.from(JSON.stringify(session)).toString("base64url")}; Path=/; SameSite=Lax`;
+  const cookie = `${authCookieName}=base64-${Buffer.from(JSON.stringify(session)).toString("base64url")}; Path=/; SameSite=Lax`;
   await page.addInitScript(cookie => { document.cookie = cookie; }, cookie);
   // The SSR header remains a guest; only the browser client uses the fictional account.
   await page.route(`${origin}/**`, route => {

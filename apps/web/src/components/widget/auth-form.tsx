@@ -21,6 +21,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" | "forgot" | "rese
   const [recoveryUser, setRecoveryUser] = useState<string | null>(null);
   const [checking, setChecking] = useState(reset);
   const [finished, setFinished] = useState(false);
+  const [signupReady, setSignupReady] = useState(false);
   const submitting = useRef(false);
   const recovery = useRef<Promise<string> | null>(null);
   const recoveryAuth = useRef<SupabaseClient["auth"] | null>(null);
@@ -54,7 +55,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" | "forgot" | "rese
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting.current || checking || finished || (reset && !recoveryUser)) return;
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const email = String(form.get("email") || "").trim(), password = String(form.get("password") || "");
     setError(""); setNotice("");
     if ((signup || reset) && password.length < 10) { setError("Use at least 10 characters."); return; }
@@ -94,7 +96,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" | "forgot" | "rese
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         } });
         if (error) throw error;
-        if (!data.session) { setNotice("Check your email to confirm your account, then return here to log in."); return; }
+        formElement.reset();
+        setSignupReady(Boolean(data.session)); setFinished(true);
+        setNotice(data.session ? "Your account is ready. You can start playing." : "Sign-up request received. Check your email to confirm your account, then log in.");
+        if (data.session) router.refresh();
+        return;
       } else {
         const { error } = await createClient().auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -103,6 +109,10 @@ export function AuthForm({ mode }: { mode: "login" | "signup" | "forgot" | "rese
     } catch (error) { setError(forgot ? "Could not send a reset link. Wait a moment and try again." : reset ? "Could not update your password. Try another password or request a new reset link." : error instanceof Error ? error.message : "Unable to connect. Please try again."); }
     finally { submitting.current = false; setBusy(false); }
   }
+  if (signup && finished) return <div className="space-y-5">
+    <p role="status" tabIndex={-1} ref={node => { node?.focus(); }} className="rounded-lg border border-primary/20 bg-primary/10 px-4 py-3 text-sm leading-6">{t(notice)}</p>
+    <Button asChild className="h-12 w-full"><Link href={signupReady ? "/" : "/login"}>{t(signupReady ? "Continue to game" : "Return to login")}<ArrowRight aria-hidden="true" /></Link></Button>
+  </div>;
   if (reset && (checking || !recoveryUser || finished)) return <div className="space-y-5" aria-busy={checking}>
     {checking && <p role="status" className="text-sm leading-6 text-muted-foreground">{t("Checking your reset link…")}</p>}
     {error && <p role="alert" className="rounded-lg bg-destructive/10 px-4 py-3 text-sm leading-6 text-destructive">{t(error)}</p>}

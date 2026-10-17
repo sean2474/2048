@@ -38,7 +38,7 @@ Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루
 
 ## Supabase와 로그인 설정
 
-두 DB에는 저장소의 마이그레이션 18개를 적용했으며 원격 이력의 버전은 `supabase/migrations` 파일명과 맞췄다. 이후 마이그레이션은 staging에서 검증한 **같은 파일**을 운영에 순서대로 적용한다. 적용된 파일을 수정하거나 원격 버전 이력을 임의로 다시 작성하지 않는다.
+원격 DB 이력의 버전은 `supabase/migrations` 파일명과 일치해야 한다. 마이그레이션은 staging에서 검증한 **같은 파일**을 운영에 순서대로 적용한다. 적용된 파일을 수정하거나 원격 버전 이력을 임의로 다시 작성하지 않는다.
 
 각 Supabase 프로젝트의 Auth Site URL과 redirect 허용 목록은 해당 환경의 실제 웹 주소에 맞춘다. 가입·OAuth는 `/auth/callback`, 비밀번호 복구는 `/auth/callback?type=recovery`로 돌아온다. 실제 사용하는 URL을 명시하며 운영 인증을 staging callback으로 보내지 않는다. 관리자도 해당 환경 DB의 별도 관리자 역할이 필요하다.
 
@@ -48,8 +48,8 @@ Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루
 
 1. `pnpm test`, `pnpm typecheck`, `pnpm lint`와 변경에 해당하는 브라우저 검사를 통과시킨다.
 2. 대상 환경을 확인하고 필요한 DB 마이그레이션을 먼저 적용한다. DB 이력과 저장소 파일 목록을 비교한다.
-3. Fly 앱의 리전, 머신 1개, 전용 볼륨, 환경별 secrets를 확인하고 소켓을 배포한다.
-4. Vercel의 프로젝트·Root Directory·환경 변수·커밋을 확인하고 웹과 관리자를 배포한다.
+3. Vercel의 프로젝트·Root Directory·환경 변수·커밋을 확인하고 웹과 관리자를 배포한다. 새 결과 사유를 추가할 때는 기존·신규 사유를 모두 읽는 웹을 소켓보다 먼저 배포한다.
+4. Fly 앱의 리전, 머신 1개, 전용 볼륨, 환경별 secrets를 확인하고 소켓을 배포한다.
 5. staging 랭크 검사를 완료한 뒤 운영 페이지·연결·게스트 친구전을 확인한다. 자동 랭크 smoke는 staging 전용이다. 운영/테스트 주소와 실제 접속 DB가 일치해야 한다.
 
 저장소 루트에서 실행한다.

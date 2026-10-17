@@ -75,6 +75,8 @@ export const gameMessages: Record<string, string> = {
   "Match saved to your history.": "경기 결과가 기록에 저장되었습니다.",
   "Could not confirm that your result was saved. Check your history shortly.": "결과 저장을 확인하지 못했습니다. 잠시 후 경기 기록을 확인해 주세요.",
   "Match history is unavailable on this server. This result has not been saved.": "이 서버에서는 경기 기록을 사용할 수 없습니다. 이번 결과는 저장되지 않았습니다.",
+  "You reached 1024 first.": "1024를 먼저 만들었습니다.",
+  "Your opponent reached 1024 first.": "상대가 1024를 먼저 만들었습니다.",
   "You reached 2048 first.": "2048을 먼저 만들었습니다.",
   "Your opponent reached 2048 first.": "상대가 2048을 먼저 만들었습니다.",
   "Your opponent has no moves left.": "상대가 더 이상 움직일 수 없습니다.",

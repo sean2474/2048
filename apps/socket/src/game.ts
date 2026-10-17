@@ -70,7 +70,7 @@ export function handleInput(pid: PlayerId, dir: Dir, io: Server) {
   me.pending = result.pendingEffects;
   me.score += result.scoreDelta;
   me.maxTile = Math.max(...me.board.filter(t => !t.ghost).map(t => t.value), 0);
-  if (me.maxTile >= 2048) return endGame(room, pid, "reached_2048", io);
+  if (me.maxTile >= 1024) return endGame(room, pid, "reached_1024", io);
   if (finishLockedGame(room, io)) return;
   broadcast(room, io);
 }

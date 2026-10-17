@@ -181,6 +181,7 @@ export const messages: Record<string, string> = {
   "ranked": "랭크전",
   "friend": "친구전",
   "legacy": "이전 규칙",
+  "reached 1024": "1024 달성",
   "reached 2048": "2048 달성",
   "opponent locked": "상대 이동 불가",
   "surrender": "항복",

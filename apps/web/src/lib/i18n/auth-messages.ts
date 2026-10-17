@@ -1,4 +1,7 @@
 export const authMessages: Record<string, string> = {
+  "Sign-up request received. Check your email to confirm your account, then log in.": "가입 요청을 완료했어요. 이메일에서 계정을 인증한 다음 로그인해 주세요.",
+  "Your account is ready. You can start playing.": "가입이 완료되었어요. 이제 게임을 시작할 수 있어요.",
+  "Continue to game": "게임 시작하기",
   "Forgot password?": "비밀번호를 잊으셨나요?",
   "Reset password": "비밀번호 재설정",
   "We’ll email you a link to choose a new password.": "새 비밀번호를 설정할 수 있는 링크를 이메일로 보내드려요.",

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { createRequire } from "node:module";
 import { mockAccount } from "./browser-fixtures.mjs";
 const require = createRequire(import.meta.url);
@@ -43,10 +44,12 @@ test("six tutorial steps teach exactly one X removal, restart and completion in 
       const xs = page.locator(".game-you").getByRole("img", { name: /X/ });
       assert.equal(await xs.count(), 2);
       const clear = page.getByRole("button", { name: english ? "Clear one X" : "X 1개 제거", exact: true });
+      assert.equal(await page.locator("[data-ability-effect]").count(), 0);
       await clear.focus();
       assert.equal(await clear.getAttribute("aria-keyshortcuts"), english ? "F" : "3");
       if (english) { await page.keyboard.press("Digit3"); assert.equal(await xs.count(), 2); }
       await page.keyboard.press(english ? "KeyF" : "Digit3");
+      await page.locator('.game-you [data-ability-effect="clear-x"]').waitFor();
       await page.getByRole("heading", { name: english ? "One X cleared. One space recovered." : "X 하나를 없애고 빈칸을 만들었어요!", exact: true }).waitFor();
       assert.equal(await xs.count(), 1);
       assert.equal(await page.getByRole("button", { name: english ? "Ability used" : "능력 사용 완료", exact: true }).isDisabled(), true);
@@ -104,7 +107,8 @@ test("all five equipped abilities activate over real sockets and fit desktop and
       const me = room.state[pid], opp = room.state[other];
       assert.equal(me.ability.id, ability);
       me.board = [
-        { id: 1_000_000, row: 0, col: 0, value: 512 }, { id: 1_000_001, row: 0, col: 1, value: 512 },
+        { id: 1_000_000, row: 0, col: 0, value: 256 }, { id: 1_000_001, row: 0, col: 1, value: 256 },
+        { id: 1_000_006, row: 0, col: 2, value: 256 }, { id: 1_000_007, row: 0, col: 3, value: 256 },
         { id: 1_000_002, row: 4, col: 3, value: 8 },
         { id: 1_000_003, row: 2, col: 2, value: -1, blockType: "xblock" }, { id: 1_000_004, row: 2, col: 3, value: -1, blockType: "xblock" },
         { id: 1_000_005, row: 3, col: 3, value: -2, blockType: "hardblock" },
@@ -114,7 +118,36 @@ test("all five equipped abilities activate over real sockets and fit desktop and
       await a.getByRole("button", { name: "왼쪽으로 이동", exact: true }).click();
       const activate = a.locator(`[data-ability-control="${ability}"]`);
       await activate.filter({ hasText: "사용 가능" }).waitFor();
+      assert.equal(await a.locator("[data-ability-effect]").count(), 0, "Charging must not replay an ability");
+      if (ability === "clear-x") {
+        room.ready.delete(other); broadcast(room, server.io);
+        await a.getByRole("heading", { name: "상대를 기다리는 중…", exact: true }).waitFor();
+        me.ability.charge = 0; broadcast(room, server.io);
+        await activate.filter({ hasText: "0 / 1024" }).waitFor();
+        room.ready.add(other); broadcast(room, server.io);
+        await a.getByRole("heading", { name: "대전 중", exact: true }).waitFor();
+        assert.equal(await a.locator("[data-ability-effect]").count(), 0, "Resuming must not replay an old charge change");
+        const board = me.board;
+        me.board = board.filter(tile => tile.blockType !== "xblock");
+        me.ability.charge = 1024; broadcast(room, server.io);
+        await activate.filter({ hasText: "사용 가능" }).waitFor();
+        await a.keyboard.press("Digit3");
+        await a.getByText("능력을 쓸 대상이 없어요. 충전은 그대로 유지돼요.", { exact: true }).waitFor();
+        assert.equal(await a.locator("[data-ability-effect]").count(), 0, "Rejected casts cannot show a success effect");
+        me.board = board; broadcast(room, server.io);
+      }
       await a.keyboard.press("Digit3");
+      const offensive = ability === "frost-wave" || ability === "swap-32";
+      await a.locator(`${offensive ? ".game-opponent" : ".game-you"} [data-ability-effect="${ability}"]`).waitFor();
+      await b.locator(`${offensive ? ".game-you" : ".game-opponent"} [data-ability-effect="${ability}"]`).waitFor();
+      assert.match(await a.locator(`${offensive ? ".game-opponent" : ".game-you"} [role="status"]`).innerText(), /내 능력/);
+      assert.match(await b.locator(`${offensive ? ".game-you" : ".game-opponent"} [role="status"]`).innerText(), offensive ? /상대 능력 도착/ : /상대 능력/);
+      if (ability === "clear-x") {
+        for (const width of [1440, 375]) {
+          await a.setViewportSize({ width, height: 900 });
+          await a.screenshot({ path: `${tmpdir()}/2048-ability-effect-normal-${width}.png`, fullPage: true });
+        }
+      }
       await activate.filter({ hasText: ability === "spawn-pause" || ability === "anchor-tile" ? "사용 중" : "0 / 1024" }).waitFor();
       assert.equal(me.ability.charge, 0);
       if (ability === "clear-x") {
@@ -141,6 +174,25 @@ test("all five equipped abilities activate over real sockets and fit desktop and
         await b.getByRole("button", { name: "아래로 이동", exact: true }).click();
         await b.waitForFunction(() => document.querySelector('.direction-pad button[aria-label="위로 이동"]').disabled);
         await b.getByRole("button", { name: "위로 이동", exact: true }).click();
+      }
+      if (ability === "clear-x") {
+        await a.emulateMedia({ reducedMotion: "reduce" });
+        for (const [index, width] of [1440, 375].entries()) {
+          await a.setViewportSize({ width, height: 900 });
+          me.ability.charge = 1024;
+          me.board.push({ id: 1_100_000 + index, row: 4, col: 2 + index, value: -1, blockType: "xblock" });
+          broadcast(room, server.io);
+          await activate.filter({ hasText: "사용 가능" }).waitFor();
+          await a.keyboard.press("Digit3");
+          const effect = a.locator('[data-ability-effect="clear-x"]');
+          await activate.filter({ hasText: "0 / 1024" }).waitFor();
+          await effect.waitFor();
+          assert.equal(await effect.evaluate(el => getComputedStyle(el).animationName), "none");
+          assert.equal(await effect.evaluate(el => getComputedStyle(el).pointerEvents), "none");
+          await a.screenshot({ path: `${tmpdir()}/2048-ability-effect-reduced-${width}.png`, fullPage: true });
+        }
+        await a.locator("[data-ability-effect]").waitFor({ state: "hidden" });
+        assert.equal(await a.locator('.game-you [role="status"]').innerText(), "");
       }
       for (const [width, height] of [[1440, 900], [375, 812], [320, 740]]) {
         await a.setViewportSize({ width, height });
