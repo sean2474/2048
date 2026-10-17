@@ -50,6 +50,32 @@
 [data-merge-effect="dragon"] .legendary-merge-flair { animation-name: merge-orbit; }
 [data-merge-effect="phoenix"] { --merge-aura: #f1c1db; animation-name: legendary-arcanist; }
 [data-merge-effect="phoenix"] .legendary-merge-flair { animation-name: merge-petals; }
+[data-merge-effect="diamond"] { --merge-aura: #80c4e4; animation-name: legendary-diamond; }
+[data-merge-effect="diamond"] .legendary-merge-flair { animation-name: merge-prism; }
+[data-merge-effect="crown"] { --merge-aura: #ddbc70; animation-name: legendary-crown; }
+[data-merge-effect="crown"] .legendary-merge-flair { animation-name: merge-coronation; }
+@keyframes legendary-diamond {
+  0% { transform: scale(.88) rotate(-3deg); }
+  32% { transform: scale(1.06) rotate(2deg); }
+  65% { transform: scale(.99) rotate(-1deg); }
+  100% { transform: none; }
+}
+@keyframes legendary-crown {
+  0% { transform: translateY(-7%) scale(.94); }
+  38% { transform: translateY(2%) scale(1.05); }
+  70% { transform: translateY(-1%) scale(1.01); }
+  100% { transform: none; }
+}
+@keyframes merge-prism {
+  0% { transform: scale(.72) rotate(-8deg); opacity: 0; }
+  22% { opacity: 1; }
+  100% { transform: scale(1.18) rotate(6deg); opacity: 0; }
+}
+@keyframes merge-coronation {
+  0% { transform: translateY(7%) scale(.9); opacity: 0; }
+  30% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-5%) scale(1.04); opacity: 0; }
+}
 @keyframes legendary-cat {
   0% { transform: scale(1.14, .84); }
   32% { transform: scale(.94, 1.09) rotate(-3deg); }

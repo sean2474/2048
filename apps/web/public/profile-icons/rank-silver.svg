@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs><linearGradient id="bg" x1="20" y1="5" x2="140" y2="160" gradientUnits="userSpaceOnUse"><stop stop-color="#e5edf4"/><stop offset="1" stop-color="#8b9fb9"/></linearGradient></defs>
+  <circle cx="80" cy="80" r="80" fill="url(#bg)"/>
+  <path d="m80 16 48 26v49l-48 44-48-44V42Z" fill="#637a96" opacity=".37"/>
+  <path d="M80 20v120M20 80h120" stroke="#f3f7fc" stroke-width="3" opacity=".5"/>
+  <path d="m29 24 21 8 63 78-11 10-70-75Z" fill="#edf4fb" stroke="#3f536b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="m29 24 78 91" stroke="#9bafc4" stroke-width="3"/>
+  <path d="m131 24-21 8-63 78 11 10 70-75Z" fill="#edf4fb" stroke="#3f536b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="m131 24-78 91" stroke="#9bafc4" stroke-width="3"/>
+  <path d="m35 105 23 19m44 0 23-19" stroke="#3f536b" stroke-width="11" stroke-linecap="round"/>
+  <path d="m35 105 23 19m44 0 23-19" stroke="#cbd8e6" stroke-width="5" stroke-linecap="round"/>
+  <path d="m36 133 11-15m66 0 11 15" stroke="#4d647e" stroke-width="9" stroke-linecap="round"/>
+  <path d="m80 57 21 23-21 27-21-27Z" fill="#bccfdf" stroke="#3f536b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="m80 64 13 16-13 17V64Z" fill="#f4f8fc"/>
+  <path d="m80 20 4 7-4 7-4-7Z" fill="#f6fbff"/>
+</svg>

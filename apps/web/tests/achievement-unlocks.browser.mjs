@@ -123,7 +123,7 @@ test("achievement collection has guest, active and unlocked responsive views wit
       await page.getByRole("heading", { name: "업적", exact: true }).waitFor();
       if (authenticated) await page.getByRole("status").filter({ hasText: /^오늘 출석 완료$/ }).waitFor();
       else { await page.getByText("로그인하고 출석과 업적을 기록하세요.").waitFor(); assert.equal(await page.getByRole("progressbar").count(), 0); }
-      assert.equal(await page.locator("#achievement-rewards > li").count(), 12);
+      assert.equal(await page.locator("#achievement-rewards > li").count(), 18);
       for (const [width, height] of [[375, 812], [768, 1024], [1440, 900]]) {
         await page.setViewportSize({ width, height });
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));

@@ -29,6 +29,8 @@ test("legendary merge motion, real audio routing, mute and reduced motion", asyn
       ["sentinel", "sentinel", "legendary-sentinel", "merge-lock", [170, 860, 1290]],
       ["runeknight", "runeknight", "legendary-runeknight", "merge-runes", [294, 587, 881]],
       ["arcanist", "arcanist", "legendary-arcanist", "merge-orbit", [523, 784, 1568]],
+      ["rank-diamond", "diamond", "legendary-diamond", "merge-prism", [1047, 1568, 2093]],
+      ["rank-master", "crown", "legendary-crown", "merge-coronation", [392, 587, 988]],
     ]) {
       account.row.skin_id = skin;
       await page.goto(`${origin}/tutorial`);
@@ -52,6 +54,7 @@ test("legendary merge motion, real audio routing, mute and reduced motion", asyn
       assert.equal(await tile.evaluate(el => { const transform = getComputedStyle(el).transform; return transform === "none" || new DOMMatrixReadOnly(transform).isIdentity; }), true);
       measurements.push({ skin, animation, flair, frequencies });
     }
+    account.row.skin_id = "arcanist";
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(`${origin}/tutorial`);
     await page.locator('.game-you [data-skin="arcanist"]').waitFor();

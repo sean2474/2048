@@ -23,6 +23,14 @@ export function MergeFlair({ character }: { character: NonNullable<SkinTokens["c
       <path d="m50 2 48 48-48 48L2 50Z" />
       <path d="m50 5 5 7-5 7-5-7Zm0 76 5 7-5 7-5-7ZM5 50l7-5 7 5-7 5Zm76 0 7-5 7 5-7 5Z" fill="currentColor" stroke="none" />
     </>}
+    {character === "diamond" && <>
+      <path d="m50 1 6 9-6 9-6-9Zm0 80 6 9-6 9-6-9ZM1 50l9-6 9 6-9 6Zm80 0 9-6 9 6-9 6Z" fill="currentColor" stroke="none" />
+      <path d="m18 10-6 11 10-4m60-7 6 11-10-4M18 90l-6-11 10 4m60 7 6-11-10 4M28 5 7 28m65-23 21 23M7 72l21 23m44 0 21-23" />
+    </>}
+    {character === "crown" && <>
+      <path d="m35 10 5 3 10-10 10 10 5-3-3 10H38Z" fill="currentColor" stroke="none" />
+      <path d="M24 83Q1 61 12 32m64 51q23-22 12-51M10 44l-6-7m5 21-7-4m12 18-9-3m85-25 6-7m-5 21 7-4m-12 18 9-3M37 92h26m-19 5h12" />
+    </>}
     {character === "arcanist" && <>
       <circle cx="50" cy="50" r="43" /><circle cx="50" cy="50" r="48" strokeDasharray="2 7" />
       <path d="m50 0 2 5 5 2-5 2-2 5-2-5-5-2 5-2Zm0 86 2 5 5 2-5 2-2 5-2-5-5-2 5-2ZM0 50l5-2 2-5 2 5 5 2-5 2-2 5-2-5Zm86 0 5-2 2-5 2 5 5 2-5 2-2 5-2-5Z" fill="currentColor" stroke="none" />

@@ -62,6 +62,8 @@ const legendaryMerges: Record<NonNullable<SkinTokens["character"]>, { wave: Osci
   bunny: { wave: "sine", notes: [[620, 930, 0, .07], [1240, 1047, .055, .13]] },
   sentinel: { wave: "triangle", notes: [[170, 85, 0, .06], [860, 430, .015, .12], [1290, 645, .025, .1]] },
   runeknight: { wave: "triangle", notes: [[294, 294, 0, .1], [587, 587, .035, .16], [881, 1175, .07, .18]] },
+  diamond: { wave: "sine", notes: [[1047, 1568, 0, .1], [1568, 2093, .035, .13], [2093, 2637, .07, .17]] },
+  crown: { wave: "triangle", notes: [[392, 392, 0, .12], [587, 784, .04, .17], [988, 1175, .08, .2]] },
   arcanist: { wave: "sine", notes: [[523, 659, 0, .12], [784, 988, .05, .17], [1568, 1319, .1, .2]] },
 };
 
