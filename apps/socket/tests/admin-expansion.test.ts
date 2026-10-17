@@ -1,14 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
+import { createAuthDatabase } from "./helpers/pglite";
 import { PGlite } from '@electric-sql/pglite';
 const ADMIN='11111111-1111-4111-8111-111111111111', A='22222222-2222-4222-8222-222222222222';
 test('admin exploration validates authority, dates, filters, stable cursors, legacy and deleted accounts', async t => {
- const db=new PGlite(); t.after(()=>db.close());
- await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
- create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}',is_anonymous boolean default false);
- create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
- grant usage on schema public,auth to anon,authenticated,service_role; grant execute on function auth.uid() to anon,authenticated,service_role;`);
+ const db=await createAuthDatabase(); t.after(()=>db.close());
  const dir=new URL('../../../supabase/migrations/',import.meta.url);
  for(const f of (await readdir(dir)).filter(f=>f.endsWith('.sql')).sort()) await db.exec(await readFile(new URL(f,dir),'utf8'));
  await db.query(`insert into auth.users(id,email) values($1,'admin@test.invalid'),($2,'player@test.invalid')`,[ADMIN,A]);

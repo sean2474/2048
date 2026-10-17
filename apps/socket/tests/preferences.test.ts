@@ -6,6 +6,7 @@ import { PROFILE_ICONS } from "schema/profile-icons";
 import { achievementForItem } from "schema/achievements";
 import { SHOP_ITEMS } from "schema/economy";
 import { ABILITIES, RETIRED_ABILITY_IDS, SKINS } from "schema/loadout";
+import { createAuthDatabase } from "./helpers/pglite";
 import { DEFAULT_SETTINGS, isSettings, isSettingsPatch, parseGuestSettings, settingsFromRow, settingsToRow, SettingsStore, type Settings } from "../../web/src/lib/preferences";
 
 const defaults = (): Settings => structuredClone(DEFAULT_SETTINGS);
@@ -229,14 +230,8 @@ test("concurrent saves are disabled and failed locale mirroring does not report 
 });
 
 test("preference RLS isolates accounts and SQL validates every client-controlled setting", async t => {
-  const db = new PGlite();
+  const db = await createAuthDatabase();
   t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role;
-    create schema auth;
-    create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}', is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant usage on schema public, auth to anon, authenticated, service_role;
-    grant execute on function auth.uid() to anon, authenticated, service_role;`);
   const migrations = new URL("../../../supabase/migrations/", import.meta.url);
   for (const file of (await readdir(migrations)).filter(file => file.endsWith(".sql")).sort()) await db.exec(await readFile(new URL(file, migrations), "utf8"));
   const A = "11111111-1111-4111-8111-111111111111", B = "22222222-2222-4222-8222-222222222222";

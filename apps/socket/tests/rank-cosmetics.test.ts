@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
 import test, { type TestContext } from "node:test";
-import { PGlite } from "@electric-sql/pglite";
+import type { PGlite } from "@electric-sql/pglite";
 import { TIERS } from "schema/ranking";
+import { createAuthDatabase } from "./helpers/pglite";
 import type { AchievementState } from "schema/achievements";
 
 const A = "11111111-1111-4111-8111-111111111111";
@@ -14,12 +15,7 @@ const migrations = new URL("../../../supabase/migrations/", import.meta.url);
 const rewards = TIERS.map(tier => `rank-${tier.toLowerCase()}`);
 
 async function database(t: TestContext, beforeUpgrade?: (db: PGlite) => Promise<void>) {
-  const db = new PGlite(); t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
-    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}',is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
-    grant usage on schema public,auth to anon,authenticated,service_role;
-    grant execute on function auth.uid() to anon,authenticated,service_role;`);
+  const db = await createAuthDatabase(); t.after(() => db.close());
   for (const file of (await readdir(migrations)).filter(file => file.endsWith(".sql") && file < migration).sort()) {
     await db.exec(await readFile(new URL(file, migrations), "utf8"));
   }

@@ -1,17 +1,13 @@
 import { test, type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
+import { createAuthDatabase } from "./helpers/pglite";
 import { randomUUID } from "node:crypto";
-import { PGlite } from "@electric-sql/pglite";
 
 const A = "11111111-1111-4111-8111-111111111111", B = "22222222-2222-4222-8222-222222222222", ADMIN = "33333333-3333-4333-8333-333333333333";
 const payload = JSON.stringify([{ userId: A, score: 100, maxTile: 64 }, { userId: B, score: 10, maxTile: 8 }]);
 async function database(t: TestContext, upgrade = false) {
-  const db = new PGlite(); t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
-    create table auth.users(id uuid primary key, email text, raw_user_meta_data jsonb default '{}', is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant usage on schema public, auth to anon, authenticated, service_role; grant execute on function auth.uid() to anon, authenticated, service_role;`);
+  const db = await createAuthDatabase(); t.after(() => db.close());
   const dir = new URL("../../../supabase/migrations/", import.meta.url);
   const files = (await readdir(dir)).filter(f => f.endsWith(".sql")).sort();
   const rank = "20261017020000_rank_seasons.sql";

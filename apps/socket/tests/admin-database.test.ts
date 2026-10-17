@@ -2,7 +2,7 @@ import { test, type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { PGlite } from "@electric-sql/pglite";
+import { createAuthDatabase } from "./helpers/pglite";
 import type { AdminOverview, AdminPlayersResult, AdminPlayerDetail } from "schema/admin";
 
 const ADMIN = "11111111-1111-4111-8111-111111111111";
@@ -10,14 +10,8 @@ const A = "22222222-2222-4222-8222-222222222222";
 const B = "33333333-3333-4333-8333-333333333333";
 const zero = { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 } };
 async function database(t: TestContext) {
-  const db = new PGlite();
+  const db = await createAuthDatabase();
   t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role;
-    create schema auth;
-    create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}', is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant usage on schema public, auth to anon, authenticated, service_role;
-    grant execute on function auth.uid() to anon, authenticated, service_role;`);
   const migrations = new URL("../../../supabase/migrations/", import.meta.url);
   for (const file of (await readdir(migrations)).filter(file => file.endsWith(".sql")).sort()) await db.exec(await readFile(new URL(file, migrations), "utf8"));
   await db.query(`insert into auth.users(id,email,raw_user_meta_data) values

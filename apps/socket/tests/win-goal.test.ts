@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
-import { PGlite } from "@electric-sql/pglite";
+import { createAuthDatabase } from "./helpers/pglite";
 import { MatchRecordSchema } from "schema/results";
 
 const A = "11111111-1111-4111-8111-111111111111";
@@ -27,12 +27,7 @@ test("current win results reject obsolete reasons and retain tile validation", (
 });
 
 test("win reason cleanup preserves results and rewards, fails safely on obsolete rows, and keeps admin guards", async t => {
-  const db = new PGlite(); t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
-    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}',is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
-    grant usage on schema public,auth to anon,authenticated,service_role;
-    grant execute on function auth.uid() to anon,authenticated,service_role;`);
+  const db = await createAuthDatabase(); t.after(() => db.close());
   const dir = new URL("../../../supabase/migrations/", import.meta.url);
   const files = (await readdir(dir)).filter(file => file.endsWith(".sql")).sort();
   for (const file of files.filter(file => file < migration)) await db.exec(await readFile(new URL(file, dir), "utf8"));

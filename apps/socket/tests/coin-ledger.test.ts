@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
+import { createAuthDatabase } from "./helpers/pglite";
 import test, { type TestContext } from "node:test";
-import { PGlite } from "@electric-sql/pglite";
 
 const ADMIN = "11111111-1111-4111-8111-111111111111";
 const A = "22222222-2222-4222-8222-222222222222";
@@ -14,11 +14,7 @@ type Ledger = { delta: string; balance_after: string; reason: string; reference:
 type History = { balance: number; transactions: { id: number; delta: number; balanceAfter: number; reason: string; note: string | null; actorId: string | null }[] };
 
 async function database(t: TestContext) {
-  const db = new PGlite(); t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
-    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}',is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
-    grant usage on schema public,auth to anon,authenticated,service_role; grant execute on function auth.uid() to anon,authenticated,service_role;`);
+  const db = await createAuthDatabase(); t.after(() => db.close());
   for (const file of (await readdir(directory)).filter(file => file.endsWith(".sql")).sort()) await db.exec(await readFile(new URL(file, directory), "utf8"));
   await db.query("insert into auth.users(id,is_anonymous) values($1,false),($2,false),($3,false),($4,true)", [ADMIN, A, B, GUEST]);
   await db.query("insert into public.admin_roles(user_id) values($1)", [ADMIN]);

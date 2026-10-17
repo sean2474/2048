@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import test, { type TestContext } from "node:test";
-import { PGlite } from "@electric-sql/pglite";
+import type { PGlite } from "@electric-sql/pglite";
 import { DAILY_QUESTS, DailyQuestStateSchema, type DailyQuestState } from "schema/daily-quests";
 import { ACHIEVEMENT_REWARDS, achievementProgress, type AchievementState } from "schema/achievements";
+import { createAuthDatabase } from "./helpers/pglite";
 import { achievementMessages } from "../../web/src/lib/i18n/achievement-messages";
 
 const A = "11111111-1111-4111-8111-111111111111", B = "22222222-2222-4222-8222-222222222222", GUEST = "33333333-3333-4333-8333-333333333333";
@@ -12,11 +13,7 @@ const migration = "20261017150000_daily_quests_and_achievement_king.sql";
 const backfill = "20261017150001_backfill_achievement_king.sql";
 const directory = new URL("../../../supabase/migrations/", import.meta.url);
 async function database(t: TestContext, before?: (db: PGlite) => Promise<void>) {
-  const db = new PGlite(); t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
-    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}',is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
-    grant usage on schema public,auth to anon,authenticated,service_role; grant execute on function auth.uid() to anon,authenticated,service_role;`);
+  const db = await createAuthDatabase(); t.after(() => db.close());
   for (const file of (await readdir(directory)).filter(file => file.endsWith(".sql") && file < migration).sort()) await db.exec(await readFile(new URL(file, directory), "utf8"));
   await db.query("insert into auth.users(id,is_anonymous) values($1,false),($2,false),($3,true)", [A, B, GUEST]);
   if (before) await before(db);

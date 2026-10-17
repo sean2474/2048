@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import { readFile, readdir } from "node:fs/promises";
-import { PGlite } from "@electric-sql/pglite";
 import { accountDeletionHandler } from "../src/account-deletion";
 import { createSupabaseServices } from "../src/supabase";
 import { createGameServer } from "../src/server";
 import { io as client } from "socket.io-client";
+import { createAuthDatabase } from "./helpers/pglite";
 import { matchmakingQueue, waitingByCode } from "../src/state";
 
 const A = "11111111-1111-4111-8111-111111111111";
@@ -123,12 +123,7 @@ test("deletion disconnects a waiting account and invalidates its pending matchma
 });
 
 test("profile names sync to standings, deletion removes owned data and anonymizes only its participant", async t => {
-  const db = new PGlite(); t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role; create schema auth;
-    create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}', is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
-    grant usage on schema public,auth to anon,authenticated,service_role;
-    grant execute on function auth.uid() to anon,authenticated,service_role;`);
+  const db = await createAuthDatabase(); t.after(() => db.close());
   const dir = new URL("../../../supabase/migrations/", import.meta.url);
   for (const file of (await readdir(dir)).filter(file => file.endsWith(".sql")).sort()) await db.exec(await readFile(new URL(file, dir), "utf8"));
   await db.query("insert into auth.users(id) values($1),($2)", [A, B]);

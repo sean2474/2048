@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
-import { PGlite } from "@electric-sql/pglite";
+import type { PGlite } from "@electric-sql/pglite";
+import { createAuthDatabase } from "./helpers/pglite";
 import { SHOP_ITEMS } from "schema/economy";
 
 const A = "11111111-1111-4111-8111-111111111111";
@@ -11,13 +12,7 @@ const migrationName = "20261017130000_cosmetic_purchases.sql";
 const migrations = new URL("../../../supabase/migrations/", import.meta.url);
 
 async function database() {
-  const db = new PGlite();
-  await db.exec(`create role anon; create role authenticated; create role service_role;
-    create schema auth;
-    create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}', is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant usage on schema public, auth to anon, authenticated, service_role;
-    grant execute on function auth.uid() to anon, authenticated, service_role;`);
+  const db = await createAuthDatabase();
   for (const file of (await readdir(migrations)).filter(file => file.endsWith(".sql") && file < migrationName).sort()) {
     await db.exec(await readFile(new URL(file, migrations), "utf8"));
   }

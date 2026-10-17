@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { AddressInfo } from "node:net";
 import { readFile, readdir } from "node:fs/promises";
-import { PGlite } from "@electric-sql/pglite";
 import { FeedbackInputSchema, type FeedbackInput } from "schema/feedback";
+import { createAuthDatabase } from "./helpers/pglite";
 import { createGameServer } from "../src/server";
 
 const ID = "11111111-1111-4111-8111-111111111111";
@@ -79,14 +79,8 @@ test("feedback limits ignore spoofed proxy headers off Fly and separate valid Fl
 });
 
 test("feedback storage permits only the server to submit and administrators to read", async t => {
-  const db = new PGlite();
+  const db = await createAuthDatabase();
   t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role;
-    create schema auth;
-    create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}', is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant usage on schema public, auth to anon, authenticated, service_role;
-    grant execute on function auth.uid() to anon, authenticated, service_role;`);
   const migrations = new URL("../../../supabase/migrations/", import.meta.url);
   for (const file of (await readdir(migrations)).filter(file => file.endsWith(".sql")).sort()) await db.exec(await readFile(new URL(file, migrations), "utf8"));
   await db.query("insert into auth.users(id,email) values($1,'reporter@example.test'),($2,'admin@example.test')", [USER, ADMIN]);

@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
-import { PGlite } from "@electric-sql/pglite";
 import { ABILITIES, DEFAULT_ABILITY_ID, MAX_COIN_BALANCE, RETIRED_ABILITY_IDS, SKINS, SKIN_RARITIES } from "schema/loadout";
 import { messages } from "../../web/src/lib/i18n/messages";
+import { createAuthDatabase } from "./helpers/pglite";
 import { achievementMessages } from "../../web/src/lib/i18n/achievement-messages";
 
 const A = "11111111-1111-4111-8111-111111111111";
@@ -27,14 +27,8 @@ test("loadout catalog keeps free skins and five localized active abilities witho
 });
 
 test("wallets backfill and initialize at zero, enforce own reads, reject client writes and constrain balances", async t => {
-  const db = new PGlite();
+  const db = await createAuthDatabase();
   t.after(() => db.close());
-  await db.exec(`create role anon; create role authenticated; create role service_role;
-    create schema auth;
-    create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}', is_anonymous boolean default false);
-    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-    grant usage on schema public, auth to anon, authenticated, service_role;
-    grant execute on function auth.uid() to anon, authenticated, service_role;`);
   const migrations = new URL("../../../supabase/migrations/", import.meta.url);
   const walletMigration = "20261015161423_player_wallets.sql";
   for (const file of (await readdir(migrations)).filter(file => file.endsWith(".sql") && file < walletMigration).sort()) {
