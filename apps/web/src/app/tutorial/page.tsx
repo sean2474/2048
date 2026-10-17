@@ -59,7 +59,7 @@ export default function TutorialPage() {
     previousLesson.current = lesson;
     if (!previous || previous.step !== lesson.step) return;
     const sound = playerSound(previous, lesson);
-    if (lesson.step === 4 && lesson.complete && !previous.complete) play("win");
+    if (lesson.step === 4 && lesson.complete && !previous.complete) play("clear-x");
     else if (sound) play(sound, settings.skinId);
   }, [lesson, play, settings.skinId]);
   useEffect(() => {

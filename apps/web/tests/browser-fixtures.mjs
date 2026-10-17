@@ -6,7 +6,7 @@ const { loadEnvConfig } = createRequire(require.resolve("next/package.json"))("@
 const { combinedEnv } = loadEnvConfig(fileURLToPath(new URL("../", import.meta.url)), true);
 export const authCookieName = `sb-${new URL(combinedEnv.NEXT_PUBLIC_SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
 
-const origin = "http://[::1]:3001";
+const origin = process.env.TEST_WEB_ORIGIN || "http://[::1]:3001";
 
 // Fictional account responses stay inside the browser; no remote profile is read or written.
 export async function mockAccount(page, id = "10000000-0000-4000-8000-000000000099") {
