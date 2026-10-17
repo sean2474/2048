@@ -5,12 +5,13 @@ import type { Feedback } from "schema/feedback";
 import { getI18n } from "@/lib/i18n/server";
 import { RefreshButton } from "@/components/refresh-button";
 import { Button } from "ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 const PAGE_SIZE = 25;
 
 export default async function FeedbackPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const [{ t, locale }, params, client] = await Promise.all([getI18n(), searchParams, createClient()]);
+  const [{ t, locale }, params, client] = await Promise.all([getI18n(), searchParams, getAdminClient()]);
+  if (!client) return null;
   const rawOffset = Number(params.offset ?? 0);
   const offset = Number.isSafeInteger(rawOffset) && rawOffset >= 0 ? rawOffset : 0;
   let rows: Feedback[] = [], total = 0, error = false;

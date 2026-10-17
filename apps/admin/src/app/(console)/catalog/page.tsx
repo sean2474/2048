@@ -1,9 +1,10 @@
 import { CatalogSchema, type ContentCatalog } from "schema/catalog";
 import { getI18n } from "@/lib/i18n/server";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminClient } from "@/lib/supabase/admin";
 import { CatalogEditor } from "@/components/catalog-editor";
 export default async function CatalogPage() {
-  const [{ t }, client] = await Promise.all([getI18n(), createClient()]);
+  const [{ t }, client] = await Promise.all([getI18n(), getAdminClient()]);
+  if (!client) return null;
   let catalog: ContentCatalog | null = null;
   try {
     const result = await client.rpc("admin_content_catalog");

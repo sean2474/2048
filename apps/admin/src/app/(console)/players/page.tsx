@@ -6,11 +6,12 @@ import { QuerySelect } from "@/components/query-select";
 import Link from "next/link";
 import { adminTime } from "@/lib/investigation";
 import type { AdminPlayersResult } from "schema/admin";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminClient } from "@/lib/supabase/admin";
 import { Button } from "ui/button";
 
 export default async function AdminPlayersPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const [{ t, locale }, search, client] = await Promise.all([getI18n(), searchParams, createClient()]);
+  const [{ t, locale }, search, client] = await Promise.all([getI18n(), searchParams, getAdminClient()]);
+  if (!client) return null;
   const query = typeof search.q === "string" ? search.q.slice(0, 100) : "";
   const status = ["active", "suspended", "admin"].includes(String(search.status)) ? String(search.status) : "all";
   const rawOffset = Number(search.offset ?? 0);

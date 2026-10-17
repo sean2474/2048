@@ -6,11 +6,12 @@ import { PlayerAccess } from "@/components/player-access";
 import Link from "next/link";
 import { adminTime, listReturn } from "@/lib/investigation";
 import type { AdminPlayerDetail } from "schema/admin";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminClient } from "@/lib/supabase/admin";
 import { Button } from "ui/button";
 
 export default async function AdminPlayerPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ returnTo?: string }> }) {
-  const [{ t, locale }, { id }, search, client] = await Promise.all([getI18n(), params, searchParams, createClient()]);
+  const [{ t, locale }, { id }, search, client] = await Promise.all([getI18n(), params, searchParams, getAdminClient()]);
+  if (!client) return null;
   let data: AdminPlayerDetail | null = null, error = "";
   try {
     const result = await client.rpc("admin_player", { p_user_id: id });
@@ -34,7 +35,7 @@ export default async function AdminPlayerPage({ params, searchParams }: { params
       <section className="admin-panel grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-10" aria-labelledby="access-heading">
         <div><h2 id="access-heading" className="admin-section-title">{t("Match access")}</h2>
         <p className="mt-3 text-xs leading-6 text-muted-foreground">{t("Suspension blocks this account from starting new casual, ranked and friend matches. Existing matches and reconnections continue. It does not block anonymous guest play.")}</p></div>
-        {player.isAdmin ? <p className="text-sm">{t("Administrator accounts cannot be suspended here.")}</p> : <PlayerAccess key={`${player.id}:${player.suspendedAt}`} player={{ id: player.id, name: player.name, email: player.email, suspendedAt: player.suspendedAt }} />}
+        {player.isAdmin ? <p className="text-sm">{t("Administrator accounts cannot be suspended here.")}</p> : <PlayerAccess key={player.id} player={{ id: player.id, name: player.name, email: player.email, suspendedAt: player.suspendedAt }} />}
       </section>
       <section className="space-y-4" aria-labelledby="recent-matches-heading">
         <h2 id="recent-matches-heading" className="admin-section-title">{t("Latest 20 matches")}</h2><Link className="inline-flex min-h-11 items-center text-sm text-primary underline" href={`/matches?player=${id}`}>{t("View all matches")}</Link>

@@ -3,10 +3,11 @@ import type { AdminMatch } from 'schema/admin';
 import { getI18n } from '@/lib/i18n/server';
 import { RefreshButton } from '@/components/refresh-button';
 import { Button } from 'ui/button';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { adminTime, listReturn } from '@/lib/investigation';
 export default async function MatchPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ returnTo?: string }> }) {
- const [{ t, locale }, { id }, search, client] = await Promise.all([getI18n(), params, searchParams, createClient()]);
+ const [{ t, locale }, { id }, search, client] = await Promise.all([getI18n(), params, searchParams, getAdminClient()]);
+  if (!client) return null;
  let data: AdminMatch | null = null, error = "";
  try {
    const result = await client.rpc("admin_match", { p_id: id });

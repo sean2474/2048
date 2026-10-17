@@ -8,6 +8,8 @@ import { useI18n } from "ui/i18n";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { createClient } from "@/lib/supabase/client";
+import { usePlayer } from "@/hooks/use-player";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const inputClass = "min-h-11 w-full rounded-xl border bg-background/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:opacity-60";
 const panelClass = "game-panel bg-card p-5 sm:p-6";
@@ -24,6 +26,15 @@ const deletionErrors: Record<string, string> = {
 };
 
 export function AccountSettings({ user, initialName }: { user: User; initialName: string | null }) {
+  const { user: liveUser } = usePlayer();
+  const { t } = useI18n();
+  if (!liveUser || liveUser.is_anonymous || liveUser.id !== user.id) {
+    return <section role="status" aria-label={t("Loading profile…")} className={panelClass}><Skeleton className="h-7 w-32" /><Skeleton className="mt-5 h-11 w-full" /></section>;
+  }
+  return <AccountSettingsForm key={liveUser.id} user={liveUser} initialName={initialName} />;
+}
+
+function AccountSettingsForm({ user, initialName }: { user: User; initialName: string | null }) {
   const { t, locale } = useI18n();
   const router = useRouter();
   const [name, setName] = useState(initialName ?? "");

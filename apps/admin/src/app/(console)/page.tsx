@@ -6,10 +6,11 @@ import { QuerySelect } from "@/components/query-select";
 import { OperationsNotice } from "@/components/operations-notice";
 import { adminTime } from "@/lib/investigation";
 import type { AdminMode, AdminOverview } from "schema/admin";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const [{ t, locale }, params, client] = await Promise.all([getI18n(), searchParams, createClient()]);
+  const [{ t, locale }, params, client] = await Promise.all([getI18n(), searchParams, getAdminClient()]);
+  if (!client) return null;
   const number = (value: number | null) => value === null ? t("Not measured") : value.toLocaleString(locale, { maximumFractionDigits: 1 });
   const days = [7, 30, 90].includes(Number(params.days)) ? Number(params.days) : 30;
   const mode: AdminMode = ["casual", "ranked", "friend"].includes(String(params.mode)) ? params.mode as AdminMode : "all";

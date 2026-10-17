@@ -3,11 +3,12 @@ import type { AdminAuditResult, AdminMatchesResult } from 'schema/admin';
 import { getI18n } from '@/lib/i18n/server';
 import { RefreshButton } from '@/components/refresh-button';
 import { Button } from 'ui/button';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { adminTime, kstDate } from '@/lib/investigation';
 
 export async function InvestigationList({ kind, search }: { kind: "matches" | "audit"; search: Record<string, string | string[] | undefined> }) {
-  const [{ t, locale }, client] = await Promise.all([getI18n(), createClient()]);
+  const [{ t, locale }, client] = await Promise.all([getI18n(), getAdminClient()]);
+  if (!client) return null;
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(search)) if (typeof value === "string") params.set(key, value);
   const pathname = `/${kind}`, query = params.toString();
