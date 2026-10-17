@@ -14,11 +14,14 @@ import { Button } from "@/components/ui/button";
 import { DemoBoard } from "@/components/widget/demo-board";
 import { usePlayer } from "@/hooks/use-player";
 import { useLiveQuery } from "@/hooks/use-live-query";
+import { useAchievements } from "@/hooks/use-achievements";
+import { ProfileIcon } from "@/components/widget/profile-icon";
 import { matchModeLabel } from "@/lib/multiplayer";
 
 export default function DashboardPage() {
   const { t, locale } = useI18n();
   const { user, player } = usePlayer();
+  const attendance = useAchievements();
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const loadRating = useCallback(async (client: SupabaseClient) => {
     if (!userId) return [];
@@ -38,6 +41,10 @@ export default function DashboardPage() {
   const recentMatches = matchesQuery.data.filter(match => match.match_participants.some(row => row.player_id === userId));
   return <main className="mx-auto max-w-[1040px] space-y-6 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
     <PageHeading icon="profile" title={t("Dashboard")}><Button asChild variant="outline"><Link href="/tutorial" data-analytics-link="/tutorial"><GraduationCap aria-hidden="true" />{t("Play tutorial")}</Link></Button><Button asChild><Link href="/find-match" data-analytics-link="/find-match">{t("Find match")}<ArrowRight aria-hidden="true" /></Link></Button></PageHeading>
+    {userId && <section aria-label={t("Daily attendance")} className="flex flex-wrap items-center gap-4 rounded-xl border bg-card px-5 py-4">
+      <ProfileIcon iconId="attendance-king" className="size-14" /><div className="min-w-0 flex-1"><p className="text-xs font-semibold text-muted-foreground">{t("Daily attendance")}</p><p className="mt-1 text-lg font-bold">{attendance.data ? t("{days} consecutive days", { days: attendance.data.attendance.streak }) : t("Checking in…")}</p><p className="mt-1 text-xs text-muted-foreground">{t("Attendance is automatic when you visit · Resets at midnight KST")}</p></div>
+      {attendance.error || attendance.checkInError ? <div role="alert" className="space-y-2 text-xs text-destructive"><p>{t("Could not save attendance. Please try again.")}</p><Button variant="outline" onClick={() => void attendance.reload()}>{t("Retry attendance")}</Button></div> : <Button asChild variant="ghost"><Link href="/achievements">{t("Achievements")}<ArrowRight aria-hidden="true" /></Link></Button>}
+    </section>}
     <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-8">
       <section aria-labelledby="profile-title" className="game-panel min-w-0 bg-card p-6 sm:p-8">
         {user === undefined ? <p role="status" className="flex min-h-40 items-center gap-3 text-sm text-muted-foreground"><Loader2 aria-hidden="true" className="size-5 animate-spin motion-reduce:animate-none" />{t("Checking your account…")}</p> : !userId ? <>

@@ -1,3 +1,4 @@
+import { allowMove } from "./move-limit";
 import type { Account, MatchRecord, ResultStatus } from "schema/results";
 import type { Server } from "socket.io";
 import { anchorHighest, applyMove, attacksFromMerges, clearOldestX, hasMoves, swap32 } from "game-core";
@@ -50,6 +51,7 @@ export function handleInput(pid: PlayerId, dir: Dir, io: Server) {
     io.to(playerChannel(pid)).emit("message", { t: "actionRejected", reason: "slowed" } satisfies S2C);
     return;
   }
+  if (!allowMove(me.moveTimes ??= [], now)) return;
   const result = applyMove(me.board, dir, room.rng, me.pending, me.ability.spawnPauseMoves === 0);
   if (!result.moved) return;
   const generated = attacksFromMerges(result.board);

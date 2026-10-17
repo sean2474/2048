@@ -4,7 +4,7 @@ import type { Effect, MatchMode, PublicPlayerState } from "schema/in-game";
 export type PlayerId = string;
 export type RoomId = string;
 export type JoinCode = string;
-export type PlayerState = Omit<PublicPlayerState, "skinId" | "attacksSent" | "iconId"> & { skinId?: PublicPlayerState["skinId"]; pending: Effect[]; telemetry: MatchTelemetry };
+export type PlayerState = Omit<PublicPlayerState, "skinId" | "attacksSent" | "iconId"> & { skinId?: PublicPlayerState["skinId"]; pending: Effect[]; telemetry: MatchTelemetry; moveTimes?: number[] };
 export type QueueEntry = { pid: PlayerId; mode: "casual" | "ranked"; rating: number; joinedAt: number };
 export type Room = {
   id: RoomId;

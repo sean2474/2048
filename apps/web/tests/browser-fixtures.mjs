@@ -40,6 +40,16 @@ export async function mockAccount(page, id = "10000000-0000-4000-8000-0000000000
       }
       value = row;
     } else if (url.pathname.endsWith("/rpc/achievement_state")) value = fixture.achievements;
+    else if (url.pathname.endsWith("/rpc/check_in")) {
+      const attendance = fixture.achievements.attendance;
+      if (!attendance.checkedInToday) {
+        attendance.streak += 1;
+        attendance.bestStreak = Math.max(attendance.bestStreak, attendance.streak);
+        attendance.checkedInToday = true;
+        attendance.lastDay = attendance.today;
+      }
+      value = fixture.achievements;
+    }
     else if (url.pathname.endsWith("/rpc/cosmetic_state")) value = fixture.cosmetics;
     else if (url.pathname.endsWith("/players")) value = { id, name: "타일탐험가", image_path: null };
     else if (url.pathname.endsWith("/player_wallets")) value = { player_id: id, balance: 0, created_at: user.created_at };

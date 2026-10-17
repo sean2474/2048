@@ -5,7 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-type Options<T> = { table: "player_stats" | "player_ratings" | "match_participants"; filter?: string; enabled?: boolean; load: (client: SupabaseClient) => Promise<T[]> };
+type Options<T> = { table: "player_stats" | "player_ratings" | "match_participants" | "solo_records"; filter?: string; enabled?: boolean; load: (client: SupabaseClient) => Promise<T[]> };
 export function useLiveQuery<T>({ table, filter, enabled = true, load }: Options<T>) {
   const { t } = useI18n();
   const [data, setData] = useState<T[]>([]);

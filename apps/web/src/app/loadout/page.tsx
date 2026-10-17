@@ -36,7 +36,7 @@ function CatalogCard({ name, selected, locked, disabled, onClick, children }: { 
 export default function LoadoutPage() {
   const { t, locale } = useI18n();
   const { user } = usePlayer();
-  const achievements = useAchievements(user);
+  const achievements = useAchievements();
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const { skin, icon, selectSkin, selectIcon, storageError, ready, saving, scope } = useLoadout();
   const cosmetics = useCosmetics(user);

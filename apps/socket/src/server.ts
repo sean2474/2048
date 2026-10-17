@@ -1,3 +1,4 @@
+import { createSoloService, type SoloWriter } from "./solo";
 import type { RankSnapshot } from "schema/ranking";
 import { operationsHandler } from "./operations";
 import type { ResultStoreDiagnostics } from "schema/admin";
@@ -15,7 +16,8 @@ import { joinRoom, handleInput, handleAbility, handleSurrender, waitForPlayer } 
 import { accountDeletionHandler, type DeleteAccount } from "./account-deletion";
 import { feedbackHandler, type FeedbackWriter } from "./feedback";
 
-export function createGameServer(options: { checkAdmin?: (token: string) => Promise<boolean>; readStore?: () => ResultStoreDiagnostics; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; readRating?: (userId: string) => Promise<number | RankSnapshot>; hasPendingRanked?: (userId: string) => boolean; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount; hasPendingAccount?: (userId: string) => boolean } = {}) {
+export function createGameServer(options: { checkAdmin?: (token: string) => Promise<boolean>; readStore?: () => ResultStoreDiagnostics; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; writeSolo?: SoloWriter; readRating?: (userId: string) => Promise<number | RankSnapshot>; hasPendingRanked?: (userId: string) => boolean; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount; hasPendingAccount?: (userId: string) => boolean } = {}) {
+  const solo = createSoloService(options);
   const pendingWrites = new Set<Promise<void>>();
   const ratingLookups = new Map<string, Promise<number | RankSnapshot>>();
   const suspensionLookups = new Map<string, Promise<string[]>>();
@@ -44,7 +46,7 @@ export function createGameServer(options: { checkAdmin?: (token: string) => Prom
   const deleteAccount = accountDeletionHandler({
     origins, resolveAccount: options.resolveAccount, deleteAccount: options.deleteAccount, deleting: deletingAccounts,
     isPlaying: id => [...rooms.values()].some(room => room.open && Object.values(room.accounts).some(account => account?.id === id)),
-    hasPending: id => options.hasPendingAccount?.(id) ?? options.hasPendingRanked?.(id) ?? false,
+    hasPending: id => solo.hasPending(id) || (options.hasPendingAccount?.(id) ?? options.hasPendingRanked?.(id) ?? false),
     disconnect: id => {
       for (const [pid, account] of playerAccounts) if (account?.id === id) {
         cancelMatch(pid);
@@ -133,6 +135,15 @@ export function createGameServer(options: { checkAdmin?: (token: string) => Prom
     playerSockets.set(pid, socket.id);
     playerAccounts.set(pid, socket.data.account);
     socket.join(playerChannel(pid));
+    let soloWindow = Date.now(), soloMessages = 0;
+    socket.on("solo", (raw: unknown, ack: unknown) => {
+      if (typeof ack !== "function") return;
+      if (Date.now() - soloWindow >= 1000) { soloWindow = Date.now(); soloMessages = 0; }
+      if (++soloMessages > 30) { ack({ state: null, error: "rate_limited" }); return; }
+      const accountId: string | null = socket.data.account?.id ?? null;
+      if (accountId && deletingAccounts.has(accountId)) { ack({ state: null, error: "account_deleting" }); return; }
+      void solo.handle(pid, accountId, raw, () => !closing && socket.connected && !playerRoom.has(pid) && (!accountId || !deletingAccounts.has(accountId))).then(reply => ack(reply));
+    });
     let windowStart = Date.now(), messages = 0, queueRequest = 0;
     socket.on("message", (raw: unknown) => {
       if (socket.data.account && deletingAccounts.has(socket.data.account.id)) return;
@@ -216,5 +227,6 @@ export function createGameServer(options: { checkAdmin?: (token: string) => Prom
     await new Promise<void>(resolve => io.close(() => resolve()));
     await matchWaitingPlayers(io, persistResult, Date.now(), checkAccess);
     await Promise.allSettled([...pendingWrites]);
+    await solo.close();
   } };
 }

@@ -1,3 +1,4 @@
+import type { SoloWriter } from "./solo";
 import { createClient } from "@supabase/supabase-js";
 import type { Account, MatchRecord } from "schema/results";
 import { INITIAL_RATING, type RankProgress, type RankSnapshot } from "schema/ranking";
@@ -8,7 +9,7 @@ import type { DeleteAccount } from "./account-deletion";
 import type { FeedbackWriter } from "./feedback";
 export type AccountResolver = (accessToken: string) => Promise<Account>;
 export type SuspensionReader = (userIds: string[]) => Promise<string[]>;
-export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { checkAdmin?: (token: string) => Promise<boolean>; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; readRating?: (userId: string) => Promise<number | RankSnapshot>; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount } {
+export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { checkAdmin?: (token: string) => Promise<boolean>; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; writeSolo?: SoloWriter; readRating?: (userId: string) => Promise<number | RankSnapshot>; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount } {
   const url = env.SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL;
   const publicKey = env.SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const secret = env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
@@ -44,6 +45,12 @@ export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { 
   };
   if (!secret) return { resolveAccount, checkAdmin };
   const admin = createClient(url, secret, options);
+  const writeSolo: SoloWriter = async record => {
+    const { error } = record.mode === "endless"
+      ? await admin.rpc("record_solo_endless", { p_run: record.id, p_player: record.playerId, p_tile: record.maxTile })
+      : await admin.rpc("record_solo", { p_run: record.id, p_player: record.playerId, p_elapsed: record.elapsedMs, p_moves: record.moves, p_score: record.score });
+    if (error) throw new Error(`Solo storage failed (${error.code || "network"})`);
+  };
   const writeFeedback: FeedbackWriter = async (input, reporterId) => {
     const { error } = await admin.from("feedback").upsert({ ...input, reporter_id: reporterId }, { onConflict: "id", ignoreDuplicates: true });
     if (error) throw new Error(`Feedback storage failed (${error.code || "network"})`);
@@ -79,7 +86,7 @@ export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { 
     const { error: deleteError } = await admin.auth.admin.deleteUser(userId);
     if (deleteError) throw new Error("deletion_failed");
   };
-  return { resolveAccount, checkAdmin, writeMatch, writeFeedback, readRating, readSuspensions, deleteAccount };
+  return { resolveAccount, checkAdmin, writeMatch, writeFeedback, writeSolo, readRating, readSuspensions, deleteAccount };
 }
 
 function rankProgress(row: Partial<RankProgress> | null): RankProgress {

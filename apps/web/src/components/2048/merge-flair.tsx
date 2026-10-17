@@ -3,6 +3,9 @@ import type { SkinTokens } from "schema/loadout";
 /** Edge-only artwork shared by the live tile and the skin detail preview. */
 export function MergeFlair({ character }: { character: NonNullable<SkinTokens["character"]> }) {
   return <svg className="legendary-merge-flair" viewBox="0 0 100 100" fill="none" aria-hidden="true" focusable="false">
+    {character === "fox" && <path d="m17 8-12 24h12L6 55l24-31H17Zm66 84 12-24H83l11-23-24 31h13Z" fill="currentColor" stroke="none" />}
+    {character === "dragon" && <><circle cx="50" cy="50" r="45" strokeDasharray="3 8" /><path d="M50 2v10m0 76v10M2 50h10m76 0h10m-64-88-7 12m58 60-7 12M9 26l12 7m58 34 12 7" strokeWidth="3" /></>}
+    {character === "phoenix" && <><path d="M3 50Q5 8 43 5M97 50Q95 8 57 5M3 50Q5 92 43 95m54-45Q95 92 57 95" /><path d="m50 0 3 8 8 3-8 3-3 8-3-8-8-3 8-3Zm0 78 3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="currentColor" stroke="none" /></>}
     {character === "cat" && <g fill="currentColor" stroke="none">
       <path d="M9 26c-7 0-8 9-4 10 2 1 3-1 4-1s2 2 4 1c4-1 3-10-4-10Zm82 0c-7 0-8 9-4 10 2 1 3-1 4-1s2 2 4 1c4-1 3-10-4-10Z" />
       <ellipse cx="2" cy="23" rx="2" ry="3" /><ellipse cx="8" cy="20" rx="2" ry="3" /><ellipse cx="14" cy="22" rx="2" ry="3" />

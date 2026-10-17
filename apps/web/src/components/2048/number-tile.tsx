@@ -23,7 +23,28 @@ export function NumberTile({ value, tokens }: { value: number; tokens: SkinToken
     {tokens.tilePattern === "sunrise" && <svg viewBox="0 0 100 100" className="absolute inset-0 size-full" aria-hidden="true" focusable="false" fill="none" stroke="#6b492b80" strokeWidth="2" strokeLinecap="round"><path d="M29 24a21 21 0 0 1 42 0M20 24h60M50 4v7M19 9l7 7M81 9l-7 7M11 37h8M81 37h8M12 78h76M25 86h50" /></svg>}
     {tokens.tilePattern === "magic-circle" && <svg viewBox="0 0 100 100" className="absolute inset-0 size-full" aria-hidden="true" focusable="false" fill="none" stroke="#385b5680" strokeWidth="2"><circle cx="50" cy="50" r="40" /><path d="m50 7 6 8-6 8-6-8Zm0 70 6 8-6 8-6-8ZM7 50l8-6 8 6-8 6Zm70 0 8-6 8 6-8 6ZM14 27V14h13m46 0h13v13M14 73v13h13m46 0h13V73" /></svg>}
     {tokens.character && <svg viewBox="0 0 100 100" className="absolute inset-0 size-full" fill="none" aria-hidden="true" focusable="false">
-      {armored ? <>
+      {tokens.character === "fox" ? <>
+        <path d="m12 45-3-37 29 19h24L91 8l-3 37-12 42H24Z" fill="#7f9ec8" stroke="#31496e" strokeWidth="2" strokeLinejoin="round" />
+        <path d="m17 17 15 14-12 8Zm66 0-15 14 12 8Z" fill="#d7f1ff" />
+        <path d="m14 42 20 7 16-11 16 11 20-7-7 40-29 14-29-14Z" fill="#f5f6f3" stroke="#6686af" strokeWidth="2" />
+        <path d="m27 38 11 3m24 0 11-3" stroke="#273b5f" strokeWidth="4" strokeLinecap="round" />
+        <path d="m52 10-8 15h8l-4 12 12-17h-9Z" fill="#ffe6a3" stroke="#967940" />
+      </> : tokens.character === "dragon" ? <>
+        <path d="m20 35-9-25 23 12m32 0 23-12-9 25" fill="#f0d596" stroke="#72603b" strokeWidth="2" strokeLinejoin="round" />
+        <path d="m13 39-9 7 8 9-7 9 10 8m72-33 9 7-8 9 7 9-10 8" fill="#79aa92" stroke="#365d51" strokeWidth="2" />
+        <rect x="13" y="22" width="74" height="71" rx="22" fill="#88b89b" stroke="#365d51" strokeWidth="2" />
+        <path d="m50 15 9 13-9 12-9-12Z" fill="#f9df9e" stroke="#917344" strokeWidth="2" />
+        <path d="m24 38 12 4m28 0 12-4" stroke="#284a43" strokeWidth="4" strokeLinecap="round" />
+        <rect x="20" y="49" width="60" height="38" rx="13" fill="#f8edcc" />
+        <path d="M28 29v4m44-4v4" stroke="#f7e7ac" strokeWidth="3" />
+      </> : tokens.character === "phoenix" ? <>
+        <path d="m20 46-15-28 22 10L36 8l14 15L64 8l9 20 22-10-15 28" fill="#d99b76" stroke="#795578" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M50 22C29 20 13 35 13 57v18q37 36 74 0V57C87 35 71 20 50 22Z" fill="#b58ac5" stroke="#674a7e" strokeWidth="2" />
+        <path d="m18 49 18-4 14 10 14-10 18 4-6 32-26 13-26-13Z" fill="#fff0d5" />
+        <path d="m26 37 12 5m24 0 12-5" stroke="#4d365e" strokeWidth="4" strokeLinecap="round" />
+        <path d="m50 7 4 11 11 4-11 4-4 11-4-11-11-4 11-4Z" fill="#ffe4a0" stroke="#9d784e" />
+        <path d="m45 45 5 7 5-7" fill="#d69b5f" />
+      </> : armored ? <>
         <path d="m9 29 12-17h58l12 17v51L79 94H21L9 80Z" fill="#33434e" stroke="#202d38" strokeWidth="2" />
         <path d="m14 29 12-12h48l12 12-12 13H26Z" fill="#8097a4" />
         <path d="m23 28 13-6h28l13 6-8 14H31Z" fill="#182b37" />

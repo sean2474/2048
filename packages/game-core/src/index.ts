@@ -43,10 +43,10 @@ export function anchorHighest(board: Board): Board {
   return highest ? board.map(tile => tile.id === highest.id ? { ...tile, anchored: true } : tile) : board;
 }
 
-function emptyCoords(b: Board): Array<{ row: number; col: number }> {
+function emptyCoords(b: Board, size: number = SIZE): Array<{ row: number; col: number }> {
   const occ = new Set(active(b).map(t => `${t.row},${t.col}`));
   const out: Array<{ row: number; col: number }> = [];
-  for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+  for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) {
     const k = `${r},${c}`;
     if (!occ.has(k)) out.push({ row: r, col: c });
   }
@@ -71,8 +71,8 @@ export function initBoard(range?: number, numTiles?: number): Board {
   return b;
 }
 
-export function spawnRandom(board: Board, range?: number, blockType?: BlockType, rng: () => number = Math.random): Board {
-  const empties = emptyCoords(board);
+export function spawnRandom(board: Board, range?: number, blockType?: BlockType, rng: () => number = Math.random, size: number = SIZE): Board {
+  const empties = emptyCoords(board, size);
   if (!empties.length) return board;
   const spot = empties[Math.floor(rng() * empties.length)];
 
@@ -87,14 +87,14 @@ export function spawnRandom(board: Board, range?: number, blockType?: BlockType,
   ];
 }
 
-export function hasMoves(board: Board): boolean {
-  const grid = Array.from({ length: SIZE }, () => Array<Cell | undefined>(SIZE));
+export function hasMoves(board: Board, size: number = SIZE): boolean {
+  const grid = Array.from({ length: size }, () => Array<Cell | undefined>(size));
   for (const tile of active(board)) grid[tile.row][tile.col] = tile;
   for (const tile of active(board)) {
     if (isFixed(tile)) continue;
     for (const [dr, dc] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
       const row = tile.row + dr, col = tile.col + dc;
-      if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) continue;
+      if (row < 0 || row >= size || col < 0 || col >= size) continue;
       const other = grid[row][col];
       if (!other) return true;
       if (getBlockType(tile) === "normal" && getBlockType(other) === "normal" && tile.value === other.value) return true;
@@ -103,7 +103,7 @@ export function hasMoves(board: Board): boolean {
   return false;
 }
 
-export function move(board: Board, dir: Dir): { board: Board; moved: boolean; gain: number } {
+export function move(board: Board, dir: Dir, size: number = SIZE): { board: Board; moved: boolean; gain: number } {
   // 고스트 제거 + 플래그 리셋
   const src = clone(active(board)).map(t => ({ ...t, spawned: false, merged: false }));
 
@@ -123,10 +123,10 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
   const coordOf = (lineIndex: number, pos: number) =>
     isHorizontal ? { row: lineIndex, col: pos } : { row: pos, col: lineIndex };
 
-  for (let i = 0; i < SIZE; i++) {
+  for (let i = 0; i < size; i++) {
     // 1) 이 라인에서 hardblock이 있는 좌표(스칼라 pos) 수집
     const blockPositions: number[] = [];
-    for (let p = 0; p < SIZE; p++) {
+    for (let p = 0; p < size; p++) {
       const key = isHorizontal ? `${i},${p}` : `${p},${i}`;
       if (hardPos.has(key)) blockPositions.push(p);
     }
@@ -139,7 +139,7 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
       if (bp - 1 >= start) segments.push([start, bp - 1]);
       start = bp + 1;
     }
-    if (start <= SIZE - 1) segments.push([start, SIZE - 1]);
+    if (start <= size - 1) segments.push([start, size - 1]);
 
     // 3) 이 라인의 non-hardblock 타일 수집(원래 pos 함께)
     const lineTiles = src
@@ -221,8 +221,8 @@ export function move(board: Board, dir: Dir): { board: Board; moved: boolean; ga
 }
 
 
-export function applyMove(board: Board, dir: Dir, rng: () => number, pending: Effect[] = [], spawnNumber = true): ApplyResult {
-  const moveResult = move(board, dir);
+export function applyMove(board: Board, dir: Dir, rng: () => number, pending: Effect[] = [], spawnNumber = true, size: number = SIZE): ApplyResult {
+  const moveResult = move(board, dir, size);
   
   if (!moveResult.moved) {
     return {
@@ -235,9 +235,9 @@ export function applyMove(board: Board, dir: Dir, rng: () => number, pending: Ef
   }
 
   // 새 타일 스폰 (rng 사용)
-  const applied = applyPendingEffects(moveResult.board, pending, rng);
+  const applied = applyPendingEffects(moveResult.board, pending, rng, size);
   let newBoard = applied.board;
-  const empties = emptyCoords(newBoard);
+  const empties = emptyCoords(newBoard, size);
   
   if (spawnNumber && empties.length > 0) {
     const spot = empties[Math.floor(rng() * empties.length)];
@@ -273,7 +273,7 @@ export function attacksFromMerges(board: Board): AttackCounts {
   return attacks;
 }
 
-export function applyEffects(board: Board, effects: Effect[], rng: () => number): Board {
+export function applyEffects(board: Board, effects: Effect[], rng: () => number, size: number = SIZE): Board {
   let newBoard = board;
   
   for (const effect of effects) {
@@ -283,7 +283,7 @@ export function applyEffects(board: Board, effects: Effect[], rng: () => number)
       // 상대방 보드에 방해 블록 추가
       const blockType = effect.blockType || "xblock"; // xblock 또는 hardblock
       
-      newBoard = spawnRandom(newBoard, undefined, blockType, rng);
+      newBoard = spawnRandom(newBoard, undefined, blockType, rng, size);
     }
     
     if (effect.type === "removeBlock") {
@@ -299,10 +299,10 @@ export function applyEffects(board: Board, effects: Effect[], rng: () => number)
   return newBoard;
 }
 
-export function newBoard(rng: () => number): Board {
+export function newBoard(rng: () => number, size: number = SIZE): Board {
   let b: Board = [];
   for (let i = 0; i < 2; i++) {
-    const empties = emptyCoords(b);
+    const empties = emptyCoords(b, size);
     if (empties.length === 0) break;
     
     const spot = empties[Math.floor(rng() * empties.length)];
@@ -316,12 +316,12 @@ export function newBoard(rng: () => number): Board {
 }
 
 // Pending attacks take the first available cells before the normal tile spawn.
-export function applyPendingEffects(board: Board, effects: Effect[], rng: () => number): { board: Board; pending: Effect[] } {
+export function applyPendingEffects(board: Board, effects: Effect[], rng: () => number, size: number = SIZE): { board: Board; pending: Effect[] } {
   let result = board;
   const pending: Effect[] = [];
   for (const effect of effects) {
-    if (effect.type === "addBlock" && emptyCoords(result).length === 0) pending.push(effect);
-    else result = applyEffects(result, [effect], rng);
+    if (effect.type === "addBlock" && emptyCoords(result, size).length === 0) pending.push(effect);
+    else result = applyEffects(result, [effect], rng, size);
   }
   return { board: result, pending };
 }

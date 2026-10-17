@@ -1,3 +1,4 @@
+import { soloMessages } from "./solo-messages";
 import { rankMessages } from "./rank-messages";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
@@ -35,6 +36,6 @@ export const getI18n = cache(async () => {
       }
     } catch { /* Render with the guest locale while the client offers a retry. */ }
   }
-  const dictionary = { ...messages, ...rankMessages, ...gameMessages, ...controlsMessages, ...tutorialMessages, ...settingsMessages, ...preferencesMessages, ...feedbackMessages, ...economyMessages, ...authMessages, ...achievementMessages };
+  const dictionary = { ...messages, ...rankMessages, ...gameMessages, ...controlsMessages, ...tutorialMessages, ...settingsMessages, ...preferencesMessages, ...feedbackMessages, ...economyMessages, ...authMessages, ...achievementMessages, ...soloMessages };
   return { locale, guestLocale, messages: dictionary, t: (key: string, values?: Values) => translate(locale, dictionary, key, values) };
 });

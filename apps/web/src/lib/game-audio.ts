@@ -55,6 +55,9 @@ const sounds: Record<GameSound, Notes> = {
 };
 
 const legendaryMerges: Record<NonNullable<SkinTokens["character"]>, { wave: OscillatorType; notes: Notes }> = {
+  fox: { wave: "triangle", notes: [[740, 1109, 0, .07], [1480, 1175, .04, .13]] },
+  dragon: { wave: "triangle", notes: [[196, 392, 0, .1], [587, 784, .04, .17], [1175, 1568, .09, .18]] },
+  phoenix: { wave: "sine", notes: [[659, 988, 0, .12], [1319, 1760, .06, .17], [1976, 1568, .12, .2]] },
   cat: { wave: "triangle", notes: [[520, 780, 0, .07], [1040, 860, .045, .11]] },
   bunny: { wave: "sine", notes: [[620, 930, 0, .07], [1240, 1047, .055, .13]] },
   sentinel: { wave: "triangle", notes: [[170, 85, 0, .06], [860, 430, .015, .12], [1290, 645, .025, .1]] },

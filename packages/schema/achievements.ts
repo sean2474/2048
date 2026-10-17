@@ -5,12 +5,20 @@ type AchievementReward = {
   id: string;
   name: string;
   description: string;
-  metric: "attendance_streak" | "wins" | "highest_tile";
+  metric: "attendance_streak" | "wins" | "highest_tile" | "solo_time" | "solo_tile";
   target: number;
   reward: { kind: "skin"; skinId: SkinId } | { kind: "icon"; iconId: ProfileIconId };
 };
 
 export const ACHIEVEMENT_REWARDS = [
+  { id: "solo-first", name: "Solo breakthrough", description: "Reach 2048 in a solo time attack.", metric: "solo_time", target: 3600000, reward: { kind: "skin", skinId: "copper-sprint" } },
+  { id: "solo-10min", name: "Against the clock", description: "Reach 2048 within 10 minutes in solo time attack.", metric: "solo_time", target: 600000, reward: { kind: "skin", skinId: "silver-current" } },
+  { id: "solo-6min", name: "Lightning hands", description: "Reach 2048 within 6 minutes in solo time attack.", metric: "solo_time", target: 360000, reward: { kind: "skin", skinId: "golden-flash" } },
+  { id: "solo-4min", name: "Storm runner", description: "Reach 2048 within 4 minutes in solo time attack.", metric: "solo_time", target: 240000, reward: { kind: "skin", skinId: "storm-fox" } },
+  { id: "solo-2min", name: "Time bender", description: "Reach 2048 within 2 minutes in solo time attack.", metric: "solo_time", target: 120000, reward: { kind: "skin", skinId: "chrono-dragon" } },
+  { id: "endless-2048", name: "Beyond the finish", description: "Create a 2048 tile in endless mode.", metric: "solo_tile", target: 2048, reward: { kind: "skin", skinId: "jade-path" } },
+  { id: "endless-4096", name: "Twilight voyager", description: "Create a 4096 tile in endless mode.", metric: "solo_tile", target: 4096, reward: { kind: "skin", skinId: "twilight-orbit" } },
+  { id: "endless-8192", name: "Star sovereign", description: "Create an 8192 tile in endless mode.", metric: "solo_tile", target: 8192, reward: { kind: "skin", skinId: "star-phoenix" } },
   { id: "checkin-7", name: "Seven dawns", description: "Check in for 7 consecutive days (KST).", metric: "attendance_streak", target: 7, reward: { kind: "skin", skinId: "dawn-oath" } },
   { id: "checkin-30", name: "Attendance king", description: "Check in for 30 consecutive days (KST).", metric: "attendance_streak", target: 30, reward: { kind: "icon", iconId: "attendance-king" } },
   { id: "wins-10", name: "Victory vanguard", description: "Win 10 eligible matches.", metric: "wins", target: 10, reward: { kind: "icon", iconId: "victory-vanguard" } },
@@ -22,6 +30,8 @@ export type AchievementState = {
   attendance: { streak: number; bestStreak: number; lastDay: string | null; today: string; checkedInToday: boolean; nextCheckInAt: string };
   wins: number;
   highestTile: number;
+  soloBestMs?: number | null;
+  soloHighestTile?: number;
   unlocks: { achievementId: AchievementId; unlockedAt: string }[];
 };
 

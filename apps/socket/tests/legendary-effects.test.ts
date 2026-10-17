@@ -32,7 +32,7 @@ test("legendary merges have distinct voices; other cues and mute stay unchanged"
         signatures.add(JSON.stringify(notes));
       } else assert.deepEqual(notes.map(note => note.frequency), [440, 880]);
     }
-    assert.equal(signatures.size, 5);
+    assert.equal(signatures.size, SKINS.filter(skin => skin.rarity === "legendary").length);
     notes.length = 0; audio.stop(); audio.play("xblock", "arcanist");
     assert.deepEqual(notes.map(note => note.frequency), [720]);
     notes.length = 0; audio.stop(); audio.setSettings({ muted: true, volume: .45 }); audio.play("merge", "sentinel");

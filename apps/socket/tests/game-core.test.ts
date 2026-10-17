@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { move, hasMoves, applyMove, applyPendingEffects, applyEffects, attacksFromMerges, clearOldestX, swap32, anchorHighest } from "game-core";
+import { newBoard, move, hasMoves, applyMove, applyPendingEffects, applyEffects, attacksFromMerges, clearOldestX, swap32, anchorHighest } from "game-core";
 import type { Board, Effect } from "schema/in-game";
 const tile = (value: number, row: number, col: number) => ({ id: 100_000 + row * 5 + col, value, row, col });
 const values = (board: Board) => board.filter(t => !t.ghost).map(t => t.value);
@@ -151,4 +151,18 @@ test("moving an already merged tile on a later turn does not charge it again", (
   const second = applyMove(first.board, "down", () => 0);
   assert.equal(second.moved, true);
   assert.deepEqual(attacksFromMerges(second.board), { xblock: 0, hardblock: 0 });
+});
+
+
+test("4×4 solo bounds affect movement, spawning and game-over without changing 5×5 defaults", () => {
+  assert.ok(newBoard(() => .999,4).every(tile=>tile.row<4&&tile.col<4));
+  assert.ok(newBoard(() => .999).some(tile=>tile.row===4||tile.col===4));
+  for (const dir of ["right","down"] as const) {
+    const moved=move([tile(2,0,0)],dir,4).board;
+    assert.equal(dir === "right" ? moved[0].col : moved[0].row,3);
+    const applied=applyMove([tile(2,0,0)],dir,()=>.999,[],true,4);
+    assert.ok(applied.board.every(tile=>tile.row<4&&tile.col<4));
+  }
+  const full=Array.from({length:16},(_,i)=>tile((Math.floor(i/4)+i%4)%2?4:2,Math.floor(i/4),i%4));
+  assert.equal(hasMoves(full,4),false); assert.equal(hasMoves(full),true);
 });

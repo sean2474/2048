@@ -2,20 +2,36 @@
 
 import { useI18n } from "ui/i18n";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { Suspense, useCallback, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LeaderboardRow } from "schema/results";
 import { ratingTier, SEASON_QUALIFYING_GAMES, type RankSeason } from "schema/ranking";
 import { useLiveQuery } from "@/hooks/use-live-query";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { usePlayer } from "@/hooks/use-player";
+import { formatSoloTime, type SoloRanking } from "schema/solo";
 import { TierBadge, TierIcon } from "@/components/widget/tier-badge";
-import { ArrowLeft, ArrowRight, Crown, Loader2, Swords, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Crown, Loader2, Swords, Timer, Trophy } from "lucide-react";
 import "@/styles/leaderboard.css";
 
 export default function LeaderboardPage() {
+  return <Suspense><Standings /></Suspense>;
+}
+function Standings() {
   const { t, locale } = useI18n();
+  const { user } = usePlayer();
+  const userId = user && !user.is_anonymous ? user.id : undefined;
+  const router = useRouter();
+  const solo = useSearchParams().get("mode") === "solo";
   const [selectedSeason, setSelectedSeason] = useState("current");
   const load = useCallback(async (client: SupabaseClient) => {
+    if (solo) {
+      const [records, own] = await Promise.all([client.rpc("solo_leaderboard", {}, { get: true }), userId ? client.rpc("my_solo_rank", {}, { get: true }) : Promise.resolve({ data: null, error: null })]);
+      if (records.error || own.error) throw records.error || own.error;
+      return [{ seasons: [] as RankSeason[], season: undefined as RankSeason | undefined, rows: [] as LeaderboardRow[], soloRows: (records.data ?? []) as SoloRanking[], own: own.data?.[0] as { rank_position: number; elapsed_ms?: number; rating?: number } | undefined }];
+    }
     const seasonsResult = await client.from("rank_seasons").select("id,name,starts_at,ends_at").order("starts_at", { ascending: false });
     if (seasonsResult.error) throw seasonsResult.error;
     const seasons = seasonsResult.data as RankSeason[];
@@ -23,20 +39,23 @@ export default function LeaderboardPage() {
     if (!season) throw new Error("Season unavailable");
     const { data, error } = await client.from(season.ends_at === null ? "player_ratings" : "season_ratings").select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating").eq("season_id", season.id).gte("games_played", SEASON_QUALIFYING_GAMES).order("rating", { ascending: false }).order("games_played", { ascending: false }).order("player_id").limit(50);
     if (error) throw error;
-    return [{ seasons, season, rows: data as LeaderboardRow[] }];
-  }, [selectedSeason]);
-  const query = useLiveQuery({ table: "player_ratings", load });
+    const own = userId ? await client.rpc("my_season_rank", { p_season: season.id }, { get: true }) : { data: null, error: null };
+    if (own.error) throw own.error;
+    return [{ seasons, season, rows: data as LeaderboardRow[], soloRows: [] as SoloRanking[], own: own.data?.[0] as { rank_position: number; elapsed_ms?: number; rating?: number } | undefined }];
+  }, [selectedSeason, solo, userId]);
+  const query = useLiveQuery({ table: solo ? "solo_records" : "player_ratings", load });
   const { loading, error, live, reload } = query;
   const data = query.data[0]?.rows ?? [], seasons = query.data[0]?.seasons ?? [], season = query.data[0]?.season;
+  const soloRows = query.data[0]?.soloRows ?? [], own = query.data[0]?.own;
   const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
 
   return <main className="mx-auto max-w-[1120px] space-y-7 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
     <section aria-labelledby="leaderboard-title" className="rank-arena relative isolate overflow-hidden rounded-xl px-6 py-7 sm:px-9 sm:py-8">
       <div className="relative z-10 max-w-2xl">
-        <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-[#e6c888]"><Swords aria-hidden="true" className="size-4" />2048 DUO <span className="opacity-50">/</span> {t("Ranked arena")}</p>
-        <h1 id="leaderboard-title" className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{t("Ranked leaderboard")}</h1>
+        <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-[#e6c888]"><Trophy aria-hidden="true" className="size-4" />2048 DUO <span className="opacity-50">/</span> {t(solo ? "Single player" : "Ranked arena")}</p>
+        <h1 id="leaderboard-title" className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{t(solo ? "Time rankings" : "Ranked leaderboard")}</h1>
         <Button asChild className="mt-5 border-[#e7bd76] bg-[#e7bd76] text-[#342d1d] shadow-[0_3px_0_#a77e40] hover:bg-[#f1cf93] focus-visible:outline-[#f6d89b]">
-          <Link href="/play/ranked"><Swords aria-hidden="true" />{t("Play ranked")}<ArrowRight aria-hidden="true" /></Link>
+          <Link href={solo ? "/solo" : "/play/ranked"}>{solo ? <Timer aria-hidden="true" /> : <Swords aria-hidden="true" />}{t(solo ? "Start time attack" : "Play ranked")}<ArrowRight aria-hidden="true" /></Link>
         </Button>
       </div>
       <div aria-hidden="true" className="absolute top-1/2 right-8 hidden -translate-y-1/2 items-end gap-1 md:flex lg:right-14">
@@ -46,6 +65,9 @@ export default function LeaderboardPage() {
       </div>
     </section>
 
+    <div className="flex flex-wrap gap-2" role="group" aria-label={t("Rankings")}><Button variant={solo ? "outline" : "default"} aria-pressed={!solo} onClick={() => router.replace("/leaderboard", { scroll: false })}><Swords aria-hidden="true" />{t("Ranked match")}</Button><Button variant={solo ? "default" : "outline"} aria-pressed={solo} onClick={() => router.replace("/leaderboard?mode=solo", { scroll: false })}><Timer aria-hidden="true" />{t("2048 time attack")}</Button></div>
+    <section aria-label={t("My ranking")} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-primary/25 bg-card px-5 py-4"><div><h2 className="text-xs font-semibold text-muted-foreground">{t("My ranking")}</h2><p className="mt-2 text-lg font-bold">{!userId ? t("Sign in to see your rank") : loading ? t("Loading leaderboard…") : error ? t("Unable to load records. Please try again.") : own ? t("Rank {rank}", { rank: own.rank_position }) : t(solo ? "No solo finish yet" : "Complete 10 ranked matches to enter the standings.")}</p></div>{!userId ? <Button asChild variant="outline"><Link href="/login">{t("Log in")}</Link></Button> : own && !loading && !error ? <p className="text-2xl font-extrabold tabular-nums">{solo ? formatSoloTime(own.elapsed_ms!) : `${own.rating?.toLocaleString(numberLocale)} ELO`}</p> : null}</section>
+    {solo ? <section className="overflow-hidden rounded-xl border bg-card" aria-labelledby="solo-ranking-title"><div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4"><div><h2 id="solo-ranking-title" className="font-bold">{t("Time rankings")} <span className="text-xs font-normal text-muted-foreground">4 × 4</span></h2><p className="mt-1 text-xs text-muted-foreground">{t("Top 50 · Best time per player · Ties use fewer moves, then the earlier finish.")}</p></div><Button variant="ghost" onClick={reload} disabled={loading}>{t("Refresh")}</Button></div>{error ? <p role="alert" className="p-5 text-sm text-destructive">{error}</p> : loading ? <p role="status" className="p-5 text-sm">{t("Loading rankings…")}</p> : !soloRows.length ? <p className="p-5 text-sm text-muted-foreground">{t("The first record is waiting for you.")}</p> : <ol className="divide-y">{soloRows.map((row, index) => <li key={row.player_id} className={`flex items-center gap-3 px-5 py-4 ${row.player_id === userId ? "bg-primary/5" : ""}`}><span className="w-7 text-sm font-bold tabular-nums text-muted-foreground">{index + 1}</span><span className="min-w-0 flex-1 truncate text-sm font-semibold">{row.name}{row.player_id === userId && <span className="ml-2 text-xs text-primary">{t("You")}</span>}</span><div className="text-right"><p className="font-bold tabular-nums">{formatSoloTime(row.elapsed_ms)}</p><p className="text-xs text-muted-foreground">{t("{count} moves", { count: row.moves })}</p></div></li>)}</ol>}</section> : <>
     <section aria-labelledby="tier-guide-title" className="rounded-xl border bg-card px-3 py-4 sm:px-6">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 px-2">
         <h2 id="tier-guide-title" className="text-xs font-bold tracking-wide">{t("Competitive tiers")}</h2>
@@ -59,7 +81,7 @@ export default function LeaderboardPage() {
       </dl>
     </section>
 
-    <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-semibold">{season?.name ?? t("Season standings")}{season?.ends_at && <span className="ml-2 font-normal text-muted-foreground">{t("Archived season")}</span>}</p><label className="flex items-center gap-2 text-sm">{t("Season")}<select aria-label={t("Season")} value={selectedSeason} onChange={event => setSelectedSeason(event.target.value)} className="min-h-11 rounded-lg border bg-card px-3"><option value="current">{t("Current season")}</option>{seasons.filter(row => row.ends_at !== null).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label></div>
+    <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-semibold">{season?.name ?? t("Season standings")}{season?.ends_at && <span className="ml-2 font-normal text-muted-foreground">{t("Archived season")}</span>}</p><DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" className="min-w-40 justify-between" aria-label={`${t("Season")}: ${selectedSeason === "current" ? t("Current season") : season?.name ?? t("Season")}`}>{selectedSeason === "current" ? t("Current season") : season?.name ?? t("Season")}<ChevronDown aria-hidden="true" className="size-4" /></Button></DropdownMenuTrigger><DropdownMenuContent align="end" className="min-w-52 rounded-xl p-2"><DropdownMenuItem className="min-h-11 rounded-lg px-3" onSelect={() => setSelectedSeason("current")}>{t("Current season")}{selectedSeason === "current" && <Check aria-hidden="true" className="ml-auto" />}</DropdownMenuItem>{seasons.filter(row => row.ends_at !== null).map(row => <DropdownMenuItem key={row.id} className="min-h-11 rounded-lg px-3" onSelect={() => setSelectedSeason(row.id)}>{row.name}{selectedSeason === row.id && <Check aria-hidden="true" className="ml-auto" />}</DropdownMenuItem>)}</DropdownMenuContent></DropdownMenu></div>
 
     {!error && !loading && data.length > 0 && <section aria-labelledby="podium-title">
       <h2 id="podium-title" className="mb-4 flex items-center gap-2 text-sm font-bold"><Crown aria-hidden="true" className="size-4 text-[#936a25]" />{t("Top 3 players")}</h2>
@@ -107,6 +129,7 @@ export default function LeaderboardPage() {
         </div>}
       <p className="px-1 text-xs leading-6 text-muted-foreground">{t("Top 50 after 10 ranked matches this season, ordered by Elo then matches played. Tiers follow Elo automatically. Elo carries over between seasons. Casual and friend matches never change your rating.")}</p>
     </section>
+    </>}
     <Button asChild variant="ghost"><Link href="/"><ArrowLeft aria-hidden="true" />{t("Back to dashboard")}</Link></Button>
   </main>;
 }
