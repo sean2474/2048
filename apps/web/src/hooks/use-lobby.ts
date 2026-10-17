@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { MatchFound, ServerMessage } from "schema/in-game";
 import { createGameSocket, CURRENT_ROOM_KEY, reasonMessage } from "@/lib/multiplayer";
+import { trackGameEvent } from "@/lib/analytics";
 
 type Mode = "findMatch" | "createRoomWithCode" | "joinRoomWithCode";
 export function useLobby(mode: Mode, code?: string, matchMode: "casual" | "ranked" = "casual", enabled = true) {
@@ -29,6 +30,7 @@ export function useLobby(mode: Mode, code?: string, matchMode: "casual" | "ranke
     const connection = socket;
     setError(""); setJoinCode(""); setMatch(null); setStatus("Connecting to game server...");
     let navigating = false;
+    let queueTracked = false;
     let matchedRoom: string | undefined;
     let introTimer: ReturnType<typeof setTimeout> | undefined;
     enterMatch.current = () => {
@@ -39,6 +41,7 @@ export function useLobby(mode: Mode, code?: string, matchMode: "casual" | "ranke
     };
     connection.on("connect", () => {
       if (matchedRoom) { enterMatch.current(); return; }
+      if (mode === "findMatch" && !queueTracked) { trackGameEvent("queue_started", { mode: matchMode }); queueTracked = true; }
       setError("");
       setStatus(mode === "findMatch" ? "Looking for an opponent..." : "Preparing your room...");
       connection.emit("message", mode === "joinRoomWithCode" ? { t: mode, joinCode: code } : mode === "findMatch" ? { t: mode, mode: matchMode } : { t: mode });

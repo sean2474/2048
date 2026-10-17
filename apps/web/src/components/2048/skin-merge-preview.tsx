@@ -9,6 +9,7 @@ import { SoundToggle } from "@/components/widget/audio-controls";
 import { useAudio } from "@/hooks/audio-provider";
 import { NumberTile } from "./number-tile";
 import { MergeFlair } from "./merge-flair";
+import { trackGameEvent } from "@/lib/analytics";
 
 export function SkinMergePreview({ skin }: { skin: Skin & { id: SkinId } }) {
   const { t } = useI18n();
@@ -41,7 +42,7 @@ export function SkinMergePreview({ skin }: { skin: Skin & { id: SkinId } }) {
       </div>
       <figcaption className="mt-3 text-center text-xs font-semibold tabular-nums text-muted-foreground" aria-hidden="true">2 + 2 <span className="mx-1">→</span> 4</figcaption>
     </figure>
-    <Button variant="secondary" className="w-full" disabled={!ready} aria-disabled={busy} onClick={() => { if (!busy) setPhase("moving"); }}>
+    <Button variant="secondary" className="w-full" disabled={!ready} aria-disabled={busy} onClick={() => { if (!busy) { setPhase("moving"); trackGameEvent("merge_previewed", { skin: skin.id, sound: !unavailable && !muted && volume > 0 }); } }}>
       {phase === "idle" ? <Play aria-hidden="true" /> : <RotateCcw aria-hidden="true" />}{t(busy ? "Playing merge…" : phase === "idle" ? "Preview merge effect" : "Replay merge effect")}
     </Button>
     <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">

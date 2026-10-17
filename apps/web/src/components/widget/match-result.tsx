@@ -54,8 +54,8 @@ export function MatchResult({ game, names }: { game: End; names: { you: string; 
   const description = t(resultText(game));
   const actions = <>
     <Button asChild><Link href={game.mode === "friend" ? "/play/create" : game.mode === "ranked" ? "/play/ranked" : "/play/online"}>{t("Play again")}<ArrowRight aria-hidden="true" /></Link></Button>
-    <Button asChild variant="outline"><Link href="/find-match">{t("Back to menu")}</Link></Button>
-    {game.recording !== "guest" && <Button asChild variant="ghost"><Link href="/history">{t("Match history")}</Link></Button>}
+    <Button asChild variant="outline"><Link href="/find-match" data-analytics-link="/find-match">{t("Back to menu")}</Link></Button>
+    {game.recording !== "guest" && <Button asChild variant="ghost"><Link href="/history" data-analytics-link="/history">{t("Match history")}</Link></Button>}
   </>;
 
   return <>

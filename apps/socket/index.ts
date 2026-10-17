@@ -4,11 +4,13 @@ import { fileURLToPath } from "node:url";
 import { createGameServer } from "./src/server";
 import { createSupabaseServices } from "./src/supabase";
 import { ResultStore } from "./src/result-store";
+import { validateDeploymentConfig } from "./src/deployment-config";
 const directory = fileURLToPath(new URL(".", import.meta.url));
 config({ path: resolve(directory, ".env") });
 // Reuse the public web config locally; privileged keys only belong in socket/.env.
 config({ path: resolve(directory, "../web/.env.local") });
 async function main() {
+  validateDeploymentConfig();
   const services = createSupabaseServices();
   const store = services.writeMatch ? new ResultStore(process.env.RESULT_OUTBOX_DIR || resolve(directory, ".data/results"), services.writeMatch) : undefined;
   if (store) await store.start();

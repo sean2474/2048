@@ -18,6 +18,7 @@ import { achievementForItem } from "schema/achievements";
 import { createClient } from "@/lib/supabase/client";
 import { SkinPreview } from "@/components/2048/skin-preview";
 import { SkinMergePreview } from "@/components/2048/skin-merge-preview";
+import { trackGameEvent } from "@/lib/analytics";
 
 const PAGE_SIZE = 12;
 type Category = "skins" | "icons";
@@ -88,20 +89,24 @@ export default function LoadoutPage() {
     detailTrigger.current = event.currentTarget;
     setDetail(next);
     setDetailOpen(true);
+    trackGameEvent("cosmetic_previewed", { item: next.id, source: "loadout" });
   }
   async function equipDetail() {
     if (!detail || guest || !detailOwned) return;
     const success = detail.category === "skins" ? await selectSkin(detail.id) : detail.id !== "guest" && await selectIcon(detail.id);
-    if (success) setDetailOpen(false);
+    if (success) {
+      setDetailOpen(false);
+      trackGameEvent("cosmetic_equipped", { category: detail.category, item: detail.id });
+    }
   }
 
   return <main className="mx-auto max-w-[1040px] space-y-4 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
     <span id="equipped-label" className="sr-only">{t("Equipped")}</span>
-    <PageHeading icon="loadout" title={t("My loadout")}><Button asChild variant="outline"><Link href="/find-match"><ArrowLeft aria-hidden="true" />{t("Find match")}</Link></Button></PageHeading>
+    <PageHeading icon="loadout" title={t("My loadout")}><Button asChild variant="outline"><Link href="/find-match" data-analytics-link="/find-match"><ArrowLeft aria-hidden="true" />{t("Find match")}</Link></Button></PageHeading>
 
     <section aria-labelledby="wallet-title" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card px-4 py-2">
-      <div className="flex items-center gap-2"><GameEmblem kind="coin" className="size-8" /><h2 id="wallet-title" className="text-xs text-muted-foreground">{t("My coins")}</h2>{user === undefined || userId && loading ? <p role="status" className="text-xs">{t("Loading balance…")}</p> : !userId ? <Link href="/login" aria-label={t("Sign in to view your balance")} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2">{t("Log in")}</Link> : walletError || balance === undefined ? <div role="alert" className="flex flex-wrap items-center gap-2"><p className="text-xs text-destructive">{t("Could not load your coin balance.")}</p><Button variant="outline" size="sm" onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</Button></div> : <p className="text-lg font-extrabold tabular-nums">{balance.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}</p>}</div>
-      <div className="flex flex-wrap gap-2"><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/achievements">{t("Achievements")}</Link></Button><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/shop">{t("Coin shop")}</Link></Button></div>
+      <div className="flex items-center gap-2"><GameEmblem kind="coin" className="size-8" /><h2 id="wallet-title" className="text-xs text-muted-foreground">{t("My coins")}</h2>{user === undefined || userId && loading ? <p role="status" className="text-xs">{t("Loading balance…")}</p> : !userId ? <Link href="/login" data-analytics-link="/login" aria-label={t("Sign in to view your balance")} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2">{t("Log in")}</Link> : walletError || balance === undefined ? <div role="alert" className="flex flex-wrap items-center gap-2"><p className="text-xs text-destructive">{t("Could not load your coin balance.")}</p><Button variant="outline" size="sm" onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</Button></div> : <p className="text-lg font-extrabold tabular-nums">{balance.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}</p>}</div>
+      <div className="flex flex-wrap gap-2"><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/achievements" data-analytics-link="/achievements">{t("Achievements")}</Link></Button><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/shop" data-analytics-link="/shop">{t("Coin shop")}</Link></Button></div>
     </section>
 
     {!guest && achievements.loading && !achievements.data && <p role="status" className="text-xs text-muted-foreground">{t("Checking unlock information…")}</p>}
@@ -129,7 +134,7 @@ export default function LoadoutPage() {
     </div>
 
     <section id="skins-panel" role="tabpanel" aria-labelledby="skins-tab" tabIndex={0} hidden={category !== "skins"} className="space-y-3 rounded-xl">
-      <div role="group" aria-label={t("Filter by rarity")} className="flex flex-wrap gap-1">{(["all", ...Object.keys(SKIN_RARITIES)] as Array<SkinRarity | "all">).map(value => <Button key={value} variant="ghost" aria-pressed={rarity === value} aria-controls="skin-results" className={`px-3 text-xs ${rarity === value ? "bg-primary/10 text-primary" : "text-muted-foreground"}`} onClick={() => { setRarity(value); setSkinPage(0); }}>{t(value === "all" ? "All skins" : SKIN_RARITIES[value].name)}</Button>)}</div>
+      <div role="group" aria-label={t("Filter by rarity")} className="flex flex-wrap gap-1">{(["all", ...Object.keys(SKIN_RARITIES)] as Array<SkinRarity | "all">).map(value => <Button key={value} variant="ghost" aria-pressed={rarity === value} aria-controls="skin-results" className={`px-3 text-xs ${rarity === value ? "bg-primary/10 text-primary" : "text-muted-foreground"}`} onClick={() => { setRarity(value); setSkinPage(0); trackGameEvent("skin_filter_changed", { rarity: value, source: "loadout" }); }}>{t(value === "all" ? "All skins" : SKIN_RARITIES[value].name)}</Button>)}</div>
       <div id="skin-results" className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">{filteredSkins.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(item => <CatalogCard key={item.id} name={t(item.name)} selected={skin.id === item.id} locked={!owns("skin", item.id)} disabled={!ready || saving} onClick={event => openDetail(event, { category: "skins", id: item.id })}><SkinPreview skin={item} /></CatalogCard>)}</div>
       {filteredSkins.length === 0 && <p role="status" className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t("No owned items in this filter.")}</p>}
       {pageCount > 1 && <nav aria-label={t("Catalog pages")} className="flex items-center justify-center gap-4">

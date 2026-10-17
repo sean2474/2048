@@ -1,7 +1,4 @@
-# fly.toml app configuration file generated for 2048-socket on 2025-10-04T20:33:42-04:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+# In-memory rooms require exactly one Machine. Deploy with --ha=false.
 
 app = '2048-socket'
 primary_region = 'dfw'
@@ -11,7 +8,11 @@ kill_timeout = 30
 [build]
   dockerfile = './Dockerfile'
 
+[deploy]
+  strategy = 'rolling'
+
 [env]
+  APP_ENV = 'production'
   PORT = '4000'
   RESULT_OUTBOX_DIR = '/data/results'
 
@@ -35,6 +36,7 @@ kill_timeout = 30
   [[services.ports]]
     port = 80
     handlers = ['http']
+    force_https = true
 
   [[services.ports]]
     port = 443

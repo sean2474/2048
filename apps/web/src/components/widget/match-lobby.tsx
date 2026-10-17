@@ -9,6 +9,7 @@ import { useLobby } from "@/hooks/use-lobby";
 import { usePlayer } from "@/hooks/use-player";
 import { useLoadout } from "@/hooks/use-loadout";
 import { ProfileIcon } from "@/components/widget/profile-icon";
+import { trackGameEvent } from "@/lib/analytics";
 import "@/styles/match-lobby.css";
 
 export function MatchLobby({ mode }: { mode: "casual" | "ranked" }) {
@@ -50,7 +51,7 @@ export function MatchLobby({ mode }: { mode: "casual" | "ranked" }) {
       <div className="lobby-actions">
         {canSearch && error && <Button className="lobby-primary" onClick={retry}>{t("Try again")}<ArrowRight aria-hidden="true" /></Button>}
         {!canSearch && user !== undefined && <Button asChild className="lobby-primary"><Link href="/login">{t("Sign in for ranked")}<ArrowRight aria-hidden="true" /></Link></Button>}
-        <Button asChild variant="outline" className="lobby-cancel"><Link href="/find-match"><ArrowLeft aria-hidden="true" />{canSearch ? t("Cancel search") : t("Back to menu")}</Link></Button>
+        <Button asChild variant="outline" className="lobby-cancel"><Link href="/find-match" onClick={() => { if (searching) trackGameEvent("queue_cancel_clicked", { mode }); }}><ArrowLeft aria-hidden="true" />{canSearch ? t("Cancel search") : t("Back to menu")}</Link></Button>
       </div>
     </section>
   <MatchIntro match={match} onEnter={enterMatch} /></main>;

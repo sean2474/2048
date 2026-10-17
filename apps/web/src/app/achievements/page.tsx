@@ -15,6 +15,7 @@ import { ProfileIcon } from "@/components/widget/profile-icon";
 import { SkinPreview } from "@/components/2048/skin-preview";
 import { usePlayer } from "@/hooks/use-player";
 import { useAchievements } from "@/hooks/use-achievements";
+import { trackGameEvent } from "@/lib/analytics";
 
 export default function AchievementsPage() {
   const { t } = useI18n();
@@ -25,16 +26,17 @@ export default function AchievementsPage() {
   const attendance = data?.attendance;
   async function attend() {
     const unlocked = await checkIn();
+    if (unlocked) trackGameEvent("attendance_checked_in", { unlocked: unlocked.length });
     if (unlocked?.length && user) setNotice({ userId: user.id, names: unlocked.map(item => ACHIEVEMENT_REWARDS.find(reward => reward.id === item.achievementId)!.name) });
   }
 
   return <main className="mx-auto max-w-[1040px] space-y-6 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
-    <PageHeading icon="crown" eyebrow={t("Collection journal")} title={t("Achievements")} description={t("Build your record. Earn something only you can wear.")}><Button asChild variant="outline"><Link href="/loadout">{t("My loadout")}</Link></Button></PageHeading>
+    <PageHeading icon="crown" eyebrow={t("Collection journal")} title={t("Achievements")} description={t("Build your record. Earn something only you can wear.")}><Button asChild variant="outline"><Link href="/loadout" data-analytics-link="/loadout">{t("My loadout")}</Link></Button></PageHeading>
 
     <section aria-labelledby="attendance-title" className="overflow-hidden rounded-2xl border bg-card">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b px-5 py-4 sm:px-6">
         <div><h2 id="attendance-title" className="flex items-center gap-2 font-bold"><CalendarCheck aria-hidden="true" className="size-5 text-primary" />{t("Daily attendance")}</h2><p className="mt-1 text-xs text-muted-foreground">{t("One check-in a day · Resets at midnight KST")}</p></div>
-        {guest ? <Button asChild><Link href="/login">{t("Log in")}</Link></Button> : <Button disabled={!data || loading || error || checkingIn || attendance?.checkedInToday} onClick={() => void attend()}>{attendance?.checkedInToday && <Check aria-hidden="true" className="size-4" />}{t(checkingIn ? "Checking in…" : attendance?.checkedInToday ? "Checked in today" : "Check in today")}</Button>}
+        {guest ? <Button asChild><Link href="/login" data-analytics-link="/login">{t("Log in")}</Link></Button> : <Button disabled={!data || loading || error || checkingIn || attendance?.checkedInToday} onClick={() => void attend()}>{attendance?.checkedInToday && <Check aria-hidden="true" className="size-4" />}{t(checkingIn ? "Checking in…" : attendance?.checkedInToday ? "Checked in today" : "Check in today")}</Button>}
       </div>
       <div className="grid gap-5 px-5 py-5 sm:grid-cols-[1fr_auto] sm:items-center sm:px-6">
         <div>{guest ? <p className="text-sm text-muted-foreground">{t("Sign in to record attendance and achievements.")}</p> : !data && loading ? <p role="status" className="text-sm text-muted-foreground">{t("Loading achievements…")}</p> : attendance ? <>
@@ -73,7 +75,7 @@ export default function AchievementsPage() {
         <h3 className="text-sm font-bold">{t(item.name)}</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{t(item.description)}</p><p className="mt-2 text-[11px] text-muted-foreground">{t("Progress not tracked yet")}</p>
         <div className="mt-3 text-xs font-semibold">{item.reward.kind === "coins" ? <p className="flex items-center gap-1.5"><GameEmblem kind="coin" className="size-4" />{t("{count} coins", { count: item.reward.amount })}</p> : <p className="flex items-center gap-2"><ProfileIcon iconId={item.reward.iconId} className="size-6" />{t(PROFILE_ICONS.find(icon => item.reward.kind === "icon" && icon.id === item.reward.iconId)!.name)}</p>}</div>
       </li>)}</ul>
-      <Button asChild variant="ghost" className="mt-4"><Link href="/shop">{t("Coin shop")}</Link></Button>
+      <Button asChild variant="ghost" className="mt-4"><Link href="/shop" data-analytics-link="/shop">{t("Coin shop")}</Link></Button>
     </details>
   </main>;
 }

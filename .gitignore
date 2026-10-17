@@ -54,3 +54,5 @@ next-env.d.ts
 # Durable server result outbox (contains account identifiers)
 .data/
 supabase/.temp/
+.env*
+!.env.example

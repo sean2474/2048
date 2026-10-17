@@ -70,6 +70,23 @@ async function setup(t: TestContext, options: Parameters<typeof createGameServer
   }
   return { ...server, connect, pair };
 }
+test("WebSocket handshakes reject unapproved origins and allow configured origins or native clients", async t => {
+  const server = await setup(t);
+  const endpoint = `http://127.0.0.1:${(server.httpServer.address() as AddressInfo).port}`;
+  const allowedOrigin = process.env.CORS_ORIGINS?.split(",")[0].trim() || "http://localhost:3001";
+  for (const [origin, expected] of [[allowedOrigin, true], ["https://unapproved-socket-smoke.invalid", false], [undefined, true]] as const) {
+    const socket = client(endpoint, { auth: { sessionToken: randomBytes(32).toString("hex") },
+      transports: ["websocket"], reconnection: false, autoConnect: false, timeout: 3000,
+      ...(origin ? { extraHeaders: { Origin: origin } } : {}),
+    });
+    t.after(() => socket.disconnect());
+    const connected = await new Promise<boolean>(resolve => {
+      socket.once("connect", () => resolve(true)); socket.once("connect_error", () => resolve(false)); socket.connect();
+    });
+    assert.equal(connected, expected, origin ?? "Native client without an Origin header");
+    socket.disconnect();
+  }
+});
 test("private rooms, malformed messages, membership checks, surrender and replay", async t => {
   const server = await setup(t, { resolveAccount }), a = await server.connect(undefined, "alice"), b = await server.connect(), outsider = await server.connect();
   const invalid = packet(a.socket, m => m.t === "reject");

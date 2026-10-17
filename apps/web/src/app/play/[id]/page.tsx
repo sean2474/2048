@@ -21,6 +21,7 @@ import { KeybindingSettings } from "@/components/widget/keybinding-settings";
 import { SoundToggle } from "@/components/widget/audio-controls";
 import { useAudio } from "@/hooks/audio-provider";
 import { matchSound } from "@/lib/game-audio";
+import { trackMatchEvent } from "@/lib/analytics";
 import { resolveKeyAction } from "@/lib/keybindings";
 import "@/styles/match-screen.css";
 import { createGameSocket, CURRENT_ROOM_KEY, matchModeLabel, reasonMessage } from "@/lib/multiplayer";
@@ -79,7 +80,10 @@ export default function GamePage() {
       if (message.t === "state" || message.t === "end") {
         const sound = message.t === "state" && !message.paused && !started ? "start" : matchSound(previousGame, message);
         if (sound && (sound !== "start" || !started)) play(sound, message.you.skinId);
-        if (message.t === "state" && !message.paused) started = true;
+        if (message.t === "state" && !message.paused) {
+          started = true;
+          trackMatchEvent("match_started", roomId, { mode: message.mode });
+        }
         previousGame = message;
         setError(""); setGame(message);
         if (message.t === "state") {
@@ -88,7 +92,10 @@ export default function GamePage() {
           if (!message.paused) serverOffset.current = message.serverTime - Date.now();
           setNow(Date.now() + serverOffset.current);
         }
-        if (message.t === "end") { finished = true; sessionStorage.removeItem(CURRENT_ROOM_KEY); }
+        if (message.t === "end") {
+          finished = true; sessionStorage.removeItem(CURRENT_ROOM_KEY);
+          trackMatchEvent("match_finished", roomId, { mode: message.mode, outcome: message.winner === "you" ? "win" : message.winner === "opp" ? "loss" : "draw" });
+        }
       } else if (message.t === "reject") {
         sessionStorage.removeItem(CURRENT_ROOM_KEY);
         setRejected(true); setError(reasonMessage(message.reason)); socket.disconnect();

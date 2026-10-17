@@ -37,7 +37,9 @@ export function createGameServer(options: { checkAdmin?: (token: string) => Prom
     res.end(JSON.stringify(req.url === "/health" ? { ok: true } : { error: "not_found" }));
   });
   const origins = (process.env.CORS_ORIGINS ?? "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001,https://2048duo.io,https://www.2048duo.io").split(",").map(s => s.trim());
-  const io = new Server(httpServer, { cors: { origin: origins }, maxHttpBufferSize: 8192 });
+  const io = new Server(httpServer, { cors: { origin: origins }, maxHttpBufferSize: 8192,
+    allowRequest: (request, done) => done(null, request.headers.origin === undefined || origins.includes(request.headers.origin)),
+  });
   const submitFeedback = feedbackHandler({ origins, writeFeedback: options.writeFeedback, resolveAccount: options.resolveAccount });
   const deleteAccount = accountDeletionHandler({
     origins, resolveAccount: options.resolveAccount, deleteAccount: options.deleteAccount, deleting: deletingAccounts,

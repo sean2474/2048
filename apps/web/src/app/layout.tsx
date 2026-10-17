@@ -5,9 +5,11 @@ import { I18nProvider } from "ui/i18n";
 import { getI18n } from "@/lib/i18n/server";
 import { SettingsProvider } from "@/hooks/settings-provider";
 import { AudioProvider } from "@/hooks/audio-provider";
+import { GameAnalytics } from "@/components/widget/analytics";
 
 export const metadata: Metadata = {
   title: "2048 Duo",
+  referrer: "origin",
   description: "Race your friends to 2048 in real-time multiplayer. Merge tiles to send obstacles, create a private room, or find a quick match.",
 };
 
@@ -25,6 +27,7 @@ export default async function RootLayout({
           <AudioProvider>
           <Header />
           {children}
+          <GameAnalytics />
           </AudioProvider>
           </SettingsProvider>
         </I18nProvider>
