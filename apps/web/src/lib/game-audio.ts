@@ -1,5 +1,5 @@
 import type { PublicPlayerState, S2C } from "schema/in-game";
-import { SKINS, type SkinId, type SkinTokens } from "schema/loadout";
+import { type SkinTokens } from "schema/loadout";
 
 export const AUDIO_STORAGE_KEY = "duo.audio";
 export const DEFAULT_AUDIO = { muted: false, volume: 0.45 };
@@ -55,6 +55,9 @@ const sounds: Record<GameSound, Notes> = {
 };
 
 const legendaryMerges: Record<NonNullable<SkinTokens["character"]>, { wave: OscillatorType; notes: Notes }> = {
+  fox: { wave: "triangle", notes: [[740, 1109, 0, .07], [1480, 1175, .04, .13]] },
+  dragon: { wave: "triangle", notes: [[196, 392, 0, .1], [587, 784, .04, .17], [1175, 1568, .09, .18]] },
+  phoenix: { wave: "sine", notes: [[659, 988, 0, .12], [1319, 1760, .06, .17], [1976, 1568, .12, .2]] },
   cat: { wave: "triangle", notes: [[520, 780, 0, .07], [1040, 860, .045, .11]] },
   bunny: { wave: "sine", notes: [[620, 930, 0, .07], [1240, 1047, .055, .13]] },
   sentinel: { wave: "triangle", notes: [[170, 85, 0, .06], [860, 430, .015, .12], [1290, 645, .025, .1]] },
@@ -90,7 +93,7 @@ export class GameAudio {
     if (this.master && this.context) this.master.gain.setValueAtTime(settings.muted ? 0 : settings.volume, this.context.currentTime);
   }
 
-  play(sound: GameSound, skinId?: SkinId) {
+  play(sound: GameSound, tokens?: SkinTokens) {
     const context = this.context;
     if (!context || !this.master || context.state !== "running" || document.hidden || this.settings.muted || this.settings.volume === 0) return;
     const now = context.currentTime;
@@ -98,8 +101,7 @@ export class GameAudio {
     if (result) this.stop();
     else if (now - this.lastPlayed < 0.045 || this.voices.size >= 12) return;
     this.lastPlayed = now;
-    const tokens: SkinTokens | undefined = sound === "merge" ? SKINS.find(skin => skin.id === skinId)?.tokens : undefined;
-    const merge = tokens?.character ? legendaryMerges[tokens.character] : undefined;
+    const merge = sound === "merge" && tokens?.character ? legendaryMerges[tokens.character] : undefined;
     for (const [frequency, endFrequency, offset, duration] of merge?.notes ?? sounds[sound]) {
       const oscillator = context.createOscillator();
       const envelope = context.createGain();

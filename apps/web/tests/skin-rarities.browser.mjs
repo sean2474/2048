@@ -6,7 +6,8 @@ import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 const { chromium } = createRequire(import.meta.url)("playwright");
-import { mockAccount } from "./browser-fixtures.mjs";
+import { mockAccount, mockCatalog } from "./browser-fixtures.mjs";
+const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const artifacts = path.join(root, "docs/skin-expansion");
 
@@ -16,12 +17,13 @@ test("rarity filters, persistence, paging and readable character tiles", async (
   try {
     const context = await browser.newContext({ locale: "ko-KR", viewport: { width: 1440, height: 900 } });
     const page = await context.newPage();
+    await mockCatalog(page);
     page.setDefaultTimeout(12000);
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
     const account = await mockAccount(page);
     account.cosmetics.purchases = ["confetti", "gingham", "pinstripe", "weave", "runes", "meadow", "tide", "aurora", "obsidian", "astral", "kitty", "bunny", "sentinel", "runeknight", "arcanist"].map(item_id => ({ kind: "skin", item_id }));
-    await page.goto("http://[::1]:3001/loadout");
+    await page.goto(`${origin}/loadout`);
     await page.locator("#skin-results button:enabled").first().waitFor();
     assert.equal(await page.locator("#skin-results button").count(), 12);
     await page.getByRole("button", { name: "다음 페이지", exact: true }).click();
@@ -60,10 +62,10 @@ test("rarity filters, persistence, paging and readable character tiles", async (
     }
     await page.reload();
     await page.getByRole("region", { name: "현재 선택" }).getByText(/아케인 오더/).waitFor();
-    await page.goto("http://[::1]:3001/settings");
+    await page.goto(`${origin}/settings`);
     await page.getByText("English", { exact: true }).click();
     await page.getByRole("heading", { name: "Game preferences", exact: true }).waitFor();
-    await page.goto("http://[::1]:3001/loadout");
+    await page.goto(`${origin}/loadout`);
     await page.getByRole("button", { name: "Legendary", exact: true }).click();
     assert.match(await page.locator("#skin-results").innerText(), /Arcane Order/);
     const filter = page.getByRole("button", { name: "Epic", exact: true });
@@ -72,13 +74,13 @@ test("rarity filters, persistence, paging and readable character tiles", async (
     assert.equal(await filter.getAttribute("aria-pressed"), "true");
     assert.notEqual(await filter.evaluate(el => getComputedStyle(el).outlineStyle), "none");
     await page.screenshot({ path: path.join(artifacts, "english-keyboard.png"), fullPage: true, animations: "disabled" });
-    await page.goto("http://[::1]:3001/tutorial");
+    await page.goto(`${origin}/tutorial`);
     await page.locator('.game-you [data-skin="arcanist"]').waitFor();
     assert.equal(await page.locator('.game-opponent [data-skin="classic"]').count(), 1);
     await page.screenshot({ path: path.join(artifacts, "equipped-game.png"), fullPage: true, animations: "disabled" });
     assert.deepEqual(errors, []);
 
-    await page.goto("http://[::1]:3001/loadout");
+    await page.goto(`${origin}/loadout`);
     await page.getByRole("button", { name: "All skins", exact: true }).waitFor();
     const fixture = execFileSync("pnpm", ["--filter", "socket", "exec", "tsx", "--tsconfig", "../web/tsconfig.json", "../web/tests/skin-tiles.fixture.tsx"], { cwd: root, encoding: "utf8" });
     await page.locator("main").evaluate((el, html) => { el.innerHTML = html; }, fixture);

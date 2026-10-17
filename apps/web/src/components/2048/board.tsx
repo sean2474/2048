@@ -3,17 +3,19 @@ import { useRef, type CSSProperties } from "react";
 import { type Board, type Dir, SIZE } from "@/types";
 import { Tile } from "./tile";
 import { useI18n } from "ui/i18n";
-import { SKINS, type SkinId } from "schema/loadout";
+import { type SkinId } from "schema/loadout";
+import { useCatalog } from "@/hooks/catalog-provider";
+import { boardBackground } from "@/lib/catalog-assets";
 export function BoardView({ board, onMove, label = "Game board", skinId = "classic" }: { board: Board; onMove?: (dir: Dir) => void; label?: string; skinId?: SkinId }) {
   const { t } = useI18n();
-  const skin = SKINS.find(item => item.id === skinId) ?? SKINS[0];
+  const skin = useCatalog().skin(skinId);
   const start = useRef<{ x: number; y: number } | null>(null);
   const style = {
     "--size": SIZE, "--gap": "var(--board-gap, clamp(6px, 1.4vw, 10px))", "--pad": "var(--gap)",
     "--tile": "calc((100% - (var(--gap) * (var(--size) + 1))) / var(--size))",
     touchAction: onMove ? "none" : "auto",
     containerType: "inline-size",
-    background: skin.tokens.boardBackground,
+    background: boardBackground(skin.tokens),
     "--skin-tile-radius": skin.tokens.tileRadius,
     borderRadius: "calc(var(--skin-tile-radius) + var(--pad))",
   } as CSSProperties;

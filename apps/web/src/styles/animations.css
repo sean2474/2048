@@ -44,6 +44,12 @@
 [data-merge-effect="runeknight"] .legendary-merge-flair { animation-name: merge-runes; }
 [data-merge-effect="arcanist"] { --merge-aura: #c6b4f5; animation-name: legendary-arcanist; }
 [data-merge-effect="arcanist"] .legendary-merge-flair { animation-name: merge-orbit; }
+[data-merge-effect="fox"] { --merge-aura: #b6dbff; animation-name: legendary-sentinel; }
+[data-merge-effect="fox"] .legendary-merge-flair { animation-name: merge-lock; }
+[data-merge-effect="dragon"] { --merge-aura: #e7ce82; animation-name: legendary-runeknight; }
+[data-merge-effect="dragon"] .legendary-merge-flair { animation-name: merge-orbit; }
+[data-merge-effect="phoenix"] { --merge-aura: #f1c1db; animation-name: legendary-arcanist; }
+[data-merge-effect="phoenix"] .legendary-merge-flair { animation-name: merge-petals; }
 [data-merge-effect="diamond"] { --merge-aura: #80c4e4; animation-name: legendary-diamond; }
 [data-merge-effect="diamond"] .legendary-merge-flair { animation-name: merge-prism; }
 [data-merge-effect="crown"] { --merge-aura: #ddbc70; animation-name: legendary-crown; }

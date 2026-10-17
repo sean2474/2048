@@ -3,10 +3,10 @@ import test from "node:test";
 import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { mockAccount } from "./browser-fixtures.mjs";
+import { mockAccount, mockCatalog } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
-const origin = process.env.TEST_WEB_ORIGIN ?? "http://[::1]:3001";
+const origin = process.env.WEB_TEST_ORIGIN ?? process.env.TEST_WEB_ORIGIN ?? "http://[::1]:3001";
 const artifacts = fileURLToPath(new URL("../../../docs/rank-cosmetics/", import.meta.url));
 const ranks = ["bronze", "silver", "gold", "platinum", "diamond", "master"];
 const names = ["브론즈의 성채", "실버의 검문장", "골드의 월계관", "플래티넘의 나침반", "다이아몬드 프리즘", "마스터의 왕관"];
@@ -15,6 +15,7 @@ async function setup(browser, viewport = { width: 375, height: 812 }) {
   const context = await browser.newContext({ locale: "ko-KR", viewport, reducedMotion: "reduce" });
   await context.addCookies([{ name: "duo.locale", value: "ko", url: origin }]);
   const page = await context.newPage();
+    await mockCatalog(page);
   page.setDefaultTimeout(10000);
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
@@ -112,7 +113,7 @@ test("tier set cards show paired rewards and stay readable at mobile, tablet and
       await page.locator("#rank-bronze").scrollIntoViewIfNeeded();
       await page.screenshot({ path: `${artifacts}collection-${width}.png` });
     }
-    await page.route("**/rest/v1/rpc/achievement_state*", route => route.fulfill({ status: 500, contentType: "application/json", body: '{"message":"Fixture failure"}' }));
+    await page.route("**/rest/v1/rpc/sync_achievements*", route => route.fulfill({ status: 500, contentType: "application/json", body: '{"message":"Fixture failure"}' }));
     await page.goto(`${origin}/loadout`);
     await page.getByRole("button", { name: "해금 정보 다시 불러오기" }).waitFor();
     await page.getByRole("tab", { name: "아이콘", exact: true }).click();

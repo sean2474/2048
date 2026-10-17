@@ -1,3 +1,5 @@
+import { CatalogIdSchema } from "./catalog";
+
 export const PROFILE_ICONS = [
   { id: "fox", name: "Ember Fox", color: "#c66a42" },
   { id: "owl", name: "Moon Owl", color: "#7d83b5" },
@@ -15,10 +17,10 @@ export const PROFILE_ICONS = [
   { id: "rank-master", name: "Master Crown", color: "#8b69a7" },
 ] as const;
 
-export type ProfileIconId = (typeof PROFILE_ICONS)[number]["id"];
+export type ProfileIconId = string;
 export const GUEST_PROFILE_ICON = { id: "guest", name: "Guest icon" } as const;
 export type PlayerIconId = ProfileIconId | typeof GUEST_PROFILE_ICON.id;
 export const DEFAULT_PROFILE_ICON: ProfileIconId = "fox";
 export function isProfileIconId(value: unknown): value is ProfileIconId {
-  return PROFILE_ICONS.some(icon => icon.id === value);
+  return CatalogIdSchema.safeParse(value).success;
 }

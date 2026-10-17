@@ -6,10 +6,10 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const artifacts = fileURLToPath(new URL("../../../docs/profile-icons", import.meta.url));
-const origin = "http://[::1]:3001";
+const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
 const roomId = "20000000-0000-4000-8000-000000000001";
 
-import { mockAccount } from "./browser-fixtures.mjs";
+import { mockAccount, mockCatalog } from "./browser-fixtures.mjs";
 
 // Local Socket.IO polling fixture: exercises the real lobby hook without creating accounts or matches.
 async function mockMatch(page, { mode = "casual", rating = 1460, opponentName = "달빛수호자", iconId = "dragon", duplicate = false, fail = false } = {}) {
@@ -64,6 +64,7 @@ test("account catalog icons persist and preserve settings on failed saves", asyn
   try {
     const context = await browser.newContext({ locale: "ko-KR", viewport: { width: 1440, height: 900 } });
     const page = await context.newPage(), errors = [];
+    await mockCatalog(page);
     page.setDefaultTimeout(10000);
     page.on("pageerror", error => errors.push(error.message));
     const account = await mockAccount(page);
@@ -115,6 +116,7 @@ test("match reveal shows real payloads, handles reduced motion, skips, errors an
     for (const [width, height, reducedMotion] of [[1440, 900, "no-preference"], [375, 812, "reduce"]]) {
       const context = await browser.newContext({ locale: "ko-KR", viewport: { width, height }, reducedMotion });
       const page = await context.newPage(), errors = [];
+    await mockCatalog(page);
       page.on("pageerror", error => errors.push(error.message));
       const sent = await mockMatch(page, { duplicate: true, opponentName: width === 375 ? "아주긴닉네임도화면밖으로나가지않아요" : "달빛수호자" });
       await page.clock.install();
@@ -151,6 +153,7 @@ test("match reveal shows real payloads, handles reduced motion, skips, errors an
     for (const scenario of ["friend", "error", "guest"]) {
       const context = await browser.newContext({ locale: "en-US", viewport: { width: 375, height: 812 } });
       const page = await context.newPage();
+    await mockCatalog(page);
       await mockMatch(page, { mode: scenario === "friend" ? "friend" : "casual", rating: null, iconId: "guest", fail: scenario === "error" });
       await page.goto(`${origin}/play/${scenario === "friend" ? "create" : "online"}`);
       if (scenario === "error") {

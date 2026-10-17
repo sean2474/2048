@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Account, MatchRecord } from "schema/results";
 import { INITIAL_RATING, type RankProgress, type RankSnapshot } from "schema/ranking";
-import { DEFAULT_PROFILE_ICON, isProfileIconId } from "schema/profile-icons";
-import { SKINS } from "schema/loadout";
+import { DEFAULT_PROFILE_ICON } from "schema/profile-icons";
+import { CatalogIdSchema } from "schema/catalog";
 import type { MatchWriter } from "./result-store";
 import type { DeleteAccount } from "./account-deletion";
 import type { FeedbackWriter } from "./feedback";
@@ -27,9 +27,12 @@ export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { 
       profileClient.from("player_preferences").select("icon_id,skin_id").eq("player_id", data.user.id).maybeSingle(),
       profileClient.from("player_ratings").select("rating,tier,placement_games").eq("player_id", data.user.id).maybeSingle(),
     ]);
+    // Database equipment triggers authorize catalog ownership; only validate ID syntax here.
+    const icon = CatalogIdSchema.safeParse(!preferences.error ? preferences.data?.icon_id : undefined);
+    const skin = CatalogIdSchema.safeParse(!preferences.error ? preferences.data?.skin_id : undefined);
     return { id: data.user.id, name: profile.name,
-      iconId: !preferences.error && isProfileIconId(preferences.data?.icon_id) ? preferences.data.icon_id : DEFAULT_PROFILE_ICON,
-      skinId: !preferences.error ? SKINS.find(skin => skin.id === preferences.data?.skin_id)?.id ?? "classic" : "classic",
+      iconId: icon.success ? icon.data : DEFAULT_PROFILE_ICON,
+      skinId: skin.success ? skin.data : "classic",
       rating: ranking.error ? null : !ranking.data ? INITIAL_RATING : Number.isSafeInteger(ranking.data.rating) ? ranking.data.rating : null,
       ...(!ranking.error ? { rank: rankProgress(ranking.data) } : {}),
     };

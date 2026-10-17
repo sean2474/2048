@@ -3,10 +3,10 @@ import test from "node:test";
 import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { authCookieName, mockAccount } from "./browser-fixtures.mjs";
+import { authCookieName, mockAccount, mockCatalog } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
-const origin = "http://[::1]:3001";
+const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
 const artifacts = fileURLToPath(new URL("../../../docs/achievement-rewards/", import.meta.url));
 
 test("30th attendance unlocks a permanent profile, duplicate click is blocked, and equip persists", async () => {
@@ -14,6 +14,7 @@ test("30th attendance unlocks a permanent profile, duplicate click is blocked, a
   try {
     const context = await browser.newContext({ locale: "ko-KR", reducedMotion: "reduce" });
     const page = await context.newPage(), errors = [];
+    await mockCatalog(page);
     page.setDefaultTimeout(8000);
     page.on("pageerror", error => errors.push(error.message));
     const account = await mockAccount(page);
@@ -67,10 +68,11 @@ test("locked rewards stay previewable, ownership errors fail closed, and attenda
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const page = await browser.newPage({ locale: "ko-KR" });
+    await mockCatalog(page);
     page.setDefaultTimeout(8000);
     const account = await mockAccount(page);
     let failRead = true, failCheckIn = true;
-    await page.route("**/rest/v1/rpc/achievement_state*", route => route.fulfill({ status: failRead ? 500 : 200, contentType: "application/json", body: JSON.stringify(failRead ? { message: "Fixture failure" } : account.achievements) }));
+    await page.route("**/rest/v1/rpc/sync_achievements*", route => route.fulfill({ status: failRead ? 500 : 200, contentType: "application/json", body: JSON.stringify(failRead ? { message: "Fixture failure" } : account.achievements) }));
     await page.route("**/rest/v1/rpc/check_in", route => {
       if (failCheckIn) return route.fulfill({ status: 500, contentType: "application/json", body: '{"message":"Fixture failure"}' });
       account.achievements.attendance = { ...account.achievements.attendance, streak: 1, bestStreak: 1, checkedInToday: true };
@@ -113,6 +115,7 @@ test("achievement collection has guest, active and unlocked responsive views wit
   try {
     for (const authenticated of [false, true]) {
       const page = await browser.newPage({ locale: "ko-KR", reducedMotion: "reduce" });
+    await mockCatalog(page);
       if (authenticated) {
         const account = await mockAccount(page);
         account.achievements.attendance.streak = 12;
@@ -125,6 +128,7 @@ test("achievement collection has guest, active and unlocked responsive views wit
       await page.getByRole("heading", { name: "업적", exact: true }).waitFor();
       if (authenticated) await page.getByRole("button", { name: "오늘 출석하기", exact: true }).waitFor();
       else { await page.getByText("로그인하고 출석과 업적을 기록하세요.").waitFor(); assert.equal(await page.getByRole("progressbar").count(), 0); }
+      await page.locator("#achievement-rewards > li").first().waitFor();
       assert.equal(await page.locator("#achievement-rewards > li").count(), 10);
       for (const [width, height] of [[375, 812], [768, 1024], [1440, 900]]) {
         await page.setViewportSize({ width, height });
@@ -151,9 +155,10 @@ test("achievement collection has guest, active and unlocked responsive views wit
 test("switching accounts discards delayed progress and check-in responses", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
-    for (const pendingCall of ["achievement_state", "check_in"]) {
+    for (const pendingCall of ["sync_achievements", "check_in"]) {
       const context = await browser.newContext({ locale: "ko-KR" });
       const page = await context.newPage();
+    await mockCatalog(page);
       page.setDefaultTimeout(8000);
       const account = await mockAccount(page);
       account.achievements.attendance = { ...account.achievements.attendance, streak: 29, bestStreak: 29 };
@@ -175,7 +180,7 @@ test("switching accounts discards delayed progress and check-in responses", asyn
       await page.goto(`${origin}/achievements`);
       if (pendingCall === "check_in") await page.getByRole("button", { name: "오늘 출석하기", exact: true }).click();
       await started;
-      if (pendingCall === "achievement_state") {
+      if (pendingCall === "sync_achievements") {
         await page.getByText("업적을 불러오는 중…").waitFor();
         await page.screenshot({ path: `${artifacts}loading.png`, fullPage: true });
       }

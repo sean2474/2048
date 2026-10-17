@@ -12,3 +12,12 @@ export function tileBg(v: number) {
 export function tileFg(v: number) {
   return v <= 4 ? "#776e65" : "#f9f6f2";
 }
+
+export function tileTextColor(background: string) {
+  const hex = background.slice(1, 7);
+  const channels = hex.length === 3 ? [...hex].map(value => value + value) : hex.match(/../g)!;
+  const luminance = channels.map(value => parseInt(value, 16) / 255)
+    .map(value => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4)
+    .reduce((sum, value, index) => sum + value * [.2126, .7152, .0722][index], 0);
+  return luminance > .179 ? "#000000" : "#ffffff";
+}
