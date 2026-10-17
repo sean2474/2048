@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { mockAccount, mockCatalog, trackAudio } from "./browser-fixtures.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const artifacts = fileURLToPath(new URL("../../../docs/legendary-motion", import.meta.url));
-const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
+const origin = process.env.WEB_TEST_ORIGIN ?? process.env.TEST_WEB_ORIGIN ?? "http://[::1]:3001";
 
 test("legendary merge motion, real audio routing, mute and reduced motion", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
@@ -15,6 +15,7 @@ test("legendary merge motion, real audio routing, mute and reduced motion", asyn
   const measurements = [];
   try {
     const context = await browser.newContext({ locale: "en-US", viewport: { width: 375, height: 812 } });
+    context.setDefaultTimeout(12000);
     await trackAudio(context);
     const page = await context.newPage(), errors = [];
     await mockCatalog(page);

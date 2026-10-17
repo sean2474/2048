@@ -9,7 +9,7 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
 const artifacts = fileURLToPath(new URL("../../../docs/achievement-rewards/", import.meta.url));
 
-test("30th attendance unlocks a permanent profile, duplicate click is blocked, and equip persists", async () => {
+test("visiting automatically checks in once, unlocks the 30th reward, and equip persists", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const context = await browser.newContext({ locale: "ko-KR", reducedMotion: "reduce" });
@@ -29,12 +29,11 @@ test("30th attendance unlocks a permanent profile, duplicate click is blocked, a
       await route.fulfill({ contentType: "application/json", body: JSON.stringify(account.achievements) });
     });
     await page.goto(`${origin}/achievements`);
-    const button = page.getByRole("button", { name: "오늘 출석하기", exact: true });
-    await page.locator("button:enabled").filter({ hasText: /^오늘 출석하기$/ }).waitFor();
-    await button.evaluate(el => { el.click(); el.click(); });
-    await page.getByRole("button", { name: "오늘 출석 완료", exact: true }).waitFor();
+    await page.getByRole("status").filter({ hasText: /^오늘 출석 완료$/ }).waitFor();
     assert.equal(checkIns, 1);
-    assert.equal(await page.getByRole("button", { name: "오늘 출석 완료", exact: true }).isDisabled(), true);
+    assert.equal(await page.getByRole("button", { name: "오늘 출석하기", exact: true }).count(), 0);
+    const rewardOrder = await page.locator("#achievement-rewards > li").evaluateAll(nodes => nodes.map(node => node.id));
+    assert.deepEqual(rewardOrder.slice(-2), ["checkin-7", "checkin-30"]);
     await page.getByRole("status").filter({ hasText: "새 보상이 해금됐어요" }).waitFor();
     await page.screenshot({ path: `${artifacts}unlocked.png`, fullPage: true });
     await page.locator("#checkin-30").getByRole("link", { name: "내 꾸미기" }).click();
@@ -99,12 +98,11 @@ test("locked rewards stay previewable, ownership errors fail closed, and attenda
     assert.equal(await page.locator("#icons-panel button").count(), 1);
     assert.equal(account.row.icon_id, "fox");
     await page.goto(`${origin}/achievements`);
-    await page.getByRole("button", { name: "오늘 출석하기", exact: true }).click();
     await page.getByRole("alert").filter({ hasText: "출석을 저장하지 못했어요" }).waitFor();
     await page.screenshot({ path: `${artifacts}checkin-error.png`, fullPage: true });
     failCheckIn = false;
-    await page.getByRole("button", { name: "오늘 출석하기", exact: true }).click();
-    await page.getByRole("button", { name: "오늘 출석 완료", exact: true }).waitFor();
+    await page.getByRole("button", { name: "출석 다시 시도", exact: true }).click();
+    await page.getByRole("status").filter({ hasText: /^오늘 출석 완료$/ }).waitFor();
     assert.equal(account.achievements.attendance.streak, 1);
   } finally { await browser.close(); }
 });
@@ -126,10 +124,10 @@ test("achievement collection has guest, active and unlocked responsive views wit
       }
       await page.goto(`${origin}/achievements`);
       await page.getByRole("heading", { name: "업적", exact: true }).waitFor();
-      if (authenticated) await page.getByRole("button", { name: "오늘 출석하기", exact: true }).waitFor();
+      if (authenticated) await page.getByRole("status").filter({ hasText: /^오늘 출석 완료$/ }).waitFor();
       else { await page.getByText("로그인하고 출석과 업적을 기록하세요.").waitFor(); assert.equal(await page.getByRole("progressbar").count(), 0); }
       await page.locator("#achievement-rewards > li").first().waitFor();
-      assert.equal(await page.locator("#achievement-rewards > li").count(), 10);
+      assert.equal(await page.locator("#achievement-rewards > li").count(), 18);
       for (const [width, height] of [[375, 812], [768, 1024], [1440, 900]]) {
         await page.setViewportSize({ width, height });
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
@@ -178,7 +176,6 @@ test("switching accounts discards delayed progress and check-in responses", asyn
         return route.fulfill({ contentType: "application/json", body: JSON.stringify(account.achievements) });
       });
       await page.goto(`${origin}/achievements`);
-      if (pendingCall === "check_in") await page.getByRole("button", { name: "오늘 출석하기", exact: true }).click();
       await started;
       if (pendingCall === "sync_achievements") {
         await page.getByText("업적을 불러오는 중…").waitFor();
@@ -204,7 +201,7 @@ test("switching accounts discards delayed progress and check-in responses", asyn
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       assert.equal(await page.locator("#checkin-30 progress").getAttribute("value"), "0");
       assert.equal(await page.getByText(/새 보상이 해금됐어요/).count(), 0);
-      assert.equal(await page.getByRole("button", { name: "오늘 출석하기", exact: true }).isEnabled(), true);
+      assert.equal(await page.getByRole("button", { name: "오늘 출석하기", exact: true }).count(), 0);
       await context.close();
     }
   } finally { await browser.close(); }

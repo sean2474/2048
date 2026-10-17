@@ -11,7 +11,7 @@ export default function JoinRoomPage() {
   const { t } = useI18n();
   const [code, setCode] = useState("");
   const [submitted, setSubmitted] = useState<string>();
-  const { status, error, retry, match, enterMatch } = useLobby("joinRoomWithCode", submitted);
+  const { status, error, retry, match } = useLobby("joinRoomWithCode", submitted);
   const busy = !!submitted && !error;
   return <main className="mx-auto w-full max-w-[520px] px-4 py-8 sm:py-12"><section className="game-panel bg-card p-6 sm:p-8">
     <GameEmblem kind="friend" className="mb-6 size-20" />
@@ -31,5 +31,5 @@ export default function JoinRoomPage() {
       <Button type="submit" className="w-full" disabled={busy || code.length !== 6}>{busy && <Loader2 aria-hidden="true" className="animate-spin motion-reduce:animate-none" />}{busy ? t("Joining...") : t("Join room")}{!busy && <ArrowRight aria-hidden="true" />}</Button>
     </form>
     <Button asChild variant="outline" className="w-full"><Link href="/find-match"><ArrowLeft aria-hidden="true" />{t("Back to menu")}</Link></Button>
-  </section><MatchIntro match={match} onEnter={enterMatch} /></main>;
+  </section><MatchIntro match={match} /></main>;
 }

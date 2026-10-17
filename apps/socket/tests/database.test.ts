@@ -210,7 +210,7 @@ test("migrations enforce RLS, atomic/idempotent results, rankings and Realtime p
   });
   assert.deepEqual((await db.query("select sum(rating)::integer as total, sum(games_played)::integer as games from public.player_ratings")).rows, [{ total: 2400, games: 10 }]);
   const published = (await db.query<{ tablename: string }>("select tablename from pg_publication_tables where pubname='supabase_realtime'")).rows.map(row => row.tablename).sort();
-  assert.deepEqual(published, ["match_participants", "player_ratings", "player_stats"]);
+  assert.deepEqual(published, ["direct_messages", "friendships", "match_participants", "player_ratings", "player_stats"]);
 });
 
 test("Elo migration preserves historical games and statistics without awarding retroactive ratings", async t => {

@@ -18,7 +18,7 @@ export function MatchLobby({ mode }: { mode: "casual" | "ranked" }) {
   const { icon } = useLoadout();
   const ranked = mode === "ranked";
   const canSearch = !ranked || !!user && !user.is_anonymous;
-  const { status, error, retry, match, enterMatch } = useLobby("findMatch", undefined, mode, canSearch);
+  const { status, error, retry, match } = useLobby("findMatch", undefined, mode, canSearch);
   const accountStatus = user === undefined ? "Checking your account…" : "Sign in to play ranked matches.";
   const searching = canSearch && !error && !match;
   const playerName = player?.name || t(user && !user.is_anonymous ? "You" : "Guest");
@@ -54,5 +54,5 @@ export function MatchLobby({ mode }: { mode: "casual" | "ranked" }) {
         <Button asChild variant="outline" className="lobby-cancel"><Link href="/find-match" onClick={() => { if (searching) trackGameEvent("queue_cancel_clicked", { mode }); }}><ArrowLeft aria-hidden="true" />{canSearch ? t("Cancel search") : t("Back to menu")}</Link></Button>
       </div>
     </section>
-  <MatchIntro match={match} onEnter={enterMatch} /></main>;
+  <MatchIntro match={match} /></main>;
 }

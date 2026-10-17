@@ -30,7 +30,7 @@ export const CatalogRewardSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("set"), skinId: CatalogIdSchema, iconId: CatalogIdSchema }).strict(),
 ]);
 export const AchievementInputSchema = z.object({ ...metadata,
-  metric: z.enum(["attendance_streak", "wins", "highest_tile", "rank_tier", "solo_time", "solo_tile"]),
+  metric: z.enum(["attendance_streak", "wins", "highest_tile", "rank_tier", "solo_time", "solo_tile", "achievements"]),
   target: z.number().int().min(1).max(1000000000), reward: CatalogRewardSchema,
 }).strict().refine(item => item.metric !== "rank_tier" || item.target <= 6, { message: "Rank target must be 1–6", path: ["target"] });
 const record = { revision: z.number().int().min(1), publishedOnce: z.boolean(), updatedAt: z.string().datetime({ offset: true }) };

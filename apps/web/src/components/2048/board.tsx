@@ -6,12 +6,12 @@ import { useI18n } from "ui/i18n";
 import { type SkinId } from "schema/loadout";
 import { useCatalog } from "@/hooks/catalog-provider";
 import { boardBackground } from "@/lib/catalog-assets";
-export function BoardView({ board, onMove, label = "Game board", skinId = "classic" }: { board: Board; onMove?: (dir: Dir) => void; label?: string; skinId?: SkinId }) {
+export function BoardView({ board, onMove, label = "Game board", skinId = "classic", size = SIZE }: { board: Board; onMove?: (dir: Dir) => void; label?: string; skinId?: SkinId; size?: number }) {
   const { t } = useI18n();
   const skin = useCatalog().skin(skinId);
   const start = useRef<{ x: number; y: number } | null>(null);
   const style = {
-    "--size": SIZE, "--gap": "var(--board-gap, clamp(6px, 1.4vw, 10px))", "--pad": "var(--gap)",
+    "--size": size, "--gap": "var(--board-gap, clamp(6px, 1.4vw, 10px))", "--pad": "var(--gap)",
     "--tile": "calc((100% - (var(--gap) * (var(--size) + 1))) / var(--size))",
     touchAction: onMove ? "none" : "auto",
     containerType: "inline-size",
@@ -32,7 +32,7 @@ export function BoardView({ board, onMove, label = "Game board", skinId = "class
       onMove(Math.abs(dx) > Math.abs(dy) ? dx > 0 ? "right" : "left" : dy > 0 ? "down" : "up");
     }}>
     <div className="absolute inset-0 grid" style={{ gridTemplateColumns: "repeat(var(--size), 1fr)", gridTemplateRows: "repeat(var(--size), 1fr)", gap: "var(--gap)", padding: "var(--pad)" }}>
-      {Array.from({ length: SIZE * SIZE }, (_, index) => <div key={index} className="shadow-inner" style={{ background: skin.tokens.emptyBackground, borderRadius: skin.tokens.tileRadius }} />)}
+      {Array.from({ length: size * size }, (_, index) => <div key={index} className="shadow-inner" style={{ background: skin.tokens.emptyBackground, borderRadius: skin.tokens.tileRadius }} />)}
     </div>
     <div className="relative w-full h-full font-bold" style={{ padding: "var(--pad)" }}>{board.map(tile => <Tile key={tile.id} tile={tile} tokens={skin.tokens} />)}</div>
   </div>;
