@@ -48,3 +48,5 @@ NEXT_DIST_DIR=.next/performance-final pnpm --filter 2048-duo build
 [데스크톱](web-performance/leaderboard.png) · [모바일](web-performance/leaderboard-mobile.png)
 
 운영 배포, 실제 모바일 기기, 운영 Speed Insights 재측정은 수행하지 않았다. 로컬 fixture는 실제 Supabase Realtime 연결의 전달 지연을 측정하지 않는다.
+
+이후 통합된 페이지별 서버·클라이언트 구성은 [렌더링 경계](page-performance-boundaries.md), 추가 최적화의 측정은 [전체 성능 비교](full-performance/results.md), 후속 배포는 [통합 기록](full-performance/integration.md)을 따른다. 위 수치와 검증은 최초 SSR 작업 당시 기록으로 유지한다.

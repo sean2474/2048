@@ -4,10 +4,12 @@ Run in an isolated worktree with its own dependencies and no dev servers. The ha
 
 ```sh
 pnpm install --frozen-lockfile
-NODE_PATH=/path/to/playwright/node_modules BENCH_LABEL=before \
+NODE_PATH=/path/to/playwright/node_modules BENCH_LABEL=local-check \
   node apps/web/tests/performance.browser.mjs
 node --test apps/web/tests/performance-metrics.test.mjs
 ```
+
+Choose a new label or `BENCH_OUTPUT` directory for each capture. The harness writes directly to that directory; do not reuse the committed `before`, `after` or remote evidence directories.
 
 Available flags (no flags required):
 
@@ -41,6 +43,7 @@ After a deployment has been explicitly verified, deployed guest-only private fri
 
 ```sh
 NODE_PATH=/path/to/playwright/node_modules BENCH_REMOTE_TARGET=staging \
+  BENCH_OUTPUT=/tmp/2048-duo-remote-staging-check \
   BENCH_DEPLOYED_COMMIT='replace-with-verified-web-sha' \
   BENCH_SOCKET_BUILD_COMMIT='replace-with-verified-socket-sha' \
   node apps/web/tests/performance-remote.browser.mjs
@@ -48,7 +51,7 @@ NODE_PATH=/path/to/playwright/node_modules BENCH_REMOTE_TARGET=staging \
 
 `BENCH_DEPLOYED_COMMIT` and `BENCH_SOCKET_BUILD_COMMIT` must contain the verified 40-character deployment/build SHAs; the harness records these supplied identities and does not itself verify a cloud provider release. `BENCH_REMOTE_TARGET` must be explicitly `staging` or `production`; URLs are fixed to the deployment guide. Each device opens its own private friend room, joins using the code, plays to a natural end, then separately tests surrender. Real network input/state/render and entry/result timings are captured without intercepting requests. Exact server room wall duration is unavailable in guest browser packets and is left null. `BENCH_OUTPUT` optionally changes the artifact destination.
 
-Compare complete local runs with `node apps/web/tests/performance-compare.mjs docs/full-performance/before/raw.json docs/full-performance/after/raw.json`. It rejects mixed machine/browser/configuration or different page-case coverage and reports raw/gzip initial JavaScript, preference query counts, native timings, observed readiness bounds and game samples.
+Compare complete local runs with `node apps/web/tests/performance-compare.mjs docs/full-performance/before/raw.json docs/full-performance/after/raw.json /tmp/2048-duo-comparison-check.md`. The explicit output path preserves the committed comparison. It rejects mixed machine/browser/configuration or different page-case coverage and reports raw/gzip initial JavaScript, preference query counts, native timings, observed readiness bounds and game samples.
 
 `resultPacketToOverlayMs` records the first observed mounted overlay geometry; opacity animation may still be running. New deployed runs separately record `resultPacketToAnimationCompleteMs` after finite overlay animations finish and two animation frames pass. Screenshots are then taken of the settled result. This extra measurement was not present in the local before/after capture.
 

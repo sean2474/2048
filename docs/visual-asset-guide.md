@@ -10,7 +10,8 @@
 
 | 용도 | 제작 기준 | 기준 소스 |
 | --- | --- | --- |
-| 로고·코인·꾸미기·책·설정·프로필 등 UI 심볼 | 단색 선, 같은 굵기·끝 처리 | [GameEmblem](../apps/web/src/components/widget/game-emblem.tsx) |
+| 로고·꾸미기·책·설정·프로필 등 UI 심볼 | 단색 선, 같은 굵기·끝 처리 | [GameEmblem](../apps/web/src/components/widget/game-emblem.tsx) |
+| 코인 | 공통 노란색 채움과 갈색 윤곽 | 같은 `GameEmblem`의 `coin` |
 | 닫기·뒤로·체크·볼륨 같은 일반 조작 | 설치된 Lucide 아이콘 재사용 | 기존 Button·Dialog·AudioControls |
 | 랭크 티어 | 기존 금속색·문장 형태의 위계 유지 | [TierIcon](../apps/web/src/components/widget/tier-badge.tsx) |
 | 플레이어 프로필 그림 | 원형 크롭 안에 캐릭터와 고유 배경 | [ProfileIcon](../apps/web/src/components/widget/profile-icon.tsx), [원본 SVG](../apps/web/public/profile-icons) |
@@ -22,7 +23,7 @@ UI 심볼에 팔각 금속 배지·입체 테두리·그라데이션을 다시 �
 
 ## 2. UI 선 아이콘
 
-- `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `strokeWidth={1.65}`가 기본이다.
+- `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `strokeWidth={1.65}`가 기본이다. 코인은 공통 노란색 채움·갈색 테두리를 사용하는 예외다.
 - `strokeLinecap="round"`, `strokeLinejoin="round"`를 사용한다. 바깥 여백은 보통 2–3단위로 두고, 별 끝 등 광학 보정만 1.5단위까지 허용한다.
 - 하나의 실루엣과 핵심 디테일만 남긴다. 작은 붓털·리벳·반사광·여러 겹 테두리와 교차점의 선 중첩을 피한다.
 - 16·24·32px에서 확인한다. 16px에서 알아보기 어렵다면 확대하는 대신 내부 선을 덜어낸다.
@@ -84,11 +85,12 @@ UI 색상은 [globals.css](../apps/web/src/app/globals.css)의 토큰을 사용�
 | 보상 | 표현 기준 | 획득 경로 |
 | --- | --- | --- |
 | 새벽의 서약 · 희귀 보드 | 숫자 영역을 비운 일출 테두리 패턴 | 7일 연속 출석 |
-| 출근왕 · 프로필 | 왕관·서류 가방·시계의 큰 실루엣, 원형 크롭 | 30일 연속 출석 |
+| 출근왕 · 프로필 | 달력·왕관·체크 표시의 큰 실루엣, 원형 크롭 | 30일 연속 출석 |
 | 승리의 선봉 · 프로필 | 투구와 월계수, 기존 동물 프로필과 구별되는 테마 | 유효 대전 10승 |
 | 룬의 성소 · 에픽 보드 | 비취 석조 배경과 숫자 바깥의 각인 마법진 | 유효 대전에서 1024 달성 |
+| 업적왕 · 프로필 | 왕관과 수집품 문장, 원형 크롭 | 다른 일반 업적 5개 달성 |
 
-저장소 기본 프로필은 160×160 SVG를 사용하고 관리자 이미지도 같은 원형 크롭의 `ProfileIcon`으로 표시한다. 보드는 스킨 토큰·공통 미리보기·실전 타일을 함께 사용한다. 전용 보드를 추가할 때 코인 상품으로 자동 등록하지 않는다. 규칙과 소유권은 [업적·상점 문서](achievements-and-shop.md), 이번 자산 캡처는 [업적 보상 자료](achievement-rewards)에 둔다.
+위 표는 초기 보상 조건이며 현재 목표는 카탈로그를 따른다. 저장소 기본 프로필은 160×160 SVG를 사용하고 관리자 이미지도 같은 원형 크롭의 `ProfileIcon`으로 표시한다. 새 출석 그림은 기존 Storage 경로를 보존한 `attendance-king-v2.svg`에 업로드한다. [이미지 seed](catalog-assets.md)의 경로를 확인한다. 보드는 스킨 토큰·공통 미리보기·실전 타일을 함께 사용한다. 전용 보드를 추가할 때 코인 상품으로 자동 등록하지 않는다. 규칙과 소유권은 [업적·상점 문서](achievements-and-shop.md), 초기 보상 자산 캡처는 [업적 보상 자료](achievement-rewards)에 둔다.
 
 ## 6. 레전더리 합성 모션
 
@@ -109,6 +111,7 @@ UI 색상은 [globals.css](../apps/web/src/app/globals.css)의 토큰을 사용�
 - 실전 `Tile`과 `SkinMergePreview`에서 같은 `MergeFlair`·CSS를 사용한다. 새 효과의 시간 변경 시 미리보기 완료 타이머도 함께 맞춘다.
 - `prefers-reduced-motion: reduce`에서는 타일 동작과 장식을 끈다. 합성된 숫자는 정상 표시한다.
 - 소리는 [GameAudio](../apps/web/src/lib/game-audio.ts)와 `useAudio`를 재사용한다. 음소거·볼륨을 따르고 미리보기는 명시적으로 재생할 때만 소리를 낸다. 상대 합성 소리를 중복 재생하지 않는다.
+- 캐릭터 10종의 효과음과 초기 7종 파형·청취 자료의 검증 범위는 [오디오 기록](audio/README.md)을 따른다.
 
 ## 7. 제작 요청 템플릿
 

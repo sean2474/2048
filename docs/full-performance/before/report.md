@@ -1,6 +1,6 @@
 # Integrated feature baseline
 
-Product baseline: e1052c7. No performance refactors included. Harness revisions and exact capture windows are in raw.json provenance.
+Product baseline: e1052c7. The earlier web SSR changes from 3b0de17 are included; the later all-page and runtime performance refactors are not. Harness revisions and exact capture windows are in raw.json provenance.
 
 All web page, navigation and bundle rows come from the quiet-host rerun. Admin, actual matches and solo clock samples come from the original run after the overlapping build finished. Machine: Apple M5 Max; Chrome 155.0.8059.80; five repetitions per page/device/cache case; no CPU/network throttling.
 

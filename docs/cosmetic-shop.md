@@ -19,4 +19,4 @@ The initial purchase migration reset previously free, now-paid equipped items to
 
 Validation includes catalog/DB parity, RLS, insufficient funds, duplicate retries, rollback, account deletion, maximum safe balances, purchase/equip browser flows, account switches, and 320–1440px layouts. `apps/socket/tests/cosmetic-remote-smoke.ts` additionally exercises concurrent HTTP RPC calls on staging using disposable accounts and a temporary operator-seeded wallet; it refuses production and cleans up its fixtures.
 
-Coin earning is not implemented by this change: accounts with a zero balance cannot buy paid items. Purchases use in-game coins only; there is no real-money payment flow. Physical phones and Safari have not been tested.
+코인은 대시보드의 [일일 퀘스트](daily-quests.md)에서 출석 20·유효 대전 3판 60·1승 40코인, 한국 시간 하루 최대 120코인을 얻는다. 잔액이 부족하면 구매할 수 없다. 상점은 게임 내 코인만 사용하며 실물 결제는 없다. 실제 휴대폰과 Safari는 검증하지 않았다.
