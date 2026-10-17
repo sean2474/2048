@@ -74,8 +74,8 @@ test("players read only their own ledger and can never write it", async t => {
 });
 
 test("administrators grant and deduct coins with a reason; the ledger keeps actor and note", async t => {
-  const { db, as, rpc, ledger, balance } = await database(t);
-  const adjust = (player: string, delta: number, reason: unknown) => rpc<{ balance: number }>("public.admin_adjust_coins($1,$2,$3)", [player, delta, reason]);
+  const { as, rpc, ledger, balance } = await database(t);
+  const adjust =(player: string, delta: number, reason: unknown) => rpc<{ balance: number }>("public.admin_adjust_coins($1,$2,$3)", [player, delta, reason]);
   await as("authenticated", B, async () => {
     await assert.rejects(adjust(A, 100, "not an admin"), /Admin access required/);
     await assert.rejects(rpc("public.admin_coin_history($1)", [A]), /Admin access required/);

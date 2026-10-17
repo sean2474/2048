@@ -32,12 +32,13 @@ export function createSupabaseServices(env: NodeJS.ProcessEnv = process.env): { 
     const { data, error } = await authClient.auth.getUser(accessToken);
     if (error || !data.user || data.user.is_anonymous) throw new Error("invalid_account");
     const profileClient = createClient(url, publicKey, { ...options, global: { ...options.global, headers: { Authorization: `Bearer ${accessToken}` } } });
-    const { data: profile, error: profileError } = await profileClient.from("players").select("name").eq("id", data.user.id).single();
-    if (profileError || !profile) throw new Error("invalid_account");
-    const [preferences, ranking] = await Promise.all([
+    // One round trip for all three reads; the socket runs far from the database and this runs on every connect.
+    const [{ data: profile, error: profileError }, preferences, ranking] = await Promise.all([
+      profileClient.from("players").select("name").eq("id", data.user.id).single(),
       profileClient.from("player_preferences").select("icon_id,skin_id").eq("player_id", data.user.id).maybeSingle(),
       profileClient.from("player_ratings").select("rating,tier,placement_games").eq("player_id", data.user.id).maybeSingle(),
     ]);
+    if (profileError || !profile) throw new Error("invalid_account");
     // Database equipment triggers authorize catalog ownership; only validate ID syntax here.
     const icon = CatalogIdSchema.safeParse(!preferences.error ? preferences.data?.icon_id : undefined);
     const skin = CatalogIdSchema.safeParse(!preferences.error ? preferences.data?.skin_id : undefined);
