@@ -6,6 +6,7 @@ import { getI18n } from "@/lib/i18n/server";
 import { SettingsProvider } from "@/hooks/settings-provider";
 import { AudioProvider } from "@/hooks/audio-provider";
 import { AchievementsProvider } from "@/hooks/use-achievements";
+import { FriendPresenceProvider } from "@/hooks/friend-presence-provider";
 import { GameAnalytics } from "@/components/widget/analytics";
 
 export const metadata: Metadata = {
@@ -27,9 +28,11 @@ export default async function RootLayout({
           <SettingsProvider initialGuestLocale={guestLocale}>
           <AudioProvider>
           <AchievementsProvider>
+          <FriendPresenceProvider>
           <Header />
           {children}
           <GameAnalytics />
+          </FriendPresenceProvider>
           </AchievementsProvider>
           </AudioProvider>
           </SettingsProvider>

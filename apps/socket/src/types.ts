@@ -21,3 +21,4 @@ export type Room = {
 };
 export const RECONNECT_TIMEOUT = 30_000;
 export const playerChannel = (pid: PlayerId) => `player:${pid}`;
+export const spectatorChannel = (roomId: RoomId, pid: PlayerId) => `spectate:${roomId}:${pid}`;

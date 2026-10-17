@@ -6,7 +6,7 @@ const { loadEnvConfig } = createRequire(require.resolve("next/package.json"))("@
 const { combinedEnv } = loadEnvConfig(fileURLToPath(new URL("../", import.meta.url)), true);
 export const authCookieName = `sb-${new URL(combinedEnv.NEXT_PUBLIC_SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
 
-const origin = "http://[::1]:3001";
+const origin = process.env.SOCIAL_TEST_ORIGIN || "http://[::1]:3001";
 
 // Fictional account responses stay inside the browser; no remote profile is read or written.
 export async function mockAccount(page, id = "10000000-0000-4000-8000-000000000099") {
@@ -51,6 +51,7 @@ export async function mockAccount(page, id = "10000000-0000-4000-8000-0000000000
       value = fixture.achievements;
     }
     else if (url.pathname.endsWith("/rpc/cosmetic_state")) value = fixture.cosmetics;
+    else if (url.pathname.endsWith("/rpc/social_players")) value = [];
     else if (url.pathname.endsWith("/players")) value = { id, name: "타일탐험가", image_path: null };
     else if (url.pathname.endsWith("/player_wallets")) value = { player_id: id, balance: 0, created_at: user.created_at };
     else value = null;

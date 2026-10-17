@@ -13,7 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { usePlayer } from "@/hooks/use-player";
 import { formatSoloTime, type SoloRanking } from "schema/solo";
 import { TierBadge, TierIcon } from "@/components/widget/tier-badge";
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Crown, Loader2, Swords, Timer, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Crown, Eye, Loader2, Swords, Timer, Trophy, UserPlus } from "lucide-react";
 import "@/styles/leaderboard.css";
 
 export default function LeaderboardPage() {
@@ -112,6 +112,7 @@ function Standings() {
             <caption className="sr-only">{t("2048 Duo ranked player standings")}</caption>
             <thead><tr className="bg-[#eeeee6] text-[11px] text-muted-foreground">
               <th scope="col">{t("Rank")}</th><th scope="col">{t("Player")}</th><th scope="col" className="hidden md:table-cell">{t("Tier")}</th><th scope="col" className="text-right">{t("Elo")}</th><th scope="col" className="hidden text-right lg:table-cell">{t("Wins")}</th><th scope="col" className="hidden text-right lg:table-cell">{t("Played")}</th><th scope="col" className="text-right">{t("Win rate")}</th>
+              <th scope="col">{t("Player actions")}</th>
             </tr></thead>
             <tbody>{data.map((row, index) => {
               const winRate = row.games_played ? Math.round(row.wins / row.games_played * 100) : 0;
@@ -123,6 +124,7 @@ function Standings() {
                 <td className="hidden text-right tabular-nums lg:table-cell">{row.wins}</td>
                 <td className="hidden text-right tabular-nums text-muted-foreground lg:table-cell">{row.games_played}</td>
                 <td className="text-right"><span className="font-bold tabular-nums">{winRate}%</span><span className="mt-1 block whitespace-nowrap text-[10px] text-muted-foreground lg:hidden">{t("{wins}W / {played} played", { wins: row.wins, played: row.games_played })}</span><span aria-hidden="true" className="mt-1.5 ml-auto hidden h-1.5 w-16 overflow-hidden rounded-full bg-muted lg:block"><span className="block h-full rounded-full bg-[#77916b]" style={{ width: `${winRate}%` }} /></span></td>
+                <td><div className="flex gap-1"><Button asChild variant="ghost" size="icon"><Link href={`/friends?player=${row.player_id}`} aria-label={t("Add {name} as a friend", { name: row.display_name })} title={t("Add friend")}><UserPlus aria-hidden="true" className="size-4" /></Link></Button>{!season?.ends_at && <Button asChild variant="ghost" size="icon"><Link href={`/watch/${row.player_id}`} aria-label={t("Watch {name}", { name: row.display_name })} title={t("Watch")}><Eye aria-hidden="true" className="size-4" /></Link></Button>}</div></td>
               </tr>;
             })}</tbody>
           </table>

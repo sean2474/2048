@@ -1,13 +1,16 @@
 "use client";
 import { useI18n } from "ui/i18n";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-type Options<T> = { table: "player_stats" | "player_ratings" | "match_participants" | "solo_records"; filter?: string; enabled?: boolean; load: (client: SupabaseClient) => Promise<T[]> };
+type LiveTable = "player_stats" | "player_ratings" | "match_participants" | "solo_records" | "friendships" | "direct_messages";
+type Options<T> = { table: LiveTable | readonly LiveTable[]; filter?: string; enabled?: boolean; load: (client: SupabaseClient) => Promise<T[]> };
 export function useLiveQuery<T>({ table, filter, enabled = true, load }: Options<T>) {
   const { t } = useI18n();
+  const subscriptionId = useId();
+  const tables = typeof table === "string" ? table : table.join(",");
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,9 +35,10 @@ export function useLiveQuery<T>({ table, filter, enabled = true, load }: Options
     }
     const schedule = () => { clearTimeout(debounce); debounce = setTimeout(() => void refresh(), 150); };
     void refresh();
-    const channel = client.channel(`duo:${table}:${filter || "all"}`)
-      .on("postgres_changes", { event: "*", schema: "public", table, ...(filter ? { filter } : {}) }, schedule)
-      .on("system", {}, message => {
+    // Widgets watching the same rows still need independent subscription lifetimes.
+    const channel = client.channel(`duo:${tables}:${filter || "all"}:${subscriptionId}`);
+    for (const name of tables.split(",")) channel.on("postgres_changes", { event: "*", schema: "public", table: name, ...(filter ? { filter } : {}) }, schedule);
+    channel.on("system", {}, message => {
         if (!active || message.extension !== "postgres_changes") return;
         setLive(message.status === "ok");
         // The WebSocket may join before PostgreSQL starts delivering changes.
@@ -51,6 +55,6 @@ export function useLiveQuery<T>({ table, filter, enabled = true, load }: Options
       active = false; clearInterval(interval); clearTimeout(debounce);
       window.removeEventListener("online", schedule); void client.removeChannel(channel);
     };
-  }, [table, filter, enabled, load, retry]);
+  }, [tables, filter, enabled, load, retry, subscriptionId]);
   return { data, loading, error: t(error), live, reload: () => setRetry(value => value + 1) };
 }

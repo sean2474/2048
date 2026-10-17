@@ -44,6 +44,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; readSuspens
   const runs = new Map<string, Run>();
   const jobs = new Map<string, Promise<void>>();
   const busy = new Set<string>();
+  const connected = new Set<string>();
   const now = () => performance.now();
   const cleanup = setInterval(() => {
     for (const [pid, run] of runs) if (now() - run.lastSeen > SOLO_LIMIT_MS + 600_000 && !jobs.has(pid)) runs.delete(pid);
@@ -74,6 +75,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; readSuspens
       const reply = (error?: string): SoloReply => ({ state: snapshot(pid, playerId), ...(error ? { error } : {}) });
       const parsed = SoloCommandSchema.safeParse(raw);
       if (!parsed.success) return reply("invalid");
+      connected.add(pid);
       const command = parsed.data;
       if (command.t === "state") return reply();
       if (busy.has(pid)) return reply("busy");
@@ -104,6 +106,8 @@ export function createSoloService(options: { writeSolo?: SoloWriter; readSuspens
       finally { busy.delete(pid); }
     },
     hasPending: (id: string) => [...runs.entries()].some(([pid, run]) => run.playerId === id && jobs.has(pid)),
+    isPlaying: (pid: string, id: string) => connected.has(pid) && snapshot(pid, id)?.status === "playing",
+    disconnect: (pid: string) => { connected.delete(pid); },
     async close() { clearInterval(cleanup); await Promise.allSettled(jobs.values()); runs.clear(); },
   };
 }

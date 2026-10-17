@@ -11,7 +11,7 @@ import { RankProgress } from "@/components/widget/rank-progress";
 import { TierBadge } from "@/components/widget/tier-badge";
 import { ArrowRight, GraduationCap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DemoBoard } from "@/components/widget/demo-board";
+import { FriendsSummary } from "@/components/widget/friends-summary";
 import { usePlayer } from "@/hooks/use-player";
 import { useLiveQuery } from "@/hooks/use-live-query";
 import { useAchievements } from "@/hooks/use-achievements";
@@ -65,7 +65,7 @@ export default function DashboardPage() {
           </>}
         </>}
       </section>
-      <section aria-label={t("Game preview")} className="mx-auto w-full max-w-[380px] min-w-0"><DemoBoard /></section>
+      <FriendsSummary key={userId ?? "guest"} userId={user === undefined ? undefined : userId ?? null} />
     </div>
     {userId && <section aria-labelledby="recent-matches-title" className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2"><h2 id="recent-matches-title" className="flex items-center gap-2 text-lg font-bold"><GameEmblem kind="history" className="size-9" />{t("Recent matches")}</h2><Link href="/history" data-analytics-link="/history" className="inline-flex min-h-11 items-center gap-2 rounded-md text-sm font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">{t("View all history")}<ArrowRight aria-hidden="true" className="size-4" /></Link></div>
