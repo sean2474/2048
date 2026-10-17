@@ -9,7 +9,7 @@ const A = "11111111-1111-4111-8111-111111111111", B = "22222222-2222-4222-8222-2
 const RUN = "33333333-3333-4333-8333-333333333333";
 const directory = new URL("../../../supabase/migrations/", import.meta.url);
 const catalogMigration = "20261017160000_content_catalog.sql";
-const forwardMigrations = ["20261017180000_integrated_solo.sql", "20261017180001_integrated_daily_catalog.sql"];
+const forwardMigrations = ["20261017180000_integrated_solo.sql", "20261017180001_integrated_daily_catalog.sql", "20261017180002_attendance_portrait.sql"];
 type History = "fresh" | "staging" | "production";
 const read = (name: string) => readFile(new URL(name, directory), "utf8");
 
@@ -39,7 +39,7 @@ async function database(t: TestContext, history: History) {
   await db.query("insert into public.player_preferences(player_id,skin_id) values($1,'kitty')", [A]);
   await db.query("insert into public.achievement_unlocks(player_id,achievement_id) select $1,id from unnest(array['checkin-7','checkin-30','wins-10','tile-2048-reward','rank-bronze']) id", [A]);
   await db.exec(await read(catalogMigration));
-  if (history === "production") await db.exec("update private.cosmetic_catalog set revision=2,status='draft' where item_id='storm-fox'");
+  if (history === "production") await db.exec("update private.cosmetic_catalog set revision=2,status='draft' where item_id='storm-fox'; update private.cosmetic_catalog set revision=2,definition=jsonb_set(definition,'{imagePath}','\"profile-icons/custom.svg\"') where item_id='attendance-king'");
   const before = (await db.query("select * from public.cosmetic_purchases order by player_id,kind,item_id")).rows;
   for (const name of forwardMigrations) await db.exec(await read(name));
   assert.deepEqual((await db.query("select * from public.cosmetic_purchases order by player_id,kind,item_id")).rows, before);
@@ -64,6 +64,7 @@ for (const history of ["fresh", "staging", "production"] as const) {
     assert.ok(catalog.achievements.some(item => item.id === "achievement-king" && item.metric === "achievements"));
     assert.ok(catalog.achievements.some(item => item.id === "solo-first" && item.status === "published"));
     assert.ok(catalog.profileIcons.some(item => item.id === "achievement-king"));
+    assert.equal(catalog.profileIcons.find(item => item.id === "attendance-king")?.imagePath, history === "production" ? "profile-icons/custom.svg" : "profile-icons/attendance-king-v2.svg");
     if (history === "production") {
       assert.equal((await db.query<{ status: string }>("select status from private.cosmetic_catalog where item_id='storm-fox'")).rows[0].status, "draft", "administrator-edited seed drafts stay draft");
       assert.equal((await db.query<{ status: string }>("select status from private.achievement_catalog where item_id='solo-4min'")).rows[0].status, "draft", "an achievement cannot publish before its reward");
