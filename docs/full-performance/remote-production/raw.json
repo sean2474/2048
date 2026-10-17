@@ -1,0 +1,3723 @@
+{
+  "measuredAt": "2026-10-17T11:43:34.522Z",
+  "target": "production",
+  "origin": "https://www.2048duo.io",
+  "harnessCommit": "36eedb95735411d9054812933ce9d2bc500540ba",
+  "browser": "155.0.8059.80",
+  "environment": "Actual network and deployed web/socket; no intercepted requests, seeded boards, auth fixture, or injected latency. Guest private friend rooms only.",
+  "games": [
+    {
+      "device": "desktop",
+      "kind": "natural",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "d5bc507e-e8e1-4e7b-ab75-eb3a93e00fcf",
+      "reason": "opponent_locked",
+      "moves": 450,
+      "roomCreationToReadyMs": 4894.396000000001,
+      "joinCodeRequestToReadyMs": 354.049,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 4156.3523749999995,
+      "firstBoardMs": 9055.454415999999,
+      "playableDurationMs": 98470.533833,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 12.994917000003625,
+      "resultPacketToAnimationCompleteMs": 1059.9417079999985,
+      "surrenderToResultMs": null,
+      "inputs": [
+        {
+          "selfStateMs": 201.7262499999997,
+          "opponentStateMs": 168.10287499999868
+        },
+        {
+          "selfStateMs": 165.1440419999999,
+          "opponentStateMs": 196.8216250000005
+        },
+        {
+          "selfStateMs": 200.58712500000001,
+          "opponentStateMs": 168.53404200000114
+        },
+        {
+          "selfStateMs": 165.11220800000046,
+          "opponentStateMs": 196.58945800000038
+        },
+        {
+          "selfStateMs": 200.52258400000028,
+          "opponentStateMs": 169.59204200000022
+        },
+        {
+          "selfStateMs": 165.16783299999952,
+          "opponentStateMs": 196.82558299999982
+        },
+        {
+          "selfStateMs": 201.81212500000038,
+          "opponentStateMs": 168.9916659999999
+        },
+        {
+          "selfStateMs": 165.56808300000012,
+          "opponentStateMs": 197.08450000000084
+        },
+        {
+          "selfStateMs": 200.58200000000033,
+          "opponentStateMs": 168.73508299999958
+        },
+        {
+          "selfStateMs": 166.23016599999937,
+          "opponentStateMs": 198.18562500000007
+        },
+        {
+          "selfStateMs": 199.96658399999978,
+          "opponentStateMs": 167.65312500000073
+        },
+        {
+          "selfStateMs": 165.402333,
+          "opponentStateMs": 197.89929200000006
+        },
+        {
+          "selfStateMs": 200.64516599999843,
+          "opponentStateMs": 168.22266599999966
+        },
+        {
+          "selfStateMs": 165.19987500000025,
+          "opponentStateMs": 197.34308299999975
+        },
+        {
+          "selfStateMs": 200.5533749999995,
+          "opponentStateMs": 168.01891699999942
+        },
+        {
+          "selfStateMs": 165.72949999999946,
+          "opponentStateMs": 197.41504199999872
+        },
+        {
+          "selfStateMs": 201.3054170000014,
+          "opponentStateMs": 169.23199999999997
+        },
+        {
+          "selfStateMs": 164.85000000000036,
+          "opponentStateMs": 197.16175000000112
+        },
+        {
+          "selfStateMs": 200.96820800000023,
+          "opponentStateMs": 168.57308300000113
+        },
+        {
+          "selfStateMs": 168.8417499999996,
+          "opponentStateMs": 198.337207999999
+        },
+        {
+          "selfStateMs": 200.19412499999999,
+          "opponentStateMs": 179.23250000000007
+        },
+        {
+          "selfStateMs": 167.61779100000058,
+          "opponentStateMs": 198.0737079999999
+        },
+        {
+          "selfStateMs": 201.00137499999983,
+          "opponentStateMs": 170.04408300000068
+        },
+        {
+          "selfStateMs": 165.97149999999965,
+          "opponentStateMs": 196.58970799999952
+        },
+        {
+          "selfStateMs": 200.62654199999997,
+          "opponentStateMs": 170.14116699999977
+        },
+        {
+          "selfStateMs": 166.00412499999948,
+          "opponentStateMs": 198.09120799999982
+        },
+        {
+          "selfStateMs": 200.50600000000122,
+          "opponentStateMs": 170.0694170000006
+        },
+        {
+          "selfStateMs": 168.41141700000117,
+          "opponentStateMs": 205.00950000000012
+        },
+        {
+          "selfStateMs": 208.73366600000008,
+          "opponentStateMs": 170.14149999999972
+        },
+        {
+          "selfStateMs": 168.8104999999996,
+          "opponentStateMs": 205.10691699999916
+        },
+        {
+          "selfStateMs": 200.1598329999997,
+          "opponentStateMs": 168.06274999999914
+        },
+        {
+          "selfStateMs": 169.33437499999854,
+          "opponentStateMs": 205.54824999999983
+        },
+        {
+          "selfStateMs": 209.7337920000009,
+          "opponentStateMs": 172.66525000000001
+        },
+        {
+          "selfStateMs": 169.3824999999997,
+          "opponentStateMs": 205.74220799999966
+        },
+        {
+          "selfStateMs": 208.80637500000012,
+          "opponentStateMs": 171.88812499999767
+        },
+        {
+          "selfStateMs": 166.37133300000278,
+          "opponentStateMs": 198.91925000000265
+        },
+        {
+          "selfStateMs": 207.74562499999956,
+          "opponentStateMs": 171.182417
+        },
+        {
+          "selfStateMs": 168.40654200000063,
+          "opponentStateMs": 205.1959999999999
+        },
+        {
+          "selfStateMs": 208.67458299999998,
+          "opponentStateMs": 171.36033300000054
+        },
+        {
+          "selfStateMs": 168.79329100000177,
+          "opponentStateMs": 205.51854100000128
+        },
+        {
+          "selfStateMs": 208.8279999999977,
+          "opponentStateMs": 170.59866599999805
+        },
+        {
+          "selfStateMs": 167.0869160000002,
+          "opponentStateMs": 204.5535000000018
+        },
+        {
+          "selfStateMs": 209.1767089999994,
+          "opponentStateMs": 171.85395900000003
+        },
+        {
+          "selfStateMs": 168.36125000000175,
+          "opponentStateMs": 205.16879100000006
+        },
+        {
+          "selfStateMs": 208.52254200000243,
+          "opponentStateMs": 171.25183400000242
+        },
+        {
+          "selfStateMs": 170.65795799999978,
+          "opponentStateMs": 207.04358299999876
+        },
+        {
+          "selfStateMs": 208.04033400000117,
+          "opponentStateMs": 171.73354199999812
+        },
+        {
+          "selfStateMs": 167.77308300000004,
+          "opponentStateMs": 204.7243750000016
+        },
+        {
+          "selfStateMs": 208.2477080000026,
+          "opponentStateMs": 171.29129100000137
+        },
+        {
+          "selfStateMs": 169.00337500000023,
+          "opponentStateMs": 205.32795799999803
+        },
+        {
+          "selfStateMs": 208.30374999999913,
+          "opponentStateMs": 171.24599999999919
+        },
+        {
+          "selfStateMs": 169.52208299999984,
+          "opponentStateMs": 205.58245800000077
+        },
+        {
+          "selfStateMs": 208.27279099999942,
+          "opponentStateMs": 171.2975409999999
+        },
+        {
+          "selfStateMs": 280.8939590000009,
+          "opponentStateMs": 317.1646670000009
+        },
+        {
+          "selfStateMs": 208.57654199999888,
+          "opponentStateMs": 171.78483400000187
+        },
+        {
+          "selfStateMs": 169.1404999999977,
+          "opponentStateMs": 205.27616599999965
+        },
+        {
+          "selfStateMs": 219.88124999999854,
+          "opponentStateMs": 183.10495900000024
+        },
+        {
+          "selfStateMs": 169.13254199999938,
+          "opponentStateMs": 205.6587499999987
+        },
+        {
+          "selfStateMs": 208.74941699999908,
+          "opponentStateMs": 171.45154199999888
+        },
+        {
+          "selfStateMs": 168.7638330000009,
+          "opponentStateMs": 205.89366599999994
+        },
+        {
+          "selfStateMs": 208.8367909999979,
+          "opponentStateMs": 171.8141660000001
+        },
+        {
+          "selfStateMs": 168.4289170000011,
+          "opponentStateMs": 204.34887499999968
+        },
+        {
+          "selfStateMs": 208.37325000000055,
+          "opponentStateMs": 171.31616699999722
+        },
+        {
+          "selfStateMs": 169.33908300000257,
+          "opponentStateMs": 200.5419170000023
+        },
+        {
+          "selfStateMs": 208.18625000000247,
+          "opponentStateMs": 171.42633399999977
+        },
+        {
+          "selfStateMs": 168.09312499999942,
+          "opponentStateMs": 204.80212499999834
+        },
+        {
+          "selfStateMs": 209.1727499999979,
+          "opponentStateMs": 171.1922080000004
+        },
+        {
+          "selfStateMs": 168.62558300000092,
+          "opponentStateMs": 205.81187499999942
+        },
+        {
+          "selfStateMs": 208.23862500000178,
+          "opponentStateMs": 171.90558299999975
+        },
+        {
+          "selfStateMs": 167.9576249999991,
+          "opponentStateMs": 204.71591699999772
+        },
+        {
+          "selfStateMs": 208.02608300000065,
+          "opponentStateMs": 172.1245830000007
+        },
+        {
+          "selfStateMs": 170.5617080000011,
+          "opponentStateMs": 205.69237500000236
+        },
+        {
+          "selfStateMs": 207.96308300000237,
+          "opponentStateMs": 173.2452910000029
+        },
+        {
+          "selfStateMs": 168.72187499999927,
+          "opponentStateMs": 205.10241699999824
+        },
+        {
+          "selfStateMs": 209.25779200000034,
+          "opponentStateMs": 172.72454199999993
+        },
+        {
+          "selfStateMs": 168.22495900000285,
+          "opponentStateMs": 204.90000000000146
+        },
+        {
+          "selfStateMs": 208.90983300000153,
+          "opponentStateMs": 171.89125000000058
+        },
+        {
+          "selfStateMs": 171.398541999999,
+          "opponentStateMs": 205.7209589999984
+        },
+        {
+          "selfStateMs": 209.3649170000026,
+          "opponentStateMs": 172.61595900000248
+        },
+        {
+          "selfStateMs": 170.87012499999764,
+          "opponentStateMs": 205.7727500000001
+        },
+        {
+          "selfStateMs": 208.6094170000033,
+          "opponentStateMs": 170.5160840000026
+        },
+        {
+          "selfStateMs": 169.01929199999722,
+          "opponentStateMs": 205.7206249999981
+        },
+        {
+          "selfStateMs": 208.29612500000076,
+          "opponentStateMs": 171.17041700000118
+        },
+        {
+          "selfStateMs": 168.4175409999989,
+          "opponentStateMs": 204.49474999999802
+        },
+        {
+          "selfStateMs": 209.2501250000023,
+          "opponentStateMs": 172.08037500000137
+        },
+        {
+          "selfStateMs": 169.0875840000008,
+          "opponentStateMs": 205.32466700000077
+        },
+        {
+          "selfStateMs": 208.2853329999998,
+          "opponentStateMs": 171.5502919999999
+        },
+        {
+          "selfStateMs": 169.54583400000047,
+          "opponentStateMs": 206.96191700000054
+        },
+        {
+          "selfStateMs": 208.29541600000084,
+          "opponentStateMs": 171.09600000000137
+        },
+        {
+          "selfStateMs": 168.50541599999997,
+          "opponentStateMs": 206.44554100000096
+        },
+        {
+          "selfStateMs": 208.51058399999965,
+          "opponentStateMs": 174.51695899999686
+        },
+        {
+          "selfStateMs": 169.70145799999955,
+          "opponentStateMs": 206.03004200000214
+        },
+        {
+          "selfStateMs": 208.12220800000068,
+          "opponentStateMs": 170.95495799999844
+        },
+        {
+          "selfStateMs": 168.68116600000212,
+          "opponentStateMs": 204.98020800000086
+        },
+        {
+          "selfStateMs": 212.3921670000018,
+          "opponentStateMs": 171.83008400000108
+        },
+        {
+          "selfStateMs": 169.2112500000003,
+          "opponentStateMs": 205.64466600000014
+        },
+        {
+          "selfStateMs": 210.0811250000006,
+          "opponentStateMs": 171.6473330000008
+        },
+        {
+          "selfStateMs": 169.76833400000032,
+          "opponentStateMs": 205.945334
+        },
+        {
+          "selfStateMs": 208.54270800000086,
+          "opponentStateMs": 171.57166700000016
+        },
+        {
+          "selfStateMs": 169.12495800000033,
+          "opponentStateMs": 205.648333000001
+        },
+        {
+          "selfStateMs": 208.29099999999744,
+          "opponentStateMs": 174.72970799999894
+        },
+        {
+          "selfStateMs": 170.6599589999969,
+          "opponentStateMs": 205.18154199999844
+        },
+        {
+          "selfStateMs": 207.94487500000105,
+          "opponentStateMs": 173.4662500000013
+        },
+        {
+          "selfStateMs": 168.93004099999962,
+          "opponentStateMs": 206.31770799999867
+        },
+        {
+          "selfStateMs": 208.27808399999776,
+          "opponentStateMs": 172.08770899999945
+        },
+        {
+          "selfStateMs": 169.08295900000303,
+          "opponentStateMs": 205.1863340000018
+        },
+        {
+          "selfStateMs": 207.8293330000015,
+          "opponentStateMs": 171.03133300000263
+        },
+        {
+          "selfStateMs": 168.30125000000044,
+          "opponentStateMs": 205.2137920000023
+        },
+        {
+          "selfStateMs": 224.09929199999897,
+          "opponentStateMs": 173.46579199999906
+        },
+        {
+          "selfStateMs": 171.95691699999952,
+          "opponentStateMs": 219.96337499999936
+        },
+        {
+          "selfStateMs": 222.76075000000128,
+          "opponentStateMs": 175.45954200000415
+        },
+        {
+          "selfStateMs": 168.86041600000317,
+          "opponentStateMs": 205.38495800000237
+        },
+        {
+          "selfStateMs": 208.6666669999977,
+          "opponentStateMs": 171.7204999999958
+        },
+        {
+          "selfStateMs": 172.46416700000555,
+          "opponentStateMs": 205.95983400000114
+        },
+        {
+          "selfStateMs": 208.1078750000015,
+          "opponentStateMs": 171.41329099999712
+        },
+        {
+          "selfStateMs": 169.03958299999795,
+          "opponentStateMs": 205.91187499999796
+        },
+        {
+          "selfStateMs": 213.0575830000016,
+          "opponentStateMs": 170.45220800000243
+        },
+        {
+          "selfStateMs": 170.53612499999872,
+          "opponentStateMs": 206.79991700000392
+        },
+        {
+          "selfStateMs": 221.86083399999916,
+          "opponentStateMs": 177.84266699999716
+        },
+        {
+          "selfStateMs": 174.1547500000015,
+          "opponentStateMs": 218.8275829999984
+        },
+        {
+          "selfStateMs": 210.20912500000122,
+          "opponentStateMs": 172.5836249999993
+        },
+        {
+          "selfStateMs": 171.1016249999957,
+          "opponentStateMs": 205.5589589999945
+        },
+        {
+          "selfStateMs": 208.564833000004,
+          "opponentStateMs": 171.30679200000304
+        },
+        {
+          "selfStateMs": 168.312208000003,
+          "opponentStateMs": 204.87991599999805
+        },
+        {
+          "selfStateMs": 209.5645000000004,
+          "opponentStateMs": 172.52216600000247
+        },
+        {
+          "selfStateMs": 172.01599999999598,
+          "opponentStateMs": 204.58858299999702
+        },
+        {
+          "selfStateMs": 208.55129200000374,
+          "opponentStateMs": 171.19104199999856
+        },
+        {
+          "selfStateMs": 168.77887499999633,
+          "opponentStateMs": 205.60050000000047
+        },
+        {
+          "selfStateMs": 209.02937499999825,
+          "opponentStateMs": 171.67033300000185
+        },
+        {
+          "selfStateMs": 171.26179099999717,
+          "opponentStateMs": 205.03520800000115
+        },
+        {
+          "selfStateMs": 209.23449999999866,
+          "opponentStateMs": 172.08312499999738
+        },
+        {
+          "selfStateMs": 168.86912499999744,
+          "opponentStateMs": 205.69066599999496
+        },
+        {
+          "selfStateMs": 209.88412500000413,
+          "opponentStateMs": 171.87162499999977
+        },
+        {
+          "selfStateMs": 171.890333000003,
+          "opponentStateMs": 205.4762499999997
+        },
+        {
+          "selfStateMs": 208.38420800000313,
+          "opponentStateMs": 171.8683749999982
+        },
+        {
+          "selfStateMs": 170.1145419999957,
+          "opponentStateMs": 205.51279200000135
+        },
+        {
+          "selfStateMs": 208.93954200000007,
+          "opponentStateMs": 171.93458400000236
+        },
+        {
+          "selfStateMs": 169.03025000000343,
+          "opponentStateMs": 205.45062499999767
+        },
+        {
+          "selfStateMs": 210.20087500000227,
+          "opponentStateMs": 171.67841600000247
+        },
+        {
+          "selfStateMs": 173.83216600000014,
+          "opponentStateMs": 218.53545800000575
+        },
+        {
+          "selfStateMs": 222.02079100000265,
+          "opponentStateMs": 171.2799159999995
+        },
+        {
+          "selfStateMs": 169.37399999999616,
+          "opponentStateMs": 219.5440829999934
+        },
+        {
+          "selfStateMs": 223.83829100000003,
+          "opponentStateMs": 176.8574579999986
+        },
+        {
+          "selfStateMs": 170.9951660000006,
+          "opponentStateMs": 219.4991250000021
+        },
+        {
+          "selfStateMs": 222.62216600000102,
+          "opponentStateMs": 174.04841599999781
+        },
+        {
+          "selfStateMs": 173.9823749999996,
+          "opponentStateMs": 219.57195800000045
+        },
+        {
+          "selfStateMs": 222.53120800000033,
+          "opponentStateMs": 173.8140410000051
+        },
+        {
+          "selfStateMs": 168.96070899999904,
+          "opponentStateMs": 219.22229199999856
+        },
+        {
+          "selfStateMs": 219.65741700000217,
+          "opponentStateMs": 175.63666699999885
+        },
+        {
+          "selfStateMs": 171.0717500000028,
+          "opponentStateMs": 219.81387499999983
+        },
+        {
+          "selfStateMs": 221.30220800000097,
+          "opponentStateMs": 174.43441699999676
+        },
+        {
+          "selfStateMs": 172.15804200000275,
+          "opponentStateMs": 219.5691250000018
+        },
+        {
+          "selfStateMs": 221.1895000000004,
+          "opponentStateMs": 175.1130839999969
+        },
+        {
+          "selfStateMs": 171.02020800000173,
+          "opponentStateMs": 218.36787500000355
+        },
+        {
+          "selfStateMs": 222.14437499999622,
+          "opponentStateMs": 175.42979199999536
+        },
+        {
+          "selfStateMs": 172.24020900000323,
+          "opponentStateMs": 218.53199999999924
+        },
+        {
+          "selfStateMs": 221.1716249999954,
+          "opponentStateMs": 175.34079099999508
+        },
+        {
+          "selfStateMs": 170.71362499999668,
+          "opponentStateMs": 204.76983299999847
+        },
+        {
+          "selfStateMs": 209.54562499999884,
+          "opponentStateMs": 172.17024999999558
+        },
+        {
+          "selfStateMs": 174.84737500000483,
+          "opponentStateMs": 219.59812500000407
+        },
+        {
+          "selfStateMs": 220.82466700000077,
+          "opponentStateMs": 178.51841699999932
+        },
+        {
+          "selfStateMs": 174.70874999999796,
+          "opponentStateMs": 219.45041700000002
+        },
+        {
+          "selfStateMs": 221.9872499999983,
+          "opponentStateMs": 176.2960830000011
+        },
+        {
+          "selfStateMs": 170.81437499999447,
+          "opponentStateMs": 218.86649999999645
+        },
+        {
+          "selfStateMs": 208.9114999999947,
+          "opponentStateMs": 171.8536249999961
+        },
+        {
+          "selfStateMs": 168.830750000001,
+          "opponentStateMs": 218.59654199999932
+        },
+        {
+          "selfStateMs": 221.2377919999999,
+          "opponentStateMs": 172.6996250000011
+        },
+        {
+          "selfStateMs": 170.0819580000025,
+          "opponentStateMs": 219.37799999999697
+        },
+        {
+          "selfStateMs": 208.6218749999971,
+          "opponentStateMs": 171.14416699999856
+        },
+        {
+          "selfStateMs": 169.42079099999683,
+          "opponentStateMs": 221.4222909999953
+        },
+        {
+          "selfStateMs": 220.66125000000466,
+          "opponentStateMs": 176.4008329999997
+        },
+        {
+          "selfStateMs": 174.62437499999942,
+          "opponentStateMs": 218.58462500000314
+        },
+        {
+          "selfStateMs": 222.0507080000025,
+          "opponentStateMs": 177.33183299999655
+        },
+        {
+          "selfStateMs": 171.2283329999991,
+          "opponentStateMs": 218.0797920000041
+        },
+        {
+          "selfStateMs": 222.47695799999929,
+          "opponentStateMs": 174.57129200000054
+        },
+        {
+          "selfStateMs": 172.89191700000083,
+          "opponentStateMs": 219.82749999999942
+        },
+        {
+          "selfStateMs": 222.6042910000033,
+          "opponentStateMs": 176.3227079999997
+        },
+        {
+          "selfStateMs": 173.13087500000256,
+          "opponentStateMs": 219.94629200000054
+        },
+        {
+          "selfStateMs": 221.88783400000102,
+          "opponentStateMs": 176.43699999999808
+        },
+        {
+          "selfStateMs": 171.08158299999923,
+          "opponentStateMs": 220.25066700000025
+        },
+        {
+          "selfStateMs": 223.27258299999812,
+          "opponentStateMs": 174.7807079999984
+        },
+        {
+          "selfStateMs": 174.72899999999936,
+          "opponentStateMs": 219.16549999999552
+        },
+        {
+          "selfStateMs": 221.6511660000033,
+          "opponentStateMs": 171.6169160000063
+        },
+        {
+          "selfStateMs": 174.39466600000014,
+          "opponentStateMs": 217.59858299999905
+        },
+        {
+          "selfStateMs": 223.39595899999404,
+          "opponentStateMs": 175.03483399999823
+        },
+        {
+          "selfStateMs": 173.99674999999843,
+          "opponentStateMs": 220.1042080000043
+        },
+        {
+          "selfStateMs": 222.55708400000003,
+          "opponentStateMs": 173.8065839999981
+        },
+        {
+          "selfStateMs": 170.09579099999974,
+          "opponentStateMs": 219.79012499999953
+        },
+        {
+          "selfStateMs": 221.63575000000128,
+          "opponentStateMs": 176.10720800000126
+        },
+        {
+          "selfStateMs": 169.84425000000192,
+          "opponentStateMs": 217.61208299999998
+        },
+        {
+          "selfStateMs": 213.30079100000148,
+          "opponentStateMs": 177.40345800000068
+        },
+        {
+          "selfStateMs": 172.7457499999946,
+          "opponentStateMs": 219.65870799999539
+        },
+        {
+          "selfStateMs": 220.6649580000012,
+          "opponentStateMs": 176.38262500000565
+        },
+        {
+          "selfStateMs": 168.59041699999943,
+          "opponentStateMs": 217.9260839999988
+        },
+        {
+          "selfStateMs": 221.3187920000055,
+          "opponentStateMs": 176.3286670000016
+        },
+        {
+          "selfStateMs": 172.8252500000017,
+          "opponentStateMs": 218.5688749999972
+        },
+        {
+          "selfStateMs": 224.47929199999635,
+          "opponentStateMs": 176.6897919999974
+        },
+        {
+          "selfStateMs": 172.68395800000144,
+          "opponentStateMs": 219.3012080000044
+        },
+        {
+          "selfStateMs": 222.10616599999776,
+          "opponentStateMs": 174.03329099999974
+        },
+        {
+          "selfStateMs": 174.54891700000007,
+          "opponentStateMs": 218.17954199999804
+        },
+        {
+          "selfStateMs": 222.74691700000403,
+          "opponentStateMs": 175.93562499999825
+        },
+        {
+          "selfStateMs": 170.69583299999795,
+          "opponentStateMs": 218.2002500000017
+        },
+        {
+          "selfStateMs": 223.78975000000355,
+          "opponentStateMs": 177.2916669999977
+        },
+        {
+          "selfStateMs": 171.14266700000007,
+          "opponentStateMs": 217.8831250000003
+        },
+        {
+          "selfStateMs": 222.23687500000233,
+          "opponentStateMs": 174.07841700000426
+        },
+        {
+          "selfStateMs": 172.57895799999824,
+          "opponentStateMs": 221.5087499999936
+        },
+        {
+          "selfStateMs": 223.6331250000003,
+          "opponentStateMs": 174.72933399999602
+        },
+        {
+          "selfStateMs": 176.9536670000016,
+          "opponentStateMs": 218.34375
+        },
+        {
+          "selfStateMs": 220.97491699999955,
+          "opponentStateMs": 176.75704199999745
+        },
+        {
+          "selfStateMs": 172.51058300000295,
+          "opponentStateMs": 218.66537499999686
+        },
+        {
+          "selfStateMs": 222.12075000000186,
+          "opponentStateMs": 172.57862500000192
+        },
+        {
+          "selfStateMs": 170.435332999994,
+          "opponentStateMs": 205.1860830000005
+        },
+        {
+          "selfStateMs": 207.14179200000217,
+          "opponentStateMs": 172.1026669999992
+        },
+        {
+          "selfStateMs": 168.91316700000607,
+          "opponentStateMs": 205.37104200000613
+        },
+        {
+          "selfStateMs": 208.03662500000064,
+          "opponentStateMs": 171.07545799999934
+        },
+        {
+          "selfStateMs": 169.90262500000244,
+          "opponentStateMs": 206.11175000000367
+        },
+        {
+          "selfStateMs": 208.36166700000467,
+          "opponentStateMs": 171.66475000000355
+        },
+        {
+          "selfStateMs": 168.36195900000166,
+          "opponentStateMs": 205.26633399999992
+        },
+        {
+          "selfStateMs": 208.77704199999425,
+          "opponentStateMs": 171.22933299999568
+        },
+        {
+          "selfStateMs": 174.43454199999542,
+          "opponentStateMs": 219.5097919999971
+        },
+        {
+          "selfStateMs": 222.93224999999802,
+          "opponentStateMs": 176.98529199999757
+        },
+        {
+          "selfStateMs": 169.15849999999773,
+          "opponentStateMs": 205.5242500000022
+        },
+        {
+          "selfStateMs": 208.35199999999895,
+          "opponentStateMs": 172.04020899999887
+        },
+        {
+          "selfStateMs": 170.13870800000586,
+          "opponentStateMs": 219.46345800000563
+        },
+        {
+          "selfStateMs": 222.34770800000115,
+          "opponentStateMs": 175.64337499999965
+        },
+        {
+          "selfStateMs": 169.0791659999959,
+          "opponentStateMs": 205.75154099999781
+        },
+        {
+          "selfStateMs": 208.78737499999988,
+          "opponentStateMs": 172.26095899999927
+        },
+        {
+          "selfStateMs": 174.44729099999677,
+          "opponentStateMs": 219.97591600000305
+        },
+        {
+          "selfStateMs": 223.15904199999932,
+          "opponentStateMs": 177.52408300000388
+        },
+        {
+          "selfStateMs": 172.48187499999767,
+          "opponentStateMs": 218.5219999999972
+        },
+        {
+          "selfStateMs": 221.62329100000352,
+          "opponentStateMs": 172.77404100000422
+        },
+        {
+          "selfStateMs": 166.97937500000262,
+          "opponentStateMs": 217.68420799999876
+        },
+        {
+          "selfStateMs": 228.7289579999997,
+          "opponentStateMs": 175.2613330000022
+        },
+        {
+          "selfStateMs": 170.30949999999575,
+          "opponentStateMs": 218.29524999999558
+        },
+        {
+          "selfStateMs": 221.41083300000173,
+          "opponentStateMs": 174.6971659999981
+        },
+        {
+          "selfStateMs": 170.27874999999767,
+          "opponentStateMs": 219.3699590000033
+        },
+        {
+          "selfStateMs": 224.42404199999874,
+          "opponentStateMs": 175.4920420000053
+        },
+        {
+          "selfStateMs": 174.63770799999475,
+          "opponentStateMs": 219.4115829999937
+        },
+        {
+          "selfStateMs": 221.89695799999754,
+          "opponentStateMs": 174.66833300000144
+        },
+        {
+          "selfStateMs": 167.97362499999872,
+          "opponentStateMs": 213.4195000000036
+        },
+        {
+          "selfStateMs": 221.32183400000213,
+          "opponentStateMs": 174.00012499999866
+        },
+        {
+          "selfStateMs": 173.9082500000004,
+          "opponentStateMs": 219.2945000000036
+        },
+        {
+          "selfStateMs": 221.66983400000026,
+          "opponentStateMs": 176.03229199999623
+        },
+        {
+          "selfStateMs": 171.9130839999998,
+          "opponentStateMs": 218.57179200000246
+        },
+        {
+          "selfStateMs": 223.79445900000428,
+          "opponentStateMs": 172.18845899999724
+        },
+        {
+          "selfStateMs": 169.61450000000332,
+          "opponentStateMs": 205.11549999999988
+        },
+        {
+          "selfStateMs": 208.80241699999897,
+          "opponentStateMs": 172.98541699999623
+        },
+        {
+          "selfStateMs": 168.38566600000195,
+          "opponentStateMs": 204.77508300000045
+        },
+        {
+          "selfStateMs": 208.14287499999773,
+          "opponentStateMs": 172.61608299999352
+        },
+        {
+          "selfStateMs": 169.3379999999961,
+          "opponentStateMs": 218.54624999999942
+        },
+        {
+          "selfStateMs": 209.44854099999793,
+          "opponentStateMs": 176.1398330000011
+        },
+        {
+          "selfStateMs": 173.32641600000352,
+          "opponentStateMs": 205.83783300000505
+        },
+        {
+          "selfStateMs": 207.50912499999686,
+          "opponentStateMs": 171.56604099999822
+        },
+        {
+          "selfStateMs": 169.04966599999898,
+          "opponentStateMs": 205.76670800000284
+        },
+        {
+          "selfStateMs": 221.49054200000683,
+          "opponentStateMs": 175.362000000001
+        },
+        {
+          "selfStateMs": 168.8886249999996,
+          "opponentStateMs": 217.85220900000422
+        },
+        {
+          "selfStateMs": 221.94154200000048,
+          "opponentStateMs": 172.8148749999964
+        },
+        {
+          "selfStateMs": 171.55750000000262,
+          "opponentStateMs": 218.8732500000042
+        },
+        {
+          "selfStateMs": 221.22420899999997,
+          "opponentStateMs": 176.00129200000083
+        },
+        {
+          "selfStateMs": 173.7206670000087,
+          "opponentStateMs": 218.4075420000081
+        },
+        {
+          "selfStateMs": 220.98112499999115,
+          "opponentStateMs": 176.33341700000165
+        },
+        {
+          "selfStateMs": 168.63266699999804,
+          "opponentStateMs": 219.2082919999957
+        },
+        {
+          "selfStateMs": 222.2788750000036,
+          "opponentStateMs": 176.59825000001
+        },
+        {
+          "selfStateMs": 171.48608299999614,
+          "opponentStateMs": 219.1572909999959
+        },
+        {
+          "selfStateMs": 208.3041249999951,
+          "opponentStateMs": 171.22499999999127
+        },
+        {
+          "selfStateMs": 171.62337500001013,
+          "opponentStateMs": 206.00458400000934
+        },
+        {
+          "selfStateMs": 222.71454200000153,
+          "opponentStateMs": 173.9355840000062
+        },
+        {
+          "selfStateMs": 172.2770840000012,
+          "opponentStateMs": 219.18529199999466
+        },
+        {
+          "selfStateMs": 220.65991699999722,
+          "opponentStateMs": 177.40908399999898
+        },
+        {
+          "selfStateMs": 174.7273339999956,
+          "opponentStateMs": 218.73120900000504
+        },
+        {
+          "selfStateMs": 221.2647500000021,
+          "opponentStateMs": 172.54904199999874
+        },
+        {
+          "selfStateMs": 174.06070800000452,
+          "opponentStateMs": 221.42174999999406
+        },
+        {
+          "selfStateMs": 222.28049999999348,
+          "opponentStateMs": 176.16879199999676
+        },
+        {
+          "selfStateMs": 171.09216699999524,
+          "opponentStateMs": 213.088957999993
+        },
+        {
+          "selfStateMs": 208.27762500000244,
+          "opponentStateMs": 173.71474999999919
+        },
+        {
+          "selfStateMs": 174.02237500000047,
+          "opponentStateMs": 205.60054200000013
+        },
+        {
+          "selfStateMs": 208.44912499999919,
+          "opponentStateMs": 172.6685829999915
+        },
+        {
+          "selfStateMs": 169.2477910000016,
+          "opponentStateMs": 206.1302080000023
+        },
+        {
+          "selfStateMs": 208.33366699999897,
+          "opponentStateMs": 174.49783300000126
+        },
+        {
+          "selfStateMs": 169.34283300000243,
+          "opponentStateMs": 205.54562499999884
+        },
+        {
+          "selfStateMs": 208.3352920000034,
+          "opponentStateMs": 170.84995800000615
+        },
+        {
+          "selfStateMs": 170.245333999992,
+          "opponentStateMs": 219.0714169999992
+        },
+        {
+          "selfStateMs": 222.78383299999405,
+          "opponentStateMs": 173.63649999999325
+        },
+        {
+          "selfStateMs": 169.6085000000021,
+          "opponentStateMs": 218.78408300000592
+        },
+        {
+          "selfStateMs": 221.80845799999952,
+          "opponentStateMs": 176.0749999999971
+        },
+        {
+          "selfStateMs": 169.69574999999895,
+          "opponentStateMs": 218.78266599999915
+        },
+        {
+          "selfStateMs": 222.80079100000148,
+          "opponentStateMs": 173.1372080000001
+        },
+        {
+          "selfStateMs": 171.99349999999686,
+          "opponentStateMs": 220.640625
+        },
+        {
+          "selfStateMs": 221.67616600000474,
+          "opponentStateMs": 176.1965829999972
+        },
+        {
+          "selfStateMs": 168.8925420000014,
+          "opponentStateMs": 205.50362499999756
+        },
+        {
+          "selfStateMs": 223.04025000000547,
+          "opponentStateMs": 175.57204199999978
+        },
+        {
+          "selfStateMs": 173.22045799999614,
+          "opponentStateMs": 220.57787500000268
+        },
+        {
+          "selfStateMs": 209.16512499999953,
+          "opponentStateMs": 174.23895800000173
+        },
+        {
+          "selfStateMs": 169.41937499999767,
+          "opponentStateMs": 205.471000000005
+        },
+        {
+          "selfStateMs": 222.41666700001224,
+          "opponentStateMs": 171.1975000000093
+        },
+        {
+          "selfStateMs": 173.44187500000407,
+          "opponentStateMs": 220.47200000000885
+        },
+        {
+          "selfStateMs": 222.051541000008,
+          "opponentStateMs": 174.9927910000115
+        },
+        {
+          "selfStateMs": 170.3388330000016,
+          "opponentStateMs": 217.95616600000358
+        },
+        {
+          "selfStateMs": 221.46124999999302,
+          "opponentStateMs": 176.0570000000007
+        },
+        {
+          "selfStateMs": 171.56083300001046,
+          "opponentStateMs": 217.2879580000008
+        },
+        {
+          "selfStateMs": 221.07316600000195,
+          "opponentStateMs": 173.23479100000986
+        },
+        {
+          "selfStateMs": 169.11687500000698,
+          "opponentStateMs": 219.27579200000037
+        },
+        {
+          "selfStateMs": 222.27087500000198,
+          "opponentStateMs": 172.53875000000698
+        },
+        {
+          "selfStateMs": 167.6679579999909,
+          "opponentStateMs": 217.3148749999964
+        },
+        {
+          "selfStateMs": 222.0187089999963,
+          "opponentStateMs": 173.98775000000023
+        },
+        {
+          "selfStateMs": 174.0403329999972,
+          "opponentStateMs": 220.40116699998907
+        },
+        {
+          "selfStateMs": 223.25145799999882,
+          "opponentStateMs": 176.2464159999945
+        },
+        {
+          "selfStateMs": 173.05020800000057,
+          "opponentStateMs": 219.56587500000023
+        },
+        {
+          "selfStateMs": 222.13141699999687,
+          "opponentStateMs": 176.0752499999944
+        },
+        {
+          "selfStateMs": 170.71574999998847,
+          "opponentStateMs": 219.2016250000015
+        },
+        {
+          "selfStateMs": 222.54262500000186,
+          "opponentStateMs": 176.49691699999676
+        },
+        {
+          "selfStateMs": 171.80379199999152,
+          "opponentStateMs": 219.39895899999829
+        },
+        {
+          "selfStateMs": 221.76112500000454,
+          "opponentStateMs": 173.52324999999837
+        },
+        {
+          "selfStateMs": 170.75354200000584,
+          "opponentStateMs": 219.19275000000198
+        },
+        {
+          "selfStateMs": 225.07966699999815,
+          "opponentStateMs": 174.39804200000071
+        },
+        {
+          "selfStateMs": 173.90258300000278,
+          "opponentStateMs": 221.06520799999998
+        },
+        {
+          "selfStateMs": 222.97316700000374,
+          "opponentStateMs": 174.76975000000675
+        },
+        {
+          "selfStateMs": 174.3660830000008,
+          "opponentStateMs": 218.8947909999988
+        },
+        {
+          "selfStateMs": 222.45287500000268,
+          "opponentStateMs": 174.01262500000303
+        },
+        {
+          "selfStateMs": 172.25629099999787,
+          "opponentStateMs": 219.48158300000068
+        },
+        {
+          "selfStateMs": 224.52741699999024,
+          "opponentStateMs": 176.3922079999902
+        },
+        {
+          "selfStateMs": 168.09212499999558,
+          "opponentStateMs": 217.24545799999032
+        },
+        {
+          "selfStateMs": 221.71712499999558,
+          "opponentStateMs": 177.64441599999554
+        },
+        {
+          "selfStateMs": 171.86045799999556,
+          "opponentStateMs": 218.4546660000051
+        },
+        {
+          "selfStateMs": 222.52829099999508,
+          "opponentStateMs": 173.0566659999895
+        },
+        {
+          "selfStateMs": 169.5968750000029,
+          "opponentStateMs": 217.78750000000582
+        },
+        {
+          "selfStateMs": 220.83666699999594,
+          "opponentStateMs": 175.86791699999594
+        },
+        {
+          "selfStateMs": 169.78091600000334,
+          "opponentStateMs": 219.50308300000324
+        },
+        {
+          "selfStateMs": 220.86175000001094,
+          "opponentStateMs": 176.59970800000883
+        },
+        {
+          "selfStateMs": 173.61654099999578,
+          "opponentStateMs": 219.17658299999312
+        },
+        {
+          "selfStateMs": 223.03954199999862,
+          "opponentStateMs": 174.50170900000376
+        },
+        {
+          "selfStateMs": 168.7252909999952,
+          "opponentStateMs": 217.90329099999508
+        },
+        {
+          "selfStateMs": 221.7571670000034,
+          "opponentStateMs": 175.76550000000861
+        },
+        {
+          "selfStateMs": 170.8587089999928,
+          "opponentStateMs": 218.15241699999024
+        },
+        {
+          "selfStateMs": 224.5099169999885,
+          "opponentStateMs": 172.11787499999627
+        },
+        {
+          "selfStateMs": 172.67250000000058,
+          "opponentStateMs": 205.97741700000188
+        },
+        {
+          "selfStateMs": 224.14116700000886,
+          "opponentStateMs": 178.16558300000906
+        },
+        {
+          "selfStateMs": 174.0291670000006,
+          "opponentStateMs": 218.61241699999664
+        },
+        {
+          "selfStateMs": 221.9024999999965,
+          "opponentStateMs": 176.09245799999917
+        },
+        {
+          "selfStateMs": 174.04974999999104,
+          "opponentStateMs": 218.31345799998962
+        },
+        {
+          "selfStateMs": 222.14087499999732,
+          "opponentStateMs": 171.4213749999908
+        },
+        {
+          "selfStateMs": 170.92412499999045,
+          "opponentStateMs": 220.15791699998954
+        },
+        {
+          "selfStateMs": 222.04487499999232,
+          "opponentStateMs": 171.59395799999766
+        },
+        {
+          "selfStateMs": 171.96620899999107,
+          "opponentStateMs": 217.55516699999862
+        },
+        {
+          "selfStateMs": 225.5891660000052,
+          "opponentStateMs": 177.28945799999929
+        },
+        {
+          "selfStateMs": 172.6236249999929,
+          "opponentStateMs": 217.98008399999526
+        },
+        {
+          "selfStateMs": 222.63516599999275,
+          "opponentStateMs": 176.26612499999464
+        },
+        {
+          "selfStateMs": 173.69562500000757,
+          "opponentStateMs": 220.1986670000042
+        },
+        {
+          "selfStateMs": 222.89720799999486,
+          "opponentStateMs": 175.28637499999604
+        },
+        {
+          "selfStateMs": 172.92591599999287,
+          "opponentStateMs": 218.8453329999902
+        },
+        {
+          "selfStateMs": 221.76633399999992,
+          "opponentStateMs": 171.48637500000768
+        },
+        {
+          "selfStateMs": 174.34745799998927,
+          "opponentStateMs": 219.5362499999901
+        },
+        {
+          "selfStateMs": 214.46058400000038,
+          "opponentStateMs": 175.4111669999984
+        },
+        {
+          "selfStateMs": 171.88779200000863,
+          "opponentStateMs": 212.15066700000898
+        },
+        {
+          "selfStateMs": 222.848834000004,
+          "opponentStateMs": 174.9335420000134
+        },
+        {
+          "selfStateMs": 173.88950000000477,
+          "opponentStateMs": 214.2728749999951
+        },
+        {
+          "selfStateMs": 222.54866699999548,
+          "opponentStateMs": 176.3208750000049
+        },
+        {
+          "selfStateMs": 170.27966699999524,
+          "opponentStateMs": 218.78495800000383
+        },
+        {
+          "selfStateMs": 222.7517499999958,
+          "opponentStateMs": 176.50966700000572
+        },
+        {
+          "selfStateMs": 171.3034170000028,
+          "opponentStateMs": 218.1371669999935
+        },
+        {
+          "selfStateMs": 220.58024999999907,
+          "opponentStateMs": 171.3815420000028
+        },
+        {
+          "selfStateMs": 170.63058299999102,
+          "opponentStateMs": 218.68658300000243
+        },
+        {
+          "selfStateMs": 221.65366700000595,
+          "opponentStateMs": 171.66991700000654
+        },
+        {
+          "selfStateMs": 169.4861249999958,
+          "opponentStateMs": 220.4146250000049
+        },
+        {
+          "selfStateMs": 222.56241600000067,
+          "opponentStateMs": 172.44825000000128
+        },
+        {
+          "selfStateMs": 171.62683300000208,
+          "opponentStateMs": 219.88133299999754
+        },
+        {
+          "selfStateMs": 222.17908299999544,
+          "opponentStateMs": 175.7838749999937
+        },
+        {
+          "selfStateMs": 171.93383299998823,
+          "opponentStateMs": 211.9938329999859
+        },
+        {
+          "selfStateMs": 222.6701250000042,
+          "opponentStateMs": 175.02912500000093
+        },
+        {
+          "selfStateMs": 173.69741700000304,
+          "opponentStateMs": 219.09820800001035
+        },
+        {
+          "selfStateMs": 220.75937500000873,
+          "opponentStateMs": 176.0564580000064
+        },
+        {
+          "selfStateMs": 169.57533300000068,
+          "opponentStateMs": 220.0424159999966
+        },
+        {
+          "selfStateMs": 222.62862499999756,
+          "opponentStateMs": 173.72525000000314
+        },
+        {
+          "selfStateMs": 173.64704199999687,
+          "opponentStateMs": 217.39204200000677
+        },
+        {
+          "selfStateMs": 222.61500000000524,
+          "opponentStateMs": 175.48466700001154
+        },
+        {
+          "selfStateMs": 170.81895800000348,
+          "opponentStateMs": 218.0530410000065
+        },
+        {
+          "selfStateMs": 220.98308399999223,
+          "opponentStateMs": 177.86058399999456
+        },
+        {
+          "selfStateMs": 172.88620799999626,
+          "opponentStateMs": 218.672166999997
+        },
+        {
+          "selfStateMs": 220.94908400000713,
+          "opponentStateMs": 174.80054199999722
+        },
+        {
+          "selfStateMs": 171.67558300000383,
+          "opponentStateMs": 218.89537500000733
+        },
+        {
+          "selfStateMs": 222.2563749999972,
+          "opponentStateMs": 172.80958400000236
+        },
+        {
+          "selfStateMs": 172.98558399999456,
+          "opponentStateMs": 219.2880839999998
+        },
+        {
+          "selfStateMs": 221.33424999999988,
+          "opponentStateMs": 175.93499999999767
+        },
+        {
+          "selfStateMs": 171.80883300000278,
+          "opponentStateMs": 219.83550000000105
+        },
+        {
+          "selfStateMs": 220.6385830000072,
+          "opponentStateMs": 172.91683299999568
+        },
+        {
+          "selfStateMs": 176.42054200000712,
+          "opponentStateMs": 219.99079200001142
+        },
+        {
+          "selfStateMs": 223.10095900000306,
+          "opponentStateMs": 176.89358400000492
+        },
+        {
+          "selfStateMs": 172.38108300000022,
+          "opponentStateMs": 222.0235410000023
+        },
+        {
+          "selfStateMs": 220.9737499999901,
+          "opponentStateMs": 174.41549999998824
+        },
+        {
+          "selfStateMs": 173.01229100000637,
+          "opponentStateMs": 219.4311660000094
+        },
+        {
+          "selfStateMs": 221.43620899999223,
+          "opponentStateMs": 175.78733399999328
+        },
+        {
+          "selfStateMs": 172.1212499999965,
+          "opponentStateMs": 220.19774999999208
+        },
+        {
+          "selfStateMs": 222.51929100000416,
+          "opponentStateMs": 175.19458300000406
+        },
+        {
+          "selfStateMs": 174.27825000000303,
+          "opponentStateMs": 219.31725000000733
+        },
+        {
+          "selfStateMs": 223.10212499999034,
+          "opponentStateMs": 173.270709000004
+        },
+        {
+          "selfStateMs": 171.8208750000049,
+          "opponentStateMs": 218.83612500000163
+        },
+        {
+          "selfStateMs": 222.31987500000105,
+          "opponentStateMs": 173.21545900001365
+        },
+        {
+          "selfStateMs": 174.59920799999963,
+          "opponentStateMs": 220.51554100000067
+        },
+        {
+          "selfStateMs": 220.7901669999992,
+          "opponentStateMs": 174.09008399999584
+        },
+        {
+          "selfStateMs": 173.3806659999973,
+          "opponentStateMs": 219.18325000000186
+        },
+        {
+          "selfStateMs": 221.125,
+          "opponentStateMs": 173.718458000003
+        },
+        {
+          "selfStateMs": 170.78075000000536,
+          "opponentStateMs": 218.16320799999812
+        },
+        {
+          "selfStateMs": 224.55962500000896,
+          "opponentStateMs": 176.55433300000732
+        },
+        {
+          "selfStateMs": 170.0767499999929,
+          "opponentStateMs": 219.81604199999128
+        },
+        {
+          "selfStateMs": 222.10070799999812,
+          "opponentStateMs": 173.44408299999486
+        },
+        {
+          "selfStateMs": 175.13208400001167,
+          "opponentStateMs": 220.57166700001108
+        },
+        {
+          "selfStateMs": 224.36558300000615,
+          "opponentStateMs": 178.25133300000743
+        },
+        {
+          "selfStateMs": 172.0882500000007,
+          "opponentStateMs": 219.01958300000115
+        },
+        {
+          "selfStateMs": 220.61404200000106,
+          "opponentStateMs": 177.31037500000093
+        },
+        {
+          "selfStateMs": 169.86408400000073,
+          "opponentStateMs": 218.68004199999268
+        },
+        {
+          "selfStateMs": 222.21837499999674,
+          "opponentStateMs": 175.104416999995
+        },
+        {
+          "selfStateMs": 172.31650000000081,
+          "opponentStateMs": 219.1838749999879
+        },
+        {
+          "selfStateMs": 222.609540999998,
+          "opponentStateMs": 176.14708299998892
+        },
+        {
+          "selfStateMs": 168.48562500000116,
+          "opponentStateMs": 219.64250000000175
+        },
+        {
+          "selfStateMs": 221.09375,
+          "opponentStateMs": 176.2328339999949
+        },
+        {
+          "selfStateMs": 174.59895799998776,
+          "opponentStateMs": 218.66441599999962
+        },
+        {
+          "selfStateMs": 222.65354200000002,
+          "opponentStateMs": 175.8666249999951
+        },
+        {
+          "selfStateMs": 171.91070800001035,
+          "opponentStateMs": 214.7543330000044
+        },
+        {
+          "selfStateMs": 222.1982080000016,
+          "opponentStateMs": 171.7824580000015
+        },
+        {
+          "selfStateMs": 172.62724999999045,
+          "opponentStateMs": 220.3411669999914
+        },
+        {
+          "selfStateMs": 221.0961249999964,
+          "opponentStateMs": 174.86387500001
+        },
+        {
+          "selfStateMs": 171.85170800000196,
+          "opponentStateMs": 218.16904100000102
+        },
+        {
+          "selfStateMs": 221.75274999999965,
+          "opponentStateMs": 172.122583999997
+        },
+        {
+          "selfStateMs": 247.604416999995,
+          "opponentStateMs": 296.2317919999914
+        },
+        {
+          "selfStateMs": 222.48654199999874,
+          "opponentStateMs": 176.5748339999991
+        },
+        {
+          "selfStateMs": 171.14220899999782,
+          "opponentStateMs": 221.34320899999875
+        },
+        {
+          "selfStateMs": 221.29366700000537,
+          "opponentStateMs": 176.18641700000444
+        },
+        {
+          "selfStateMs": 171.66283400000248,
+          "opponentStateMs": 219.69820900000923
+        },
+        {
+          "selfStateMs": 222.32308299999568,
+          "opponentStateMs": 175.32358300000487
+        },
+        {
+          "selfStateMs": 175.66533399999025,
+          "opponentStateMs": 220.24858400000085
+        },
+        {
+          "selfStateMs": 222.00145799999882,
+          "opponentStateMs": 177.06033300000126
+        },
+        {
+          "selfStateMs": 170.98300000000745,
+          "opponentStateMs": 205.41891599999508
+        },
+        {
+          "selfStateMs": 209.2835839999898,
+          "opponentStateMs": 172.40837499999907
+        },
+        {
+          "selfStateMs": 180.14754199999152,
+          "opponentStateMs": 225.6548749999929
+        },
+        {
+          "selfStateMs": 208.1208750000078,
+          "opponentStateMs": 171.54370799999742
+        },
+        {
+          "selfStateMs": 168.53625000000466,
+          "opponentStateMs": 218.6955830000079
+        },
+        {
+          "selfStateMs": 222.77529199999117,
+          "opponentStateMs": 176.8993749999936
+        },
+        {
+          "selfStateMs": 170.2556249999907,
+          "opponentStateMs": 219.55841699999291
+        },
+        {
+          "selfStateMs": 220.96408400000655,
+          "opponentStateMs": 177.781084000002
+        },
+        {
+          "selfStateMs": 170.03016700000444,
+          "opponentStateMs": 219.6812920000084
+        },
+        {
+          "selfStateMs": 222.27183399999922,
+          "opponentStateMs": 175.7845420000085
+        },
+        {
+          "selfStateMs": 175.87291600000754,
+          "opponentStateMs": 219.2745830000058
+        },
+        {
+          "selfStateMs": 223.3647090000013,
+          "opponentStateMs": 173.82258400000865
+        },
+        {
+          "selfStateMs": 172.5697499999951,
+          "opponentStateMs": 205.16837499999383
+        },
+        {
+          "selfStateMs": 221.5745420000021,
+          "opponentStateMs": 175.66062499998952
+        },
+        {
+          "selfStateMs": 171.72520800000348,
+          "opponentStateMs": 217.16100000000733
+        },
+        {
+          "selfStateMs": 221.809957999998,
+          "opponentStateMs": 170.86391600000206
+        },
+        {
+          "selfStateMs": 169.42608300001302,
+          "opponentStateMs": 218.9377080000122
+        },
+        {
+          "selfStateMs": 221.58062500000233,
+          "opponentStateMs": 175.2967079999944
+        },
+        {
+          "selfStateMs": 170.8191669999942,
+          "opponentStateMs": 217.64916699999594
+        }
+      ],
+      "inputPaintMs": [
+        220.09999990463257,
+        228.90000009536743,
+        223.2000002861023,
+        234.90000009536743,
+        227.10000038146973,
+        220.5,
+        231.90000009536743,
+        225.80000019073486,
+        220,
+        230.90000009536743,
+        224.19999980926514,
+        218.40000009536743,
+        230.59999990463257,
+        224.2000002861023,
+        227.59999990463257,
+        223.19999980926514,
+        226.7000002861023,
+        238.59999990463257,
+        240.09999990463257,
+        236.5,
+        231.2000002861023,
+        228.30000019073486,
+        241.7000002861023,
+        235.2000002861023,
+        232.59999990463257,
+        228.59999990463257,
+        240.90000009536743,
+        241.7999997138977,
+        237.09999990463257,
+        237.30000019073486,
+        233.09999990463257,
+        229,
+        229.2999997138977,
+        241.59999990463257,
+        236.10000038146973,
+        233.2999997138977,
+        228.69999980926514,
+        241.80000019073486,
+        238,
+        231.2000002861023,
+        241.7999997138977,
+        236.5,
+        233.90000009536743,
+        228.90000009536743,
+        239.30000019073486,
+        234.30000019073486,
+        231,
+        244.59999990463257,
+        235.69999980926514,
+        231,
+        226,
+        237.7000002861023,
+        234.10000038146973,
+        230.5,
+        245.2999997138977,
+        243.90000009536743,
+        241.5,
+        236.5,
+        231.30000019073486,
+        253.2999997138977,
+        239.59999990463257,
+        233.59999990463257,
+        232,
+        228.30000019073486,
+        240.60000038146973,
+        236.5,
+        231.69999980926514,
+        226.69999980926514,
+        239.90000009536743,
+        235.30000019073486,
+        248.60000038146973,
+        249.59999990463257,
+        247.7000002861023,
+        247.10000038146973,
+        247.10000038146973,
+        252.09999990463257,
+        239.7999997138977,
+        240.7999997138977,
+        241.39999961853027,
+        242.09999990463257,
+        239.09999990463257,
+        241.80000019073486,
+        226.89999961853027,
+        242.09999990463257,
+        228,
+        240.69999980926514,
+        244.39999961853027,
+        246.80000019073486,
+        247.5,
+        247.30000019073486,
+        247.69999980926514,
+        246.90000009536743,
+        251.19999980926514,
+        249.90000009536743,
+        252,
+        238.69999980926514,
+        249.69999980926514,
+        254.30000019073486,
+        257,
+        255.19999980926514,
+        242,
+        243.7000002861023,
+        246.10000038146973,
+        247,
+        249.09999990463257,
+        252.89999961853027,
+        235,
+        233.2000002861023,
+        228.59999990463257,
+        241.40000009536743,
+        255,
+        236.80000019073486,
+        251.7999997138977,
+        233.10000038146973,
+        247.39999961853027,
+        247.89999961853027,
+        251,
+        247.40000009536743,
+        247.39999961853027,
+        246.5,
+        253.5,
+        239.19999980926514,
+        241,
+        237.59999990463257,
+        233.69999980926514,
+        233,
+        240.59999990463257,
+        255.09999990463257,
+        243,
+        245.2000002861023,
+        246,
+        249.5,
+        235.7000002861023,
+        246.80000019073486,
+        247.40000009536743,
+        250.80000019073486,
+        250,
+        225.09999990463257,
+        237.30000019073486,
+        232.09999990463257,
+        228.80000019073486,
+        244.40000009536743,
+        245.59999990463257,
+        247.7999997138977,
+        247.40000009536743,
+        244.2000002861023,
+        228.5,
+        239.90000009536743,
+        239.19999980926514,
+        239.80000019073486,
+        246.2999997138977,
+        250.09999990463257,
+        253.7999997138977,
+        253.80000019073486,
+        254.09999990463257,
+        239,
+        240.19999980926514,
+        257.59999990463257,
+        254.90000009536743,
+        239.80000019073486,
+        254.5,
+        240.09999990463257,
+        242.7999997138977,
+        245.30000019073486,
+        248,
+        248.59999990463257,
+        249,
+        251.5,
+        247.80000019073486,
+        249.10000038146973,
+        251.40000009536743,
+        251.40000009536743,
+        255.40000009536743,
+        254.89999961853027,
+        254.40000009536743,
+        240.19999980926514,
+        242.40000009536743,
+        240.90000009536743,
+        247.7999997138977,
+        248.7999997138977,
+        249.7999997138977,
+        253.2999997138977,
+        253.40000009536743,
+        254.5,
+        246.7999997138977,
+        248,
+        249.5,
+        251,
+        237.80000019073486,
+        241.59999990463257,
+        245.59999990463257,
+        245.90000009536743,
+        249,
+        251.09999990463257,
+        249.30000019073486,
+        251.19999980926514,
+        251.2000002861023,
+        253.40000009536743,
+        254.09999990463257,
+        238.09999990463257,
+        239.10000038146973,
+        242.59999990463257,
+        241.5,
+        242,
+        241.5,
+        246.09999990463257,
+        247.7000002861023,
+        246.40000009536743,
+        250.5,
+        255.59999990463257,
+        239.5,
+        243,
+        251.2000002861023,
+        250.89999961853027,
+        251.09999990463257,
+        251.09999990463257,
+        233,
+        240.5,
+        256.30000019073486,
+        240.59999990463257,
+        243.40000009536743,
+        245.59999990463257,
+        243.5,
+        249,
+        250.89999961853027,
+        183.90000009536743,
+        194.30000019073486,
+        188.5,
+        199,
+        193.19999980926514,
+        187.2000002861023,
+        197.30000019073486,
+        192,
+        184.40000009536743,
+        196.40000009536743,
+        190.40000009536743,
+        184.39999961853027,
+        196.59999990463257,
+        190.59999990463257,
+        202,
+        189.80000019073486,
+        200.30000019073486,
+        196.30000019073486,
+        199.30000019073486,
+        194,
+        188.80000019073486,
+        186,
+        199.5,
+        193.69999980926514,
+        191.09999990463257,
+        186.30000019073486,
+        298.5,
+        199,
+        200.59999990463257,
+        195.2000002861023,
+        190.69999980926514,
+        186.90000009536743,
+        187.30000019073486,
+        198.2999997138977,
+        194.39999961853027,
+        191.2000002861023,
+        187,
+        199.5,
+        195.09999990463257,
+        187.69999980926514,
+        199.40000009536743,
+        194.30000019073486,
+        191.09999990463257,
+        187,
+        197.80000019073486,
+        192.80000019073486,
+        188.7999997138977,
+        198.5,
+        191.40000009536743,
+        188.2000002861023,
+        200.2999997138977,
+        196.39999961853027,
+        191.90000009536743,
+        189,
+        204.59999990463257,
+        187.2000002861023,
+        198.7999997138977,
+        194.5,
+        200.2999997138977,
+        197.80000019073486,
+        195.5,
+        191.69999980926514,
+        188.5,
+        185.7000002861023,
+        197.59999990463257,
+        193.5,
+        203.7000002861023,
+        201,
+        197.09999990463257,
+        207.30000019073486,
+        192,
+        191.39999961853027,
+        206.69999980926514,
+        190,
+        192.89999961853027,
+        196.30000019073486,
+        198.80000019073486,
+        200.40000009536743,
+        202.5,
+        198.2999997138977,
+        200.30000019073486,
+        201.59999990463257,
+        200.30000019073486,
+        202.90000009536743,
+        201.5,
+        201.80000019073486,
+        204.2999997138977,
+        189.69999980926514,
+        190.19999980926514,
+        190.10000038146973,
+        205.90000009536743,
+        207,
+        193.2000002861023,
+        193.10000038146973,
+        195.5,
+        191.09999990463257,
+        194.69999980926514,
+        197.90000009536743,
+        197.5,
+        198.09999990463257,
+        201,
+        201.7000002861023,
+        189.59999990463257,
+        205.5,
+        194.30000019073486,
+        196,
+        193.5,
+        190.59999990463257,
+        185.5,
+        197.5,
+        196.59999990463257,
+        193.69999980926514,
+        194.19999980926514,
+        206,
+        189.30000019073486,
+        191,
+        187.19999980926514,
+        190.40000009536743,
+        204,
+        189.30000019073486,
+        196.90000009536743,
+        198.69999980926514,
+        197.80000019073486,
+        193.5,
+        190.10000038146973,
+        205.40000009536743,
+        199.5,
+        198.5,
+        203,
+        205.5,
+        191.60000038146973,
+        193.09999990463257,
+        192.10000038146973,
+        189.39999961853027,
+        191.59999990463257,
+        194.90000009536743,
+        193.30000019073486,
+        198.5,
+        194.59999990463257,
+        189.7000002861023,
+        201.80000019073486,
+        186.40000009536743,
+        188.80000019073486,
+        190,
+        190.40000009536743,
+        203.60000038146973,
+        200.5,
+        198.39999961853027,
+        198.30000019073486,
+        201.80000019073486,
+        191.19999980926514,
+        194,
+        197.2000002861023,
+        196.2999997138977,
+        197.90000009536743,
+        198.19999980926514,
+        200.40000009536743,
+        198.59999990463257,
+        196.59999990463257,
+        198.19999980926514,
+        196.69999980926514,
+        200.30000019073486,
+        201.90000009536743,
+        189.19999980926514,
+        191.59999990463257,
+        190,
+        191.69999980926514,
+        192.69999980926514,
+        205.69999980926514,
+        192.40000009536743,
+        194.80000019073486,
+        195.09999990463257,
+        194.59999990463257,
+        196.80000019073486,
+        197.5,
+        200.09999990463257,
+        193,
+        201,
+        190,
+        190.69999980926514,
+        194,
+        196.89999961853027,
+        195.90000009536743,
+        197.2999997138977,
+        204.89999961853027,
+        191.5,
+        191.80000019073486,
+        195.59999990463257,
+        198.40000009536743,
+        202.2000002861023,
+        204.30000019073486,
+        192,
+        209.59999990463257,
+        193.09999990463257,
+        192.80000019073486,
+        194.80000019073486,
+        194.7000002861023,
+        194.80000019073486,
+        197.09999990463257,
+        199.09999990463257,
+        198.90000009536743,
+        199.39999961853027,
+        200.5,
+        198.90000009536743,
+        202.80000019073486,
+        205.2999997138977,
+        189.2999997138977,
+        191.7999997138977,
+        192.69999980926514,
+        198.59999990463257,
+        200.2999997138977,
+        269.19999980926514,
+        193.69999980926514,
+        194.5,
+        195.59999990463257,
+        195,
+        205.19999980926514,
+        197,
+        198,
+        201.40000009536743,
+        202.90000009536743,
+        203.7000002861023,
+        203.5,
+        192.2999997138977,
+        195.60000038146973
+      ]
+    },
+    {
+      "device": "desktop",
+      "kind": "surrender",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "192381fc-2f16-478c-84ce-b64a0a69d3c0",
+      "reason": "surrender",
+      "moves": 0,
+      "roomCreationToReadyMs": 5172.366499999999,
+      "joinCodeRequestToReadyMs": 386.53499999999985,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 4106.323250000001,
+      "firstBoardMs": 9282.940625,
+      "playableDurationMs": 499.1320830000004,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 11.182416999999987,
+      "resultPacketToAnimationCompleteMs": 1052.3728330000013,
+      "surrenderToResultMs": 171.49270800000158,
+      "inputs": [],
+      "inputPaintMs": []
+    },
+    {
+      "device": "mobile-emulation",
+      "kind": "natural",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "66432ddd-f72c-48de-b645-18ffbaeb2515",
+      "reason": "opponent_locked",
+      "moves": 270,
+      "roomCreationToReadyMs": 5008.508667,
+      "joinCodeRequestToReadyMs": 335.41799999999785,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 4060.037791999999,
+      "firstBoardMs": 9073.228208999999,
+      "playableDurationMs": 66336.761083,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 14.949709000007715,
+      "resultPacketToAnimationCompleteMs": 1056.6729170000035,
+      "surrenderToResultMs": null,
+      "inputs": [
+        {
+          "selfStateMs": 166.92129200000272,
+          "opponentStateMs": 165.8730420000029
+        },
+        {
+          "selfStateMs": 200.36870900000213,
+          "opponentStateMs": 167.43937500000175
+        },
+        {
+          "selfStateMs": 165.53641600000265,
+          "opponentStateMs": 197.36683300000004
+        },
+        {
+          "selfStateMs": 200.32970800000112,
+          "opponentStateMs": 167.45904200000223
+        },
+        {
+          "selfStateMs": 164.6021249999976,
+          "opponentStateMs": 197.30583399999887
+        },
+        {
+          "selfStateMs": 201.34449999999924,
+          "opponentStateMs": 169.57924999999886
+        },
+        {
+          "selfStateMs": 165.2803750000021,
+          "opponentStateMs": 197.5828330000004
+        },
+        {
+          "selfStateMs": 201.5818330000002,
+          "opponentStateMs": 168.5057080000006
+        },
+        {
+          "selfStateMs": 165.2607080000016,
+          "opponentStateMs": 199.38879100000122
+        },
+        {
+          "selfStateMs": 201.0655000000006,
+          "opponentStateMs": 169.59412499999962
+        },
+        {
+          "selfStateMs": 165.60570800000278,
+          "opponentStateMs": 196.63999999999942
+        },
+        {
+          "selfStateMs": 200.88266699999804,
+          "opponentStateMs": 166.67533299999923
+        },
+        {
+          "selfStateMs": 165.35424999999668,
+          "opponentStateMs": 198.03299999999945
+        },
+        {
+          "selfStateMs": 200.30891599999813,
+          "opponentStateMs": 168.41249999999854
+        },
+        {
+          "selfStateMs": 165.6583750000027,
+          "opponentStateMs": 198.36891699999978
+        },
+        {
+          "selfStateMs": 201.2764160000006,
+          "opponentStateMs": 168.3615409999984
+        },
+        {
+          "selfStateMs": 165.6441670000022,
+          "opponentStateMs": 198.1022499999999
+        },
+        {
+          "selfStateMs": 200.63012499999968,
+          "opponentStateMs": 167.62362500000017
+        },
+        {
+          "selfStateMs": 165.51245799999742,
+          "opponentStateMs": 198.2200410000005
+        },
+        {
+          "selfStateMs": 200.64666600000055,
+          "opponentStateMs": 167.47583300000042
+        },
+        {
+          "selfStateMs": 165.99725000000035,
+          "opponentStateMs": 198.73199999999997
+        },
+        {
+          "selfStateMs": 201.26254100000006,
+          "opponentStateMs": 167.88854100000026
+        },
+        {
+          "selfStateMs": 167.23645899999974,
+          "opponentStateMs": 197.71533400000044
+        },
+        {
+          "selfStateMs": 204.21537499999977,
+          "opponentStateMs": 167.1941250000018
+        },
+        {
+          "selfStateMs": 165.89187499999753,
+          "opponentStateMs": 198.25145899999916
+        },
+        {
+          "selfStateMs": 200.70716700000048,
+          "opponentStateMs": 169.46979199999987
+        },
+        {
+          "selfStateMs": 164.24833299999955,
+          "opponentStateMs": 197.2604169999977
+        },
+        {
+          "selfStateMs": 208.26737499999945,
+          "opponentStateMs": 173.08858299999702
+        },
+        {
+          "selfStateMs": 169.9989170000008,
+          "opponentStateMs": 206.22912500000166
+        },
+        {
+          "selfStateMs": 209.88362499999857,
+          "opponentStateMs": 173.06720900000073
+        },
+        {
+          "selfStateMs": 175.86975000000166,
+          "opponentStateMs": 210.88220800000272
+        },
+        {
+          "selfStateMs": 209.3043749999997,
+          "opponentStateMs": 174.19558300000062
+        },
+        {
+          "selfStateMs": 168.15420799999993,
+          "opponentStateMs": 206.81891600000017
+        },
+        {
+          "selfStateMs": 208.99108300000444,
+          "opponentStateMs": 173.8896249999998
+        },
+        {
+          "selfStateMs": 169.546792000001,
+          "opponentStateMs": 206.937417000001
+        },
+        {
+          "selfStateMs": 209.00470900000073,
+          "opponentStateMs": 173.36483399999997
+        },
+        {
+          "selfStateMs": 171.3490840000013,
+          "opponentStateMs": 206.38904200000252
+        },
+        {
+          "selfStateMs": 209.58791700000438,
+          "opponentStateMs": 170.22979200000555
+        },
+        {
+          "selfStateMs": 165.80079200000182,
+          "opponentStateMs": 204.60383400000137
+        },
+        {
+          "selfStateMs": 209.35879199999908,
+          "opponentStateMs": 173.58191700000316
+        },
+        {
+          "selfStateMs": 170.87358400000085,
+          "opponentStateMs": 205.6139170000024
+        },
+        {
+          "selfStateMs": 209.49741599999834,
+          "opponentStateMs": 174.4960409999985
+        },
+        {
+          "selfStateMs": 166.6814579999991,
+          "opponentStateMs": 205.43141599999944
+        },
+        {
+          "selfStateMs": 209.26620800000092,
+          "opponentStateMs": 173.8370830000058
+        },
+        {
+          "selfStateMs": 170.79420799999934,
+          "opponentStateMs": 206.01379199999792
+        },
+        {
+          "selfStateMs": 212.08437499999854,
+          "opponentStateMs": 176.48533300000418
+        },
+        {
+          "selfStateMs": 169.734083000003,
+          "opponentStateMs": 205.3654170000009
+        },
+        {
+          "selfStateMs": 208.84958400000323,
+          "opponentStateMs": 173.55308399999922
+        },
+        {
+          "selfStateMs": 170.952833000003,
+          "opponentStateMs": 206.74637500000244
+        },
+        {
+          "selfStateMs": 208.39458300000115,
+          "opponentStateMs": 169.46079199999804
+        },
+        {
+          "selfStateMs": 235.8454999999958,
+          "opponentStateMs": 237.09300000000076
+        },
+        {
+          "selfStateMs": 208.72495799999888,
+          "opponentStateMs": 174.0081250000003
+        },
+        {
+          "selfStateMs": 174.15616600000067,
+          "opponentStateMs": 208.13450000000012
+        },
+        {
+          "selfStateMs": 208.390416000002,
+          "opponentStateMs": 173.95875000000524
+        },
+        {
+          "selfStateMs": 171.5795419999995,
+          "opponentStateMs": 205.955375000005
+        },
+        {
+          "selfStateMs": 207.06766600000265,
+          "opponentStateMs": 174.62595800000418
+        },
+        {
+          "selfStateMs": 167.0523749999993,
+          "opponentStateMs": 205.7411659999998
+        },
+        {
+          "selfStateMs": 209.45479100000375,
+          "opponentStateMs": 174.17670799999905
+        },
+        {
+          "selfStateMs": 170.4452919999967,
+          "opponentStateMs": 204.50554199999897
+        },
+        {
+          "selfStateMs": 210.61441600000398,
+          "opponentStateMs": 169.65829099999974
+        },
+        {
+          "selfStateMs": 171.46104200000264,
+          "opponentStateMs": 206.8627919999999
+        },
+        {
+          "selfStateMs": 210.03508399999555,
+          "opponentStateMs": 174.93037499999627
+        },
+        {
+          "selfStateMs": 171.234375,
+          "opponentStateMs": 205.81850000000122
+        },
+        {
+          "selfStateMs": 208.60033299999486,
+          "opponentStateMs": 173.03374999999505
+        },
+        {
+          "selfStateMs": 166.81158300000243,
+          "opponentStateMs": 205.25808300000062
+        },
+        {
+          "selfStateMs": 208.1552920000031,
+          "opponentStateMs": 168.81204199999775
+        },
+        {
+          "selfStateMs": 171.903790999997,
+          "opponentStateMs": 206.67504100000224
+        },
+        {
+          "selfStateMs": 208.58237499999814,
+          "opponentStateMs": 172.90058300000237
+        },
+        {
+          "selfStateMs": 172.3324580000044,
+          "opponentStateMs": 204.91833300000144
+        },
+        {
+          "selfStateMs": 208.26712500000576,
+          "opponentStateMs": 173.2002500000017
+        },
+        {
+          "selfStateMs": 172.56062499999825,
+          "opponentStateMs": 205.4392910000024
+        },
+        {
+          "selfStateMs": 208.8602499999979,
+          "opponentStateMs": 175.7909159999981
+        },
+        {
+          "selfStateMs": 170.4723329999979,
+          "opponentStateMs": 205.50504199999705
+        },
+        {
+          "selfStateMs": 208.7289579999997,
+          "opponentStateMs": 179.35466700000688
+        },
+        {
+          "selfStateMs": 174.4344160000037,
+          "opponentStateMs": 206.19466600000305
+        },
+        {
+          "selfStateMs": 208.67470899999898,
+          "opponentStateMs": 176.60279200000514
+        },
+        {
+          "selfStateMs": 176.6990420000002,
+          "opponentStateMs": 205.02150000000256
+        },
+        {
+          "selfStateMs": 209.29870900000242,
+          "opponentStateMs": 176.84370900000067
+        },
+        {
+          "selfStateMs": 171.7121249999982,
+          "opponentStateMs": 206.218915999998
+        },
+        {
+          "selfStateMs": 209.3459159999984,
+          "opponentStateMs": 179.94258299999638
+        },
+        {
+          "selfStateMs": 170.50908300000447,
+          "opponentStateMs": 205.45237500000076
+        },
+        {
+          "selfStateMs": 208.30737499999668,
+          "opponentStateMs": 173.25016699999833
+        },
+        {
+          "selfStateMs": 177.1358340000006,
+          "opponentStateMs": 205.34712500000023
+        },
+        {
+          "selfStateMs": 208.26016600000003,
+          "opponentStateMs": 179.66358300000138
+        },
+        {
+          "selfStateMs": 171.08320800000365,
+          "opponentStateMs": 205.8853750000053
+        },
+        {
+          "selfStateMs": 209.50887499999953,
+          "opponentStateMs": 174.18283399999927
+        },
+        {
+          "selfStateMs": 170.97362499999872,
+          "opponentStateMs": 205.7103750000024
+        },
+        {
+          "selfStateMs": 210.4415829999998,
+          "opponentStateMs": 173.002250000005
+        },
+        {
+          "selfStateMs": 176.9774580000012,
+          "opponentStateMs": 205.8950829999958
+        },
+        {
+          "selfStateMs": 208.90308400000504,
+          "opponentStateMs": 173.28095900000335
+        },
+        {
+          "selfStateMs": 171.38079099999595,
+          "opponentStateMs": 207.93249999999534
+        },
+        {
+          "selfStateMs": 209.9740410000013,
+          "opponentStateMs": 175.09195799999725
+        },
+        {
+          "selfStateMs": 170.82624999999825,
+          "opponentStateMs": 205.47041699999681
+        },
+        {
+          "selfStateMs": 209.19208300000173,
+          "opponentStateMs": 179.58000000000175
+        },
+        {
+          "selfStateMs": 170.3248339999991,
+          "opponentStateMs": 205.40762499999983
+        },
+        {
+          "selfStateMs": 211.6015000000043,
+          "opponentStateMs": 181.22433300000557
+        },
+        {
+          "selfStateMs": 177.42525000000023,
+          "opponentStateMs": 205.67604199999914
+        },
+        {
+          "selfStateMs": 208.77379199999996,
+          "opponentStateMs": 173.7693750000035
+        },
+        {
+          "selfStateMs": 171.96066699999938,
+          "opponentStateMs": 206.6910829999979
+        },
+        {
+          "selfStateMs": 210.58479100000113,
+          "opponentStateMs": 172.81716600000073
+        },
+        {
+          "selfStateMs": 173.47583299999678,
+          "opponentStateMs": 205.41362500000105
+        },
+        {
+          "selfStateMs": 207.88933299999917,
+          "opponentStateMs": 172.67404199999874
+        },
+        {
+          "selfStateMs": 175.49666699999943,
+          "opponentStateMs": 206.43525000000227
+        },
+        {
+          "selfStateMs": 209.25004199999967,
+          "opponentStateMs": 179.80216699999437
+        },
+        {
+          "selfStateMs": 171.58000000000175,
+          "opponentStateMs": 205.52983400000085
+        },
+        {
+          "selfStateMs": 208.87345799999457,
+          "opponentStateMs": 173.35583299999416
+        },
+        {
+          "selfStateMs": 174.44008300000132,
+          "opponentStateMs": 206.00370800000383
+        },
+        {
+          "selfStateMs": 211.01450000000477,
+          "opponentStateMs": 180.24995800000033
+        },
+        {
+          "selfStateMs": 170.53591700000106,
+          "opponentStateMs": 205.2976670000062
+        },
+        {
+          "selfStateMs": 209.11466700000165,
+          "opponentStateMs": 173.93691699999908
+        },
+        {
+          "selfStateMs": 176.97449999999662,
+          "opponentStateMs": 205.85337499999878
+        },
+        {
+          "selfStateMs": 209.75366600000416,
+          "opponentStateMs": 173.65995800000383
+        },
+        {
+          "selfStateMs": 174.6750000000029,
+          "opponentStateMs": 219.94774999999936
+        },
+        {
+          "selfStateMs": 222.0694999999978,
+          "opponentStateMs": 176.68099999999686
+        },
+        {
+          "selfStateMs": 171.08370899999863,
+          "opponentStateMs": 220.9855000000025
+        },
+        {
+          "selfStateMs": 223.19570799999929,
+          "opponentStateMs": 176.9642920000042
+        },
+        {
+          "selfStateMs": 171.27570900000137,
+          "opponentStateMs": 219.93195900000137
+        },
+        {
+          "selfStateMs": 208.78295800000342,
+          "opponentStateMs": 173.5739160000012
+        },
+        {
+          "selfStateMs": 174.20837500000198,
+          "opponentStateMs": 206.07800000000134
+        },
+        {
+          "selfStateMs": 209.57904199999757,
+          "opponentStateMs": 177.38987500000076
+        },
+        {
+          "selfStateMs": 174.11262500000157,
+          "opponentStateMs": 206.16912500000035
+        },
+        {
+          "selfStateMs": 211.94974999999977,
+          "opponentStateMs": 174.1772920000003
+        },
+        {
+          "selfStateMs": 171.25100000000384,
+          "opponentStateMs": 205.8789590000015
+        },
+        {
+          "selfStateMs": 208.45516599999974,
+          "opponentStateMs": 173.20454100000643
+        },
+        {
+          "selfStateMs": 173.97891700000037,
+          "opponentStateMs": 205.44108399999823
+        },
+        {
+          "selfStateMs": 208.70570899999439,
+          "opponentStateMs": 173.55270899999596
+        },
+        {
+          "selfStateMs": 175.04737500000192,
+          "opponentStateMs": 206.93074999999953
+        },
+        {
+          "selfStateMs": 208.04791699999623,
+          "opponentStateMs": 175.68937500000175
+        },
+        {
+          "selfStateMs": 176.24883399999817,
+          "opponentStateMs": 205.34083399999508
+        },
+        {
+          "selfStateMs": 208.3413750000036,
+          "opponentStateMs": 175.46320900000137
+        },
+        {
+          "selfStateMs": 173.7522089999984,
+          "opponentStateMs": 206.1753749999989
+        },
+        {
+          "selfStateMs": 208.3202500000043,
+          "opponentStateMs": 173.0029579999973
+        },
+        {
+          "selfStateMs": 177.5279170000067,
+          "opponentStateMs": 206.49095900000248
+        },
+        {
+          "selfStateMs": 209.42299999999523,
+          "opponentStateMs": 174.02720799999952
+        },
+        {
+          "selfStateMs": 171.2495409999974,
+          "opponentStateMs": 205.77737499999785
+        },
+        {
+          "selfStateMs": 221.93129200000112,
+          "opponentStateMs": 180.4646670000002
+        },
+        {
+          "selfStateMs": 170.98341699999582,
+          "opponentStateMs": 205.7223329999979
+        },
+        {
+          "selfStateMs": 222.86795900000288,
+          "opponentStateMs": 174.86554199999955
+        },
+        {
+          "selfStateMs": 173.7288750000007,
+          "opponentStateMs": 218.0400840000002
+        },
+        {
+          "selfStateMs": 221.86120800000208,
+          "opponentStateMs": 174.27275000000373
+        },
+        {
+          "selfStateMs": 174.5662500000035,
+          "opponentStateMs": 218.25283300000592
+        },
+        {
+          "selfStateMs": 211.75833399999829,
+          "opponentStateMs": 179.7232920000024
+        },
+        {
+          "selfStateMs": 173.7275840000002,
+          "opponentStateMs": 220.00475000000006
+        },
+        {
+          "selfStateMs": 223.0925830000051,
+          "opponentStateMs": 179.36125000000175
+        },
+        {
+          "selfStateMs": 178.3506669999988,
+          "opponentStateMs": 206.3680000000022
+        },
+        {
+          "selfStateMs": 208.3275829999984,
+          "opponentStateMs": 180.1627920000028
+        },
+        {
+          "selfStateMs": 171.062582999999,
+          "opponentStateMs": 207.4406669999953
+        },
+        {
+          "selfStateMs": 208.6470829999962,
+          "opponentStateMs": 174.80849999999919
+        },
+        {
+          "selfStateMs": 176.4420420000024,
+          "opponentStateMs": 205.89908300000388
+        },
+        {
+          "selfStateMs": 209.3159999999989,
+          "opponentStateMs": 175.93208400000003
+        },
+        {
+          "selfStateMs": 176.846000000005,
+          "opponentStateMs": 205.43349999999919
+        },
+        {
+          "selfStateMs": 208.59945800000423,
+          "opponentStateMs": 173.16620800000237
+        },
+        {
+          "selfStateMs": 171.73300000000017,
+          "opponentStateMs": 205.42120799999975
+        },
+        {
+          "selfStateMs": 213.63516700000037,
+          "opponentStateMs": 172.3184590000019
+        },
+        {
+          "selfStateMs": 178.96583300000202,
+          "opponentStateMs": 205.98470799999632
+        },
+        {
+          "selfStateMs": 208.42812499999854,
+          "opponentStateMs": 176.05425000000105
+        },
+        {
+          "selfStateMs": 170.8648749999993,
+          "opponentStateMs": 204.85558399999718
+        },
+        {
+          "selfStateMs": 209.18195900000137,
+          "opponentStateMs": 174.4567090000055
+        },
+        {
+          "selfStateMs": 170.87016700000095,
+          "opponentStateMs": 205.63029199999437
+        },
+        {
+          "selfStateMs": 223.2463329999955,
+          "opponentStateMs": 179.12320799999725
+        },
+        {
+          "selfStateMs": 173.87866699999722,
+          "opponentStateMs": 220.08445899999788
+        },
+        {
+          "selfStateMs": 221.5653749999983,
+          "opponentStateMs": 173.59070899999642
+        },
+        {
+          "selfStateMs": 170.11033300000418,
+          "opponentStateMs": 220.36329100000148
+        },
+        {
+          "selfStateMs": 223.07920799999556,
+          "opponentStateMs": 173.78016599999683
+        },
+        {
+          "selfStateMs": 177.15904199999932,
+          "opponentStateMs": 214.48599999999715
+        },
+        {
+          "selfStateMs": 209.2962090000001,
+          "opponentStateMs": 173.5873750000028
+        },
+        {
+          "selfStateMs": 175.51399999999558,
+          "opponentStateMs": 218.4705829999948
+        },
+        {
+          "selfStateMs": 222.39783300000272,
+          "opponentStateMs": 173.82204099999944
+        },
+        {
+          "selfStateMs": 171.6952079999901,
+          "opponentStateMs": 221.03579199999513
+        },
+        {
+          "selfStateMs": 221.6299169999984,
+          "opponentStateMs": 173.47816699999385
+        },
+        {
+          "selfStateMs": 176.4067500000092,
+          "opponentStateMs": 206.76725000000442
+        },
+        {
+          "selfStateMs": 221.2305420000048,
+          "opponentStateMs": 177.67808300000615
+        },
+        {
+          "selfStateMs": 180.85633400001097,
+          "opponentStateMs": 218.61429200001294
+        },
+        {
+          "selfStateMs": 223.41799999999057,
+          "opponentStateMs": 173.1236659999995
+        },
+        {
+          "selfStateMs": 179.83437500000582,
+          "opponentStateMs": 220.2997500000056
+        },
+        {
+          "selfStateMs": 222.6498339999962,
+          "opponentStateMs": 184.33916699999827
+        },
+        {
+          "selfStateMs": 170.624708000003,
+          "opponentStateMs": 219.5519159999967
+        },
+        {
+          "selfStateMs": 217.45991700000013,
+          "opponentStateMs": 179.26550000000861
+        },
+        {
+          "selfStateMs": 170.8293330000015,
+          "opponentStateMs": 219.69916699999885
+        },
+        {
+          "selfStateMs": 222.19574999999895,
+          "opponentStateMs": 179.82762500000536
+        },
+        {
+          "selfStateMs": 180.06237499999406,
+          "opponentStateMs": 219.859540999998
+        },
+        {
+          "selfStateMs": 208.3246669999935,
+          "opponentStateMs": 173.04833299999882
+        },
+        {
+          "selfStateMs": 171.24770800000988,
+          "opponentStateMs": 218.6086670000077
+        },
+        {
+          "selfStateMs": 210.19408299999486,
+          "opponentStateMs": 175.90820799999346
+        },
+        {
+          "selfStateMs": 177.53208400000585,
+          "opponentStateMs": 207.21504200001073
+        },
+        {
+          "selfStateMs": 209.40037499999744,
+          "opponentStateMs": 174.11866700000246
+        },
+        {
+          "selfStateMs": 174.92799999999988,
+          "opponentStateMs": 206.167208999992
+        },
+        {
+          "selfStateMs": 208.60599999999977,
+          "opponentStateMs": 176.45870800000557
+        },
+        {
+          "selfStateMs": 172.7127080000064,
+          "opponentStateMs": 207.14133300000685
+        },
+        {
+          "selfStateMs": 221.99083399999654,
+          "opponentStateMs": 173.02758399999584
+        },
+        {
+          "selfStateMs": 175.91924999999173,
+          "opponentStateMs": 206.43383300000278
+        },
+        {
+          "selfStateMs": 221.81375000000116,
+          "opponentStateMs": 172.58045800001128
+        },
+        {
+          "selfStateMs": 181.22504199999094,
+          "opponentStateMs": 218.7494999999908
+        },
+        {
+          "selfStateMs": 222.5527909999946,
+          "opponentStateMs": 176.68695799999114
+        },
+        {
+          "selfStateMs": 176.1117499999964,
+          "opponentStateMs": 219.0276670000021
+        },
+        {
+          "selfStateMs": 222.721000000005,
+          "opponentStateMs": 182.06495800000266
+        },
+        {
+          "selfStateMs": 181.41008300000976,
+          "opponentStateMs": 221.08829200000037
+        },
+        {
+          "selfStateMs": 224.41679199998907,
+          "opponentStateMs": 175.95570799999405
+        },
+        {
+          "selfStateMs": 177.000291999997,
+          "opponentStateMs": 219.46349999999802
+        },
+        {
+          "selfStateMs": 222.88412499999686,
+          "opponentStateMs": 174.23595899999782
+        },
+        {
+          "selfStateMs": 171.2099589999998,
+          "opponentStateMs": 205.18633399999817
+        },
+        {
+          "selfStateMs": 209.48633300000802,
+          "opponentStateMs": 180.22333300000173
+        },
+        {
+          "selfStateMs": 175.46829199999047,
+          "opponentStateMs": 204.76774999999907
+        },
+        {
+          "selfStateMs": 222.67454100000032,
+          "opponentStateMs": 173.3677500000049
+        },
+        {
+          "selfStateMs": 177.27745900000446,
+          "opponentStateMs": 220.1362919999956
+        },
+        {
+          "selfStateMs": 227.4711249999964,
+          "opponentStateMs": 173.68691699999908
+        },
+        {
+          "selfStateMs": 170.90825000000768,
+          "opponentStateMs": 219.56170800000837
+        },
+        {
+          "selfStateMs": 222.08712500000547,
+          "opponentStateMs": 175.47983399999794
+        },
+        {
+          "selfStateMs": 176.916790999996,
+          "opponentStateMs": 219.28666599999997
+        },
+        {
+          "selfStateMs": 221.35645799999475,
+          "opponentStateMs": 173.39512499999546
+        },
+        {
+          "selfStateMs": 170.44879200001014,
+          "opponentStateMs": 217.89729200000875
+        },
+        {
+          "selfStateMs": 223.01508299999114,
+          "opponentStateMs": 179.58787499999744
+        },
+        {
+          "selfStateMs": 178.2130840000027,
+          "opponentStateMs": 219.2896250000049
+        },
+        {
+          "selfStateMs": 223.17533299999195,
+          "opponentStateMs": 176.81449999999313
+        },
+        {
+          "selfStateMs": 170.18904199999815,
+          "opponentStateMs": 218.77891699998872
+        },
+        {
+          "selfStateMs": 221.58995799999684,
+          "opponentStateMs": 173.23449999999139
+        },
+        {
+          "selfStateMs": 178.54987500001153,
+          "opponentStateMs": 221.05816600000253
+        },
+        {
+          "selfStateMs": 222.75991599999543,
+          "opponentStateMs": 183.73158300000068
+        },
+        {
+          "selfStateMs": 179.42949999999837,
+          "opponentStateMs": 219.7156249999971
+        },
+        {
+          "selfStateMs": 221.844041999997,
+          "opponentStateMs": 176.10204199999862
+        },
+        {
+          "selfStateMs": 176.34900000000198,
+          "opponentStateMs": 218.79983300001186
+        },
+        {
+          "selfStateMs": 215.7715840000019,
+          "opponentStateMs": 174.82145900001342
+        },
+        {
+          "selfStateMs": 171.13108300000022,
+          "opponentStateMs": 220.09124999999767
+        },
+        {
+          "selfStateMs": 221.35399999999208,
+          "opponentStateMs": 183.549417000002
+        },
+        {
+          "selfStateMs": 176.48462499999732,
+          "opponentStateMs": 220.55262499999662
+        },
+        {
+          "selfStateMs": 223.33308399999805,
+          "opponentStateMs": 179.09824999999546
+        },
+        {
+          "selfStateMs": 180.687334000002,
+          "opponentStateMs": 220.78695900000457
+        },
+        {
+          "selfStateMs": 223.26954199999454,
+          "opponentStateMs": 182.22950000000128
+        },
+        {
+          "selfStateMs": 179.46766599999683,
+          "opponentStateMs": 219.23629100000835
+        },
+        {
+          "selfStateMs": 217.88216599999578,
+          "opponentStateMs": 183.72070799999346
+        },
+        {
+          "selfStateMs": 179.04133300000103,
+          "opponentStateMs": 219.17512500000885
+        },
+        {
+          "selfStateMs": 222.10479199999827,
+          "opponentStateMs": 178.85162500001024
+        },
+        {
+          "selfStateMs": 174.6349590000027,
+          "opponentStateMs": 220.19295900000725
+        },
+        {
+          "selfStateMs": 208.73104100000637,
+          "opponentStateMs": 174.24279099999694
+        },
+        {
+          "selfStateMs": 180.50750000000698,
+          "opponentStateMs": 220.07875000000058
+        },
+        {
+          "selfStateMs": 221.64174999999523,
+          "opponentStateMs": 178.86224999999104
+        },
+        {
+          "selfStateMs": 176.5018749999872,
+          "opponentStateMs": 219.1893749999872
+        },
+        {
+          "selfStateMs": 222.86516700001084,
+          "opponentStateMs": 175.04262500000186
+        },
+        {
+          "selfStateMs": 177.1846249999944,
+          "opponentStateMs": 220.03758299999754
+        },
+        {
+          "selfStateMs": 223.23500000000058,
+          "opponentStateMs": 177.3282920000056
+        },
+        {
+          "selfStateMs": 180.6462909999973,
+          "opponentStateMs": 211.1766659999994
+        },
+        {
+          "selfStateMs": 270.5246249999909,
+          "opponentStateMs": 273.2461659999972
+        },
+        {
+          "selfStateMs": 177.72708300000522,
+          "opponentStateMs": 219.72258300000976
+        },
+        {
+          "selfStateMs": 221.97895900000003,
+          "opponentStateMs": 181.2310839999991
+        },
+        {
+          "selfStateMs": 179.72225000000617,
+          "opponentStateMs": 218.86716700000397
+        },
+        {
+          "selfStateMs": 221.9314999999915,
+          "opponentStateMs": 182.76366599999892
+        },
+        {
+          "selfStateMs": 179.89383400000224,
+          "opponentStateMs": 219.41849999999977
+        },
+        {
+          "selfStateMs": 221.01258300000336,
+          "opponentStateMs": 176.5972080000065
+        },
+        {
+          "selfStateMs": 176.12987499999872,
+          "opponentStateMs": 220.05454199999804
+        },
+        {
+          "selfStateMs": 222.79804200000945,
+          "opponentStateMs": 172.76208400000178
+        },
+        {
+          "selfStateMs": 176.94704100000672,
+          "opponentStateMs": 218.72537500000908
+        },
+        {
+          "selfStateMs": 208.39775000000373,
+          "opponentStateMs": 179.44416700000875
+        },
+        {
+          "selfStateMs": 175.9358329999959,
+          "opponentStateMs": 204.85554099999717
+        },
+        {
+          "selfStateMs": 221.48083299999416,
+          "opponentStateMs": 172.97020799999882
+        },
+        {
+          "selfStateMs": 173.31108299999323,
+          "opponentStateMs": 220.0923749999929
+        },
+        {
+          "selfStateMs": 218.39300000001094,
+          "opponentStateMs": 173.6367920000048
+        },
+        {
+          "selfStateMs": 172.9452500000043,
+          "opponentStateMs": 217.61954099999275
+        },
+        {
+          "selfStateMs": 223.54770799999824,
+          "opponentStateMs": 174.6129579999979
+        },
+        {
+          "selfStateMs": 171.7541249999922,
+          "opponentStateMs": 218.38266699999804
+        },
+        {
+          "selfStateMs": 310.79945799999405,
+          "opponentStateMs": 310.53070799999114
+        },
+        {
+          "selfStateMs": 179.77799999999115,
+          "opponentStateMs": 219.25279199999932
+        },
+        {
+          "selfStateMs": 223.13929199999257,
+          "opponentStateMs": 179.29287499999919
+        },
+        {
+          "selfStateMs": 170.61208299999998,
+          "opponentStateMs": 220.66062500000407
+        },
+        {
+          "selfStateMs": 217.47583300000406,
+          "opponentStateMs": 181.28979199999594
+        },
+        {
+          "selfStateMs": 173.45241699999315,
+          "opponentStateMs": 218.20345899999666
+        },
+        {
+          "selfStateMs": 222.91975000000093,
+          "opponentStateMs": 179.45924999999988
+        },
+        {
+          "selfStateMs": 171.84616699999606,
+          "opponentStateMs": 219.120041999995
+        },
+        {
+          "selfStateMs": 222.17808300000615,
+          "opponentStateMs": 182.25091699999757
+        },
+        {
+          "selfStateMs": 176.15612499999406,
+          "opponentStateMs": 217.88991600000008
+        },
+        {
+          "selfStateMs": 222.2445000000007,
+          "opponentStateMs": 184.3881670000119
+        }
+      ],
+      "inputPaintMs": [
+        177.39999961853027,
+        197.19999980926514,
+        196.2999997138977,
+        198,
+        196.30000019073486,
+        196.2999997138977,
+        196.80000019073486,
+        197.09999990463257,
+        197,
+        197,
+        197.09999990463257,
+        195.5,
+        198.30000019073486,
+        197,
+        198.10000038146973,
+        199,
+        198.5,
+        196.89999961853027,
+        196.7000002861023,
+        196.80000019073486,
+        198.69999980926514,
+        198.09999990463257,
+        196.80000019073486,
+        197.7999997138977,
+        198,
+        246.89999961853027,
+        197.09999990463257,
+        196.90000009536743,
+        198.40000009536743,
+        196.69999980926514,
+        196.89999961853027,
+        198.5,
+        198.5,
+        196.59999990463257,
+        196.89999961853027,
+        196.90000009536743,
+        198.30000019073486,
+        198.2000002861023,
+        197.09999990463257,
+        197.90000009536743,
+        197.5,
+        196.5,
+        196.59999990463257,
+        196.80000019073486,
+        198.19999980926514,
+        196.69999980926514,
+        196.19999980926514,
+        197,
+        198.10000038146973,
+        196.40000009536743,
+        197.59999990463257,
+        198.09999990463257,
+        198.2000002861023,
+        196.69999980926514,
+        197.5,
+        196.19999980926514,
+        196.89999961853027,
+        196.30000019073486,
+        198.2999997138977,
+        196.90000009536743,
+        197.90000009536743,
+        197.90000009536743,
+        197.90000009536743,
+        198.19999980926514,
+        196.90000009536743,
+        198.19999980926514,
+        197.40000009536743,
+        196.90000009536743,
+        196.5,
+        196.2000002861023,
+        197.59999990463257,
+        197.60000038146973,
+        196.2999997138977,
+        197.2999997138977,
+        196.69999980926514,
+        196.80000019073486,
+        196.90000009536743,
+        198.5,
+        198,
+        196.90000009536743,
+        196.69999980926514,
+        196.80000019073486,
+        196.59999990463257,
+        196.5,
+        197.2999997138977,
+        196.90000009536743,
+        213.60000038146973,
+        198,
+        198.30000019073486,
+        196.89999961853027,
+        212.59999990463257,
+        197.39999961853027,
+        197.19999980926514,
+        198,
+        198.09999990463257,
+        198.30000019073486,
+        214.2999997138977,
+        196.7000002861023,
+        213.7000002861023,
+        197.2000002861023,
+        196.59999990463257,
+        196.2000002861023,
+        198.30000019073486,
+        196.59999990463257,
+        196.90000009536743,
+        196.69999980926514,
+        196.40000009536743,
+        196.69999980926514,
+        196.60000038146973,
+        198.10000038146973,
+        198,
+        197.90000009536743,
+        198.39999961853027,
+        198.19999980926514,
+        213.19999980926514,
+        197,
+        196.80000019073486,
+        213.40000009536743,
+        196.39999961853027,
+        198.5,
+        213,
+        197.90000009536743,
+        196.40000009536743,
+        198,
+        196.5,
+        196.69999980926514,
+        196.90000009536743,
+        196.90000009536743,
+        196,
+        196.2999997138977,
+        213.80000019073486,
+        197,
+        197.90000009536743,
+        197.19999980926514,
+        197.90000009536743,
+        230.59999990463257,
+        230.09999990463257,
+        229.60000038146973,
+        230.69999980926514,
+        229.59999990463257,
+        231.39999961853027,
+        229.40000009536743,
+        230.2000002861023,
+        230.2999997138977,
+        230.09999990463257,
+        230.09999990463257,
+        230,
+        229.7000002861023,
+        231.09999990463257,
+        229.90000009536743,
+        231.5,
+        230.09999990463257,
+        230.5,
+        230.59999990463257,
+        231.5,
+        229.30000019073486,
+        229.7999997138977,
+        229.2000002861023,
+        230.2000002861023,
+        231.09999990463257,
+        229.7000002861023,
+        229.69999980926514,
+        230.30000019073486,
+        229.89999961853027,
+        230.90000009536743,
+        229.90000009536743,
+        230,
+        230.09999990463257,
+        231.09999990463257,
+        231.59999990463257,
+        230,
+        231.09999990463257,
+        229.59999990463257,
+        230.59999990463257,
+        229.7999997138977,
+        230.30000019073486,
+        230.5,
+        230.30000019073486,
+        230.40000009536743,
+        229.80000019073486,
+        230,
+        231.40000009536743,
+        229.40000009536743,
+        229.80000019073486,
+        229.5,
+        230,
+        229.30000019073486,
+        229.40000009536743,
+        229.59999990463257,
+        229.80000019073486,
+        229.7999997138977,
+        246.30000019073486,
+        247.40000009536743,
+        231,
+        228.90000009536743,
+        229.7000002861023,
+        231.59999990463257,
+        229.60000038146973,
+        229.7999997138977,
+        229.7000002861023,
+        229.69999980926514,
+        229.59999990463257,
+        246.5,
+        246.90000009536743,
+        247.2000002861023,
+        229.59999990463257,
+        246.2000002861023,
+        229.7000002861023,
+        229.80000019073486,
+        230,
+        229.2999997138977,
+        246,
+        231.2999997138977,
+        229.80000019073486,
+        246.40000009536743,
+        247.19999980926514,
+        246.30000019073486,
+        230.40000009536743,
+        246.2999997138977,
+        246.19999980926514,
+        246.2999997138977,
+        246.30000019073486,
+        246,
+        246,
+        247.7000002861023,
+        229.80000019073486,
+        229.7000002861023,
+        229.30000019073486,
+        229.59999990463257,
+        246.90000009536743,
+        246.09999990463257,
+        246.39999961853027,
+        246.19999980926514,
+        246.5,
+        246.5,
+        231.09999990463257,
+        247.30000019073486,
+        247.69999980926514,
+        246.59999990463257,
+        246.2999997138977,
+        246.2999997138977,
+        246.2999997138977,
+        246.09999990463257,
+        246,
+        246.30000019073486,
+        246,
+        246,
+        246.09999990463257,
+        247.5,
+        246.40000009536743,
+        246.30000019073486,
+        229.39999961853027,
+        245.90000009536743,
+        246.30000019073486,
+        246.80000019073486,
+        280.7000002861023,
+        247.30000019073486,
+        246.90000009536743,
+        245.80000019073486,
+        247.2000002861023,
+        229.59999990463257,
+        246.39999961853027,
+        247.89999961853027,
+        247.59999990463257,
+        315.2999997138977,
+        246.2999997138977,
+        246.39999961853027,
+        246.10000038146973,
+        246.80000019073486,
+        245.7999997138977
+      ]
+    },
+    {
+      "device": "mobile-emulation",
+      "kind": "surrender",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "689363cf-3f10-4d0b-b506-2f1377510160",
+      "reason": "surrender",
+      "moves": 0,
+      "roomCreationToReadyMs": 4627.506290999998,
+      "joinCodeRequestToReadyMs": 370.7323749999923,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 4074.480917000008,
+      "firstBoardMs": 8706.240875000003,
+      "playableDurationMs": 235.58866700000362,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 1.9005829999950947,
+      "resultPacketToAnimationCompleteMs": 1038.762916000007,
+      "surrenderToResultMs": 168.90891700000793,
+      "inputs": [],
+      "inputPaintMs": []
+    }
+  ],
+  "failures": [],
+  "deployedCommit": "dbdc654fecec148d493b1ab6df53fe9d247e7ad8",
+  "socketBuildCommit": "0b90df576e82f8642839f1f6c301efe6a8dbcbf7",
+  "provenance": {
+    "initialAttempt": "initial-attempt.json",
+    "retryAttempt": "../remote-production-retry/raw.json",
+    "initialHarnessCommit": "36eedb95735411d9054812933ce9d2bc500540ba",
+    "retryHarnessCommit": "dca9e539429303725184290cd47b20adb21174f4",
+    "initialFailures": [
+      {
+        "device": "desktop",
+        "kind": "natural",
+        "error": "Error: locator.fill: Error: strict mode violation: locator('#room-code') resolved to 2 elements:\n    1) <input value=\"\" maxlength=\"6\" id=\"room-code\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"ABC123\" autocapitalize=\"characters\" class=\"h-20 w-full rounded-xl border bg-background/50 px-4 text-center font-mono text-3xl uppercase tracking-[0.16em] outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:opacity-50\"/> aka getByLabel('Room code')\n    2) <input value=\"\" maxlength=\"6\" id=\"room-code\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"ABC123\" autocapitalize=\"characters\" class=\"h-20 w-full rounded-xl border bg-background/50 px-4 text-center font-mono text-3xl uppercase tracking-[0.16em] outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:opacity-50\"/> aka getByRole('textbox', { name: 'ABC123' })\n\nCall log:\n\u001b[2m  - waiting for locator('#room-code')\u001b[22m\n"
+      }
+    ],
+    "retryCases": [
+      "desktop:natural"
+    ],
+    "reason": "Only desktop:natural retried after scoping the room-code input and submit button to visible controls. Initial server-streamed hidden DOM caused strict-selector ambiguity before the match joined. Other three passing cases retained unchanged.",
+    "coverage": "All four requested device/ending cases passed across the preserved initial and targeted retry attempts."
+  }
+}
