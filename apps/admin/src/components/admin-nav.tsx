@@ -17,10 +17,11 @@ const items = [
 export function AdminNav() {
   const { t } = useI18n();
   const pathname = usePathname();
-  return <nav aria-label={t('Administration')} className="flex flex-wrap gap-2 md:flex-col">
+  // Phones get one horizontally scrolling row; the sidebar column starts at md.
+  return <nav aria-label={t('Administration')} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-col md:overflow-visible md:px-0 md:pb-0">
     {items.map(item => {
       const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
-      return <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined} className={`flex min-h-11 flex-1 items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors md:flex-none ${active ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
+      return <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined} className={`flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-semibold transition-colors md:gap-3 md:px-4 md:py-3 ${active ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>
         <svg aria-hidden="true" viewBox="0 0 20 20" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.path} /></svg>{t(item.label)}
       </Link>;
     })}
