@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { UserAvatar } from "./user-avatar";
+import { getAccount } from "@/lib/supabase/account";
 export const Header = async () => {
   const { t, locale } = await getI18n();
   let player = null;
@@ -13,13 +14,12 @@ export const Header = async () => {
   const configured = isSupabaseConfigured();
   if (configured) {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user, player: profile } = await getAccount();
     if (user && !user.is_anonymous) {
-      const [profile, walletResult] = await Promise.allSettled([
-        supabase.from("players").select("name").eq("id", user.id).maybeSingle(),
+      const [walletResult] = await Promise.allSettled([
         supabase.from("player_wallets").select("balance").eq("player_id", user.id).maybeSingle(),
       ]);
-      player = profile.status === "fulfilled" ? profile.value.data : null;
+      player = profile;
       player ??= { name: t("Player") };
       if (walletResult.status === "fulfilled") {
         const { data: wallet, error } = walletResult.value;

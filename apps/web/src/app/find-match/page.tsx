@@ -1,5 +1,4 @@
-"use client";
-import { useI18n } from "ui/i18n";
+import { getI18n } from "@/lib/i18n/server";
 import Link from "next/link";
 import { PageHeading } from "@/components/widget/page-heading";
 import { GameEmblem } from "@/components/widget/game-emblem";
@@ -9,8 +8,8 @@ import { LoadoutSummary } from "@/components/widget/loadout-summary";
 import { AbilityPicker } from "@/components/widget/ability-picker";
 import { DemoBoard } from "@/components/widget/demo-board";
 
-export default function Page() {
-  const { t } = useI18n();
+export default async function Page() {
+  const { t } = await getI18n();
   return <main className="mx-auto max-w-[960px] px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
     <PageHeading icon="duel" title={t("Find match")} eyebrow={t("1 vs 1")} />
     <div className="mt-6 grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_280px] md:gap-8 lg:gap-10">

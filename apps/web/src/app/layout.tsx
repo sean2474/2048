@@ -7,6 +7,8 @@ import { SettingsProvider } from "@/hooks/settings-provider";
 import { AudioProvider } from "@/hooks/audio-provider";
 import { CatalogProvider, CatalogNotice } from "@/hooks/catalog-provider";
 import { GameAnalytics } from "@/components/widget/analytics";
+import { PlayerProvider } from "@/hooks/use-player";
+import { getAccount } from "@/lib/supabase/account";
 
 export const metadata: Metadata = {
   title: "2048 Duo",
@@ -19,11 +21,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { locale, guestLocale, messages } = await getI18n();
+  const [{ locale, guestLocale, messages }, account] = await Promise.all([getI18n(), getAccount()]);
   return (
     <html lang={locale}>
       <body className={`antialiased`}>
         <I18nProvider initialLocale={locale} messages={messages}>
+          <PlayerProvider initialAccount={account}>
           <CatalogProvider>
           <SettingsProvider initialGuestLocale={guestLocale}>
           <AudioProvider>
@@ -34,6 +37,7 @@ export default async function RootLayout({
           </AudioProvider>
           </SettingsProvider>
           </CatalogProvider>
+          </PlayerProvider>
         </I18nProvider>
       </body>
     </html>

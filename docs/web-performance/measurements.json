@@ -1,0 +1,40 @@
+{
+  "baseline": "8b5562c7b4577ce30e8d2279b9723ce23ea3cf68",
+  "metric": "Next.js production build First Load JS (kB)",
+  "before": {
+    "/": {
+      "routeSize": "7.31 kB",
+      "firstLoadJS": 252.0
+    },
+    "/find-match": {
+      "routeSize": "7.52 kB",
+      "firstLoadJS": 239.0
+    },
+    "/history": {
+      "routeSize": "5.36 kB",
+      "firstLoadJS": 250.0
+    },
+    "/leaderboard": {
+      "routeSize": "6.1 kB",
+      "firstLoadJS": 237.0
+    }
+  },
+  "after": {
+    "/": {
+      "routeSize": "2.5 kB",
+      "firstLoadJS": 234.0
+    },
+    "/find-match": {
+      "routeSize": "6.55 kB",
+      "firstLoadJS": 238.0
+    },
+    "/history": {
+      "routeSize": "1.1 kB",
+      "firstLoadJS": 233.0
+    },
+    "/leaderboard": {
+      "routeSize": "1.21 kB",
+      "firstLoadJS": 233.0
+    }
+  }
+}

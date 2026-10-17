@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { LOCALE_COOKIE, translate, type Values } from "ui/locale";
 import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/account";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { GUEST_SETTINGS_COOKIE, parseGuestSettings } from "@/lib/preferences";
 import { messages } from "./messages";
@@ -28,7 +29,7 @@ export const getI18n = cache(async () => {
   if (isSupabaseConfigured()) {
     try {
       const client = await createClient();
-      const { data: { user } } = await client.auth.getUser();
+      const user = await getUser();
       if (user && !user.is_anonymous) {
         const { data } = await client.from("player_preferences").select("locale").eq("player_id", user.id).maybeSingle();
         if (data?.locale === "ko" || data?.locale === "en") locale = data.locale;
