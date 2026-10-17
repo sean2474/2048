@@ -103,8 +103,8 @@ test("migrations enforce RLS, atomic/idempotent results, rankings and Realtime p
   await db.query("insert into auth.users (id, raw_user_meta_data) values ($1, '{\"name\":\"Alice\"}'), ($2, '{\"name\":\"Bob\"}'), ($3, '{\"name\":\"Other\"}')", [A, B, C]);
   assert.equal((await db.query("select * from public.players")).rows.length, 3);
   const payload = JSON.stringify([{ userId: A, score: 4096, maxTile: 2048 }, { userId: B, score: 1024, maxTile: 512 }]);
-  const rpc = "select public.record_match($1::uuid, '2026-10-15T01:00:00Z', '2026-10-15T01:05:00Z', 'reached_2048', 1::smallint, $2::jsonb) as inserted";
-  const rankedRpc = "select public.record_match($1::uuid, '2026-10-15T01:00:00Z', '2026-10-15T01:05:00Z', 'reached_2048', 1::smallint, $2::jsonb, 'ranked') as inserted";
+  const rpc = "select public.record_match($1::uuid, '2026-10-15T01:00:00Z', '2026-10-15T01:05:00Z', 'reached_1024', 1::smallint, $2::jsonb) as inserted";
+  const rankedRpc = "select public.record_match($1::uuid, '2026-10-15T01:00:00Z', '2026-10-15T01:05:00Z', 'reached_1024', 1::smallint, $2::jsonb, 'ranked') as inserted";
   async function as(role: string, id: string, fn: () => Promise<void>) {
     await db.exec(`set role ${role}`);
     await db.query("select set_config('request.jwt.claim.sub', $1, false)", [id]);

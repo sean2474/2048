@@ -14,7 +14,7 @@
 .halo, .trail { border: 3px solid var(--effect-color); border-radius: 50%; }
 .halo { animation: burst 1000ms ease-out both; }
 .trail { animation: burst 1000ms 120ms ease-out both; }
-.mark { animation: mark 1100ms ease-out both; }
+.mark { animation: mark 1100ms ease-out both; translate: var(--effect-offset, 0) 0; }
 .icon { width: clamp(44px, 18vw, 80px); height: auto; filter: drop-shadow(0 3px 8px #0004); }
 
 .effect[data-ability-effect="spawn-pause"] { --effect-color: #d69a31; }
@@ -30,6 +30,17 @@
 .effect[data-ability-effect="swap-32"] { --effect-color: #ad8ee5; }
 .effect[data-ability-effect="swap-32"] .halo, .effect[data-ability-effect="swap-32"] .trail { border-left-color: transparent; border-right-color: transparent; animation: swap-arcs 1100ms ease-out both; }
 .effect[data-ability-effect="swap-32"] .trail { inset: 18%; animation-direction: reverse; }
+
+.effect[data-attack-effect="xblock"] { --effect-color: #e1534b; }
+.effect[data-attack-effect="hardblock"] { --effect-color: #59697d; }
+.attack { display: grid; place-items: center; width: clamp(32px, 12vw, 60px); aspect-ratio: 1; border: 3px solid #a92d1b; border-radius: 12px; background: #ef635c; color: white; font-size: clamp(22px, 8vw, 40px); line-height: 1; box-shadow: 0 4px 12px #0003; }
+.effect[data-attack-effect="hardblock"] .attack { border-color: #111827; background: #2c2c2c; }
+.effect[data-attack-phase="sent"] .mark { animation-name: send-attack; }
+.effect[data-attack-phase="sent"] .halo, .effect[data-attack-phase="sent"] .trail { border-style: dashed; }
+.effect[data-attack-phase="incoming"] .mark { animation-name: incoming-attack; }
+.effect[data-attack-phase="incoming"] .halo, .effect[data-attack-phase="incoming"] .trail { border-style: dashed; animation-name: anchor-lock; }
+.effect[data-attack-phase="landed"] .mark { animation-name: anchor-mark; }
+.effect[data-attack-phase="landed"] .halo, .effect[data-attack-phase="landed"] .trail { border-width: 4px; border-radius: 20%; }
 
 .notice {
   position: absolute;
@@ -51,6 +62,11 @@
 }
 .visible { padding: 6px 10px; }
 
+@media (max-width: 699px) {
+  :global(.opponent-board) .notice { bottom: 4px; left: 4px; right: 4px; max-width: calc(100% - 8px); font-size: 10px; line-height: 1.2; }
+  :global(.opponent-board) .visible { padding: 4px; }
+}
+
 @keyframes settle { 0%, 65% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes burst { from { opacity: .85; transform: scale(.5); } to { opacity: 0; transform: scale(2); } }
 @keyframes mark { 0% { opacity: 0; transform: scale(.8); } 25%, 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.15); } }
@@ -59,6 +75,8 @@
 @keyframes anchor-lock { from { opacity: 0; transform: scale(1.5); } 35%, 70% { opacity: .85; transform: scale(1); } to { opacity: 0; transform: scale(1); } }
 @keyframes anchor-mark { from { opacity: 0; transform: translateY(-20%); } 35%, 70% { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(0); } }
 @keyframes swap-arcs { from { opacity: .8; transform: rotate(-70deg); } to { opacity: 0; transform: rotate(110deg); } }
+@keyframes send-attack { from { opacity: 0; transform: translateY(20%) scale(.8); } 25%, 55% { opacity: 1; } to { opacity: 0; transform: translateY(-60%) scale(.6); } }
+@keyframes incoming-attack { from { opacity: 0; transform: translateY(-25%); } 35%, 75% { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {
   .effect, .effect * { animation: none !important; transform: none !important; }

@@ -9,19 +9,20 @@ import { bindingCodeFromEvent, DEFAULT_KEYBINDINGS, KEY_ACTIONS, keyLabel, type 
 import { useSettings } from "@/hooks/settings-provider";
 
 const ACTION_LABELS: Record<KeyAction, string> = {
-  up: "Move up", down: "Move down", left: "Move left", right: "Move right", xblock: "Send X block", hardblock: "Send hard block", ability: "Use special ability",
+  up: "Move up", down: "Move down", left: "Move left", right: "Move right", ability: "Use special ability",
 };
 
 export function KeybindingSettings({ bindings, saveBindings, storageError, onOpenChange }: {
   bindings: Keybindings;
-  saveBindings: (next: Keybindings) => Promise<boolean>;
+  saveBindings: (next: Keybindings, customShortcuts?: boolean) => Promise<boolean>;
   storageError: string | null;
   onOpenChange?: (open: boolean) => void;
 }) {
   const { t } = useI18n();
-  const { ready, saving, scope } = useSettings();
+  const { ready, saving, scope, settings } = useSettings();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Keybindings>(bindings);
+  const [shortcuts, setShortcuts] = useState(settings.customShortcuts);
   const [listening, setListening] = useState<KeyAction | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +34,7 @@ export function KeybindingSettings({ bindings, saveBindings, storageError, onOpe
     if (saving) return;
     setOpen(next);
     setDraft({ ...bindings });
+    setShortcuts(settings.customShortcuts);
     setListening(null);
     setError(null);
     onOpenChange?.(next);
@@ -76,8 +78,9 @@ export function KeybindingSettings({ bindings, saveBindings, storageError, onOpe
     }}>
       <DialogHeader>
         <DialogTitle>{t("Keybindings")}</DialogTitle>
-        <DialogDescription className="leading-6">{t("Choose your extra movement, attack and ability keys. Arrow keys always work.")}</DialogDescription>
+        <DialogDescription className="leading-6">{t("Choose your extra movement and ability keys. Arrow keys always work.")}</DialogDescription>
       </DialogHeader>
+      <label className="flex min-h-11 items-center gap-3 text-sm font-semibold"><input type="checkbox" className="size-4 accent-primary" checked={shortcuts} disabled={saving} onChange={event => setShortcuts(event.target.checked)} />{t("Enable custom shortcuts")}</label>
       <p className="text-xs leading-5 text-muted-foreground">{t("Keys use their physical A–Z / 0–9 positions, even with Korean input enabled.")}</p>
       <div className="divide-y divide-border rounded-xl border px-4">
         {KEY_ACTIONS.map(action => <div key={action} className="flex min-h-16 items-center justify-between gap-3 py-2">
@@ -93,7 +96,7 @@ export function KeybindingSettings({ bindings, saveBindings, storageError, onOpe
         <Button variant="ghost" disabled={saving} onClick={() => { setDraft({ ...DEFAULT_KEYBINDINGS }); setListening(null); setError(null); }}>{t("Reset keys")}</Button>
         <div className="flex gap-2 [&>button]:flex-1">
           <Button variant="outline" disabled={saving} onClick={() => changeOpen(false)}>{t("Cancel")}</Button>
-          <Button disabled={!ready || saving || listening !== null} onClick={async () => { if (await saveBindings(draft)) { setOpen(false); setListening(null); onOpenChange?.(false); } }}>{t(saving ? "Saving…" : "Save keys")}</Button>
+          <Button disabled={!ready || saving || listening !== null} onClick={async () => { if (await saveBindings(draft, shortcuts === settings.customShortcuts ? undefined : shortcuts)) { setOpen(false); setListening(null); onOpenChange?.(false); } }}>{t(saving ? "Saving…" : "Save keys")}</Button>
         </div>
       </DialogFooter>
     </DialogContent>

@@ -13,27 +13,24 @@ test("audio preferences reject corrupt, incomplete and out-of-range storage", ()
   assert.deepEqual(parseAudioSettings('{"muted":false,"volume":1}'), { muted: false, volume: 1 });
 });
 
-test("tutorial actions distinguish movement, merges, charges, attacks and impacts", () => {
-  for (const step of [0, 1, 2, 3, 4] as const) {
+test("tutorial actions distinguish movement, merges, automatic attacks and impacts", () => {
+  for (const step of [0, 1, 2, 3] as const) {
     const initial = createLesson(step);
     const moved = tutorialReducer(initial, { type: "move", dir: "up" });
     assert.equal(playerSound(initial, moved), step === 3 ? "impact" : "move");
     assert.equal(playerSound(moved, tutorialReducer(moved, { type: "move", dir: "up" })), null);
     const merged = tutorialReducer(initial, { type: "move", dir: "left" });
-    assert.equal(playerSound(initial, merged), step === 0 ? "merge" : step === 3 ? "impact" : "charge");
-    if (step === 1 || step === 2 || step === 4) {
-      const blockType = step === 2 ? "hardblock" : "xblock";
-      const attacked = tutorialReducer(merged, { type: "attack", blockType });
-      assert.equal(playerSound(merged, attacked), blockType);
-      const rejected = { ...merged, notice: "Attack rejected" };
-      assert.equal(playerSound(merged, rejected), null);
+    assert.equal(playerSound(initial, merged), step === 0 ? "merge" : step === 3 ? "impact" : step === 1 ? "xblock" : "hardblock");
+    if (step === 1 || step === 2) {
+      const landed = tutorialReducer(merged, { type: "opponentMove" });
+      assert.equal(playerSound(merged, landed), null, "opponent movement must not replay your attack");
     }
   }
 });
 
 function state(): ServerState {
   const lesson = createLesson();
-  return { t: "state", serverTime: 0, mode: "casual", you: { ...lesson, skinId: "classic", maxTile: 2, ability: createAbilityState() }, paused: false, pendingAttacks: 0, incomingAttacks: { xblock: 0, hardblock: 0 }, names: { you: "Guest", opp: "Opponent" } };
+  return { t: "state", serverTime: 0, mode: "casual", you: { ...lesson, iconId: "guest", skinId: "classic", maxTile: 2, ability: createAbilityState() }, paused: false, pendingAttacks: 0, incomingAttacks: { xblock: 0, hardblock: 0 }, names: { you: "Guest", opp: "Opponent" } };
 }
 
 test("match cues ignore opponent moves, repeated snapshots, ghosts and reconnect catch-up", () => {

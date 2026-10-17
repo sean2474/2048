@@ -33,12 +33,10 @@ export function reasonMessage(reason: string) {
     case "ranked_result_pending": return "Your previous ranked result is still being saved. Please try again shortly.";
     case "account_suspended": return "This account is suspended from starting new matches. Contact the game administrator.";
     case "account_check_failed": return "Your account status could not be checked. Please try again shortly.";
-    case "no_charge": return "No attack tickets left. Merge 256 for X or 512 for a hard block.";
     case "ability_not_ready": return "Merge tiles to finish charging your ability.";
     case "ability_no_target": return "No valid target. Your ability charge was kept.";
     case "ability_active": return "This effect is already active. Your ability charge was kept.";
     case "slowed": return "Slowed. Wait briefly before your next move.";
-    case "incoming_full": return "Your opponent already has six incoming attacks. Your ticket was kept.";
     case "paused": return "Attacks are paused until both players reconnect.";
     case "not_in_room": return "This room belongs to another session. Join with your friend's room code.";
     case "room_not_found": case "room_closed": return "This game has ended or the server has restarted. Start a new game.";

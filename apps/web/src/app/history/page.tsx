@@ -12,7 +12,7 @@ import { useLiveQuery } from "@/hooks/use-live-query";
 import { Button } from "@/components/ui/button";
 import { matchModeLabel } from "@/lib/multiplayer";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-const reasons = { reached_1024: "Reached 1024", reached_2048: "Reached 2048", opponent_locked: "No moves remaining", surrender: "Surrender", opponent_disconnected: "Disconnected", draw: "Both boards stuck" };
+const reasons = { reached_1024: "Reached 1024", opponent_locked: "No moves remaining", surrender: "Surrender", opponent_disconnected: "Disconnected", draw: "Both boards stuck" };
 export default function HistoryPage() {
   const { t, locale } = useI18n();
   const { user } = usePlayer();

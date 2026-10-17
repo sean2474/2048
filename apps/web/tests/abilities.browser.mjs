@@ -12,47 +12,45 @@ const { broadcast } = require("../../socket/src/game.ts");
 const origin = "http://[::1]:3001";
 const artifacts = new URL("../../../docs/abilities/", import.meta.url).pathname;
 
-test("six tutorial steps teach exactly one X removal, restart and completion in Korean and English", { timeout: 90000 }, async () => {
+test("five tutorial steps teach automatic attacks and manual ability in Korean and English", { timeout: 90000 }, async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   await mkdir(artifacts, { recursive: true });
   try {
     for (const english of [false, true]) {
       const context = await browser.newContext({ locale: english ? "en-US" : "ko-KR", viewport: { width: english ? 1440 : 375, height: 900 }, extraHTTPHeaders: { "x-vercel-ip-country": english ? "US" : "KR" } });
-      if (english) await context.addCookies([{ name: "duo.guest-settings", value: encodeURIComponent(JSON.stringify({ locale: "en", skinId: "classic", iconId: "fox", abilityId: null, customShortcuts: true, keybindings: { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD", xblock: "Digit1", hardblock: "Digit2", ability: "KeyF" } })), url: origin }]);
+      if (english) await context.addCookies([{ name: "duo.guest-settings", value: encodeURIComponent(JSON.stringify({ locale: "en", skinId: "classic", iconId: "fox", abilityId: null, customShortcuts: true, keybindings: { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD", ability: "KeyF" } })), url: origin }]);
       const page = await context.newPage(), errors = [];
       page.on("pageerror", error => errors.push(error.message));
       await page.goto(`${origin}/tutorial`);
       const direction = dir => page.getByRole("button", { name: english ? `Move ${dir}` : { left: "왼쪽으로 이동", down: "아래로 이동" }[dir], exact: true });
       const advance = async (ko, en) => page.getByRole("button", { name: english ? en : ko, exact: true }).click();
-      const attack = type => page.locator(`[data-attack-control=${type}]`);
-      await page.keyboard.press(english ? "KeyF" : "Digit3");
+      assert.equal(await page.locator("[data-attack-control]").count(), 0);
+      await page.keyboard.press(english ? "KeyF" : "Digit1");
       assert.equal(await page.getByTestId("your-score").innerText(), "0");
       await direction("left").click();
       await advance("128 두 개로 건너뛰기", "Skip ahead to 128 + 128");
       await direction("left").click();
-      await attack("xblock").click();
+      await page.locator(".game-opponent").getByRole("img", { name: /X/ }).waitFor();
       await advance("하드블록도 배워보기", "Try a hard block");
       await direction("left").click();
-      await attack("hardblock").click();
+      await page.getByRole("heading", { name: english ? "A fixed obstacle on their board" : "상대의 길을 막았어요", exact: true }).waitFor();
       await advance("상대 공격도 받아보기", "Try receiving an attack");
       await direction("left").click();
       await direction("down").click();
-      await advance("여러 개 모아 쓰기", "Practice saving attacks");
-      await direction("left").click();
-      for (const type of ["xblock", "xblock", "hardblock", "hardblock"]) await attack(type).click();
       await advance("기본 능력 써보기", "Try the default ability");
+      assert.equal(await page.locator("[data-attack-effect]").count(), 0, "new lessons do not replay earlier attacks");
       const xs = page.locator(".game-you").getByRole("img", { name: /X/ });
       assert.equal(await xs.count(), 2);
-      const clear = page.getByRole("button", { name: english ? "Clear one X" : "X 1개 제거", exact: true });
+      const clear = page.locator('.game-you [data-ability-control="clear-x"]');
       assert.equal(await page.locator("[data-ability-effect]").count(), 0);
       await clear.focus();
-      assert.equal(await clear.getAttribute("aria-keyshortcuts"), english ? "F" : "3");
-      if (english) { await page.keyboard.press("Digit3"); assert.equal(await xs.count(), 2); }
-      await page.keyboard.press(english ? "KeyF" : "Digit3");
+      assert.equal(await clear.getAttribute("aria-keyshortcuts"), english ? "F" : "1");
+      if (english) { await page.keyboard.press("Digit1"); assert.equal(await xs.count(), 2); }
+      await page.keyboard.press(english ? "KeyF" : "Digit1");
       await page.locator('.game-you [data-ability-effect="clear-x"]').waitFor();
       await page.getByRole("heading", { name: english ? "One X cleared. One space recovered." : "X 하나를 없애고 빈칸을 만들었어요!", exact: true }).waitFor();
       assert.equal(await xs.count(), 1);
-      assert.equal(await page.getByRole("button", { name: english ? "Ability used" : "능력 사용 완료", exact: true }).isDisabled(), true);
+      assert.equal(await clear.isDisabled(), true);
       const finish = page.getByRole("link", { name: english ? "Find a match" : "대전 찾기", exact: true });
       assert.equal(await finish.evaluate(el => el === document.activeElement), true);
       assert.equal(await finish.getAttribute("href"), "/find-match");
@@ -106,6 +104,7 @@ test("all five equipped abilities activate over real sockets and fit desktop and
       const other = room.players.find(id => id !== pid);
       const me = room.state[pid], opp = room.state[other];
       assert.equal(me.ability.id, ability);
+      assert.equal(await a.locator(".game-player-heading [data-profile-icon=fox]").count(), 2);
       me.board = [
         { id: 1_000_000, row: 0, col: 0, value: 256 }, { id: 1_000_001, row: 0, col: 1, value: 256 },
         { id: 1_000_006, row: 0, col: 2, value: 256 }, { id: 1_000_007, row: 0, col: 3, value: 256 },
@@ -115,7 +114,7 @@ test("all five equipped abilities activate over real sockets and fit desktop and
       ];
       opp.board = [{ id: 1_000_010, row: 0, col: 0, value: 32 }, { id: 1_000_011, row: 0, col: 1, value: 8 }, { id: 1_000_012, row: 2, col: 2, value: 128 }];
       broadcast(room, server.io);
-      await a.getByRole("button", { name: "왼쪽으로 이동", exact: true }).click();
+      await a.keyboard.press("ArrowLeft");
       const activate = a.locator(`[data-ability-control="${ability}"]`);
       await activate.filter({ hasText: "사용 가능" }).waitFor();
       assert.equal(await a.locator("[data-ability-effect]").count(), 0, "Charging must not replay an ability");
@@ -123,7 +122,7 @@ test("all five equipped abilities activate over real sockets and fit desktop and
         room.ready.delete(other); broadcast(room, server.io);
         await a.getByRole("heading", { name: "상대를 기다리는 중…", exact: true }).waitFor();
         me.ability.charge = 0; broadcast(room, server.io);
-        await activate.filter({ hasText: "0 / 1024" }).waitFor();
+        await activate.filter({ hasText: "0%" }).waitFor();
         room.ready.add(other); broadcast(room, server.io);
         await a.getByRole("heading", { name: "대전 중", exact: true }).waitFor();
         assert.equal(await a.locator("[data-ability-effect]").count(), 0, "Resuming must not replay an old charge change");
@@ -131,12 +130,12 @@ test("all five equipped abilities activate over real sockets and fit desktop and
         me.board = board.filter(tile => tile.blockType !== "xblock");
         me.ability.charge = 1024; broadcast(room, server.io);
         await activate.filter({ hasText: "사용 가능" }).waitFor();
-        await a.keyboard.press("Digit3");
+        await a.keyboard.press("Digit1");
         await a.getByText("능력을 쓸 대상이 없어요. 충전은 그대로 유지돼요.", { exact: true }).waitFor();
         assert.equal(await a.locator("[data-ability-effect]").count(), 0, "Rejected casts cannot show a success effect");
         me.board = board; broadcast(room, server.io);
       }
-      await a.keyboard.press("Digit3");
+      await a.keyboard.press("Digit1");
       const offensive = ability === "frost-wave" || ability === "swap-32";
       await a.locator(`${offensive ? ".game-opponent" : ".game-you"} [data-ability-effect="${ability}"]`).waitFor();
       await b.locator(`${offensive ? ".game-you" : ".game-opponent"} [data-ability-effect="${ability}"]`).waitFor();
@@ -148,7 +147,7 @@ test("all five equipped abilities activate over real sockets and fit desktop and
           await a.screenshot({ path: `${tmpdir()}/2048-ability-effect-normal-${width}.png`, fullPage: true });
         }
       }
-      await activate.filter({ hasText: ability === "spawn-pause" || ability === "anchor-tile" ? "사용 중" : "0 / 1024" }).waitFor();
+      await activate.filter({ hasText: ability === "spawn-pause" || ability === "anchor-tile" ? "사용 중" : "0%" }).waitFor();
       assert.equal(me.ability.charge, 0);
       if (ability === "clear-x") {
         assert.equal(me.board.filter(tile => tile.blockType === "xblock").length, 1);
@@ -156,14 +155,14 @@ test("all five equipped abilities activate over real sockets and fit desktop and
       } else if (ability === "spawn-pause") {
         assert.equal(me.ability.spawnPauseMoves, 3);
         const count = me.board.filter(tile => !tile.ghost).length;
-        await a.getByRole("button", { name: "아래로 이동", exact: true }).click();
+        await a.keyboard.press("ArrowDown");
         await a.getByText("숫자 생성 중지 · 2회 남음", { exact: true }).waitFor();
         assert.equal(me.board.filter(tile => !tile.ghost).length, count);
       } else if (ability === "anchor-tile") {
         await a.locator("[data-anchored=true]").waitFor();
         const anchor = me.board.find(tile => !tile.ghost && tile.anchored);
         const position = [anchor.row, anchor.col];
-        await a.getByRole("button", { name: "아래로 이동", exact: true }).click();
+        await a.keyboard.press("ArrowDown");
         await a.getByText("알박기 · 2회 남음", { exact: true }).waitFor();
         assert.deepEqual([me.board.find(tile => !tile.ghost && tile.anchored).row, me.board.find(tile => !tile.ghost && tile.anchored).col], position);
       } else if (ability === "swap-32") {
@@ -183,9 +182,9 @@ test("all five equipped abilities activate over real sockets and fit desktop and
           me.board.push({ id: 1_100_000 + index, row: 4, col: 2 + index, value: -1, blockType: "xblock" });
           broadcast(room, server.io);
           await activate.filter({ hasText: "사용 가능" }).waitFor();
-          await a.keyboard.press("Digit3");
+          await a.keyboard.press("Digit1");
           const effect = a.locator('[data-ability-effect="clear-x"]');
-          await activate.filter({ hasText: "0 / 1024" }).waitFor();
+          await activate.filter({ hasText: "0%" }).waitFor();
           await effect.waitFor();
           assert.equal(await effect.evaluate(el => getComputedStyle(el).animationName), "none");
           assert.equal(await effect.evaluate(el => getComputedStyle(el).pointerEvents), "none");

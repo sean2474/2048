@@ -11,7 +11,7 @@ import { playerChannel } from "./types";
 import { playerSockets, disconnectTimers, disconnectDeadlines, rooms, playerRoom, matchmakingQueue, waitingByCode, playerAccounts } from "./state";
 import { findMatch, cancelMatch, canQueue, matchWaitingPlayers, type MatchAccess } from "./matchmaking";
 import { createRoomWithCode, joinRoomWithCode } from "./rooms";
-import { joinRoom, handleInput, handleAttack, handleAbility, handleSurrender, waitForPlayer } from "./game";
+import { joinRoom, handleInput, handleAbility, handleSurrender, waitForPlayer } from "./game";
 import { accountDeletionHandler, type DeleteAccount } from "./account-deletion";
 import { feedbackHandler, type FeedbackWriter } from "./feedback";
 
@@ -192,7 +192,6 @@ export function createGameServer(options: { checkAdmin?: (token: string) => Prom
         }
         case "joinRoom": joinRoom(pid, msg.roomId, io, msg.skinId, msg.abilityId); break;
         case "input": handleInput(pid, msg.dir, io); break;
-        case "attack": handleAttack(pid, msg.blockType, io); break;
         case "ability": handleAbility(pid, io); break;
         case "surrender": handleSurrender(pid, io); break;
       }

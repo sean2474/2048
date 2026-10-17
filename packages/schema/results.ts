@@ -12,7 +12,7 @@ export type MatchTelemetry = z.infer<typeof MatchTelemetrySchema>;
 export const MatchRecordSchema = z.object({
   id: z.string().uuid(), startedAt: z.string().datetime(), endedAt: z.string().datetime(),
   mode: MatchModeSchema.default("casual"),
-  reason: z.enum(["reached_1024", "reached_2048", "opponent_locked", "surrender", "opponent_disconnected", "draw"]),
+  reason: z.enum(["reached_1024", "opponent_locked", "surrender", "opponent_disconnected", "draw"]),
   winnerSlot: z.union([z.literal(1), z.literal(2)]).nullable(),
   participants: z.array(z.object({ userId: z.string().uuid().nullable(), score: z.number().int().min(0).max(1_000_000_000), maxTile: z.number().int().min(2).max(2048).refine(value => (value & (value - 1)) === 0), telemetry: MatchTelemetrySchema.optional() })).length(2),
 }).refine(record => (record.reason === "draw") === (record.winnerSlot === null))

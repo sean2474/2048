@@ -1,4 +1,4 @@
-export const KEY_ACTIONS = ["up", "down", "left", "right", "xblock", "hardblock", "ability"] as const;
+export const KEY_ACTIONS = ["up", "down", "left", "right", "ability"] as const;
 export type KeyAction = (typeof KEY_ACTIONS)[number];
 export type Keybindings = Record<KeyAction, string>;
 
@@ -7,9 +7,7 @@ export const DEFAULT_KEYBINDINGS: Readonly<Keybindings> = Object.freeze({
   down: "KeyS",
   left: "KeyA",
   right: "KeyD",
-  xblock: "Digit1",
-  hardblock: "Digit2",
-  ability: "Digit3",
+  ability: "Digit1",
 });
 export const KEYBINDINGS_STORAGE_KEY = "duo.keybindings.v1";
 
@@ -29,12 +27,18 @@ export function isKeybindings(value: unknown): value is Keybindings {
 }
 
 export function upgradeKeybindings(value: unknown): unknown {
-  if (value && typeof value === "object" && !Array.isArray(value) && !Object.hasOwn(value, "ability") && Object.keys(value).length === 6) {
-    const ability = [3, 4, 5, 6, 7, 8, 9, 0, 1, 2].map(digit => `Digit${digit}`).find(code => !Object.values(value).includes(code));
-    const upgraded = { ...value, ability };
-    if (isKeybindings(upgraded)) return upgraded;
-  }
-  return value;
+  if (!value || typeof value !== "object" || Array.isArray(value) || isKeybindings(value)) return value;
+  const entries = Object.entries(value);
+  const hasAbility = Object.hasOwn(value, "ability");
+  if (entries.length !== (hasAbility ? 7 : 6)
+    || !["up", "down", "left", "right", "xblock", "hardblock"].every(action => Object.hasOwn(value, action))
+    || !entries.every(([, code]) => isBindingCode(code))
+    || new Set(entries.map(([, code]) => code)).size !== entries.length) return value;
+  const old = value as Record<string, string>;
+  const movement = { up: old.up, down: old.down, left: old.left, right: old.right };
+  const ability = hasAbility && old.ability !== "Digit3" ? old.ability
+    : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(digit => `Digit${digit}`).find(code => !Object.values(movement).includes(code));
+  return { ...movement, ability };
 }
 
 export function parseKeybindings(raw: string | null): Keybindings {
@@ -62,7 +66,7 @@ export function resolveKeyAction(event: KeyEvent, bindings: Keybindings, charact
   if (Object.hasOwn(arrows, event.code)) return arrows[event.code];
   if (!characterShortcuts) return null;
   const action = KEY_ACTIONS.find(candidate => bindings[candidate] === event.code) ?? null;
-  return event.repeat && (action === "xblock" || action === "hardblock" || action === "ability") ? null : action;
+  return event.repeat && action === "ability" ? null : action;
 }
 
 export function createMovementRepeater(move: (direction: "up" | "down" | "left" | "right") => void) {

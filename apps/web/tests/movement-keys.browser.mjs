@@ -14,7 +14,7 @@ test("held movement has the same cadence for arrows and letters and stops with i
   const socketOrigin = `http://127.0.0.1:${server.httpServer.address().port}`;
   const moves = [];
   let socket;
-  const player = { board: [{ id: 1, row: 0, col: 0, value: 2 }], score: 0, maxTile: 2, skinId: "classic", attacks: { xblock: 0, hardblock: 0 }, ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
+  const player = { board: [{ id: 1, row: 0, col: 0, value: 2 }], score: 0, maxTile: 2, skinId: "classic", attacksSent: { xblock: 0, hardblock: 0 }, ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
   const state = { t: "state", serverTime: Date.now(), mode: "casual", you: player, opp: player, names: { you: "Guest", opp: "Opponent" }, paused: false, pendingAttacks: 0, incomingAttacks: { xblock: 0, hardblock: 0 } };
   const send = () => socket.emit("message", state);
   server.io.on("connection", connected => {
@@ -120,15 +120,17 @@ test("held movement has the same cadence for arrows and letters and stops with i
     assert.equal(moves.length, slowed, "the ability movement delay remains enforced");
     Object.assign(player.ability, { slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 }); send();
     await page.waitForFunction(() => !document.querySelector('button[aria-label="Move up"]')?.disabled);
+    await page.getByRole("button", { name: "Keybindings", exact: true }).click();
     await page.getByRole("checkbox", { name: "Enable custom shortcuts", exact: true }).uncheck();
-    await page.getByRole("checkbox", { name: "Enable custom shortcuts", exact: true }).evaluate(element => element.blur());
+    await dialog.getByRole("button", { name: "Save keys", exact: true }).click();
+    await dialog.waitFor({ state: "hidden" });
     const disabled = moves.length;
     await page.keyboard.press("KeyW");
     await page.keyboard.press("ArrowUp");
     await page.waitForTimeout(100);
     assert.deepEqual(moves.slice(disabled), ["up"]);
-    await page.getByRole("checkbox", { name: "Enable custom shortcuts", exact: true }).check();
     await page.getByRole("button", { name: "Keybindings", exact: true }).click();
+    await page.getByRole("checkbox", { name: "Enable custom shortcuts", exact: true }).check();
     await dialog.getByRole("button", { name: "Move up W", exact: true }).click();
     await page.keyboard.press("KeyI");
     await dialog.getByRole("button", { name: "Save keys", exact: true }).click();

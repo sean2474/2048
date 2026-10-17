@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { move, hasMoves, applyMove, applyPendingEffects, applyEffects, chargeAttacks, clearOldestX, swap32, anchorHighest } from "game-core";
+import { move, hasMoves, applyMove, applyPendingEffects, applyEffects, attacksFromMerges, clearOldestX, swap32, anchorHighest } from "game-core";
 import type { Board, Effect } from "schema/in-game";
 const tile = (value: number, row: number, col: number) => ({ id: 100_000 + row * 5 + col, value, row, col });
 const values = (board: Board) => board.filter(t => !t.ghost).map(t => t.value);
@@ -105,33 +105,29 @@ test("obstacle placement uses the supplied RNG", () => {
   assert.deepEqual([last.row, last.col], [4, 4]);
 });
 
-test("only newly merged 256 and 512 tiles charge the matching attacks", () => {
+test("only newly merged 256 and 512 tiles generate the matching attacks", () => {
   for (const value of [4, 64, 128, 256, 512, 1024, 2048]) {
     const board = [{ ...tile(value, 0, 0), merged: true }];
-    assert.deepEqual(chargeAttacks(board, { xblock: 0, hardblock: 0 }), {
+    assert.deepEqual(attacksFromMerges(board), {
       xblock: value === 256 ? 1 : 0,
       hardblock: value === 512 ? 1 : 0,
     });
   }
 });
 
-test("every qualifying merge charges one attack, without sending obstacles", () => {
+test("every qualifying merge generates one attack without altering the sender board", () => {
   const board = [128, 128, 128, 128, 256, 256].map((value, i) => tile(value, Math.floor(i / 4), i % 4));
   const result = applyMove(board, "left", () => 0);
   assert.equal(result.moved, true);
-  assert.deepEqual(chargeAttacks(result.board, { xblock: 0, hardblock: 0 }), { xblock: 2, hardblock: 1 });
+  assert.deepEqual(attacksFromMerges(result.board), { xblock: 2, hardblock: 1 });
   assert.equal(result.board.some(t => t.blockType === "xblock" || t.blockType === "hardblock"), false);
   assert.deepEqual(result.pendingEffects, []);
 });
 
-test("each attack stock caps independently at three without mutating inputs", () => {
-  const board = [256, 256, 512, 512].map((value, col) => ({ ...tile(value, 0, col), merged: true }));
-  const inventory = { xblock: 2, hardblock: 3 };
+test("all simultaneous qualifying merges count without a stock cap or input mutation", () => {
+  const board = [256, 256, 256, 256, 512, 512, 512, 512].map((value, i) => ({ ...tile(value, Math.floor(i / 4), i % 4), merged: true }));
   const before = structuredClone(board);
-  const result = chargeAttacks(board, inventory);
-  assert.deepEqual(result, { xblock: 3, hardblock: 3 });
-  assert.notEqual(result, inventory);
-  assert.deepEqual(inventory, { xblock: 2, hardblock: 3 });
+  assert.deepEqual(attacksFromMerges(board), { xblock: 4, hardblock: 4 });
   assert.deepEqual(board, before);
 });
 
@@ -144,15 +140,15 @@ test("existing tiles, ghost tiles and obstacles never charge attacks", () => {
     { ...tile(256, 1, 0), merged: true, blockType: "xblock" },
     { ...tile(512, 1, 1), merged: true, blockType: "hardblock" },
   ];
-  assert.deepEqual(chargeAttacks(board, { xblock: 1, hardblock: 2 }), { xblock: 1, hardblock: 2 });
-  assert.deepEqual(chargeAttacks([], { xblock: 0, hardblock: 0 }), { xblock: 0, hardblock: 0 });
+  assert.deepEqual(attacksFromMerges(board), { xblock: 0, hardblock: 0 });
+  assert.deepEqual(attacksFromMerges([]), { xblock: 0, hardblock: 0 });
 });
 
 test("moving an already merged tile on a later turn does not charge it again", () => {
   const first = applyMove([tile(128, 0, 0), tile(128, 0, 1)], "left", () => 0);
-  const inventory = chargeAttacks(first.board, { xblock: 0, hardblock: 0 });
-  assert.deepEqual(inventory, { xblock: 1, hardblock: 0 });
+  const attacks = attacksFromMerges(first.board);
+  assert.deepEqual(attacks, { xblock: 1, hardblock: 0 });
   const second = applyMove(first.board, "down", () => 0);
   assert.equal(second.moved, true);
-  assert.deepEqual(chargeAttacks(second.board, inventory), inventory);
+  assert.deepEqual(attacksFromMerges(second.board), { xblock: 0, hardblock: 0 });
 });

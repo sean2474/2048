@@ -28,10 +28,11 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
     await page.waitForFunction(() => window.audioProbe.contexts[0].master.gain.value === 0);
     await page.getByRole("button", { name: "Skip ahead to 128 + 128", exact: true }).tap();
     await page.getByRole("button", { name: "Move left", exact: true }).tap();
-    await page.getByRole("heading", { name: "X attack charged. Your turn to send it.", exact: true }).waitFor();
+    await page.getByRole("heading", { name: "Your X block landed", exact: true }).waitFor();
     assert.equal(await page.evaluate(() => window.audioProbe.notes.length), 2);
     await sound.tap();
-    await page.getByRole("group", { name: "Attack controls", exact: true }).getByRole("button", { name: /Send X block/ }).tap();
+    await page.getByRole("button", { name: "Restart this step", exact: true }).tap();
+    await page.getByRole("button", { name: "Move left", exact: true }).tap();
     await page.waitForFunction(() => window.audioProbe.notes.at(-1) === 720);
     assert.equal(await page.evaluate(() => window.audioProbe.contexts.length), 1);
 
@@ -126,7 +127,7 @@ test("friend match plays confirmed moves and one result cue per player", async (
     const initialNotes = await host.evaluate(() => window.audioProbe.notes.length);
     // At least one direction is valid on a newly spawned board.
     for (const direction of ["left", "down", "right", "up"]) {
-      await host.getByRole("button", { name: `Move ${direction}`, exact: true }).click();
+      await host.keyboard.press(`Arrow${direction[0].toUpperCase()}${direction.slice(1)}`);
     }
     await host.waitForFunction(count => window.audioProbe.notes.length > count, initialNotes);
     await guest.getByRole("button", { name: "Surrender", exact: true }).click();

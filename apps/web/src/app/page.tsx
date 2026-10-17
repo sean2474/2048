@@ -9,7 +9,7 @@ import type { HistoryMatch, LeaderboardRow } from "schema/results";
 import { SEASON_QUALIFYING_GAMES } from "schema/ranking";
 import { RankProgress } from "@/components/widget/rank-progress";
 import { TierBadge } from "@/components/widget/tier-badge";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, GraduationCap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DemoBoard } from "@/components/widget/demo-board";
 import { usePlayer } from "@/hooks/use-player";
@@ -37,7 +37,7 @@ export default function DashboardPage() {
   const rating = ratingQuery.data.find(row => row.player_id === userId);
   const recentMatches = matchesQuery.data.filter(match => match.match_participants.some(row => row.player_id === userId));
   return <main className="mx-auto max-w-[1040px] space-y-6 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
-    <PageHeading icon="profile" title={t("Dashboard")}><Button asChild><Link href="/find-match" data-analytics-link="/find-match">{t("Find match")}<ArrowRight aria-hidden="true" /></Link></Button></PageHeading>
+    <PageHeading icon="profile" title={t("Dashboard")}><Button asChild variant="outline"><Link href="/tutorial" data-analytics-link="/tutorial"><GraduationCap aria-hidden="true" />{t("Play tutorial")}</Link></Button><Button asChild><Link href="/find-match" data-analytics-link="/find-match">{t("Find match")}<ArrowRight aria-hidden="true" /></Link></Button></PageHeading>
     <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-8">
       <section aria-labelledby="profile-title" className="game-panel min-w-0 bg-card p-6 sm:p-8">
         {user === undefined ? <p role="status" className="flex min-h-40 items-center gap-3 text-sm text-muted-foreground"><Loader2 aria-hidden="true" className="size-5 animate-spin motion-reduce:animate-none" />{t("Checking your account…")}</p> : !userId ? <>

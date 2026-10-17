@@ -63,8 +63,7 @@ test("country defaults survive hydration; manual language persists and mobile co
     await page.goto(`${origin}/tutorial`);
     assert.equal(await page.getByRole("combobox").count(), 0);
     const directions = page.getByRole("group", { name: "Direction controls", exact: true });
-    const attacks = page.getByRole("group", { name: "Attack controls", exact: true });
-    assert.equal(await attacks.locator("button:disabled").count(), 2);
+    assert.equal(await page.locator("[data-attack-control], .charge-rail").count(), 0);
     for (const direction of ["up", "left", "down", "right"]) {
       const button = directions.getByRole("button", { name: `Move ${direction}`, exact: true });
       const box = await button.boundingBox();
@@ -77,28 +76,17 @@ test("country defaults survive hydration; manual language persists and mobile co
     assert.equal(await page.getByTestId("your-score").innerText(), "4");
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 375);
     await page.getByRole("button", { name: "Skip ahead to 128 + 128", exact: true }).tap();
-    assert.equal(await attacks.locator("button:disabled").count(), 2);
     await directions.getByRole("button", { name: "Move left", exact: true }).tap();
-    const xAttack = attacks.getByRole("button", { name: /Send X block/ });
-    const hardAttack = attacks.getByRole("button", { name: /Send hard block/ });
-    assert.match(await xAttack.innerText(), /1 \/ 3/);
-    assert.equal(await hardAttack.isDisabled(), true);
-    await xAttack.tap();
     await page.getByRole("heading", { name: "Your X block landed", exact: true }).waitFor();
-    assert.match(await xAttack.innerText(), /0 \/ 3/);
-    assert.equal(await xAttack.isDisabled(), true);
     assert.equal(await page.getByRole("group", { name: "Opponent’s game board", exact: true }).getByRole("img", { name: /X block, movable obstacle/ }).count(), 1);
     await page.getByRole("button", { name: "Try a hard block", exact: true }).tap();
     await directions.getByRole("button", { name: "Move left", exact: true }).tap();
-    assert.match(await hardAttack.innerText(), /1 \/ 3/);
-    await hardAttack.tap();
     await page.getByRole("heading", { name: "A fixed obstacle on their board", exact: true }).waitFor();
-    assert.equal(await hardAttack.isDisabled(), true);
     assert.equal(await page.getByRole("group", { name: "Opponent’s game board", exact: true }).getByRole("img", { name: /Hard block, fixed obstacle/ }).count(), 1);
     for (const width of [320, 375, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
-      for (const button of [xAttack, hardAttack]) {
+      for (const button of [directions.getByRole("button", { name: "Move left", exact: true })]) {
         const box = await button.boundingBox();
         assert.ok(box.width >= 44 && box.height >= 44);
       }

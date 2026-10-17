@@ -4,7 +4,7 @@ import { SKINS, type SkinId, type SkinTokens } from "schema/loadout";
 export const AUDIO_STORAGE_KEY = "duo.audio";
 export const DEFAULT_AUDIO = { muted: false, volume: 0.45 };
 export type AudioSettings = typeof DEFAULT_AUDIO;
-export type GameSound = "move" | "merge" | "charge" | "xblock" | "hardblock" | "incoming" | "impact" | "start" | "win" | "lose" | "draw";
+export type GameSound = "move" | "merge" | "xblock" | "hardblock" | "incoming" | "impact" | "start" | "win" | "lose" | "draw";
 
 export function parseAudioSettings(raw: string | null): AudioSettings {
   try {
@@ -16,15 +16,14 @@ export function parseAudioSettings(raw: string | null): AudioSettings {
   return { ...DEFAULT_AUDIO };
 }
 
-type AudioPlayer = Pick<PublicPlayerState, "board" | "score" | "attacks">;
+type AudioPlayer = Pick<PublicPlayerState, "board" | "score" | "attacksSent">;
 export function playerSound(previous: AudioPlayer, next: AudioPlayer): GameSound | null {
   for (const type of ["hardblock", "xblock"] as const) {
-    if (next.attacks[type] < previous.attacks[type]) return type;
+    if ((next.attacksSent?.[type] ?? 0) > (previous.attacksSent?.[type] ?? 0)) return type;
   }
   const before = previous.board.filter(tile => !tile.ghost);
   const after = next.board.filter(tile => !tile.ghost);
   if (after.some(tile => (tile.blockType === "xblock" || tile.blockType === "hardblock") && !before.some(old => old.id === tile.id))) return "impact";
-  if (next.attacks.xblock > previous.attacks.xblock || next.attacks.hardblock > previous.attacks.hardblock) return "charge";
   if (next.score > previous.score) return "merge";
   if (after.length !== before.length || after.some(tile => !before.some(old => old.id === tile.id && old.row === tile.row && old.col === tile.col && old.value === tile.value))) return "move";
   return null;
@@ -45,7 +44,6 @@ type Notes = readonly (readonly [number, number, number, number])[];
 const sounds: Record<GameSound, Notes> = {
   move: [[180, 110, 0, 0.055]],
   merge: [[440, 660, 0, 0.09], [880, 880, 0.05, 0.1]],
-  charge: [[523, 523, 0, 0.1], [659, 659, 0.07, 0.12], [1047, 1047, 0.14, 0.2]],
   xblock: [[720, 180, 0, 0.16]],
   hardblock: [[150, 45, 0, 0.2], [75, 40, 0.03, 0.18]],
   incoming: [[330, 330, 0, 0.08], [330, 330, 0.12, 0.08]],

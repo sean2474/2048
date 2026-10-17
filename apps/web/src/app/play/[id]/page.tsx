@@ -5,13 +5,10 @@ import { useI18n } from "ui/i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { Flag, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
-import type { Dir, S2C } from "schema/in-game";
+import { ABILITY_CHARGE, type Dir, type S2C } from "schema/in-game";
 import type { Socket } from "socket.io-client";
 import { GameArena } from "@/components/2048/game-arena";
 import { MatchResult } from "@/components/widget/match-result";
-import { AttackControls } from "@/components/2048/attack-controls";
-import { AbilityControls } from "@/components/2048/ability-controls";
-import { ABILITY_CHARGE } from "schema/in-game";
 import { DEFAULT_ABILITY_ID } from "schema/loadout";
 import { Button } from "@/components/ui/button";
 import { usePlayer } from "@/hooks/use-player";
@@ -42,7 +39,7 @@ export default function GamePage() {
   const [rejected, setRejected] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [confirming, setConfirming] = useState(false);
-  const { settings, ready: settingsReady, saving: settingsSaving, saveSettings, error: settingsError } = useSettings();
+  const { settings, ready: settingsReady, error: settingsError } = useSettings();
   const settingsResolved = settingsReady || !!settingsError;
   const characterShortcuts = settingsReady && settings.customShortcuts;
   const [now, setNow] = useState(0);
@@ -124,11 +121,6 @@ export default function GamePage() {
     setActionMessage("");
     socketRef.current.emit("message", { t: "input", dir });
   }, [canMove, movementDelayed]);
-  const handleAttack = useCallback((blockType: "xblock" | "hardblock") => {
-    if (!canMove || !socketRef.current?.connected || game?.t !== "state" || game.you.attacks[blockType] < 1) return;
-    setActionMessage("");
-    socketRef.current.emit("message", { t: "attack", blockType });
-  }, [canMove, game]);
   const handleAbility = useCallback(() => {
     if (!canMove || !socketRef.current?.connected || game?.t !== "state" || game.you.ability.charge < ABILITY_CHARGE || game.you.ability.spawnPauseMoves > 0 || game.you.ability.anchorMoves > 0) return;
     setActionMessage("");
@@ -137,8 +129,7 @@ export default function GamePage() {
   useGameKeyboard({
     enabled: canMove, bindings, characterShortcuts,
     onAction: action => {
-      if (action === "xblock" || action === "hardblock") handleAttack(action);
-      else if (action === "ability") handleAbility();
+      if (action === "ability") handleAbility();
       else handleMove(action);
     },
   });
@@ -161,11 +152,12 @@ export default function GamePage() {
   const slowRemaining = Math.max(0, Math.ceil((game.you.ability.slowEndsAt - abilityNow) / 1000));
   return <main className="match-screen">
     <section className="match-toolbar">
-      <div className="min-w-0" role="status">
+      <div className="flex min-w-0 items-center gap-3" role="status">
+        <GameEmblem kind={game.mode === "ranked" ? "crown" : game.mode === "friend" ? "friend" : "duel"} className="size-10 text-primary" /><div className="min-w-0">
         <p className="text-xs font-semibold text-muted-foreground">{t(matchModeLabel[game.mode])}</p>
         <h1 className="text-lg font-extrabold tracking-tight">{ended ? t(game.winner === "you" ? "You win!" : game.winner === "draw" ? "Draw" : "You lose.") : t(!connected ? "Reconnecting…" : game.paused ? "Waiting for opponent…" : "Match in progress")}</h1>
         {!ended && game.paused && deadline && <p className="text-xs text-primary">{t("Game paused · {seconds}s to reconnect", { seconds: Math.max(0, Math.ceil((deadline - now) / 1000)) })}</p>}
-      </div>
+      </div></div>
       <div className="flex max-w-full flex-wrap items-center gap-2">
         <SoundToggle />
         {!ended && <KeybindingSettings bindings={bindings} saveBindings={saveBindings} storageError={storageError} onOpenChange={setSettingsOpen} />}
@@ -178,23 +170,18 @@ export default function GamePage() {
       </div>
     </section>
     <div className="game-stage">
-      <GameArena effectsEnabled={connected && game.t === "state" && !game.paused} you={game.you} opponent={game.opp} names={{ you: player?.name || names.you, opp: names.opp }} bindings={bindings} characterShortcuts={characterShortcuts} onMove={canMove && !movementDelayed ? handleMove : undefined} onAttack={canMove ? handleAttack : undefined} />
+      <GameArena effectsEnabled={connected && game.t === "state" && !game.paused} you={game.you} opponent={game.opp} names={{ you: player?.name || names.you, opp: names.opp }} abilityBinding={characterShortcuts ? bindings.ability : undefined} onMove={canMove && !movementDelayed ? handleMove : undefined} onAbility={canMove ? handleAbility : undefined} />
     </div>
-    {ended ? <MatchResult key={game.matchId} game={game} names={{ you: player?.name || names.you, opp: names.opp }} /> : <section className="match-controls">
-      <div className="match-controls-info min-w-0 space-y-1">
-        {error ? <p role="alert" className="text-xs text-destructive">{t(error)} <button className="min-h-11 px-2 font-semibold underline" onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</button></p> : <p role="status" className="text-xs leading-5 text-muted-foreground">{t(actionMessage || (game.paused ? "Attacks paused while reconnecting." : game.you.attacks.xblock + game.you.attacks.hardblock > 0 ? "Attack ready. Choose when to send it." : "Merge 256 or 512 to charge an attack."))}</p>}
-        {game.pendingAttacks > 0 && <p role="status" className="text-xs font-semibold text-primary">{t("Incoming: X {x} · Hard {hard}", { x: game.incomingAttacks.xblock, hard: game.incomingAttacks.hardblock })}</p>}
-        <p className="text-[11px] text-muted-foreground">{t("Merge points charge your ability: {points}. Hold one use.", { points: ABILITY_CHARGE })}</p>
+    {ended ? <MatchResult key={game.matchId} game={game} names={{ you: player?.name || names.you, opp: names.opp }} /> : <section className="match-controls live-match-controls">
+      {(error || actionMessage || game.you.ability.spawnPauseMoves > 0 || game.you.ability.anchorMoves > 0 || slowRemaining > 0 || settingsError) && <div className="match-controls-info min-w-0 space-y-1">
+        {error ? <p role="alert" className="text-xs text-destructive">{t(error)} <button className="min-h-11 px-2 font-semibold underline" onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</button></p> : actionMessage && <p role="status" className="text-xs leading-5 text-muted-foreground">{t(actionMessage)}</p>}
         <div role="status" className="text-xs font-semibold text-primary">
           {game.you.ability.spawnPauseMoves > 0 && <p>{t("No number spawns: {moves} moves left", { moves: game.you.ability.spawnPauseMoves })}</p>}
           {game.you.ability.anchorMoves > 0 && <p>{t("Tile anchored: {moves} moves left", { moves: game.you.ability.anchorMoves })}</p>}
           {slowRemaining > 0 && <p>{t(abilityNow < game.you.ability.slowStartsAt ? "Slowdown incoming!" : "Slowed: {seconds}s · one move every 0.4s", { seconds: slowRemaining })}</p>}
         </div>
-        <label className="flex min-h-11 items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" className="size-4 accent-primary" checked={characterShortcuts} disabled={!settingsReady || settingsSaving} onChange={event => void saveSettings({ customShortcuts: event.target.checked })} aria-describedby="shortcut-help" />{t("Enable custom shortcuts")}</label>
-        {settingsError && <p role="alert" className="text-xs text-destructive">{t(settingsError)}</p>}
-        <p id="shortcut-help" className="sr-only">{t("Arrow keys and on-screen buttons remain available when shortcuts are off.")}</p>
-      </div>
-      <div className="space-y-1.5"><AbilityControls ability={game.you.ability} binding={characterShortcuts ? bindings.ability : undefined} onUse={canMove ? handleAbility : undefined} /><AttackControls attacks={game.you.attacks} onAttack={canMove ? handleAttack : undefined} /></div>
+        {settingsError && !settingsOpen && <p role="alert" className="text-xs text-destructive">{t(settingsError)}</p>}
+      </div>}
       <div className="direction-pad grid shrink-0 grid-cols-3 gap-1" role="group" aria-label={t("Direction controls")}>
         <div /><Button variant="outline" size="icon" aria-label={t("Move up")} disabled={!canMove || movementDelayed} onClick={() => handleMove("up")}><ArrowUp /></Button><div />
         <Button variant="outline" size="icon" aria-label={t("Move left")} disabled={!canMove || movementDelayed} onClick={() => handleMove("left")}><ArrowLeft /></Button>

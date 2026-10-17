@@ -183,7 +183,7 @@ test("unavailable ranked storage never promises a later rank update", { timeout:
     const response = await route.fetch({ url: `${socketOrigin}${url.pathname}${url.search}` });
     await route.fulfill({ response, headers: { ...response.headers(), "access-control-allow-origin": "*" } });
   });
-  const player = { skinId: "classic", board: [{ id: 1, row: 0, col: 0, value: 2 }], score: 0, maxTile: 2, attacks: { xblock: 0, hardblock: 0 }, ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
+  const player = { skinId: "classic", board: [{ id: 1, row: 0, col: 0, value: 2 }], score: 0, maxTile: 2, attacksSent: { xblock: 0, hardblock: 0 }, ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
   server.io.on("connection", socket => {
     socket.removeAllListeners("message");
     socket.on("message", message => { if (message.t === "joinRoom") socket.emit("message", { t: "end", matchId: "unavailable-fixture", mode: "ranked", recording: "unavailable", winner: "you", reason: "surrender", you: player, opp: player }); });

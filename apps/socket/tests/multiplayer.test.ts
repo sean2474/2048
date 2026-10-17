@@ -8,7 +8,7 @@ import type { MatchRecord } from "schema/results";
 import type { AbilityId, SkinId } from "schema/loadout";
 import { createGameServer } from "../src/server";
 import { rooms, playerRoom, disconnectTimers, waitingByCode, matchmakingQueue } from "../src/state";
-import { clearDisconnect, waitForPlayer, handleInput, handleAttack, handleAbility, joinRoom, snapshot } from "../src/game";
+import { clearDisconnect, waitForPlayer, handleInput, handleAbility, joinRoom, snapshot } from "../src/game";
 import { matchWaitingPlayers } from "../src/matchmaking";
 import { ResultStore } from "../src/result-store";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -176,6 +176,42 @@ test("guests and accounts without authoritative preferences cannot request rewar
   a.socket.emit("message", { t: "joinRoom", roomId, skinId: "rune-sanctum" });
   for (const state of await Promise.all(states) as ServerState[]) assert.deepEqual([state.you.skinId, state.opp?.skinId], ["classic", "classic"]);
 });
+for (const profile of ["account", "default", "guest"] as const) test(`public ${profile} icons remain authoritative through updates, reconnect and results`, async t => {
+  const server = await setup(t, {
+    resolveAccount: async token => ({ ...await resolveAccount(token), ...(profile === "account" ? { iconId: token === "alice" ? "dragon" as const : "owl" as const } : {}) }),
+  });
+  const access = profile === "guest" ? undefined : "alice";
+  const { a, b, roomId } = await server.pair(access, profile === "guest" ? undefined : "bob");
+  const room = rooms.get(roomId)!, pid = playerId(a.token);
+  const expected = profile === "account" ? ["dragon", "owl"] : profile === "guest" ? ["guest", "guest"] : ["fox", "fox"];
+  const check = (state: ServerMessage, reverse = false) => {
+    assert.ok(state.t === "state" || state.t === "end");
+    assert.deepEqual([state.you.iconId, state.opp?.iconId], reverse ? [...expected].reverse() : expected);
+  };
+  check(snapshot(room, pid));
+  check(snapshot(room, playerId(b.token)), true);
+  const changed = packet(a.socket, m => m.t === "state" && !m.paused);
+  // Client-supplied profile fields cannot replace the account's verified icon.
+  a.socket.emit("message", { t: "joinRoom", roomId, iconId: "robot" });
+  check(await changed);
+  room.state[pid].board = [{ id: 295_000, row: 0, col: 0, value: 2 }];
+  const moved = packet(a.socket, m => m.t === "state" && !m.paused);
+  a.socket.emit("message", { t: "input", dir: "down" });
+  check(await moved);
+  const paused = packet(b.socket, m => m.t === "state" && m.paused);
+  a.socket.disconnect();
+  check(await paused, true);
+  const restored = await server.connect(a.token, access, "cat");
+  const resumes = [restored.socket, b.socket].map(socket => packet(socket, m => m.t === "state" && !m.paused));
+  restored.socket.emit("message", { t: "joinRoom", roomId, iconId: "rabbit" });
+  const [own, opponent] = await Promise.all(resumes);
+  check(own); check(opponent, true);
+  const ends = [restored.socket, b.socket].map(socket => packet(socket, m => m.t === "end"));
+  restored.socket.emit("message", { t: "surrender" });
+  const [ownEnd, opponentEnd] = await Promise.all(ends);
+  check(ownEnd); check(opponentEnd, true);
+});
+
 test("reconnect pauses both players and restores the same board without new socket loops", async t => {
   const server = await setup(t), { a, b, roomId } = await server.pair();
   const room = rooms.get(roomId)!;
@@ -188,7 +224,7 @@ test("reconnect pauses both players and restores the same board without new sock
   const state = await paused as ServerState;
   assert.ok(state.reconnectDeadline);
   const board = structuredClone(room.state[playerId(a.token)].board);
-  room.state[playerId(a.token)].attacks = { xblock: 2, hardblock: 1 };
+  room.state[playerId(a.token)].telemetry.sent = { xblock: 2, hardblock: 1 };
   room.state[playerId(a.token)].pending.push({ type: "addBlock", blockType: "xblock" });
   const opponentBefore = structuredClone(room.state[playerId(b.token)].board);
   handleInput(playerId(b.token), "down", server.io);
@@ -198,7 +234,7 @@ test("reconnect pauses both players and restores the same board without new sock
   restored.socket.emit("message", { t: "joinRoom", roomId });
   const [resumed] = await Promise.all([resumeA, resumeB]) as ServerState[];
   assert.deepEqual(resumed.you.board, board);
-  assert.deepEqual(resumed.you.attacks, { xblock: 2, hardblock: 1 });
+  assert.deepEqual(resumed.you.attacksSent, { xblock: 2, hardblock: 1 });
   assert.equal(resumed.pendingAttacks, 1);
   assert.equal(disconnectTimers.size, 0);
   assert.equal(rooms.size, 1);
@@ -230,32 +266,26 @@ test("a 1024 merge produces a terminal result and releases the room", async t =>
   assert.equal(rooms.size, 0);
 });
 
-test("256 and 512 charge manual attacks; firing spends once and lands on the next valid move", async t => {
+test("256 and 512 automatically fire on the same merge and land on the next valid recipient move", async t => {
   const server = await setup(t), { a, b, roomId } = await server.pair();
   const room = rooms.get(roomId)!;
-  room.state[playerId(a.token)].board = [128, 128, 256, 256].map((value, col) => ({ id: 400_000 + col, row: 0, col, value }));
-  const before = structuredClone(room.state[playerId(b.token)].board);
+  const me = room.state[playerId(a.token)], opponent = room.state[playerId(b.token)];
+  me.board = [128, 128, 256, 256].map((value, col) => ({ id: 400_000 + col, row: 0, col, value }));
+  const before = structuredClone(opponent.board);
   const changed = packet(a.socket, m => m.t === "state");
+  const warning = packet(b.socket, m => m.t === "state" && m.pendingAttacks === 2);
   a.socket.emit("message", { t: "input", dir: "left" });
-  const result = await changed as ServerState;
+  const [result, incoming] = await Promise.all([changed, warning]) as ServerState[];
   assert.equal(result.you.maxTile, 512);
   assert.equal(room.open, true);
-  assert.deepEqual(result.you.attacks, { xblock: 1, hardblock: 1 });
-  assert.deepEqual(room.state[playerId(b.token)].board, before);
-  const warning = packet(b.socket, m => m.t === "state" && m.pendingAttacks === 1);
-  a.socket.emit("message", { t: "attack", blockType: "hardblock" });
-  const incoming = await warning as ServerState;
-  assert.deepEqual(incoming.incomingAttacks, { xblock: 0, hardblock: 1 });
+  assert.deepEqual(result.you.attacksSent, { xblock: 1, hardblock: 1 });
+  assert.equal("attacks" in result.you, false, "the protocol no longer exposes manual stock");
+  assert.deepEqual(incoming.opp?.attacksSent, result.you.attacksSent);
+  assert.deepEqual(incoming.incomingAttacks, { xblock: 1, hardblock: 1 });
   assert.deepEqual(incoming.you.board, before);
-  assert.deepEqual(room.state[playerId(a.token)].attacks, { xblock: 1, hardblock: 0 });
-  const secondAttack = packet(b.socket, m => m.t === "state" && m.pendingAttacks === 2);
-  a.socket.emit("message", { t: "attack", blockType: "xblock" });
-  await secondAttack;
-  assert.equal(room.state[playerId(a.token)].attacks.xblock, 0);
-  // Invalid input must not deliver a queued attack.
-  room.state[playerId(b.token)].board = [{ id: 450_000, row: 0, col: 0, value: 2 }];
+  opponent.board = [{ id: 450_000, row: 0, col: 0, value: 2 }];
   handleInput(playerId(b.token), "left", server.io);
-  assert.equal(room.state[playerId(b.token)].pending.length, 2);
+  assert.equal(opponent.pending.length, 2);
   const landed = packet(b.socket, m => m.t === "state" && m.pendingAttacks === 0);
   b.socket.emit("message", { t: "input", dir: "right" });
   const after = await landed as ServerState;
@@ -264,27 +294,43 @@ test("256 and 512 charge manual attacks; firing spends once and lands on the nex
   assert.equal(after.you.board.filter(tile => !tile.ghost).length, 4);
 });
 
-test("attack validation, full incoming queues and pauses never consume stock", async t => {
+test("manual attacks are rejected and initial or paused state never generates automatic attacks", async t => {
   const server = await setup(t), { a, b, roomId } = await server.pair();
-  const room = rooms.get(roomId)!;
-  const pid = playerId(a.token), me = room.state[pid], opponent = room.state[playerId(b.token)];
-  let rejected = packet(a.socket, m => m.t === "actionRejected");
-  a.socket.emit("message", { t: "attack", blockType: "xblock" });
-  assert.deepEqual(await rejected, { t: "actionRejected", reason: "no_charge" });
-  const invalid = packet(a.socket, m => m.t === "reject");
-  a.socket.emit("message", { t: "attack", blockType: "normal", amount: 99 });
-  assert.equal((await invalid).t, "reject");
-  me.attacks.xblock = 3;
-  opponent.pending = Array.from({ length: 6 }, () => ({ type: "addBlock", blockType: "xblock" }));
-  rejected = packet(a.socket, m => m.t === "actionRejected");
-  handleAttack(pid, "xblock", server.io);
-  assert.deepEqual(await rejected, { t: "actionRejected", reason: "incoming_full" });
-  assert.equal(me.attacks.xblock, 3);
-  room.ready.delete(playerId(b.token));
-  rejected = packet(a.socket, m => m.t === "actionRejected");
-  handleAttack(pid, "xblock", server.io);
-  assert.deepEqual(await rejected, { t: "actionRejected", reason: "paused" });
-  assert.equal(me.attacks.xblock, 3);
+  const room = rooms.get(roomId)!, pid = playerId(a.token), other = playerId(b.token);
+  const me = room.state[pid], opponent = room.state[other];
+  for (const blockType of ["xblock", "hardblock", "normal"]) {
+    const rejected = packet(a.socket, m => m.t === "reject");
+    a.socket.emit("message", { t: "attack", blockType });
+    assert.deepEqual(await rejected, { t: "reject", reason: "invalid" });
+  }
+  assert.deepEqual((snapshot(room, pid) as ServerState).you.attacksSent, { xblock: 0, hardblock: 0 });
+  assert.equal(opponent.pending.length, 0);
+  me.board = [128, 128].map((value, col) => ({ id: 460_000 + col, row: 0, col, value }));
+  const before = structuredClone(me.board);
+  room.ready.delete(other);
+  handleInput(pid, "left", server.io);
+  assert.deepEqual(me.board, before);
+  assert.deepEqual(me.telemetry.charged, { xblock: 0, hardblock: 0 });
+  assert.deepEqual(me.telemetry.sent, { xblock: 0, hardblock: 0 });
+  assert.equal(opponent.pending.length, 0);
+});
+
+for (const terminal of ["reached_1024", "opponent_locked"] as const) test(`${terminal} ends before generated attacks can enter the opponent queue`, async t => {
+  const server = await setup(t), { a, b, roomId } = await server.pair();
+  const room = rooms.get(roomId)!, pid = playerId(a.token), me = room.state[pid], opponent = room.state[playerId(b.token)];
+  me.board = terminal === "reached_1024"
+    ? [512, 512, 128, 128].map((value, i) => ({ id: 465_000 + i, row: Math.floor(i / 2), col: i % 2, value }))
+    : Array.from({ length: 25 }, (_, i) => ({ id: 465_000 + i, row: Math.floor(i / 5), col: i % 5, value: i < 2 ? 128 : -2, blockType: i < 2 ? "normal" as const : "hardblock" as const }));
+  const ended = packet(a.socket, m => m.t === "end");
+  handleInput(pid, "left", server.io);
+  const result = await ended;
+  assert.equal(result.t === "end" && result.reason, terminal);
+  assert.deepEqual(me.telemetry.charged, { xblock: 1, hardblock: 0 });
+  assert.deepEqual(me.telemetry.sent, { xblock: 0, hardblock: 0 });
+  assert.equal(opponent.pending.length, 0);
+  const before = structuredClone(me.board);
+  handleInput(pid, "right", server.io);
+  assert.deepEqual(me.board, before);
 });
 
 test("128 and invalid moves do not charge or send attacks", async t => {
@@ -293,13 +339,13 @@ test("128 and invalid moves do not charge or send attacks", async t => {
   const me = room.state[playerId(a.token)], opp = room.state[playerId(b.token)];
   me.board = [64, 64].map((value, col) => ({ id: 470_000 + col, row: 0, col, value }));
   handleInput(playerId(a.token), "left", server.io);
-  assert.deepEqual(me.attacks, { xblock: 0, hardblock: 0 });
+  assert.deepEqual(me.telemetry.sent, { xblock: 0, hardblock: 0 });
   assert.equal(opp.pending.length, 0);
   me.board = [{ id: 471_000, row: 0, col: 0, value: 2 }];
   const before = structuredClone(me.board);
   handleInput(playerId(a.token), "left", server.io);
   assert.deepEqual(me.board, before);
-  assert.deepEqual(me.attacks, { xblock: 0, hardblock: 0 });
+  assert.deepEqual(me.telemetry.sent, { xblock: 0, hardblock: 0 });
   assert.equal(opp.pending.length, 0);
 });
 
@@ -503,12 +549,9 @@ test("server telemetry measures valid moves, actual charges, sent and landed att
   const room = rooms.get(roomId)!;
   const me = room.state[playerId(a.token)], opponent = room.state[playerId(b.token)];
   me.board = [128, 128, 256, 256].map((value, col) => ({ id: 700_000 + col, row: 0, col, value }));
-  me.attacks = { xblock: 2, hardblock: 3 };
   handleInput(playerId(a.token), "left", server.io);
-  assert.deepEqual(me.telemetry.charged, { xblock: 1, hardblock: 0 });
+  assert.deepEqual(me.telemetry.charged, { xblock: 1, hardblock: 1 });
   assert.equal(me.telemetry.moves, 1);
-  handleAttack(playerId(a.token), "xblock", server.io);
-  handleAttack(playerId(a.token), "hardblock", server.io);
   assert.deepEqual(me.telemetry.sent, { xblock: 1, hardblock: 1 });
   assert.deepEqual(opponent.telemetry.received, { xblock: 0, hardblock: 0 });
   opponent.board = [{ id: 710_000, row: 0, col: 0, value: 2 }];
@@ -525,38 +568,36 @@ test("server telemetry measures valid moves, actual charges, sent and landed att
   assert.deepEqual(records[0].participants[1].telemetry, opponent.telemetry);
 });
 
-test("six saved attacks can fire without moving and a full queue preserves further tickets", async t => {
+test("automatic volleys fill the six-slot queue, count all earned attacks, and discard overflow", async t => {
   const server = await setup(t), { a, b, roomId } = await server.pair();
-  const room = rooms.get(roomId)!;
-  const me = room.state[playerId(a.token)], opponent = room.state[playerId(b.token)];
-  me.attacks = { xblock: 3, hardblock: 3 };
-  const before = structuredClone(me.board);
-  const incoming = packet(b.socket, m => m.t === "state" && m.pendingAttacks === 6);
-  for (const blockType of ["xblock", "hardblock", "xblock", "hardblock", "xblock", "hardblock"] as const) {
-    a.socket.emit("message", { t: "attack", blockType });
-  }
-  const state = await incoming as ServerState;
-  assert.deepEqual(state.incomingAttacks, { xblock: 3, hardblock: 3 });
-  assert.deepEqual(me.attacks, { xblock: 0, hardblock: 0 });
-  assert.deepEqual(me.telemetry.sent, { xblock: 3, hardblock: 3 });
-  assert.deepEqual(me.board, before);
-  const empty = packet(a.socket, m => m.t === "actionRejected");
-  a.socket.emit("message", { t: "attack", blockType: "xblock" });
-  assert.deepEqual(await empty, { t: "actionRejected", reason: "no_charge" });
-  me.attacks.xblock = 1;
-  const full = packet(a.socket, m => m.t === "actionRejected");
-  a.socket.emit("message", { t: "attack", blockType: "xblock" });
-  assert.deepEqual(await full, { t: "actionRejected", reason: "incoming_full" });
-  assert.equal(me.attacks.xblock, 1);
+  const room = rooms.get(roomId)!, pid = playerId(a.token);
+  const me = room.state[pid], opponent = room.state[playerId(b.token)];
+  const mergeVolley = () => {
+    me.board = [128, 128, 128, 128, 256, 256, 256, 256].map((value, i) => ({ id: 820_000 + i, row: Math.floor(i / 4), col: i % 4, value }));
+    handleInput(pid, "left", server.io);
+  };
+  mergeVolley();
+  assert.deepEqual(me.telemetry.sent, { xblock: 2, hardblock: 2 });
+  mergeVolley();
   assert.equal(opponent.pending.length, 6);
-  opponent.board = [{ id: 820_000, row: 0, col: 0, value: 2 }];
+  assert.deepEqual(me.telemetry.charged, { xblock: 4, hardblock: 4 });
+  assert.deepEqual(me.telemetry.sent, { xblock: 4, hardblock: 2 });
+  mergeVolley();
+  assert.deepEqual(me.telemetry.charged, { xblock: 6, hardblock: 6 });
+  assert.deepEqual(me.telemetry.sent, { xblock: 4, hardblock: 2 });
+  assert.deepEqual((snapshot(room, playerId(b.token)) as ServerState).incomingAttacks, { xblock: 4, hardblock: 2 });
+  opponent.board = [{ id: 821_000, row: 0, col: 0, value: 2 }];
   handleInput(playerId(b.token), "right", server.io);
   assert.equal(opponent.pending.length, 0);
-  assert.equal(opponent.board.filter(tile => tile.blockType === "xblock").length, 3);
-  assert.equal(opponent.board.filter(tile => tile.blockType === "hardblock").length, 3);
-  handleAttack(playerId(a.token), "xblock", server.io);
-  assert.equal(me.attacks.xblock, 0);
+  assert.equal(opponent.board.filter(tile => tile.blockType === "xblock").length, 4);
+  assert.equal(opponent.board.filter(tile => tile.blockType === "hardblock").length, 2);
+  me.board = [{ id: 822_000, row: 0, col: 0, value: 2 }];
+  handleInput(pid, "down", server.io);
+  assert.equal(opponent.pending.length, 0, "discarded overflow cannot be saved or sent on a later move");
+  me.board = [128, 128].map((value, col) => ({ id: 823_000 + col, row: 0, col, value }));
+  handleInput(pid, "left", server.io);
   assert.equal(opponent.pending.length, 1);
+  assert.deepEqual(me.telemetry.sent, { xblock: 5, hardblock: 2 });
 });
 
 
@@ -687,13 +728,13 @@ test("ability charge comes only from merges, caps at one use, and Clear X remove
   assert.equal(me.ability.charge, ABILITY_CHARGE);
   me.board.push({ id: 900_001, row: 2, col: 2, value: -1, blockType: "xblock" }, { id: 900_000, row: 2, col: 3, value: -1, blockType: "xblock" }, { id: 900_002, row: 3, col: 3, value: -2, blockType: "hardblock" });
   me.pending.push({ type: "addBlock", blockType: "xblock" });
-  const board = structuredClone(me.board), score = me.score, attacks = { ...me.attacks };
+  const board = structuredClone(me.board), score = me.score, attacksSent = { ...me.telemetry.sent };
   const used = packet(a.socket, m => m.t === "state" && m.you.ability.charge === 0);
   a.socket.emit("message", { t: "ability" });
   await used;
   assert.deepEqual(me.board, board.filter(tile => tile.id !== 900_000));
   assert.equal(me.score, score);
-  assert.deepEqual(me.attacks, attacks);
+  assert.deepEqual(me.telemetry.sent, attacksSent);
   assert.equal(me.pending.length, 1);
   handleAbility(pid, server.io);
   assert.equal(me.board.filter(tile => tile.blockType === "xblock").length, 1);
@@ -739,7 +780,7 @@ for (const abilityId of ["spawn-pause", "anchor-tile"] as const) test(`${ability
   assert.equal(state.you.ability[key], 0);
 });
 
-test("slowdown gives a warning, limits server moves but not attacks, expires, and freezes during reconnect", async t => {
+test("slowdown gives a warning, limits server moves and automatic attacks, expires, and freezes during reconnect", async t => {
   const server = await setup(t, { resolveAccount }), { a, b, roomId } = await server.pair("alice", "bob", "casual", undefined, ["frost-wave", "clear-x"]);
   const room = rooms.get(roomId)!, pid = playerId(a.token), other = playerId(b.token), me = room.state[pid], opp = room.state[other];
   opp.board = [{ id: 915_000, row: 0, col: 0, value: 2 }];
@@ -752,12 +793,12 @@ test("slowdown gives a warning, limits server moves but not attacks, expires, an
   assert.equal(opp.telemetry.moves, moves + 1, "The warning must not slow movement");
   opp.ability.slowStartsAt = Date.now() - 1;
   opp.ability.nextMoveAt = Date.now() + SLOW_MOVE_MS;
+  opp.board = [128, 128].map((value, col) => ({ id: 916_000 + col, row: 0, col, value }));
   const before = structuredClone(opp.board);
-  handleInput(other, "up", server.io);
+  handleInput(other, "left", server.io);
   assert.deepEqual(opp.board, before);
-  opp.attacks.xblock = 1;
-  handleAttack(other, "xblock", server.io);
-  assert.equal(opp.attacks.xblock, 0);
+  assert.deepEqual(opp.telemetry.sent, { xblock: 0, hardblock: 0 });
+  assert.deepEqual(opp.telemetry.charged, { xblock: 0, hardblock: 0 });
   waitForPlayer(pid, server.io);
   room.pausedAt = Date.now() - 4000;
   const endsAt = opp.ability.slowEndsAt;
@@ -767,8 +808,9 @@ test("slowdown gives a warning, limits server moves but not attacks, expires, an
   assert.ok(opp.ability.slowEndsAt >= endsAt + 4000);
   assert.equal(me.ability.id, "frost-wave");
   opp.ability.slowEndsAt = Date.now() - 1;
-  handleInput(other, "up", server.io);
+  handleInput(other, "left", server.io);
   assert.notDeepEqual(opp.board, before, "Expired slowdown must allow movement even if nextMoveAt is later");
+  assert.deepEqual(opp.telemetry.sent, { xblock: 1, hardblock: 0 });
 });
 
 test("32 swap exchanges only valid opponent tiles, preserves scores, and cannot move an anchored tile", async t => {

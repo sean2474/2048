@@ -22,6 +22,7 @@ test("arena details preserve the palette and fit every user page at three sizes"
       for (const route of ["/", "/find-match", "/loadout", "/history", "/settings", "/how-to-play", "/feedback", "/login", "/signup", "/auth/error", "/play/join", "/play/create", "/play/online", "/play/ranked", "/tutorial"]) {
         await page.goto(`${origin}${route}`);
         await page.getByRole("main").getByRole("heading", { level: 1 }).waitFor();
+        if (route === "/") assert.equal(await page.getByRole("link", { name: "튜토리얼 하기", exact: true }).getAttribute("href"), "/tutorial");
         const size = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, background: getComputedStyle(document.body).backgroundColor, primary: getComputedStyle(document.documentElement).getPropertyValue("--primary").trim(), emblems: document.querySelectorAll("main [data-emblem]").length }));
         assert.equal(size.width, width, `${route} overflows ${width}`);
         assert.equal(size.background, "rgb(246, 243, 235)");

@@ -28,7 +28,6 @@ function resultText(game: End) {
   const won = game.winner === "you";
   switch (game.reason) {
     case "reached_1024": return won ? "You reached 1024 first." : "Your opponent reached 1024 first.";
-    case "reached_2048": return won ? "You reached 2048 first." : "Your opponent reached 2048 first.";
     case "opponent_locked": return won ? "Your opponent has no moves left." : "Your board has no moves left.";
     case "surrender": return won ? "Your opponent surrendered." : "You surrendered this round.";
     case "opponent_disconnected": return won ? "Your opponent did not reconnect in time." : "You did not reconnect in time.";

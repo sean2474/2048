@@ -48,7 +48,7 @@ async function mockMatch(page, { mode = "casual", rating = 1460, opponentName = 
           const packet = `42${JSON.stringify(["message", fail ? { t: "error", reason: "code_not_found" } : match])}`;
           push(duplicate ? `${packet}\x1e${packet}` : packet);
         } else if (message.t === "joinRoom") {
-          const player = { board: [{ id: 1, row: 0, col: 0, value: 2 }, { id: 2, row: 0, col: 1, value: 2 }], score: 0, maxTile: 2, attacks: { xblock: 0, hardblock: 0 }, skinId: "classic", ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
+          const player = { board: [{ id: 1, row: 0, col: 0, value: 2 }, { id: 2, row: 0, col: 1, value: 2 }], score: 0, maxTile: 2, attacksSent: { xblock: 0, hardblock: 0 }, skinId: "classic", ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
           push(`42${JSON.stringify(["message", { t: "state", mode, serverTime: Date.now(), you: player, opp: player, names: { you: "타일탐험가", opp: opponentName }, paused: false, pendingAttacks: 0, incomingAttacks: { xblock: 0, hardblock: 0 } }])}`);
         }
       }

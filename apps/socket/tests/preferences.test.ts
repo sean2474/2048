@@ -287,28 +287,35 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
 
 test("legacy account and guest bindings upgrade without losing saved keys or locale", () => {
   const old = { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", xblock: "Digit1", hardblock: "Digit2" };
-  const saved = { ...defaults(), locale: "en" as const, keybindings: old, customShortcuts: false };
-  const expected = { ...saved, keybindings: { ...old, ability: "Digit4" } };
-  assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(saved))), expected);
-  assert.deepEqual(settingsFromRow({ ...settingsToRow(defaults()), locale: "en", keybindings: old, custom_shortcuts: false }), expected);
-  assert.equal(isSettingsPatch({ keybindings: old }), false);
+  for (const [bindings, expectedKeys] of [
+    [old, { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", ability: "Digit1" }],
+    [{ ...old, up: "Digit1", xblock: "KeyX", ability: "Digit3" }, { up: "Digit1", down: "KeyK", left: "KeyJ", right: "KeyL", ability: "Digit2" }],
+    [{ ...old, ability: "KeyF" }, { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", ability: "KeyF" }],
+  ]) {
+    const saved = { ...defaults(), locale: "en" as const, keybindings: bindings, customShortcuts: false };
+    const expected = { ...saved, keybindings: expectedKeys };
+    assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(saved))), expected);
+    assert.deepEqual(settingsFromRow({ ...settingsToRow(defaults()), locale: "en", keybindings: bindings, custom_shortcuts: false }), expected);
+    assert.equal(isSettingsPatch({ keybindings: bindings }), false);
+  }
   assert.throws(() => settingsFromRow({ ...settingsToRow(defaults()), keybindings: { ...old, ability: null } }), /Invalid saved settings/);
 });
 
-test("ability-key migration preserves old rows, permits old clients and strictly validates new bindings", async t => {
+test("manual ability migration preserves old rows and validates five-key settings", async t => {
   const db = new PGlite();
   t.after(() => db.close());
   const old = { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", xblock: "Digit1", hardblock: "Digit2" };
   await db.exec("create schema private; create role anon; create role authenticated; create role service_role; create table public.player_preferences(id int primary key, keybindings jsonb not null);");
   await db.query("insert into public.player_preferences values (1,$1::jsonb)", [JSON.stringify(old)]);
   await db.exec(await readFile(new URL("../../../supabase/migrations/20261016175755_ability_keybinding.sql", import.meta.url), "utf8"));
+  await db.exec(await readFile(new URL("../../../supabase/migrations/20261017060000_manual_ability_key.sql", import.meta.url), "utf8"));
   assert.deepEqual((await db.query("select keybindings from public.player_preferences where id=1")).rows, [{ keybindings: old }]);
   await db.exec("insert into public.player_preferences(id) values (2)");
   assert.deepEqual((await db.query("select keybindings from public.player_preferences where id=2")).rows, [{ keybindings: DEFAULT_SETTINGS.keybindings }]);
   for (const value of [old, DEFAULT_SETTINGS.keybindings, { ...old, ability: "KeyF" }]) {
     assert.deepEqual((await db.query("select private.valid_player_keybindings($1::jsonb) as valid", [JSON.stringify(value)])).rows, [{ valid: true }]);
   }
-  for (const value of [null, [], {}, { ...old, extra: "KeyF" }, { ...old, ability: "Digit3" }, { ...old, ability: null }, { ...old, ability: "Enter" }, { ...DEFAULT_SETTINGS.keybindings, extra: "KeyF" }]) {
+  for (const value of [null, [], {}, { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD", xblock: "Digit1" }, { ...old, extra: "KeyF" }, { ...old, ability: "Digit3" }, { ...old, ability: null }, { ...old, ability: "Enter" }, { ...DEFAULT_SETTINGS.keybindings, extra: "KeyF" }]) {
     assert.deepEqual((await db.query("select private.valid_player_keybindings($1::jsonb) as valid", [JSON.stringify(value)])).rows, [{ valid: false }]);
   }
 });

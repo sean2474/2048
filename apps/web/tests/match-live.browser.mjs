@@ -38,11 +38,15 @@ test("two browser tabs see their friend-match intro before entering a real game"
     await Promise.all([a, b].map(async page => {
       await page.waitForURL(/\/play\/[a-f\d-]{36}$/);
       await page.locator(".match-screen").waitFor();
-      await page.getByRole("button", { name: "오른쪽으로 이동", exact: true }).waitFor();
+      await page.locator("[data-ability-control]").waitFor();
     }));
     assert.equal(a.url(), b.url());
-    assert.equal(await a.getByRole("button", { name: "오른쪽으로 이동", exact: true }).isEnabled(), true);
-    assert.equal(await b.getByRole("button", { name: "오른쪽으로 이동", exact: true }).isEnabled(), true);
+    assert.equal(await a.locator(".direction-pad").isVisible(), true);
+    assert.equal(await b.locator(".direction-pad").isVisible(), true);
+    assert.equal(await a.locator(".game-player-heading [data-profile-icon=guest]").count(), 2);
+    assert.equal(await a.locator(".match-toolbar [data-emblem=friend]").count(), 1);
+    await a.setViewportSize({ width: 1440, height: 900 });
+    assert.equal(await a.locator(".direction-pad").isVisible(), false);
     assert.deepEqual(errors, []);
   } finally { await context.unrouteAll({ behavior: "ignoreErrors" }); await browser.close(); await server.close(); }
 });

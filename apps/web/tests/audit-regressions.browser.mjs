@@ -20,7 +20,7 @@ test("a failed preference save and its retry preserve the active game connection
     socket.on("message", message => {
       if (message.t !== "joinRoom" && message.t !== "input") return;
       if (message.t === "input") moves++;
-      const player = { board: [{ id: 1, row: 0, col: 0, value: 2 }], score: moves * 4, maxTile: 2, skinId: "classic", attacks: { xblock: 0, hardblock: 0 }, ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
+      const player = { board: [{ id: 1, row: 0, col: 0, value: 2 }], score: moves * 4, maxTile: 2, skinId: "classic", attacksSent: { xblock: 0, hardblock: 0 }, ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 } };
       socket.emit("message", { t: "state", serverTime: Date.now(), mode: "casual", you: player, opp: player, names: { you: "Guest", opp: "Opponent" }, paused: false, pendingAttacks: 0, incomingAttacks: { xblock: 0, hardblock: 0 } });
     });
   });
@@ -46,18 +46,27 @@ test("a failed preference save and its retry preserve the active game connection
       } });
     });
     const shortcuts = page.getByRole("checkbox", { name: "Enable custom shortcuts" });
-    await shortcuts.click();
-    await page.getByText("Could not save your settings. Please try again.", { exact: true }).waitFor();
-    await page.getByRole("button", { name: "Move right", exact: true }).click();
+    await page.getByRole("button", { name: "Keybindings", exact: true }).click();
+    await shortcuts.uncheck();
+    await page.getByRole("dialog").getByRole("button", { name: "Save keys", exact: true }).click();
+    await page.getByRole("dialog").getByText("Could not save your settings. Please try again.", { exact: true }).waitFor();
+    await page.getByRole("dialog").getByRole("button", { name: "Cancel", exact: true }).click();
+    await page.getByRole("dialog").waitFor({ state: "hidden" });
+    await page.keyboard.press("ArrowRight");
     await page.waitForFunction(() => document.querySelector('[data-testid="your-score"]')?.textContent === "4");
     assert.equal(connections.length, 1, "saving an unrelated preference must not reconnect the game");
     await page.evaluate(() => { delete document.cookie; });
+    await page.getByRole("button", { name: "Keybindings", exact: true }).click();
     await shortcuts.uncheck();
+    await page.getByRole("dialog").getByRole("button", { name: "Save keys", exact: true }).click();
+    await page.getByRole("dialog").waitFor({ state: "hidden" });
     await page.getByText("Could not save your settings. Please try again.", { exact: true }).waitFor({ state: "hidden" });
-    await page.getByRole("button", { name: "Move left", exact: true }).click();
+    await page.keyboard.press("ArrowLeft");
     await page.waitForFunction(() => document.querySelector('[data-testid="your-score"]')?.textContent === "8");
     assert.equal(connections.length, 1, "retrying a preference save must preserve the connection");
+    await page.getByRole("button", { name: "Keybindings", exact: true }).click();
     assert.equal(await shortcuts.isChecked(), false);
+    await page.getByRole("dialog").getByRole("button", { name: "Cancel", exact: true }).click();
     assert.deepEqual(errors, []);
   } finally {
     await context.unrouteAll({ behavior: "ignoreErrors" });

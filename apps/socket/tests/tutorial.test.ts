@@ -2,31 +2,33 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createLesson, tutorialReducer } from "../../web/src/lib/tutorial";
 
-test("the tutorial teaches controls, X and hard blocks before receiving attacks", () => {
+test("tutorial merges send attacks automatically and wait for the opponent's next move", () => {
   const initial = createLesson();
   assert.equal(tutorialReducer(initial, { type: "advance" }), initial);
-  assert.equal(tutorialReducer(initial, { type: "attack", blockType: "xblock" }), initial);
+  assert.equal(tutorialReducer(initial, { type: "opponentMove" }), initial);
   const merged = tutorialReducer(initial, { type: "move", dir: "left" });
   assert.equal(merged.complete, true);
   assert.equal(merged.score, 4);
-  assert.equal(merged.attacks.xblock, 0);
+  assert.deepEqual(merged.attacksSent, { xblock: 0, hardblock: 0 });
   assert.equal(tutorialReducer(merged, { type: "move", dir: "right" }), merged);
   let lesson = tutorialReducer(merged, { type: "advance" });
-  assert.deepEqual(lesson.board.map(tile => tile.value), [128, 128]);
   for (const blockType of ["xblock", "hardblock"] as const) {
-    const charged = tutorialReducer(lesson, { type: "move", dir: "right" });
-    assert.equal(charged.charged, true);
-    assert.equal(charged.complete, false);
-    assert.equal(charged.attacks[blockType], 1);
-    assert.equal(charged.score, blockType === "xblock" ? 256 : 512);
-    const sent = tutorialReducer(charged, { type: "attack", blockType });
-    assert.equal(sent.complete, true);
-    assert.equal(sent.attacks[blockType], 0);
-    assert.equal(sent.board, charged.board);
-    assert.equal(sent.opponent.filter(tile => tile.blockType === blockType).length, 1);
-    assert.equal(tutorialReducer(sent, { type: "attack", blockType }), sent);
-    assert.deepEqual(tutorialReducer(sent, { type: "restart" }), createLesson(sent.step));
-    lesson = tutorialReducer(sent, { type: "advance" });
+    const sent = tutorialReducer(lesson, { type: "move", dir: "right" });
+    assert.equal(sent.complete, false);
+    assert.equal(sent.attacksSent[blockType], 1);
+    assert.equal(sent.score, blockType === "xblock" ? 256 : 512);
+    assert.equal(sent.opponent, lesson.opponent);
+    assert.deepEqual(sent.opponentPending, [{ type: "addBlock", blockType }]);
+    assert.equal(tutorialReducer(sent, { type: "move", dir: "left" }), sent);
+    assert.equal(tutorialReducer(sent, { type: "advance" }), sent);
+    const landed = tutorialReducer(sent, { type: "opponentMove" });
+    assert.equal(landed.complete, true);
+    assert.equal(landed.board, sent.board);
+    assert.equal(landed.opponentPending.length, 0);
+    assert.equal(landed.opponent.filter(tile => tile.blockType === blockType).length, 1);
+    assert.equal(tutorialReducer(landed, { type: "opponentMove" }), landed);
+    assert.deepEqual(tutorialReducer(landed, { type: "restart" }), createLesson(landed.step));
+    lesson = tutorialReducer(landed, { type: "advance" });
   }
   assert.equal(lesson.step, 3);
   assert.deepEqual(initial, createLesson());
@@ -46,34 +48,13 @@ test("incoming attacks arrive after a move, then X slides while hard blocks stay
   assert.notEqual(moved.board.find(tile => tile.id === x.id)?.row, x.row);
   const fixed = moved.board.find(tile => tile.id === hard.id)!;
   assert.deepEqual([fixed.row, fixed.col], [hard.row, hard.col]);
-  assert.deepEqual(moved.attacks, { xblock: 0, hardblock: 0 });
+  assert.deepEqual(moved.attacksSent, { xblock: 0, hardblock: 0 });
   assert.equal(tutorialReducer(moved, { type: "advance" }).step, 4);
   assert.deepEqual(tutorialReducer(arrived, { type: "restart" }), incoming);
 });
 
-test("four saved attacks queue without moving and land together on one opponent move", () => {
-  let lesson = tutorialReducer(createLesson(4), { type: "move", dir: "left" });
-  assert.deepEqual(lesson.attacks, { xblock: 2, hardblock: 2 });
-  assert.equal(lesson.charged, true);
-  const board = lesson.board, opponent = lesson.opponent;
-  for (const blockType of ["xblock", "hardblock", "xblock"] as const) {
-    lesson = tutorialReducer(lesson, { type: "attack", blockType });
-    assert.equal(lesson.complete, false);
-    assert.equal(lesson.opponent, opponent);
-    assert.equal(lesson.board, board);
-  }
-  assert.equal(lesson.pending.length, 3);
-  lesson = tutorialReducer(lesson, { type: "attack", blockType: "hardblock" });
-  assert.equal(lesson.complete, true);
-  assert.deepEqual(lesson.attacks, { xblock: 0, hardblock: 0 });
-  assert.equal(lesson.pending.length, 0);
-  assert.equal(lesson.opponent.filter(tile => tile.blockType === "xblock").length, 2);
-  assert.equal(lesson.opponent.filter(tile => tile.blockType === "hardblock").length, 2);
-  assert.equal(tutorialReducer(lesson, { type: "advance" }).step, 5);
-});
-
 test("the default ability clears exactly the oldest X without moving tiles or consuming queued attacks", () => {
-  const initial = createLesson(5);
+  const initial = createLesson(4);
   const lesson = { ...initial, pending: [{ type: "addBlock" as const, blockType: "xblock" as const }] };
   const oldestX = lesson.board.find(tile => tile.blockType === "xblock")!;
   assert.equal(tutorialReducer(lesson, { type: "advance" }), lesson);
@@ -83,36 +64,35 @@ test("the default ability clears exactly the oldest X without moving tiles or co
   assert.equal(cleared.board.filter(tile => tile.blockType === "xblock").length, 1);
   assert.deepEqual(cleared.board, lesson.board.filter(tile => tile.id !== oldestX.id));
   assert.equal(cleared.pending, lesson.pending);
-  assert.equal(cleared.attacks, lesson.attacks);
+  assert.equal(cleared.attacksSent, lesson.attacksSent);
   assert.equal(cleared.score, lesson.score);
   assert.equal(cleared.opponent, lesson.opponent);
   assert.equal(tutorialReducer(cleared, { type: "ability" }), cleared);
   assert.equal(tutorialReducer(cleared, { type: "advance" }), cleared);
   assert.deepEqual(tutorialReducer(cleared, { type: "restart" }), initial);
-  assert.deepEqual(createLesson(5), initial);
 });
 
 test("the ability does not spend its practice use without an X or outside the ability lesson", () => {
-  const initial = createLesson(5);
+  const initial = createLesson(4);
   const noX = { ...initial, board: initial.board.filter(tile => tile.blockType !== "xblock") };
   assert.equal(tutorialReducer(noX, { type: "ability" }), noX);
-  for (const step of [0, 1, 2, 3, 4] as const) {
+  for (const step of [0, 1, 2, 3] as const) {
     const lesson = createLesson(step);
     assert.equal(tutorialReducer(lesson, { type: "ability" }), lesson);
   }
 });
 
-test("a different first direction keeps the lesson playable and invalid moves do not charge", () => {
+test("a different first direction stays playable and invalid moves never send attacks", () => {
   const initial = createLesson(1);
   const up = tutorialReducer(initial, { type: "move", dir: "up" });
-  assert.equal(up.charged, false);
+  assert.deepEqual(up.attacksSent, { xblock: 0, hardblock: 0 });
   const blocked = tutorialReducer(up, { type: "move", dir: "up" });
   assert.equal(blocked.board, up.board);
   assert.equal(blocked.score, 0);
-  assert.equal(blocked.attacks.xblock, 0);
+  assert.equal(blocked.attacksSent.xblock, 0);
   assert.ok(blocked.notice.startsWith("Nothing moved."));
-  const charged = tutorialReducer(blocked, { type: "move", dir: "left" });
-  assert.equal(charged.charged, true);
-  assert.equal(charged.attacks.xblock, 1);
+  const sent = tutorialReducer(blocked, { type: "move", dir: "left" });
+  assert.equal(sent.attacksSent.xblock, 1);
+  assert.equal(sent.opponentPending.length, 1);
   assert.deepEqual(tutorialReducer(up, { type: "restart" }), initial);
 });

@@ -1,11 +1,12 @@
-import type { MatchRecord, ResultStatus } from "schema/results";
+import type { Account, MatchRecord, ResultStatus } from "schema/results";
 import type { Server } from "socket.io";
-import { anchorHighest, applyMove, chargeAttacks, clearOldestX, hasMoves, swap32 } from "game-core";
-import { ABILITY_CHARGE, MAX_PENDING_ATTACKS, SLOW_DURATION_MS, SLOW_MOVE_MS, SLOW_WARNING_MS, type S2C, type EndReason, type Dir, type AttackType, type ActionRejected } from "schema/in-game";
+import { anchorHighest, applyMove, attacksFromMerges, clearOldestX, hasMoves, swap32 } from "game-core";
+import { ABILITY_CHARGE, MAX_PENDING_ATTACKS, SLOW_DURATION_MS, SLOW_MOVE_MS, SLOW_WARNING_MS, type S2C, type EndReason, type Dir, type ActionRejected, type PublicPlayerState } from "schema/in-game";
 import { playerChannel, RECONNECT_TIMEOUT, type PlayerId, type Room, type PlayerState } from "./types";
 import { rooms, playerRoom, disconnectTimers, disconnectDeadlines } from "./state";
 import { DEFAULT_ABILITY_ID, type AbilityId, type SkinId } from "schema/loadout";
 import { achievementForItem } from "schema/achievements";
+import { DEFAULT_PROFILE_ICON } from "schema/profile-icons";
 
 export function clearDisconnect(pid: PlayerId) {
   clearTimeout(disconnectTimers.get(pid));
@@ -52,10 +53,10 @@ export function handleInput(pid: PlayerId, dir: Dir, io: Server) {
   }
   const result = applyMove(me.board, dir, room.rng, me.pending, me.ability.spawnPauseMoves === 0);
   if (!result.moved) return;
-  const charged = chargeAttacks(result.board, me.attacks);
+  const generated = attacksFromMerges(result.board);
   me.telemetry.moves++;
   for (const type of ["xblock", "hardblock"] as const) {
-    me.telemetry.charged[type] += charged[type] - me.attacks[type];
+    me.telemetry.charged[type] += generated[type];
     me.telemetry.received[type] += me.pending.filter(effect => effect.type === "addBlock" && effect.blockType === type).length
       - result.pendingEffects.filter(effect => effect.type === "addBlock" && effect.blockType === type).length;
   }
@@ -66,12 +67,18 @@ export function handleInput(pid: PlayerId, dir: Dir, io: Server) {
   if (me.ability.anchorMoves > 0 && --me.ability.anchorMoves === 0) {
     me.board = me.board.map(tile => tile.anchored ? { ...tile, anchored: false } : tile);
   }
-  me.attacks = charged;
   me.pending = result.pendingEffects;
   me.score += result.scoreDelta;
   me.maxTile = Math.max(...me.board.filter(t => !t.ghost).map(t => t.value), 0);
   if (me.maxTile >= 1024) return endGame(room, pid, "reached_1024", io);
   if (finishLockedGame(room, io)) return;
+  const opp = room.state[room.players.find(player => player !== pid)!];
+  for (const blockType of ["xblock", "hardblock"] as const) {
+    const accepted = Math.min(generated[blockType], Math.max(0, MAX_PENDING_ATTACKS - opp.pending.length));
+    me.telemetry.sent[blockType] += accepted;
+    // Overflow is discarded; accepted attacks land on the recipient's next valid move.
+    for (let i = 0; i < accepted; i++) opp.pending.push({ type: "addBlock", blockType });
+  }
   broadcast(room, io);
 }
 
@@ -127,26 +134,6 @@ export function handleAbility(pid: PlayerId, io: Server) {
   if (!finishLockedGame(room, io)) broadcast(room, io);
 }
 
-export function handleAttack(pid: PlayerId, blockType: AttackType, io: Server) {
-  const room = rooms.get(playerRoom.get(pid) ?? "");
-  if (!room?.open) return;
-  const me = room.state[pid];
-  const opponent = room.players.find(p => p !== pid)!;
-  const opp = room.state[opponent];
-  const reason: ActionRejected["reason"] | undefined = room.ready.size !== 2 ? "paused"
-    : me.attacks[blockType] <= 0 ? "no_charge"
-    : opp.pending.length >= MAX_PENDING_ATTACKS ? "incoming_full" : undefined;
-  if (reason) {
-    io.to(playerChannel(pid)).emit("message", { t: "actionRejected", reason } satisfies S2C);
-    return;
-  }
-  me.attacks[blockType]--;
-  me.telemetry.sent[blockType]++;
-  // Delivery waits for the recipient's next valid move; inventory is spent now.
-  opp.pending.push({ type: "addBlock", blockType });
-  broadcast(room, io);
-}
-
 export function handleSurrender(pid: PlayerId, io: Server) {
   const room = rooms.get(playerRoom.get(pid) ?? "");
   if (room?.open) endGame(room, room.players.find(p => p !== pid)!, "surrender", io);
@@ -180,7 +167,7 @@ export function endGame(room: Room, winner: PlayerId | null, reason: EndReason, 
     const recording: ResultStatus = !room.accounts[pid] ? "guest" : room.persistResult ? "saving" : "unavailable";
     io.to(playerChannel(pid)).emit("message", {
       t: "end", matchId: room.id, mode: room.mode, recording, winner: winner === null ? "draw" : winner === pid ? "you" : "opp",
-      reason, you: publicState(room.state[pid]), opp: publicState(room.state[opp]),
+      reason, you: publicState(room.state[pid], room.accounts[pid]), opp: publicState(room.state[opp], room.accounts[opp]),
     } satisfies S2C);
     clearDisconnect(pid);
     playerRoom.delete(pid);
@@ -196,14 +183,14 @@ export function endGame(room: Room, winner: PlayerId | null, reason: EndReason, 
   }
 }
 
-function publicState(state: PlayerState) {
-  return { skinId: state.skinId ?? "classic", board: state.board, score: state.score, maxTile: state.maxTile, attacks: state.attacks, ability: { ...state.ability } };
+function publicState(state: PlayerState, account: Account | null): PublicPlayerState {
+  return { iconId: account ? account.iconId ?? DEFAULT_PROFILE_ICON : "guest", skinId: state.skinId ?? "classic", board: state.board, score: state.score, maxTile: state.maxTile, attacksSent: { ...state.telemetry.sent }, ability: { ...state.ability } };
 }
 export function snapshot(room: Room, viewer: PlayerId): S2C {
   const opponent = room.players.find(p => p !== viewer)!;
   const deadlines = room.players.flatMap(p => disconnectDeadlines.has(p) ? [disconnectDeadlines.get(p)!] : []);
   return {
-    t: "state", mode: room.mode, you: publicState(room.state[viewer]), opp: publicState(room.state[opponent]),
+    t: "state", mode: room.mode, you: publicState(room.state[viewer], room.accounts[viewer]), opp: publicState(room.state[opponent], room.accounts[opponent]),
     paused: room.ready.size !== 2,
     serverTime: room.pausedAt ?? Date.now(),
     reconnectDeadline: deadlines.length ? Math.min(...deadlines) : undefined,

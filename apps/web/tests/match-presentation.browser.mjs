@@ -81,7 +81,7 @@ test("waiting, retry, cancel, ranked guest gate and real victory/defeat overlays
       await page.waitForURL(/\/play\/[a-f\d-]{36}$/);
       await page.getByRole("button", { name: "기권", exact: true }).waitFor();
     }
-    for (const direction of ["왼쪽으로 이동", "아래로 이동", "오른쪽으로 이동", "위로 이동"]) await a.getByRole("button", { name: direction, exact: true }).click();
+    for (const key of ["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"]) await a.keyboard.press(key);
     await b.getByRole("button", { name: "기권", exact: true }).click();
     await b.getByRole("alertdialog").getByRole("button", { name: "기권", exact: true }).click();
     for (const [page, outcome, title] of [[a, "victory", "승리!"], [b, "defeat", "패배"]]) {
@@ -121,25 +121,25 @@ test("selected account icon appears while waiting", async () => {
 test("result variants, missing opponent, reduced motion and recording updates", { timeout: 120000 }, async () => {
   await withServer(async ({ context, server }) => {
     let socket;
-    const player = { ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 }, skinId: "classic", board: [{ id: 1, row: 0, col: 0, value: 2048 }], score: 20504, maxTile: 2048, attacks: { xblock: 0, hardblock: 0 } };
+    const player = { ability: { id: "clear-x", charge: 0, spawnPauseMoves: 0, anchorMoves: 0, slowStartsAt: 0, slowEndsAt: 0, nextMoveAt: 0 }, skinId: "classic", board: [{ id: 1, row: 0, col: 0, value: 2048 }], score: 20504, maxTile: 2048, attacksSent: { xblock: 0, hardblock: 0 } };
     server.io.on("connection", connection => {
       socket = connection;
       connection.removeAllListeners("message");
       connection.on("message", message => { if (message.t === "joinRoom") connection.emit("message", { t: "state", serverTime: Date.now(), mode: "ranked", you: player, opp: player, names: { you: "아주긴닉네임도화면밖으로나가지않아요", opp: "상대플레이어" }, paused: false, pendingAttacks: 0, incomingAttacks: { xblock: 0, hardblock: 0 } }); });
     });
-    for (const [winner, reason, title, mode] of [["you", "reached_1024", "승리!", "ranked"], ["opp", "reached_1024", "패배", "casual"], ["draw", "draw", "무승부", "friend"], ["you", "reached_2048", "승리!", "ranked"], ["opp", "opponent_locked", "패배", "casual"], ["you", "opponent_disconnected", "승리!", "friend"]]) {
+    for (const [winner, reason, title, mode] of [["you", "reached_1024", "승리!", "ranked"], ["opp", "reached_1024", "패배", "casual"], ["draw", "draw", "무승부", "friend"], ["opp", "opponent_locked", "패배", "casual"], ["you", "opponent_disconnected", "승리!", "friend"]]) {
       const page = await context.newPage();
       await page.setViewportSize({ width: 375, height: 812 });
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(`${origin}/play/20000000-0000-4000-8000-000000000001`);
       await page.locator(".game-you").waitFor();
+      assert.equal(await page.locator(".match-toolbar [data-emblem=crown]").count(), 1);
       const end = { t: "end", matchId: "fixture-match", mode, winner, reason, recording: "saving", you: player, ...(winner === "opp" ? {} : { opp: { ...player, score: 18064 } }) };
       socket.emit("message", end);
       const result = page.getByRole("dialog", { name: title, exact: true });
       await result.waitFor();
-      if (reason === "reached_1024" || reason === "reached_2048") {
-        const tile = reason === "reached_1024" ? 1024 : 2048;
-        assert.equal(await result.locator(".match-end-description").textContent(), `${winner === "opp" ? "상대가 " : ""}${tile}${tile === 1024 ? "를" : "을"} 먼저 만들었습니다.`);
+      if (reason === "reached_1024") {
+        assert.equal(await result.locator(".match-end-description").textContent(), `${winner === "opp" ? "상대가 " : ""}1024를 먼저 만들었습니다.`);
       }
       assert.equal(await result.locator(".match-end-title").evaluate(el => getComputedStyle(el).animationName), "none");
       assert.equal(await result.locator(".match-end-score").first().textContent(), "20,504");

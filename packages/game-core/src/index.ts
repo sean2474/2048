@@ -1,5 +1,5 @@
-import type { AbilityState, AttackInventory, BlockType, Board, Cell, Dir, Effect } from "schema/in-game";
-import { MAX_ATTACK_STOCK, SIZE } from "schema/in-game";
+import type { AbilityState, AttackCounts, BlockType, Board, Cell, Dir, Effect } from "schema/in-game";
+import { SIZE } from "schema/in-game";
 import { DEFAULT_ABILITY_ID } from "schema/loadout";
 
 export type ApplyResult = {
@@ -263,14 +263,14 @@ export function applyMove(board: Board, dir: Dir, rng: () => number, pending: Ef
   };
 }
 
-export function chargeAttacks(board: Board, attacks: AttackInventory): AttackInventory {
-  const charged = { ...attacks };
+export function attacksFromMerges(board: Board): AttackCounts {
+  const attacks: AttackCounts = { xblock: 0, hardblock: 0 };
   for (const tile of board) {
     if (!tile.merged || tile.ghost || getBlockType(tile) !== "normal") continue;
-    if (tile.value === 256) charged.xblock = Math.min(MAX_ATTACK_STOCK, charged.xblock + 1);
-    if (tile.value === 512) charged.hardblock = Math.min(MAX_ATTACK_STOCK, charged.hardblock + 1);
+    if (tile.value === 256) attacks.xblock++;
+    if (tile.value === 512) attacks.hardblock++;
   }
-  return charged;
+  return attacks;
 }
 
 export function applyEffects(board: Board, effects: Effect[], rng: () => number): Board {

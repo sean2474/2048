@@ -26,7 +26,7 @@ export function useGameKeyboard({ enabled, bindings, characterShortcuts, onActio
       if (!action) return;
       event.preventDefault();
       if (event.repeat) return;
-      if (action === "xblock" || action === "hardblock" || action === "ability") actionRef.current(action);
+      if (action === "ability") actionRef.current(action);
       else movement.press(event.code, action);
     };
     const onKeyUp = (event: KeyboardEvent) => movement.release(event.code);
