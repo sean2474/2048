@@ -23,6 +23,12 @@ test('admin records render on the server, share verified access, validate URL fi
     if (name === 'admin_matches') return { data: { matches: [], hasMore: false, nextCursor: null } };
     if (name === 'admin_audit_entries') return { data: { entries: [], hasMore: false, nextCursor: null } };
     if (name === 'admin_content_catalog') return { data: { skins: [], profileIcons: [], achievements: [] } };
+    if (name === 'admin_overview') return { data: { periodDays: 7, periodStart: '2026-10-10T15:00:00Z', periodEnd: '2026-10-17T15:00:00Z',
+      totals: { matches: 12, rankedMatches: 5, players: 6, avgDurationSeconds: 90, avgScore: 1500, telemetryParticipants: 24, unmeasuredParticipants: 0, avgMoves: 40 },
+      modes: [{ mode: 'casual', matches: 7 }, { mode: 'ranked', matches: 5 }], reasons: [{ reason: 'reached_1024', matches: 12 }],
+      daily: [{ date: '2026-10-16', matches: 5 }, { date: '2026-10-17', matches: 7 }], tiers: [{ tier: 'Gold', players: 6 }],
+      attacks: [{ type: 'xblock', charged: 9, sent: 8, received: 7, participantsWhoSent: 8, winsWhenSent: 6 }, { type: 'hardblock', charged: 2, sent: 2, received: 1, participantsWhoSent: 2, winsWhenSent: 1 }],
+      abilities: [{ ability: 'frost-wave', participants: 8, wins: 6, uses: 11 }, { ability: 'clear-x', participants: 3, wins: 1, uses: 2 }] } };
     return { data: null };
   } });
   t.after(() => app.close());
@@ -45,6 +51,16 @@ test('admin records render on the server, share verified access, validate URL fi
   assert.doesNotMatch(detail, /<b>Fixture grant/);
   assert.match(detail, /Grant coins…/);
   assert.match(await html('/seasons'), /SSR season history/);
+  const overview = await html('/?days=7');
+  // The fixture renders Korean, so match rendered copy rather than the embedded English dictionary.
+  assert.match(overview, /id="ability-heading"[^>]*>특수 능력별 승률</);
+  assert.match(overview, /감속<\/span><span[^>]*>사용 11회/, 'frost-wave shows its use count');
+  assert.match(overview, /<strong>75(<!-- -->)?%<\/strong>/, 'frost-wave: 6 wins of 8 measured results');
+  assert.match(overview, /<strong>33(<!-- -->)?%<\/strong>[\s\S]{0,400}?표본 부족/, 'clear-x has fewer than 5 samples');
+  assert.match(overview, /알박기/, 'abilities without results stay listed');
+  assert.ok((overview.match(/기록 없음/g) ?? []).length >= 3, 'three abilities have no measured results (streamed chunks may split rows)');
+  assert.match(overview, /<svg[^>]*role="img"[^>]*aria-label="일별 종료 대전/);
+  assert.match(overview, /<table class="sr-only">/);
   assert.match(await html('/matches'), /No saved matches found/);
   assert.match(await html('/audit'), /No access changes recorded/);
   unavailable = true;

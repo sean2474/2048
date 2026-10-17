@@ -13,6 +13,8 @@ export type AdminOverview = {
   daily: { date: string; matches: number }[];
   tiers: { tier: string; players: number }[];
   attacks: { type: "xblock" | "hardblock"; charged: number; sent: number; received: number; participantsWhoSent: number; winsWhenSent: number }[];
+  // Absent on databases that have not applied the ability statistics migration.
+  abilities?: { ability: string; participants: number; wins: number; uses: number }[];
 };
 export type AdminPlayer = {
   id: string; name: string; username: string | null; email: string | null; createdAt: string;

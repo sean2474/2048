@@ -26,6 +26,7 @@ export function joinRoom(pid: PlayerId, roomId: string, io: Server, skinId: Skin
     const account = room.accounts[pid];
     room.state[pid].skinId = account && (["classic", "slate", "paper", "charcoal", "espresso"].includes(skinId) || account.skinId === skinId) ? skinId : "classic";
     room.state[pid].ability.id = account ? abilityId : DEFAULT_ABILITY_ID;
+    room.state[pid].telemetry.ability = room.state[pid].ability.id;
   }
   clearDisconnect(pid);
   room.ready.add(pid);
@@ -133,6 +134,7 @@ export function handleAbility(pid: PlayerId, io: Server) {
     }
   }
   me.ability.charge = 0;
+  me.telemetry.abilityUses = (me.telemetry.abilityUses ?? 0) + 1;
   if (!finishLockedGame(room, io)) broadcast(room, io);
 }
 

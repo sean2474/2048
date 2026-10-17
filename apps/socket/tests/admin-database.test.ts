@@ -94,7 +94,7 @@ test("suspension is atomic, audited, idempotent, and protects administrators", a
 
 test("telemetry remains nullable, validates atomically, deduplicates and powers measured balance aggregates", async t => {
   const { db, as, rpc, record } = await database(t);
-  const measured = { moves: 10, charged: { xblock: 3, hardblock: 1 }, sent: { xblock: 2, hardblock: 1 }, received: { xblock: 1, hardblock: 0 } };
+  const measured = { moves: 10, charged: { xblock: 3, hardblock: 1 }, sent: { xblock: 2, hardblock: 1 }, received: { xblock: 1, hardblock: 0 }, ability: "frost-wave", abilityUses: 2 };
   const id = randomUUID();
   assert.equal(await record(id, measured), true);
   assert.equal(await record(id, zero), false);
@@ -103,7 +103,8 @@ test("telemetry remains nullable, validates atomically, deduplicates and powers 
   await record(randomUUID(), zero, "friend");
   await record(randomUUID(), measured, "ranked", 50);
   const before = (await db.query("select * from public.player_ratings order by player_id")).rows;
-  const invalids = [{}, [], { ...zero, moves: -1 }, { ...zero, moves: 1.5 }, { ...zero, moves: "1" }, { ...zero, moves: 1_000_000_001 }, { ...zero, sent: { xblock: 0 } }, { ...zero, charged: { xblock: null, hardblock: 0 } }, { ...zero, extra: true }, { ...zero, sent: { xblock: 0, hardblock: 0, extra: 1 } }];
+  const invalids = [{}, [], { ...zero, moves: -1 }, { ...zero, moves: 1.5 }, { ...zero, moves: "1" }, { ...zero, moves: 1_000_000_001 }, { ...zero, sent: { xblock: 0 } }, { ...zero, charged: { xblock: null, hardblock: 0 } }, { ...zero, extra: true }, { ...zero, sent: { xblock: 0, hardblock: 0, extra: 1 } },
+    { ...zero, ability: "Bad Name!" }, { ...zero, ability: 7 }, { ...zero, ability: "" }, { ...zero, abilityUses: -1 }, { ...zero, abilityUses: 1.5 }, { ...zero, abilityUses: "2" }];
   for (const bad of invalids) {
     const badId = randomUUID();
     await assert.rejects(record(badId, bad), /Invalid match telemetry/);
@@ -119,6 +120,9 @@ test("telemetry remains nullable, validates atomically, deduplicates and powers 
       { type: "xblock", charged: 3, sent: 2, received: 1, participantsWhoSent: 1, winsWhenSent: 1 },
       { type: "hardblock", charged: 1, sent: 1, received: 0, participantsWhoSent: 1, winsWhenSent: 1 },
     ]);
+    assert.deepEqual(overview.abilities, [{ ability: "frost-wave", participants: 1, wins: 1, uses: 2 }], "results without an ability key are not counted as any ability");
+    assert.deepEqual((await rpc<AdminOverview>("public.admin_overview(90,'ranked')")).abilities, [{ ability: "frost-wave", participants: 2, wins: 2, uses: 4 }], "the 50-day-old ranked result joins the 90-day window");
+    assert.deepEqual((await rpc<AdminOverview>("public.admin_overview(30,'friend')")).abilities, []);
     assert.equal((await rpc<AdminOverview>("public.admin_overview(90,'ranked')")).totals.matches, 2);
     const casual = await rpc<AdminOverview>("public.admin_overview(30,'casual')");
     assert.equal(casual.totals.avgMoves, null); assert.equal(casual.totals.unmeasuredParticipants, 2);

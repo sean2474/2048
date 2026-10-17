@@ -119,8 +119,8 @@ export function createMatch(p1: PlayerId, p2: PlayerId, io: Server, event: "matc
     accounts: { [p1]: accounts.get(p1) ?? null, [p2]: accounts.get(p2) ?? null },
     id, mode, players: [p1, p2], ready: new Set(), rng, open: true,
     state: {
-      [p1]: { board: first, score: 0, maxTile: Math.max(...first.map(t => t.value)), pending: [], ability: createAbilityState(), telemetry: { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 } } },
-      [p2]: { board: second, score: 0, maxTile: Math.max(...second.map(t => t.value)), pending: [], ability: createAbilityState(), telemetry: { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 } } },
+      [p1]: { board: first, score: 0, maxTile: Math.max(...first.map(t => t.value)), pending: [], ability: createAbilityState(), telemetry: { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 }, abilityUses: 0 } },
+      [p2]: { board: second, score: 0, maxTile: Math.max(...second.map(t => t.value)), pending: [], ability: createAbilityState(), telemetry: { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 }, abilityUses: 0 } },
     },
   };
   rooms.set(id, room);

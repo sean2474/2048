@@ -1,12 +1,15 @@
 import { z } from "zod";
 import type { ProfileIconId } from "./profile-icons";
-import type { SkinId } from "./loadout";
+import { ABILITIES, type SkinId } from "./loadout";
 import type { RankProgress, Tier } from "./ranking";
 import { MatchModeSchema, type MatchMode } from "./in-game";
 const AttackCountsSchema = z.object({ xblock: z.number().int().min(0).max(1_000_000_000), hardblock: z.number().int().min(0).max(1_000_000_000) }).strict();
 export const MatchTelemetrySchema = z.object({
   moves: z.number().int().min(0).max(1_000_000_000),
   charged: AttackCountsSchema, sent: AttackCountsSchema, received: AttackCountsSchema,
+  // The ability chosen before the match and how often it fired; absent on records before ability statistics.
+  ability: z.string().refine(value => ABILITIES.some(ability => ability.id === value)).optional(),
+  abilityUses: z.number().int().min(0).max(1_000_000_000).optional(),
 }).strict();
 export type MatchTelemetry = z.infer<typeof MatchTelemetrySchema>;
 export const MatchRecordSchema = z.object({

@@ -6,7 +6,9 @@ import { QuerySelect } from "@/components/query-select";
 import { OperationsNotice } from "@/components/operations-notice";
 import { adminTime } from "@/lib/investigation";
 import type { AdminMode, AdminOverview } from "schema/admin";
+import { ABILITIES } from "schema/loadout";
 import { getAdminClient } from "@/lib/supabase/admin";
+import { BarList, ColumnChart, RateBars, SERIES_COLORS } from "@/components/charts";
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const [{ t, locale }, params, client] = await Promise.all([getI18n(), searchParams, getAdminClient()]);
@@ -55,10 +57,29 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>}
         <p className="border-t bg-muted/40 px-6 py-4 text-[11px] leading-5 text-muted-foreground">{t("Only measured player results are included. Missing historical telemetry is excluded, not counted as zero. Win rate is the share of sender results ending in a win. It shows correlation, not the attack’s effect. A result may appear in both rows.")}</p>
       </section>
-      <div className="grid md:grid-cols-2 gap-4">
+      <section className="admin-panel space-y-5 p-6" aria-labelledby="ability-heading">
+        <div><h2 id="ability-heading" className="admin-section-title">{t("Special ability win rates")}</h2><p className="mt-2 text-xs leading-5 text-muted-foreground">{t("Share of measured player results that ended in a win, grouped by the ability chosen before the match. The dashed line marks 50%. This shows correlation, not the ability’s effect; fewer than 5 samples are shown faded.")}</p></div>
+        <RateBars locale={locale} emptyLabel={t("No results")} lowSampleLabel={t("small sample")} sampleLabel={count => t("n={count}", { count })}
+          rows={ABILITIES.map((ability, index) => {
+            const stat = data.abilities?.find(row => row.ability === ability.id);
+            return { key: ability.id, label: t(ability.name), color: SERIES_COLORS[index], wins: stat?.wins ?? 0, samples: stat?.participants ?? 0, detail: stat?.uses ? t("{count} uses", { count: stat.uses.toLocaleString(locale) }) : undefined };
+          })} />
+        {data.abilities === undefined && <p className="text-xs text-muted-foreground">{t("Ability statistics appear once the ability statistics migration is applied to this database.")}</p>}
+        <h3 className="text-xs font-semibold">{t("Attack win rates")}</h3>
+        <RateBars locale={locale} emptyLabel={t("No senders")} lowSampleLabel={t("small sample")} sampleLabel={count => t("n={count}", { count })}
+          rows={data.attacks.map((attack, index) => ({ key: attack.type, label: t(attack.type === "xblock" ? "X block" : "Hard block"), color: SERIES_COLORS[index], wins: attack.winsWhenSent, samples: attack.participantsWhoSent }))} />
+      </section>
+      <section className="admin-panel space-y-4 p-6" aria-labelledby="daily-heading">
+        <h2 id="daily-heading" className="admin-section-title">{t("Daily completed matches (KST)")}</h2>
+        <ColumnChart locale={locale} title={t("Daily completed matches (KST)")} valueLabel={t("Completed matches")}
+          columns={data.daily.map(row => {
+            const day = new Date(`${row.date}T00:00:00+09:00`);
+            return { label: day.toLocaleDateString(locale, { timeZone: "Asia/Seoul", month: "numeric", day: "numeric" }), value: row.matches, title: `${day.toLocaleDateString(locale, { timeZone: "Asia/Seoul", dateStyle: "medium" })}: ${row.matches.toLocaleString(locale)}` };
+          })} />
+      </section>
+      <div className="grid gap-4 md:grid-cols-3">
         <Counts title="Matches by mode" rows={data.modes.map(row => ({ label: row.mode, count: row.matches }))} />
         <Counts title="Match ending reasons" rows={data.reasons.map(row => ({ label: row.reason, count: row.matches }))} />
-        <Counts title="Daily completed matches (KST)" rows={data.daily.map(row => ({ label: new Date(`${row.date}T00:00:00+09:00`).toLocaleDateString(locale, { timeZone: "Asia/Seoul", dateStyle: "medium" }), count: row.matches }))} />
         <Counts title="Current ranked tier distribution" description="All players with a ranked rating; independent of the period and mode filters." rows={data.tiers.map(row => ({ label: row.tier, count: row.players }))} />
       </div>
     </>}
@@ -67,10 +88,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
 async function Counts({ title, description, rows }: { title: string; description?: string; rows: { label: string; count: number }[] }) {
   const { t, locale } = await getI18n();
-  const maximum = Math.max(1, ...rows.map(row => row.count));
-  return <section className="admin-panel p-6 space-y-5">
+  return <section className="admin-panel space-y-5 p-6">
     <h2 className="admin-section-title">{t(title)}</h2>
     {description && <p className="text-xs leading-5 text-muted-foreground">{t(description)}</p>}
-    {!rows.length ? <p className="text-sm text-muted-foreground">{t("No data yet.")}</p> : <ul className="space-y-5 max-h-80 overflow-y-auto">{rows.map(row => <li key={row.label} className="text-xs"><div className="flex justify-between gap-4"><span className="capitalize text-muted-foreground">{t(row.label.replaceAll("_", " "))}</span><span className="font-semibold tabular-nums">{row.count.toLocaleString(locale)}</span></div><div aria-hidden="true" className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-1.5 rounded-full bg-secondary-foreground/75" style={{ width: `${row.count / maximum * 100}%` }} /></div></li>)}</ul>}
+    {!rows.length ? <p className="text-sm text-muted-foreground">{t("No data yet.")}</p> : <BarList locale={locale} rows={rows.map(row => ({ label: t(row.label.replaceAll("_", " ")), count: row.count }))} />}
   </section>;
 }
