@@ -1,0 +1,2454 @@
+{
+  "label": "lcp-after",
+  "measuredAt": "2026-10-17T11:36:39.751Z",
+  "commit": "e981e47278b1c03c5d7f7185bf06decf14276404",
+  "environment": {
+    "mode": "local-production-build",
+    "node": "v26.0.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M5 Max",
+    "browser": "155.0.8059.80",
+    "runs": 5,
+    "throttling": "none",
+    "backend": "loopback fixture data + real local Socket.IO; no external database or network latency simulation",
+    "cold": "fresh context with empty HTTP cache; warm server process",
+    "warm": "same-context reload",
+    "mobile": "viewport/touch emulation on desktop CPU, not real phone",
+    "observationWindowMs": 1000,
+    "unknownFixtureRoutes": [
+      "/realtime/v1/websocket"
+    ]
+  },
+  "coverage": [
+    {
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "auth": true,
+      "ready": {
+        "selector": "main a[href=\"/find-match\"]"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/achievements",
+      "path": "/achievements",
+      "auth": true,
+      "ready": {
+        "selector": "#achievement-rewards progress"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/auth/error",
+      "path": "/auth/error",
+      "auth": false,
+      "ready": {
+        "selector": "main a"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/feedback",
+      "path": "/feedback",
+      "auth": true,
+      "ready": {
+        "selector": "main textarea"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/find-match",
+      "path": "/find-match",
+      "auth": true,
+      "ready": {
+        "selector": "main"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/forgot-password",
+      "path": "/forgot-password",
+      "auth": false,
+      "ready": {
+        "selector": "input[type=\"email\"]"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/friends",
+      "path": "/friends",
+      "auth": true,
+      "ready": {
+        "text": "Benchmark Rival"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/history",
+      "path": "/history",
+      "auth": true,
+      "ready": {
+        "text": "Benchmark Rival"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/how-to-play",
+      "path": "/how-to-play",
+      "auth": true,
+      "ready": {
+        "selector": "main"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/leaderboard",
+      "path": "/leaderboard",
+      "auth": true,
+      "ready": {
+        "text": "Benchmark Player"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/loadout",
+      "path": "/loadout",
+      "auth": true,
+      "ready": {
+        "selector": "[role=\"tablist\"]"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/login",
+      "path": "/login",
+      "auth": false,
+      "ready": {
+        "selector": "input[type=\"password\"]"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/play/[id]",
+      "journey": "real-match"
+    },
+    {
+      "app": "web",
+      "route": "/play/create",
+      "path": "/play/create",
+      "auth": true,
+      "ready": {
+        "selector": "[data-testid=\"join-code\"]"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/play/join",
+      "path": "/play/join",
+      "auth": true,
+      "ready": {
+        "selector": "#room-code"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/play/online",
+      "path": "/play/online",
+      "auth": true,
+      "ready": {
+        "text": "Looking for an opponent"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/play/ranked",
+      "path": "/play/ranked",
+      "auth": true,
+      "ready": {
+        "text": "Looking for an opponent"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/reset-password",
+      "path": "/reset-password",
+      "auth": false,
+      "ready": {
+        "selector": "main"
+      },
+      "state": "no-recovery-session"
+    },
+    {
+      "app": "web",
+      "route": "/settings",
+      "path": "/settings",
+      "auth": true,
+      "ready": {
+        "selector": "main button"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/shop",
+      "path": "/shop",
+      "auth": true,
+      "ready": {
+        "selector": "#shop-items > li"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/signup",
+      "path": "/signup",
+      "auth": false,
+      "ready": {
+        "selector": "input[type=\"password\"]"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/solo",
+      "path": "/solo",
+      "auth": true,
+      "ready": {
+        "selector": "[aria-label=\"Solo controls\"] button:not([disabled])"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/test",
+      "path": "/test",
+      "auth": true,
+      "ready": {
+        "selector": "main"
+      },
+      "state": "legacy-route"
+    },
+    {
+      "app": "web",
+      "route": "/tutorial",
+      "path": "/tutorial",
+      "auth": true,
+      "ready": {
+        "selector": ".game-you [data-skin]"
+      }
+    },
+    {
+      "app": "web",
+      "route": "/watch/[id]",
+      "path": "/watch/10000000-0000-4000-8000-000000000098",
+      "auth": true,
+      "ready": {
+        "text": "No match available to watch"
+      },
+      "state": "offline-player"
+    }
+  ],
+  "bundles": [
+    {
+      "app": "web",
+      "route": "/forgot-password",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/f7543079ba681824.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 879985,
+      "gzipBytes": 256897,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/login",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/f7bd3635dacd1c38.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 881234,
+      "gzipBytes": 257261,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/reset-password",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/f7543079ba681824.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 879985,
+      "gzipBytes": 256897,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/signup",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/e078b0e081419faa.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 881236,
+      "gzipBytes": 257261,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/_not-found",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 871415,
+      "gzipBytes": 253658,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/achievements",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/6e88e46791b0dab1.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 901819,
+      "gzipBytes": 263177,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/auth/error",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 871415,
+      "gzipBytes": 253658,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/feedback",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/0b212f1bd53c6da7.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 879041,
+      "gzipBytes": 256879,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/find-match",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/22a5539d6a5a6b4c.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 884638,
+      "gzipBytes": 257882,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/friends",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/4520e717973cdd92.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 898597,
+      "gzipBytes": 262391,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/history",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/53cc6fc6d07bf843.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 873544,
+      "gzipBytes": 254763,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/how-to-play",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 871415,
+      "gzipBytes": 253658,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/leaderboard",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/8224ed429af78df0.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 873808,
+      "gzipBytes": 254863,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/loadout",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/afde732df334b13e.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 906776,
+      "gzipBytes": 265219,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/1606f4ecb623045f.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 895590,
+      "gzipBytes": 261438,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/play/[id]",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/9232d24bce1ad061.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 938230,
+      "gzipBytes": 274966,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/play/create",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/f218c8cebe9028cc.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 882673,
+      "gzipBytes": 258010,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/play/join",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/b9bd88825506ae77.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 882550,
+      "gzipBytes": 258016,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/play/online",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/54fcdd74563cec34.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 887896,
+      "gzipBytes": 259477,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/play/ranked",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/54fcdd74563cec34.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 887896,
+      "gzipBytes": 259477,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/settings",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/76ececd437e24233.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 902580,
+      "gzipBytes": 263412,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/shop",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/1598385913a17231.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 901234,
+      "gzipBytes": 263622,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/solo",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/948aa1f37269c574.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 920057,
+      "gzipBytes": 269514,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/test",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/ac7ab59d3f63fd53.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 902037,
+      "gzipBytes": 264232,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/tutorial",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/ebd0b43432ea9793.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 920051,
+      "gzipBytes": 269579,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    },
+    {
+      "app": "web",
+      "route": "/watch/[id]",
+      "files": [
+        "static/chunks/20b41f7e1e61847c.js",
+        "static/chunks/afd77d251f44bebc.js",
+        "static/chunks/6085c358b4dffa1b.js",
+        "static/chunks/cd4407d14d9881b3.js",
+        "static/chunks/27dba05f9801e5f2.js",
+        "static/chunks/57fee1d978d6010c.js",
+        "static/chunks/b50b4c9d432f1218.js",
+        "static/chunks/f290c0a96f22069c.js",
+        "static/chunks/a6d768fd4158f11d.js",
+        "static/chunks/8b090bee31ea5c47.js",
+        "static/chunks/7b2bd816833ff7af.js",
+        "static/chunks/41fa34e4c1b8c425.js",
+        "static/chunks/c22cffe93da93b1d.js",
+        "static/chunks/4919ebd398246555.js",
+        "static/chunks/190a181a88844795.js",
+        "static/chunks/turbopack-729efcc329608efd.js"
+      ],
+      "jsBytes": 902535,
+      "gzipBytes": 263892,
+      "definition": "Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded."
+    }
+  ],
+  "pages": [
+    {
+      "capturedAt": "2026-10-17T11:36:48.597Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 1,
+      "cache": "cold",
+      "ttfbMs": 117.7999997138977,
+      "domContentLoadedMs": 140.09999990463257,
+      "loadMs": 152.59999990463257,
+      "headingMs": 431.09999990463257,
+      "observedDataReadyMs": 1009.0999999046326,
+      "fcpMs": 160,
+      "lcpMs": 476,
+      "lcpCandidates": [
+        {
+          "at": 160,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 476,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 383961,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:49.694Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 1,
+      "cache": "warm",
+      "ttfbMs": 11.299999713897705,
+      "domContentLoadedMs": 25.09999990463257,
+      "loadMs": 25.199999809265137,
+      "headingMs": 27.199999809265137,
+      "observedDataReadyMs": 1016.5999999046326,
+      "fcpMs": 36,
+      "lcpMs": 284,
+      "lcpCandidates": [
+        {
+          "at": 36,
+          "size": 1659,
+          "tag": "SPAN",
+          "id": "",
+          "text": "2048Duo",
+          "url": null
+        },
+        {
+          "at": 68,
+          "size": 1819,
+          "tag": "P",
+          "id": "",
+          "text": "1 / 3 completed",
+          "url": null
+        },
+        {
+          "at": 284,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 90295,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:50.793Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 2,
+      "cache": "cold",
+      "ttfbMs": 12.599999904632568,
+      "domContentLoadedMs": 33.5,
+      "loadMs": 45.59999990463257,
+      "headingMs": 323.40000009536743,
+      "observedDataReadyMs": 1008,
+      "fcpMs": 40,
+      "lcpMs": 372,
+      "lcpCandidates": [
+        {
+          "at": 40,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 372,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 384085,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:51.810Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 2,
+      "cache": "warm",
+      "ttfbMs": 17.699999809265137,
+      "domContentLoadedMs": 34.69999980926514,
+      "loadMs": 34.799999713897705,
+      "headingMs": 36.90000009536743,
+      "observedDataReadyMs": 1008.5999999046326,
+      "fcpMs": 56,
+      "lcpMs": 308,
+      "lcpCandidates": [
+        {
+          "at": 56,
+          "size": 1659,
+          "tag": "SPAN",
+          "id": "",
+          "text": "2048Duo",
+          "url": null
+        },
+        {
+          "at": 108,
+          "size": 1819,
+          "tag": "P",
+          "id": "",
+          "text": "1 / 3 completed",
+          "url": null
+        },
+        {
+          "at": 308,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 90295,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:52.923Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 3,
+      "cache": "cold",
+      "ttfbMs": 9.799999713897705,
+      "domContentLoadedMs": 29.699999809265137,
+      "loadMs": 42.299999713897705,
+      "headingMs": 321.8999996185303,
+      "observedDataReadyMs": 1006.3999996185303,
+      "fcpMs": 40,
+      "lcpMs": 356,
+      "lcpCandidates": [
+        {
+          "at": 40,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 356,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 383948,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/auth/v1/user",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:53.940Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 3,
+      "cache": "warm",
+      "ttfbMs": 17.300000190734863,
+      "domContentLoadedMs": 34.80000019073486,
+      "loadMs": 34.80000019073486,
+      "headingMs": 37.09999990463257,
+      "observedDataReadyMs": 1009.2000002861023,
+      "fcpMs": 44,
+      "lcpMs": 292,
+      "lcpCandidates": [
+        {
+          "at": 44,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 292,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 90272,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:55.049Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 4,
+      "cache": "cold",
+      "ttfbMs": 9.5,
+      "domContentLoadedMs": 27.5,
+      "loadMs": 52.700000286102295,
+      "headingMs": 48.60000038146973,
+      "observedDataReadyMs": 1002.7000002861023,
+      "fcpMs": 88,
+      "lcpMs": 336,
+      "lcpCandidates": [
+        {
+          "at": 88,
+          "size": 1659,
+          "tag": "SPAN",
+          "id": "",
+          "text": "2048Duo",
+          "url": null
+        },
+        {
+          "at": 168,
+          "size": 1819,
+          "tag": "P",
+          "id": "",
+          "text": "1 / 3 completed",
+          "url": null
+        },
+        {
+          "at": 336,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 36,
+      "transferBytes": 384491,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/auth/v1/user",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/auth/v1/user"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:56.066Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 4,
+      "cache": "warm",
+      "ttfbMs": 15.400000095367432,
+      "domContentLoadedMs": 33.40000009536743,
+      "loadMs": 33.40000009536743,
+      "headingMs": 35.799999713897705,
+      "observedDataReadyMs": 1008.6999998092651,
+      "fcpMs": 40,
+      "lcpMs": 292,
+      "lcpCandidates": [
+        {
+          "at": 40,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 292,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 36,
+      "transferBytes": 90727,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings",
+        "/auth/v1/user"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:57.175Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 5,
+      "cache": "cold",
+      "ttfbMs": 9.100000381469727,
+      "domContentLoadedMs": 27.90000009536743,
+      "loadMs": 40.5,
+      "headingMs": 317.40000009536743,
+      "observedDataReadyMs": 1005.2000002861023,
+      "fcpMs": 40,
+      "lcpMs": 356,
+      "lcpCandidates": [
+        {
+          "at": 40,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 356,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 384087,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:58.191Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "desktop",
+      "run": 5,
+      "cache": "warm",
+      "ttfbMs": 8.599999904632568,
+      "domContentLoadedMs": 22,
+      "loadMs": 22.09999990463257,
+      "headingMs": 24.09999990463257,
+      "observedDataReadyMs": 1013.1999998092651,
+      "fcpMs": 32,
+      "lcpMs": 280,
+      "lcpCandidates": [
+        {
+          "at": 32,
+          "size": 1659,
+          "tag": "SPAN",
+          "id": "",
+          "text": "2048Duo",
+          "url": null
+        },
+        {
+          "at": 64,
+          "size": 1819,
+          "tag": "P",
+          "id": "",
+          "text": "1 / 3 completed",
+          "url": null
+        },
+        {
+          "at": 280,
+          "size": 17500,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 35,
+      "transferBytes": 90292,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 3,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_wallets",
+        "/rest/v1/player_ratings"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:36:59.286Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 1,
+      "cache": "cold",
+      "ttfbMs": 10.5,
+      "domContentLoadedMs": 29,
+      "loadMs": 74.19999980926514,
+      "headingMs": 69.30000019073486,
+      "observedDataReadyMs": 1003.5,
+      "fcpMs": 92,
+      "lcpMs": 340,
+      "lcpCandidates": [
+        {
+          "at": 92,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 340,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 380687,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:00.359Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 1,
+      "cache": "warm",
+      "ttfbMs": 7.200000286102295,
+      "domContentLoadedMs": 20,
+      "loadMs": 20.100000381469727,
+      "headingMs": 22,
+      "observedDataReadyMs": 1017.2000002861023,
+      "fcpMs": 36,
+      "lcpMs": 280,
+      "lcpCandidates": [
+        {
+          "at": 36,
+          "size": 1659,
+          "tag": "SPAN",
+          "id": "",
+          "text": "2048Duo",
+          "url": null
+        },
+        {
+          "at": 280,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 87037,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:01.469Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 2,
+      "cache": "cold",
+      "ttfbMs": 8.700000286102295,
+      "domContentLoadedMs": 26,
+      "loadMs": 38.700000286102295,
+      "headingMs": 317.90000009536743,
+      "observedDataReadyMs": 1005.9000000953674,
+      "fcpMs": 40,
+      "lcpMs": 372,
+      "lcpCandidates": [
+        {
+          "at": 40,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 372,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 380685,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:02.485Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 2,
+      "cache": "warm",
+      "ttfbMs": 16.40000009536743,
+      "domContentLoadedMs": 35.30000019073486,
+      "loadMs": 35.40000009536743,
+      "headingMs": 37.5,
+      "observedDataReadyMs": 1008.0999999046326,
+      "fcpMs": 52,
+      "lcpMs": 296,
+      "lcpCandidates": [
+        {
+          "at": 52,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 296,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 86896,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:03.596Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 3,
+      "cache": "cold",
+      "ttfbMs": 8.099999904632568,
+      "domContentLoadedMs": 26,
+      "loadMs": 37.90000009536743,
+      "headingMs": 317.7999997138977,
+      "observedDataReadyMs": 1005.9000000953674,
+      "fcpMs": 44,
+      "lcpMs": 372,
+      "lcpCandidates": [
+        {
+          "at": 44,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 372,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 380684,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:04.614Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 3,
+      "cache": "warm",
+      "ttfbMs": 15.200000286102295,
+      "domContentLoadedMs": 32.200000286102295,
+      "loadMs": 32.30000019073486,
+      "headingMs": 34.40000009536743,
+      "observedDataReadyMs": 1012,
+      "fcpMs": 48,
+      "lcpMs": 296,
+      "lcpCandidates": [
+        {
+          "at": 48,
+          "size": 1659,
+          "tag": "SPAN",
+          "id": "",
+          "text": "2048Duo",
+          "url": null
+        },
+        {
+          "at": 296,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 86892,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:05.727Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 4,
+      "cache": "cold",
+      "ttfbMs": 10.5,
+      "domContentLoadedMs": 29.600000381469727,
+      "loadMs": 41.5,
+      "headingMs": 321,
+      "observedDataReadyMs": 1006.7000002861023,
+      "fcpMs": 40,
+      "lcpMs": 372,
+      "lcpCandidates": [
+        {
+          "at": 40,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 372,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 380687,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:06.743Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 4,
+      "cache": "warm",
+      "ttfbMs": 16.5,
+      "domContentLoadedMs": 35.5,
+      "loadMs": 35.5,
+      "headingMs": 37.700000286102295,
+      "observedDataReadyMs": 1008.3000001907349,
+      "fcpMs": 48,
+      "lcpMs": 296,
+      "lcpCandidates": [
+        {
+          "at": 48,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 296,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 86902,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:07.852Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 5,
+      "cache": "cold",
+      "ttfbMs": 8.700000286102295,
+      "domContentLoadedMs": 26,
+      "loadMs": 37.80000019073486,
+      "headingMs": 316.7000002861023,
+      "observedDataReadyMs": 1005.8000001907349,
+      "fcpMs": 40,
+      "lcpMs": 372,
+      "lcpCandidates": [
+        {
+          "at": 40,
+          "size": 2193,
+          "tag": "P",
+          "id": "",
+          "text": "Loading collection…",
+          "url": null
+        },
+        {
+          "at": 372,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 380686,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    },
+    {
+      "capturedAt": "2026-10-17T11:37:08.869Z",
+      "app": "web",
+      "route": "/",
+      "path": "/",
+      "state": "ready",
+      "auth": true,
+      "device": "mobile-emulation",
+      "run": 5,
+      "cache": "warm",
+      "ttfbMs": 16.90000009536743,
+      "domContentLoadedMs": 34.40000009536743,
+      "loadMs": 34.5,
+      "headingMs": 36.59999990463257,
+      "observedDataReadyMs": 1009.5,
+      "fcpMs": 48,
+      "lcpMs": 292,
+      "lcpCandidates": [
+        {
+          "at": 48,
+          "size": 1659,
+          "tag": "SPAN",
+          "id": "",
+          "text": "2048Duo",
+          "url": null
+        },
+        {
+          "at": 292,
+          "size": 13805,
+          "tag": "P",
+          "id": "",
+          "text": "Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.",
+          "url": null
+        }
+      ],
+      "longTaskMs": 0,
+      "resourceCount": 30,
+      "transferBytes": 86903,
+      "resourceBytesNote": "Cross-origin bytes without Timing-Allow-Origin are unavailable; resource count still includes them.",
+      "preferencesQueries": 2,
+      "backendRequests": [
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets",
+        "/realtime/v1/websocket",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/rpc/sync_achievements",
+        "/rest/v1/rpc/content_catalog",
+        "/rest/v1/rpc/sync_daily_quests",
+        "/rest/v1/rpc/social_players",
+        "/auth/v1/user",
+        "/auth/v1/user",
+        "/rest/v1/player_preferences",
+        "/rest/v1/players",
+        "/rest/v1/matches",
+        "/rest/v1/player_ratings",
+        "/rest/v1/player_wallets"
+      ]
+    }
+  ],
+  "navigation": [],
+  "games": [],
+  "solo": [],
+  "failures": [],
+  "summary": [
+    {
+      "key": "web | / | desktop | account | cold",
+      "samples": 5,
+      "ttfbMs": {
+        "median": 9.799999713897705,
+        "p95": 117.7999997138977
+      },
+      "loadMs": {
+        "median": 45.59999990463257,
+        "p95": 152.59999990463257
+      },
+      "headingMs": {
+        "median": 321.8999996185303,
+        "p95": 431.09999990463257
+      },
+      "observedDataReadyMs": {
+        "median": 1006.3999996185303,
+        "p95": 1009.0999999046326
+      },
+      "fcpMs": {
+        "median": 40,
+        "p95": 160
+      },
+      "lcpMs": {
+        "median": 356,
+        "p95": 476
+      },
+      "longTaskMs": {
+        "median": 0,
+        "p95": 0
+      },
+      "transferBytes": {
+        "median": 384085,
+        "p95": 384491
+      }
+    },
+    {
+      "key": "web | / | desktop | account | warm",
+      "samples": 5,
+      "ttfbMs": {
+        "median": 15.400000095367432,
+        "p95": 17.699999809265137
+      },
+      "loadMs": {
+        "median": 33.40000009536743,
+        "p95": 34.80000019073486
+      },
+      "headingMs": {
+        "median": 35.799999713897705,
+        "p95": 37.09999990463257
+      },
+      "observedDataReadyMs": {
+        "median": 1009.2000002861023,
+        "p95": 1016.5999999046326
+      },
+      "fcpMs": {
+        "median": 40,
+        "p95": 56
+      },
+      "lcpMs": {
+        "median": 292,
+        "p95": 308
+      },
+      "longTaskMs": {
+        "median": 0,
+        "p95": 0
+      },
+      "transferBytes": {
+        "median": 90295,
+        "p95": 90727
+      }
+    },
+    {
+      "key": "web | / | mobile-emulation | account | cold",
+      "samples": 5,
+      "ttfbMs": {
+        "median": 8.700000286102295,
+        "p95": 10.5
+      },
+      "loadMs": {
+        "median": 38.700000286102295,
+        "p95": 74.19999980926514
+      },
+      "headingMs": {
+        "median": 317.7999997138977,
+        "p95": 321
+      },
+      "observedDataReadyMs": {
+        "median": 1005.9000000953674,
+        "p95": 1006.7000002861023
+      },
+      "fcpMs": {
+        "median": 40,
+        "p95": 92
+      },
+      "lcpMs": {
+        "median": 372,
+        "p95": 372
+      },
+      "longTaskMs": {
+        "median": 0,
+        "p95": 0
+      },
+      "transferBytes": {
+        "median": 380686,
+        "p95": 380687
+      }
+    },
+    {
+      "key": "web | / | mobile-emulation | account | warm",
+      "samples": 5,
+      "ttfbMs": {
+        "median": 16.40000009536743,
+        "p95": 16.90000009536743
+      },
+      "loadMs": {
+        "median": 34.5,
+        "p95": 35.5
+      },
+      "headingMs": {
+        "median": 36.59999990463257,
+        "p95": 37.700000286102295
+      },
+      "observedDataReadyMs": {
+        "median": 1009.5,
+        "p95": 1017.2000002861023
+      },
+      "fcpMs": {
+        "median": 48,
+        "p95": 52
+      },
+      "lcpMs": {
+        "median": 296,
+        "p95": 296
+      },
+      "longTaskMs": {
+        "median": 0,
+        "p95": 0
+      },
+      "transferBytes": {
+        "median": 86902,
+        "p95": 87037
+      }
+    }
+  ]
+}

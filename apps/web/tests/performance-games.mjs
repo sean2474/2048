@@ -53,8 +53,8 @@ export async function measureMatch(browser, origin, device, fixture, { surrender
       const code = await pages[0].getByTestId('join-code').innerText();
       assert.match(code, /^[A-Z0-9]{6}$/);
       await pages[1].goto(`${origin}/play/join`);
-      await pages[1].locator('#room-code').fill(code);
-      await pages[1].locator('form button[type="submit"]').click();
+      await pages[1].locator('#room-code:visible').fill(code);
+      await pages[1].locator('form button[type="submit"]:visible').click();
     } else await Promise.all(pages.map(page => page.goto(`${origin}/play/online`)));
     const matched = await Promise.all(found);
     assert.equal(matched[0].message.roomId, matched[1].message.roomId);
@@ -108,10 +108,17 @@ export async function measureMatch(browser, origin, device, fixture, { surrender
     assert.equal(results[0].message.matchId, results[1].message.matchId);
     assert.equal(results[0].message.reason === 'surrender', surrender);
     assert.deepEqual(errors, []);
+    // The first locator observation only establishes mounted geometry. Measure actual finite animation completion separately.
+    await Promise.all(pages.map(page => page.evaluate(async () => {
+      const animations = document.querySelector('.match-end').getAnimations({ subtree: true }).filter(animation => animation.effect?.getTiming().iterations !== Infinity);
+      await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
+      await new Promise(resolvePaint => requestAnimationFrame(() => requestAnimationFrame(resolvePaint)));
+    })));
+    const resultAnimationAt = performance.now();
     if (screenshotPath) await pages[1].screenshot({ path: screenshotPath, fullPage: true });
     const inputPaintMs = (await Promise.all(pages.map(page => page.evaluate(() => window.__inputTimes)))).flat();
     const record = fixture.matches.find(match => match.id === matched[0].message.roomId);
-    return { device: device.name, kind: surrender ? 'surrender' : 'natural', policy: 'alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards', watchReadyMs, roomId: matched[0].message.roomId, reason: results[0].message.reason, moves: moves + (surrender ? 0 : 1), roomCreationToReadyMs: friend ? matched[1].at - queueAt : null, joinCodeRequestToReadyMs: friend ? matched[1].at - streams[1].events.find(event => event.direction === 'sent' && event.message.t === 'joinRoomWithCode').at : null, queueNavigationToFoundMs: friend ? null : matched[1].at - queueAt, secondQueueRequestToFoundMs: friend ? null : matched[1].at - Math.max(...streams.map(stream => stream.events.find(event => event.direction === 'sent' && event.message.t === 'findMatch').at)), introAndJoinMs: Math.max(...started.map(event => event.at)) - Math.max(...matched.map(event => event.at)), firstBoardMs: boardAt - queueAt, playableDurationMs: results[0].at - Math.max(...started.map(event => event.at)), roomWallDurationMs: record ? Date.parse(record.endedAt) - Date.parse(record.startedAt) : null, resultPacketToOverlayMs: resultPaintAt - Math.max(...results.map(event => event.at)), surrenderToResultMs: surrenderAt === null ? null : results[0].at - [...streams[0].events].reverse().find(event => event.direction === 'sent' && event.message.t === 'surrender').at, inputs, inputPaintMs };
+    return { device: device.name, kind: surrender ? 'surrender' : 'natural', policy: 'alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards', watchReadyMs, roomId: matched[0].message.roomId, reason: results[0].message.reason, moves: moves + (surrender ? 0 : 1), roomCreationToReadyMs: friend ? matched[1].at - queueAt : null, joinCodeRequestToReadyMs: friend ? matched[1].at - streams[1].events.find(event => event.direction === 'sent' && event.message.t === 'joinRoomWithCode').at : null, queueNavigationToFoundMs: friend ? null : matched[1].at - queueAt, secondQueueRequestToFoundMs: friend ? null : matched[1].at - Math.max(...streams.map(stream => stream.events.find(event => event.direction === 'sent' && event.message.t === 'findMatch').at)), introAndJoinMs: Math.max(...started.map(event => event.at)) - Math.max(...matched.map(event => event.at)), firstBoardMs: boardAt - queueAt, playableDurationMs: results[0].at - Math.max(...started.map(event => event.at)), roomWallDurationMs: record ? Date.parse(record.endedAt) - Date.parse(record.startedAt) : null, resultPacketToOverlayMs: resultPaintAt - Math.max(...results.map(event => event.at)), resultPacketToAnimationCompleteMs: resultAnimationAt - Math.max(...results.map(event => event.at)), surrenderToResultMs: surrenderAt === null ? null : results[0].at - [...streams[0].events].reverse().find(event => event.direction === 'sent' && event.message.t === 'surrender').at, inputs, inputPaintMs };
   } finally { streams.forEach(stream => stream.close()); if (spectator) await spectator.close(); await Promise.all(contexts.map(context => context.close())); }
 }
 
