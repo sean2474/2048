@@ -3,8 +3,9 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Info, Infinity as InfinityIcon, RotateCcw, Timer, Trophy } from "lucide-react";
 import { useI18n } from "ui/i18n";
-import { ACHIEVEMENT_REWARDS } from "schema/achievements";
-import { SKINS, SKIN_RARITIES } from "schema/loadout";
+import { useCatalog } from "@/hooks/catalog-provider";
+import { ProfileIcon } from "@/components/widget/profile-icon";
+import { SKIN_RARITIES } from "schema/loadout";
 import { SOLO_SIZE, formatSoloTime, type SoloMode } from "schema/solo";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
@@ -41,6 +42,7 @@ export default function SoloPage() {
   const [selectedMode, setSelectedMode] = useState<SoloMode | null>(null);
   const [restart, setRestart] = useState<SoloMode | null>(null);
   const achievements = useAchievements();
+  const catalog = useCatalog();
   const best = achievements.data?.soloBestMs;
   const mode = selectedMode ?? state?.mode ?? "time-attack";
   const endless = mode === "endless";
@@ -70,10 +72,11 @@ export default function SoloPage() {
       {achievements.error && <p role="alert" className="text-xs text-destructive">{t("Could not load achievement progress.")}</p>}
       <p className="break-keep text-sm leading-6 text-muted-foreground">{t(endless ? "4×4 board · No time limit, abilities or undo. Continue beyond 2048. Milestone rewards save as soon as you reach them." : "4×4 board · Reach 2048 · No abilities or undo. The clock starts when you press Start and keeps running until you finish, for up to one hour.")}</p><p className="text-xs leading-5 text-muted-foreground">{t("Use arrow keys, swipe your board or use the direction buttons below.")}</p>{account === null && <Button asChild variant="outline" className="w-full"><Link href="/login">{t("Sign in for records & rewards")}</Link></Button>}
     </section>
-    <section className="rounded-xl border bg-card p-5"><h2 className="mb-4 flex items-center gap-2 font-bold"><Trophy aria-hidden="true" className="size-4 text-primary" />{t(endless ? "Beyond 2048" : "Earn your speed")}</h2><ul className="space-y-4">{ACHIEVEMENT_REWARDS.filter(item => item.metric === (endless ? "solo_tile" : "solo_time")).map(item => {
-      const skin = SKINS.find(skin => item.reward.kind === "skin" && skin.id === item.reward.skinId)!;
+    <section className="rounded-xl border bg-card p-5"><h2 className="mb-4 flex items-center gap-2 font-bold"><Trophy aria-hidden="true" className="size-4 text-primary" />{t("Achievements")}</h2><ul className="space-y-4">{catalog.achievements.filter(item => item.metric === (endless ? "solo_tile" : "solo_time") && (item.status === "published" || achievements.data?.unlocks.some(unlock => unlock.achievementId === item.id))).map(item => {
+      const skin = catalog.skins.find(skin => item.reward.kind !== "icon" && skin.id === item.reward.skinId);
+      const icon = catalog.profileIcons.find(icon => item.reward.kind !== "skin" && icon.id === item.reward.iconId);
       const unlocked = achievements.data?.unlocks.some(unlock => unlock.achievementId === item.id);
-      return <li key={item.id} className="flex items-center gap-4"><div className="w-[72px] shrink-0 sm:w-20"><SkinPreview skin={skin} /></div><div className="min-w-0"><p className="flex items-center gap-1 text-sm font-bold">{unlocked && <Check aria-label={t("Permanently unlocked")} className="size-4 shrink-0 text-primary" />}{t(skin.name)}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{item.metric === "solo_tile" ? t("Reach {tile}", { tile: item.target }) : item.id === "solo-first" ? t("First 2048 finish") : t("Finish within {minutes} minutes", { minutes: item.target / 60000 })}</p><p className="mt-0.5 text-[11px] font-semibold text-primary">{t(SKIN_RARITIES[skin.rarity].name)}</p></div></li>;
+      return <li key={item.id} className="flex items-center gap-4"><div className="w-[72px] shrink-0 sm:w-20">{skin && <SkinPreview skin={skin} />}{icon && <ProfileIcon iconId={icon.id} className="size-16" />}</div><div className="min-w-0"><p className="flex items-center gap-1 text-sm font-bold">{unlocked && <Check aria-label={t("Permanently unlocked")} className="size-4 shrink-0 text-primary" />}{t(skin?.name ?? icon?.name ?? item.name)}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{item.metric === "solo_tile" ? t("Reach {tile}", { tile: item.target }) : t("Target time: {time}", { time: formatSoloTime(item.target) })}</p>{skin && <p className="mt-0.5 text-[11px] font-semibold text-primary">{t(SKIN_RARITIES[skin.rarity].name)}</p>}</div></li>;
     })}</ul><Button asChild variant="ghost" className="mt-4 w-full"><Link href="/achievements">{t("Achievements")}<ArrowRight aria-hidden="true" /></Link></Button></section>
   </>;
 

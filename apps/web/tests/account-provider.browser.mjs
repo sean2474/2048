@@ -15,7 +15,7 @@ test("auth hydration, login navigation, shared profile and cross-tab logout", { 
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(fixture.origin + "/login");
   await page.getByRole("textbox", { name: "Email", exact: true }).fill("fixture@example.invalid");
-  await page.getByLabel("Password", { exact: true }).fill("fixture-password");
+  await page.getByRole("region", { name: "Log in", exact: true }).getByLabel("Password", { exact: true }).fill("fixture-password");
   await page.getByRole("button", { name: "Log in", exact: true }).click();
   await page.waitForURL(fixture.origin + "/");
   await page.getByRole("heading", { name: "Fixture Challenger", exact: true }).waitFor();

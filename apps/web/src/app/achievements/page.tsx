@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Check, LockKeyhole, ArrowRight } from "lucide-react";
+import { CalendarCheck, Check, LockKeyhole, ArrowRight } from "lucide-react";
 import { achievementProgress } from "schema/achievements";
 import { formatSoloTime } from "schema/solo";
 import { TIERS } from "schema/ranking";
@@ -24,6 +24,9 @@ export default function AchievementsPage() {
   const { data, loading, error, checkingIn, checkInError, reload, newRewards } = useAchievements();
   const guest = user === null || user?.is_anonymous;
   const attendance = data?.attendance;
+  const attendanceReward = achievements.find(item => item.status === "published" && item.metric === "attendance_streak" && item.reward.kind === "icon");
+  const attendanceIconId = attendanceReward?.reward.kind === "icon" ? attendanceReward.reward.iconId : undefined;
+  const attendanceIcon = profileIcons.find(icon => icon.id === attendanceIconId);
   const [filter, setFilter] = useState<"all" | "progress" | "completed">("all");
   const progressData = !error ? data : undefined;
   const entries = useMemo(() => achievements.filter(item => item.status === "published" || data?.unlocks.some(unlock => unlock.achievementId === item.id)).map(item => ({ item, progress: progressData ? achievementProgress(item, progressData) : undefined }))
@@ -46,7 +49,7 @@ export default function AchievementsPage() {
 
     <section aria-labelledby="attendance-title" className="overflow-hidden rounded-2xl border bg-card">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b px-5 py-4 sm:px-6">
-        <div><h2 id="attendance-title" className="flex items-center gap-2 font-bold"><ProfileIcon iconId="attendance-king" className="size-10" />{t("Daily attendance")}</h2><p className="mt-1 text-xs text-muted-foreground">{t("Attendance is automatic when you visit · Resets at midnight KST")}</p></div>
+        <div><h2 id="attendance-title" className="flex items-center gap-2 font-bold"><CalendarCheck aria-hidden="true" className="size-5 text-primary" />{t("Daily attendance")}</h2><p className="mt-1 text-xs text-muted-foreground">{t("Attendance is automatic when you visit · Resets at midnight KST")}</p></div>
         {guest ? <Button asChild><Link href="/login" data-analytics-link="/login">{t("Log in")}</Link></Button> : <span role="status" className="inline-flex items-center gap-2 text-sm font-semibold text-primary">{attendance?.checkedInToday && <Check aria-hidden="true" className="size-4" />}{t(checkingIn ? "Checking in…" : attendance?.checkedInToday ? "Checked in today" : "Automatic attendance")}</span>}
       </div>
       <div className="grid gap-5 px-5 py-5 sm:grid-cols-[1fr_auto] sm:items-center sm:px-6">
@@ -54,7 +57,7 @@ export default function AchievementsPage() {
           <p className="flex items-baseline gap-2"><span className="text-4xl font-extrabold tabular-nums tracking-tight">{attendance.streak}</span><span className="text-sm text-muted-foreground">{t("consecutive days")}</span></p>
           <p className="mt-2 text-xs text-muted-foreground">{t("Best streak: {days} days", { days: attendance.bestStreak })}</p>
         </> : null}<p className="mt-3 max-w-md text-xs leading-5 text-muted-foreground">{t("Missing a day resets your streak. Unlocked rewards are yours to keep.")}</p></div>
-        <div className="flex items-center gap-3 rounded-xl bg-secondary/40 px-4 py-3"><ProfileIcon iconId="attendance-king" className="size-16" /><div><p className="text-[11px] font-semibold text-primary">{t("30-day reward")}</p><p className="mt-1 font-bold">{t("Attendance King")}</p><p className="mt-1 text-xs text-muted-foreground">{t("Exclusive profile")}</p></div></div>
+        {attendanceReward && attendanceIcon && <div className="flex items-center gap-3 rounded-xl bg-secondary/40 px-4 py-3"><ProfileIcon iconId={attendanceIcon.id} className="size-16" /><div><p className="text-[11px] font-semibold text-primary">{t("{days}-day reward", { days: attendanceReward.target })}</p><p className="mt-1 font-bold">{t(attendanceIcon.name)}</p><p className="mt-1 text-xs text-muted-foreground">{t("Exclusive profile")}</p></div></div>}
       </div>
     </section>
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 text-sm"><p>{t("Could not load achievement progress.")}</p><Button variant="outline" onClick={() => void reload()}>{t("Reload unlock information")}</Button></div>}
