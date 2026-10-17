@@ -28,7 +28,7 @@ async function database(t: TestContext, beforeUpgrade?: (db: PGlite) => Promise<
   await db.exec(await readFile(new URL(migration, migrations), "utf8"));
   const as = async <T>(role: "anon" | "authenticated" | "service_role", id: string, action: () => Promise<T>) => {
     await db.exec(`set role ${role}`);
-    await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
+    await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [id]);
     try { return await action(); } finally { await db.exec("reset role"); }
   };
   const state = (id = A) => as("authenticated", id, async () => (await db.query<{ state: AchievementState }>("select public.achievement_state() as state")).rows[0].state);

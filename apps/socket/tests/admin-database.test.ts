@@ -25,7 +25,7 @@ async function database(t: TestContext) {
   await db.query("insert into public.admin_roles(user_id) values($1)", [ADMIN]);
   const as = async <T>(role: "anon" | "authenticated" | "service_role", id: string, fn: () => Promise<T>) => {
     await db.exec(`set role ${role}`);
-    await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
+    await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [id]);
     try { return await fn(); } finally { await db.exec("reset role"); }
   };
   const rpc = async <T>(sql: string, args: unknown[] = []) => (await db.query<{ value: T }>(`select ${sql} as value`, args)).rows[0].value;

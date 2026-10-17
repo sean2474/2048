@@ -27,7 +27,7 @@ async function database(t: {after:(callback:()=>Promise<void>)=>void}, beforeUpg
  if(beforeUpgrade) await beforeUpgrade(db);
  await db.exec(await readFile(new URL(migration,migrations),'utf8'));
  await db.exec("insert into storage.objects(bucket_id,name) values('catalog-assets','icons/new-icon.webp')");
- const as=async<T>(role:string,id:string,fn:()=>Promise<T>)=>{await db.exec(`set role ${role}`);await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);try{return await fn();}finally{await db.exec('reset role');}};
+ const as=async<T>(role:string,id:string,fn:()=>Promise<T>)=>{await db.exec(`set role ${role}`);await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)",[id]);try{return await fn();}finally{await db.exec('reset role');}};
  const rpc=async(name:string,args:unknown[]=[]) => (await db.query<{v:any}>(`select public.${name}(${args.map((_,i)=>'$'+(i+1)).join(',')}) as v`,args)).rows[0].v;
  const save=(item:object,revision=0)=>rpc('admin_save_cosmetic',['icon',JSON.stringify(item),revision]);
  return{db,as,rpc,save};

@@ -84,10 +84,10 @@ test("win reason cleanup preserves results and rewards, fails safely on obsolete
   await assert.rejects(record(A, B, 1024, "reached_512"), /check constraint/);
   await db.query("insert into public.admin_roles values($1)", [A]);
   await db.exec("set role authenticated");
-  await db.query("select set_config('request.jwt.claim.sub',$1,false)", [B]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [B]);
   await assert.rejects(db.query("select public.admin_matches(p_reason=>'reached_1024')"), /Admin access required/);
   await assert.rejects(db.query("select private.award_match_achievements($1)", [B]), /permission denied/);
-  await db.query("select set_config('request.jwt.claim.sub',$1,false)", [A]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [A]);
   for (const [id, reason] of [[previous, "surrender"], [current, "reached_1024"]]) {
     const result = await db.query<{ value: { matches: Array<{ id: string; reason: string }> } }>("select public.admin_matches(p_reason=>$1,p_match_id=>$2) as value", [reason, id]);
     assert.equal(result.rows[0].value.matches[0].id, id);

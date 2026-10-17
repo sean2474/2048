@@ -16,4 +16,13 @@ export const economyMessages: Record<string, string> = {
   "Buy in shop": "상점에서 구매",
   "View in loadout": "꾸미기에서 보기",
   "{item} · Preview shop item": "{item} · 상품 미리보기",
+  "Recent coin activity": "최근 코인 내역",
+  "Could not load your coin activity.": "코인 내역을 불러오지 못했어요.",
+  "No coin activity yet.": "아직 코인 내역이 없어요.",
+  "Daily quest reward": "일일 퀘스트 보상",
+  "Shop purchase": "상점 구매",
+  "Operator grant": "운영자 지급",
+  "Operator deduction": "운영자 차감",
+  "Coin change": "코인 변동",
+  "Balance {count}": "잔액 {count}",
 };

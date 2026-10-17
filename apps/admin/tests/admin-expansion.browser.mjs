@@ -62,7 +62,7 @@ test('admin P0 browser journey, URL filters, KST, failures, mobile and protected
  for(let i=0;i<100;i++){try{if((await fetch(`${origin}/login`)).status===200)break;}catch{}await new Promise(r=>setTimeout(r,300));if(i===99)throw Error(logs);}
  const browser=await chromium.launch({channel:"chrome",headless:true});t.after(()=>browser.close());
  const context=await browser.newContext({locale:'en-US',timezoneId:'America/Los_Angeles',viewport:{width:1440,height:900}});
- const expires=Math.floor(Date.now()/1000)+3600;const jwt=`${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({sub:ADMIN,exp:expires,role:'authenticated'})).toString('base64url')}.fixture`;
+ const expires=Math.floor(Date.now()/1000)+3600;const jwt=`${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({sub:ADMIN,exp:expires,role:'authenticated',aal:'aal2'})).toString('base64url')}.fixture`;
  const session={access_token:jwt,refresh_token:'fixture',expires_at:expires,expires_in:3600,token_type:'bearer',user};
  await context.addCookies([{name:'sb-2048-admin-auth',value:`base64-${Buffer.from(JSON.stringify(session)).toString('base64url')}`,url:origin},{name:'duo.locale',value:'en',url:origin}]);
  const evidence=join(ROOT,'docs/admin-p0');await mkdir(evidence,{recursive:true});

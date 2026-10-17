@@ -14,9 +14,10 @@ export const fixtureRating = { player_id: fixturePlayer, display_name: "Fixture 
 function user(id) {
   return { id, aud: "authenticated", role: "authenticated", email: "fixture@example.invalid", is_anonymous: false, app_metadata: {}, user_metadata: {}, created_at: "2026-01-01T00:00:00Z" };
 }
-function session(id) {
+// Administrator sessions carry the aal2 claim; pass "aal1" to exercise the two-factor gate.
+function session(id, aal = "aal2") {
   const exp = Math.floor(Date.now() / 1000) + 3600;
-  const access_token = [Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url"), Buffer.from(JSON.stringify({ sub: id, exp, role: "authenticated" })).toString("base64url"), "fixture"].join(".");
+  const access_token = [Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url"), Buffer.from(JSON.stringify({ sub: id, exp, role: "authenticated", aal })).toString("base64url"), "fixture"].join(".");
   return { access_token, refresh_token: "fixture-only", expires_at: exp, expires_in: 3600, token_type: "bearer", user: user(id) };
 }
 
@@ -76,6 +77,6 @@ export async function startServerFixture({ handle, port = 0, app = "web" } = {})
       await new Promise(resolve => setTimeout(resolve, 100));
     }
   } catch (error) { await close(); throw error; }
-  const cookie = (id = fixturePlayer) => ({ name: app === "admin" ? "sb-2048-admin-auth" : "sb-127-auth-token", value: `base64-${Buffer.from(JSON.stringify(session(id))).toString("base64url")}`, url: origin });
+  const cookie = (id = fixturePlayer, aal = "aal2") => ({ name: app === "admin" ? "sb-2048-admin-auth" : "sb-127-auth-token", value: `base64-${Buffer.from(JSON.stringify(session(id, aal))).toString("base64url")}`, url: origin });
   return { origin, requests, cookie, close };
 }

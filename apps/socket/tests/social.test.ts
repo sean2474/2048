@@ -15,7 +15,7 @@ test("friend requests, private paginated messages and spectator permissions are 
   const [a,b,c] = [randomUUID(),randomUUID(),randomUUID()];
   await db.query("insert into auth.users(id,raw_user_meta_data) values($1,'{\"name\":\"Alice\"}'),($2,'{\"name\":\"Bob\"}'),($3,'{\"name\":\"Carol\"}')", [a,b,c]);
   const as = async (role: string, user: string, fn: () => Promise<unknown>) => {
-    await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false)", [user]);
+    await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [user]);
     try { return await fn(); } finally { await db.exec("reset role"); }
   };
   const action = (user: string, target: string, action: string) => as("authenticated",user,() => db.query("select public.friend_action($1,$2)",[target,action]));

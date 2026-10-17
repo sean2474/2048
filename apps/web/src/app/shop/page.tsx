@@ -14,6 +14,7 @@ import { ProfileIcon } from "@/components/widget/profile-icon";
 import { SkinPreview } from "@/components/2048/skin-preview";
 import dynamic from "next/dynamic";
 import { CatalogSkeleton } from "@/components/widget/catalog-skeleton";
+import { CoinHistory } from "@/components/widget/coin-history";
 
 const SkinMergePreview = dynamic(() => import("@/components/2048/skin-merge-preview").then(module => module.SkinMergePreview));
 import { usePlayer } from "@/hooks/use-player";
@@ -46,6 +47,7 @@ export default function ShopPage() {
       <GameEmblem kind="coin" className="size-8" /><h2 id="shop-wallet-title" className="text-xs text-muted-foreground">{t("My coins")}</h2>
       {cosmetics.loading ? <p role="status" className="text-xs">{t("Loading balance…")}</p> : !userId ? <Link href="/login" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary">{t("Log in")}</Link> : cosmetics.error || !cosmetics.data ? <div role="alert" className="flex flex-wrap items-center gap-2"><p className="text-xs text-destructive">{t("Could not load your cosmetics.")}</p><Button variant="outline" size="sm" onClick={() => void cosmetics.reload()}>{t("Try again")}</Button></div> : <p className="text-lg font-extrabold tabular-nums">{cosmetics.data.balance.toLocaleString(numberLocale)}</p>}
     </section>
+    <CoinHistory userId={userId} balance={cosmetics.data?.balance} />
     <div role="tablist" aria-label={t("Shop categories")} className="inline-flex gap-1 rounded-xl bg-muted p-1" onKeyDown={event => {
       if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
       event.preventDefault();

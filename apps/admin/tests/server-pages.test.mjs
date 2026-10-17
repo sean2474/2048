@@ -18,6 +18,7 @@ test('admin records render on the server, share verified access, validate URL fi
       return unavailable ? { status: 503, data: { message: 'fixture unavailable' } } : { data: { total: 1, players: [player] } };
     }
     if (name === 'admin_player') return { data: { player, matches: [], audit: [] } };
+    if (name === 'admin_coin_history') return { data: { balance: 1234, transactions: [{ id: 1, delta: 1234, balanceAfter: 1234, reason: 'admin_grant', reference: {}, actorId: fixturePlayer, note: '<b>Fixture grant</b>', createdAt: '2026-10-17T00:00:00Z' }] } };
     if (name === 'admin_rank_seasons') return { data: [{ ...fixtureSeason, created_by: fixturePlayer, transition_reason: 'SSR season history' }] };
     if (name === 'admin_matches') return { data: { matches: [], hasMore: false, nextCursor: null } };
     if (name === 'admin_audit_entries') return { data: { entries: [], hasMore: false, nextCursor: null } };
@@ -38,6 +39,11 @@ test('admin records render on the server, share verified access, validate URL fi
   const detail = await html(`/players/${fixturePlayer}?returnTo=https://example.invalid`);
   assert.match(detail, /href="\/players"/);
   assert.match(detail, /Latest 20 matches/);
+  assert.match(detail, /Operator grant/);
+  assert.match(detail, /1,234/);
+  assert.match(detail, /&lt;b&gt;Fixture grant&lt;\/b&gt;/);
+  assert.doesNotMatch(detail, /<b>Fixture grant/);
+  assert.match(detail, /Grant coins…/);
   assert.match(await html('/seasons'), /SSR season history/);
   assert.match(await html('/matches'), /No saved matches found/);
   assert.match(await html('/audit'), /No access changes recorded/);
@@ -66,4 +72,22 @@ test('admin records render on the server, share verified access, validate URL fi
   let rest = '';
   for (;;) { const part = await reader.read(); if (part.done) break; rest += decoder.decode(part.value); }
   assert.match(prefix + rest, /private@example.invalid/);
+
+  // Second factor: an aal1 session never reaches console data or the operations proxy.
+  const weak = app.cookie(fixturePlayer, 'aal1');
+  const weakHeaders = { ...headers, cookie: `${weak.name}=${weak.value}; 2048-locale=en` };
+  const beforeWeak = calls.length;
+  const gated = await fetch(app.origin + '/players', { headers: weakHeaders, redirect: 'manual' });
+  assert.equal(gated.status, 307);
+  assert.equal(new URL(gated.headers.get('location'), app.origin).pathname, '/mfa');
+  assert.equal(calls.slice(beforeWeak).length, 0, 'no admin RPC runs before the second factor');
+  const enroll = await fetch(app.origin + '/mfa', { headers: weakHeaders });
+  assert.equal(enroll.status, 200);
+  assert.match(await enroll.text(), /Set up two-factor authentication/);
+  const operations = await fetch(app.origin + '/api/operations', { headers: weakHeaders });
+  assert.equal(operations.status, 403);
+  assert.equal((await operations.json()).error, 'mfa_required');
+  const verified = await fetch(app.origin + '/mfa', { headers, redirect: 'manual' });
+  assert.equal(verified.status, 307);
+  assert.equal(new URL(verified.headers.get('location'), app.origin).pathname, '/');
 });

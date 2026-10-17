@@ -19,6 +19,8 @@ export async function GET() {
     const client = await createClient();
     const { data: { user }, error } = await client.auth.getUser();
     if (error || !user || user.is_anonymous) return reply(401, 'authentication_required');
+    const { data: assurance } = await client.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (assurance?.currentLevel !== 'aal2') return reply(403, 'mfa_required');
 
     const role = await client.rpc('is_game_admin');
     const base = process.env.ADMIN_SOCKET_URL;

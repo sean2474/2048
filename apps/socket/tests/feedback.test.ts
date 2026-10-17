@@ -99,10 +99,10 @@ test("feedback storage permits only the server to submit and administrators to r
   await insert(); await insert();
   assert.equal((await db.query("select * from public.feedback")).rows.length, 1);
   await db.exec("reset role; set role authenticated");
-  await db.query("select set_config('request.jwt.claim.sub',$1,false)", [USER]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [USER]);
   assert.deepEqual((await db.query("select * from public.feedback")).rows, []);
   await assert.rejects(insert(), /permission denied/);
-  await db.query("select set_config('request.jwt.claim.sub',$1,false)", [ADMIN]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [ADMIN]);
   assert.equal((await db.query("select * from public.feedback")).rows.length, 1);
   await assert.rejects(db.query("delete from public.feedback"), /permission denied/);
   await db.exec("reset role");

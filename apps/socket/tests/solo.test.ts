@@ -97,7 +97,7 @@ test("database records best times atomically, awards threshold skins, protects w
   const a = randomUUID(), b = randomUUID();
   await db.query("insert into auth.users(id) values($1),($2)", [a,b]);
   const as = async (role: string, user: string, fn: () => Promise<unknown>) => {
-    await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false)", [user]);
+    await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [user]);
     try { return await fn(); } finally { await db.exec("reset role"); }
   };
   const record = (ms: number, player = a, moves = 1000, id = randomUUID()) => as("service_role", "", () => db.query("select public.record_solo($1,$2,$3,$4,20480)", [id,player,ms,moves]));

@@ -1,5 +1,6 @@
 import type { MatchMode } from "./in-game";
 import type { MatchRecord, MatchTelemetry } from "./results";
+import type { CoinTransactionReason } from "./economy";
 
 export type AdminMode = "all" | MatchMode;
 export type AdminTelemetry = MatchTelemetry;
@@ -25,6 +26,12 @@ export type AdminPlayerDetail = {
   matches: { id: string; endedAt: string; mode: MatchMode | "legacy"; reason: MatchRecord["reason"]; durationSeconds: number; score: number; maxTile: number; result: "win" | "loss" | "draw"; ratingBefore: number | null; ratingAfter: number | null; ratingDelta: number | null; telemetry: AdminTelemetry | null }[];
   audit: { id: string; createdAt: string; actorId: string; action: "suspend" | "unsuspend"; reason: string }[];
 };
+
+export type AdminCoinTransaction = {
+  id: number; delta: number; balanceAfter: number; reason: CoinTransactionReason;
+  reference: Record<string, unknown>; actorId: string | null; note: string | null; createdAt: string;
+};
+export type AdminCoinHistory = { balance: number; transactions: AdminCoinTransaction[] };
 
 export type AdminCursor = { time: string; id: string };
 export type AdminMatch = {

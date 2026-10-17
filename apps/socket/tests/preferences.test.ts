@@ -244,7 +244,7 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
   assert.deepEqual((await db.query("select * from public.player_preferences")).rows, []);
   async function as(role: "anon" | "authenticated", id: string, action: () => Promise<void>) {
     await db.exec(`set role ${role}`);
-    await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
+    await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [id]);
     try { await action(); } finally { await db.exec("reset role"); }
   }
   await as("anon", "", async () => {

@@ -50,7 +50,7 @@ async function database(t: TestContext, history: History) {
 
 async function as<T>(db: PGlite, role: "anon" | "authenticated" | "service_role", id: string, run: () => Promise<T>) {
   await db.exec(`set role ${role}`);
-  await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [id]);
   try { return await run(); } finally { await db.exec("reset role"); }
 }
 async function rpc<T>(db: PGlite, name: string, args: unknown[] = []) {

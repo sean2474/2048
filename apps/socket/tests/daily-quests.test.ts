@@ -32,7 +32,7 @@ async function database(t: TestContext, before?: (db: PGlite) => Promise<void>) 
   return { db, at, checkIn, record };
 }
 async function as(db: PGlite, role: string, id: string, run: () => Promise<void>) {
-  await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
+  await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [id]);
   try { await run(); } finally { await db.exec("reset role"); }
 }
 

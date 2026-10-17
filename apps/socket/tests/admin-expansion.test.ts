@@ -14,9 +14,9 @@ test('admin exploration validates authority, dates, filters, stable cursors, leg
  await db.query(`insert into auth.users(id,email) values($1,'admin@test.invalid'),($2,'player@test.invalid')`,[ADMIN,A]);
  await db.query('insert into public.admin_roles values($1)',[ADMIN]);
  const rpc=async(sql:string,args:unknown[]=[]) => (await db.query<{value:any}>(`select ${sql} as value`,args)).rows[0].value;
- await db.exec('set role authenticated'); await db.query("select set_config('request.jwt.claim.sub',$1,false)",[A]);
+ await db.exec('set role authenticated'); await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)",[A]);
  for(const sql of ['public.admin_matches()','public.admin_audit_entries()','public.admin_players_filtered()','public.admin_match(null)']) await assert.rejects(rpc(sql),/Admin access required/);
- await db.query("select set_config('request.jwt.claim.sub',$1,false)",[ADMIN]);
+ await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)",[ADMIN]);
  assert.deepEqual((await rpc('public.admin_matches()')).matches,[]);
  assert.deepEqual((await rpc('public.admin_audit_entries()')).entries,[]);
  await assert.rejects(rpc("public.admin_matches(p_mode=>'invalid')"),/Invalid match filter/);

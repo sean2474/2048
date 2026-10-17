@@ -2,6 +2,20 @@
 
 관리자는 모노레포의 별도 Next.js 앱 `apps/admin`이다. 로컬 주소는 `http://localhost:3100`이며 게임 `apps/web`의 `/admin` 경로는 제거했다. 같은 Supabase 계정을 사용하지만 관리자 앱에서 따로 로그인하고, `sb-2048-admin-auth` 쿠키로 게임 로그인과 세션을 분리한다. DB의 `admin_roles`에 등록된 계정만 접근할 수 있으며 이메일이나 사용자 수정 가능 metadata로 관리자 권한을 판단하지 않는다.
 
+## 2단계 인증(MFA)
+
+관리자 권한은 **인증 앱(TOTP) 2단계 인증을 마친 세션(aal2)** 에만 부여한다. `20261017200000_admin_mfa.sql`이 `is_game_admin()`에 JWT `aal` 클레임 검사를 추가하므로 모든 관리자 RPC, 피드백 RLS, Storage 업로드 정책, 소켓의 `/admin/operations` 토큰 검증이 같은 경계를 공유한다. 비밀번호만 통과한 세션은 DB에서도 관리자가 아니다.
+
+- 로그인 뒤 콘솔 레이아웃은 세션 보증 수준을 확인하고 aal1이면 `/mfa`로 보낸다. 등록된 인증 수단이 없으면 QR 코드와 수동 입력 키를 보여 주고 6자리 코드로 활성화한다. 이미 등록했으면 코드 확인만 한다. 완료하지 못한 이전 등록은 새 등록 때 정리한다.
+- `/api/operations`는 aal1 세션에 `403 mfa_required`를 반환하고 Operations 화면은 2단계 인증 필요 상태를 표시한다.
+- Supabase 프로젝트의 Authentication → Multi-Factor에서 **TOTP가 활성화**되어 있어야 한다. 비활성화 상태면 등록 화면이 프로젝트 설정 안내 오류를 표시한다. 환경별로 운영·staging 프로젝트를 각각 확인한다.
+- 마이그레이션 적용 직후 기존 관리자 세션은 모두 등록 화면으로 이동한다. 인증 앱을 분실한 관리자는 신뢰된 DB 관리 경로에서 `auth.mfa_factors`의 해당 사용자 행을 삭제한 뒤 다시 등록한다. 앱에는 복구 코드나 수단 삭제 UI가 없다.
+- 검증: `apps/socket/tests/coin-ledger.test.ts`(aal1 거절·aal2 허용·JSON 클레임 읽기)와 `apps/admin/tests/server-pages.test.mjs`(aal1 리디렉션·`/mfa` 렌더링·`/api/operations` 거절). 실제 인증 앱 등록은 Supabase 호스팅 환경에서 브라우저로 확인한다.
+
+## 코인 지급·차감
+
+사용자 상세의 **Coins** 구역은 현재 잔액, 최근 거래 20건, 지급·차감 폼을 제공한다. `admin_adjust_coins(p_user_id, p_delta, p_reason)`는 관리자 권한을 확인하고 1~1,000,000 범위의 수량과 1~500자 사유를 요구한다. 지갑 행을 잠근 뒤 잔액을 바꾸고 `coin_transactions`에 사유·처리 관리자 ID를 기록한다. 차감은 현재 잔액을 넘을 수 없고 익명 계정은 대상이 될 수 없다. `admin_coin_history(p_user_id, p_limit)`는 잔액과 최신순 거래를 반환한다. 거래 내역 자체가 감사 기록이며 기존 `admin_audit`에는 추가하지 않는다. [코인 거래 내역](cosmetic-shop.md#코인-거래-내역)
+
 새 체크아웃에서는 `apps/admin/.env.example`을 `.env.local`로 복사해 공개 Supabase URL과 공개 키만 설정한다. `pnpm dev:admin`으로 독립 실행하거나 루트 `pnpm dev`로 게임 웹·소켓과 함께 실행한다. 서비스 키는 관리자 앱에 넣지 않는다. 게임 헤더에는 관리자 링크가 없으며 별도 관리자 주소로 접속한다. 배포할 때도 `apps/web`과 `apps/admin`을 서로 다른 프로젝트와 도메인으로 연결한다.
 
 현재 관리자 로그인은 이메일·비밀번호 방식이며 Google 전용 계정 로그인은 제공하지 않는다. 게임과 관리자는 각자 현재 세션만 로그아웃한다. 로컬의 포트 차이는 쿠키 보안 경계가 아니므로 운영에서는 별도 호스트와 HTTPS를 사용한다.

@@ -27,7 +27,7 @@ async function database() {
 
 async function as<T>(db: PGlite, role: "anon" | "authenticated", id: string, action: () => Promise<T>) {
   await db.exec(`set role ${role}`);
-  await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [id]);
   try { return await action(); } finally { await db.exec("reset role"); }
 }
 

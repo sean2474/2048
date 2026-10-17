@@ -14,8 +14,9 @@ export const dynamic = "force-dynamic";
 export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
   const { t } = await getI18n();
   if (!isSupabaseConfigured()) return <main className="mx-auto max-w-lg px-6 py-20"><div className="mb-4 flex justify-end"><LanguageSwitcher /></div><div className="admin-panel space-y-4 p-8"><p className="admin-eyebrow">{t("Duo administration")}</p><h1 className="admin-title">{t("Administration unavailable")}</h1><p className="text-sm leading-6 text-muted-foreground">{t("The administrator application has not been configured.")}</p></div></main>;
-  const { user, allowed, error } = await getAdminAccess();
+  const { user, allowed, error, mfa } = await getAdminAccess();
   if (!user || user.is_anonymous) redirect("/login");
+  if (mfa) redirect("/mfa");
   if (error || allowed !== true) return <main className="mx-auto max-w-lg px-6 py-20"><div className="mb-4 flex justify-end"><LanguageSwitcher /></div><div className="admin-panel space-y-6 p-8">
     <p className="admin-eyebrow">{t("Duo administration · Restricted access")}</p>
     <h1 className="admin-title">{t(error ? "Access could not be verified" : "Administrator access required")}</h1>

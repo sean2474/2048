@@ -115,7 +115,7 @@ test("migrations enforce RLS, atomic/idempotent results, rankings and Realtime p
   const rankedRpc = "select public.record_match($1::uuid, '2026-10-15T01:00:00Z', '2026-10-15T01:05:00Z', 'reached_1024', 1::smallint, $2::jsonb, 'ranked') as inserted";
   async function as(role: string, id: string, fn: () => Promise<void>) {
     await db.exec(`set role ${role}`);
-    await db.query("select set_config('request.jwt.claim.sub', $1, false)", [id]);
+    await db.query("select set_config('request.jwt.claim.sub', $1, false), set_config('request.jwt.claim.aal', 'aal2', false)", [id]);
     try { await fn(); } finally { await db.exec("reset role"); }
   }
   await as("anon", "", async () => {

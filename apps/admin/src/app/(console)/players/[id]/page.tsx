@@ -5,18 +5,21 @@ import { PlayerAccess } from "@/components/player-access";
 
 import Link from "next/link";
 import { adminTime, listReturn } from "@/lib/investigation";
-import type { AdminPlayerDetail } from "schema/admin";
+import type { AdminCoinHistory, AdminPlayerDetail } from "schema/admin";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { Button } from "ui/button";
+import { COIN_REASON_LABELS } from "schema/economy";
+import { CoinAdjust } from "@/components/coin-adjust";
 
 export default async function AdminPlayerPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ returnTo?: string }> }) {
   const [{ t, locale }, { id }, search, client] = await Promise.all([getI18n(), params, searchParams, getAdminClient()]);
   if (!client) return null;
-  let data: AdminPlayerDetail | null = null, error = "";
+  let data: AdminPlayerDetail | null = null, coins: AdminCoinHistory | null = null, error = "";
   try {
-    const result = await client.rpc("admin_player", { p_user_id: id });
+    const [result, history] = await Promise.all([client.rpc("admin_player", { p_user_id: id }), client.rpc("admin_coin_history", { p_user_id: id })]);
     if (result.error) throw new Error(result.error.code === "P0002" ? "This player was not found." : "Player details could not be loaded. Check your connection and administrator access, then try again.");
     data = result.data as AdminPlayerDetail;
+    if (!history.error) coins = history.data as AdminCoinHistory;
   } catch (failure) { error = failure instanceof Error ? failure.message : "Player details could not be loaded. Check your connection and administrator access, then try again."; }
   const player = data?.player;
   return <section className="space-y-6" aria-labelledby="player-heading">
@@ -36,6 +39,19 @@ export default async function AdminPlayerPage({ params, searchParams }: { params
         <div><h2 id="access-heading" className="admin-section-title">{t("Match access")}</h2>
         <p className="mt-3 text-xs leading-6 text-muted-foreground">{t("Suspension blocks this account from starting new casual, ranked and friend matches. Existing matches and reconnections continue. It does not block anonymous guest play.")}</p></div>
         {player.isAdmin ? <p className="text-sm">{t("Administrator accounts cannot be suspended here.")}</p> : <PlayerAccess key={player.id} player={{ id: player.id, name: player.name, email: player.email, suspendedAt: player.suspendedAt }} />}
+      </section>
+      <section className="admin-panel grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-10" aria-labelledby="coins-heading">
+        <div><h2 id="coins-heading" className="admin-section-title">{t("Coins")}</h2>
+          <p className="mt-3 text-3xl font-bold tabular-nums">{coins ? coins.balance.toLocaleString(locale) : "—"}</p>
+          <p className="mt-3 text-xs leading-6 text-muted-foreground">{t("Grants and deductions are recorded in the player's coin ledger with your administrator ID and reason. Deductions cannot exceed the current balance.")}</p>
+          {!coins ? <p role="alert" className="admin-error mt-4">{t("Coin history could not be loaded.")}</p>
+            : !coins.transactions.length ? <p className="admin-state mt-4">{t("No coin activity yet.")}</p>
+            : <ol className="mt-4 divide-y text-sm" aria-label={t("Latest {count} coin transactions", { count: coins.transactions.length })}>{coins.transactions.map(entry => <li key={entry.id} className="flex items-start justify-between gap-4 py-3">
+              <div className="min-w-0"><p className="font-semibold">{t(COIN_REASON_LABELS[entry.reason] ?? entry.reason)}</p>{entry.note && <p className="whitespace-pre-wrap break-words text-xs leading-5 text-muted-foreground">{entry.note}</p>}<p className="text-[11px] text-muted-foreground">{adminTime(entry.createdAt, locale)}</p></div>
+              <div className="shrink-0 text-right tabular-nums"><p className={`font-semibold ${entry.delta > 0 ? "text-secondary-foreground" : "text-destructive"}`}>{entry.delta > 0 ? "+" : ""}{entry.delta.toLocaleString(locale)}</p><p className="text-xs text-muted-foreground">{t("Balance after")} {entry.balanceAfter.toLocaleString(locale)}</p></div>
+            </li>)}</ol>}
+        </div>
+        <CoinAdjust key={player.id} player={{ id: player.id, name: player.name }} balance={coins?.balance ?? null} />
       </section>
       <section className="space-y-4" aria-labelledby="recent-matches-heading">
         <h2 id="recent-matches-heading" className="admin-section-title">{t("Latest 20 matches")}</h2><Link className="inline-flex min-h-11 items-center text-sm text-primary underline" href={`/matches?player=${id}`}>{t("View all matches")}</Link>

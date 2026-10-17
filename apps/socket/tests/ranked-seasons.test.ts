@@ -29,7 +29,7 @@ async function database(t: TestContext, upgrade = false) {
   for (const file of files.filter(f => f >= rank)) await db.exec(await readFile(new URL(file, dir), "utf8"));
   const rpc = async <T>(sql: string, args: unknown[] = []) => (await db.query<{ value: T }>(`select ${sql} as value`, args)).rows[0].value;
   const as = async <T>(role: string, id: string, fn: () => Promise<T>) => {
-    await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
+    await db.exec(`set role ${role}`); await db.query("select set_config('request.jwt.claim.sub',$1,false), set_config('request.jwt.claim.aal','aal2',false)", [id]);
     try { return await fn(); } finally { await db.exec("reset role"); }
   };
   const record = (winner: number | null = 1, id = randomUUID(), start = "2026-10-15T00:00:00Z", end = "2026-10-15T00:01:00Z") =>

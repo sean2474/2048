@@ -72,7 +72,7 @@ test("admin catalog creates, uploads, publishes and edits without overwriting ne
   const browser = await chromium.launch({ channel: "chrome", headless: true }); t.after(() => browser.close());
   const context = await browser.newContext({ locale: "en-US", viewport: { width: 1440, height: 1000 } });
   const expires = Math.floor(Date.now() / 1000) + 3600;
-  const jwt = `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url")}.${Buffer.from(JSON.stringify({ sub: id, exp: expires, role: "authenticated" })).toString("base64url")}.fixture`;
+  const jwt = `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url")}.${Buffer.from(JSON.stringify({ sub: id, exp: expires, role: "authenticated", aal: "aal2" })).toString("base64url")}.fixture`;
   const session = { access_token: jwt, refresh_token: "fixture", expires_at: expires, expires_in: 3600, token_type: "bearer", user };
   await context.addCookies([{ name: "sb-2048-admin-auth", value: `base64-${Buffer.from(JSON.stringify(session)).toString("base64url")}`, url: origin }, { name: "duo.locale", value: "en", url: origin }]);
   const page = await context.newPage(); const errors = []; page.on("pageerror", error => errors.push(error.message));

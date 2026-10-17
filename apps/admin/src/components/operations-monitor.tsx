@@ -9,6 +9,7 @@ const errors: Record<string, string> = {
   socket_not_configured: 'Socket operations URL is not configured.',
   authentication_required: 'Administrator access required',
   admin_access_required: 'Administrator access required',
+  mfa_required: 'Two-factor verification required',
   admin_verification_unavailable: 'Administrator permission could not be verified.',
   socket_verification_unavailable: 'Socket permission verification is unavailable.',
   socket_unreachable: 'The game server could not be reached.',
