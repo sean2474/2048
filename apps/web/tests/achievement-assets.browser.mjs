@@ -31,7 +31,7 @@ test("achievement portraits crop cleanly and board reward numbers fit even at op
         const range = document.createRange();
         if (number) range.selectNodeContents(number);
         const text = number ? range.getBoundingClientRect() : null;
-        return { skin: el.closest("[data-skin]").dataset.skin, value: number?.textContent, label: el.getAttribute("aria-label"), fits: !text || text.left >= face.left - 1 && text.right <= face.right + 1 && text.bottom <= face.bottom + 1, decorations: el.querySelectorAll("svg").length };
+        return { skin: el.closest("[data-skin]").dataset.skin, value: number?.textContent, label: el.getAttribute("aria-label"), fits: !text || text.left >= face.left - 1 && text.right <= face.right + 1 && text.bottom <= face.bottom + 1, decorations: el.querySelectorAll(":scope > span > svg").length };
       }));
       assert.equal(result.length, 34);
       for (const tile of result) {

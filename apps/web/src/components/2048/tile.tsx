@@ -4,7 +4,7 @@ import type { SkinTokens } from "schema/loadout";
 import { NumberTile } from "./number-tile";
 import { MergeFlair } from "./merge-flair";
 import { useI18n } from "ui/i18n";
-import { Pin } from "lucide-react";
+import { Pin, X } from "lucide-react";
 
 export function Tile({ tile, tokens }: { tile: Cell; tokens: SkinTokens }) {
   const { t } = useI18n();
@@ -47,7 +47,7 @@ export function Tile({ tile, tokens }: { tile: Cell; tokens: SkinTokens }) {
           borderRadius: isHardBlock || isXBlock ? undefined : "var(--skin-tile-radius, 0.5rem)",
         }}
       >
-        {isHardBlock ? null : isXBlock ? <span aria-hidden="true" className="font-black" style={{ fontSize: "var(--x-font-size, min(2.25rem, 12cqw))" }}>✖</span> : <NumberTile value={value} tokens={tokens} />}
+        {isHardBlock ? null : isXBlock ? <X aria-hidden="true" className="absolute inset-[20%] size-3/5" strokeWidth={4} /> : <NumberTile value={value} tokens={tokens} />}
         {tile.anchored && !ghost && <span className="absolute inset-0 rounded-[inherit] ring-2 ring-inset ring-primary" data-anchored="true"><span role="img" aria-label={t("Anchored tile")} className="absolute right-0 top-0 rounded-bl bg-primary p-0.5 text-primary-foreground"><Pin aria-hidden="true" className="size-2.5" /></span></span>}
         {merged && !ghost && !isXBlock && !isHardBlock && tokens.character && <MergeFlair character={tokens.character} />}
       </div>

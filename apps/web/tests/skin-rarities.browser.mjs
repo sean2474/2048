@@ -92,7 +92,7 @@ test("rarity filters, persistence, paging and readable character tiles", async (
         const text = number ? range.getBoundingClientRect() : null;
         const character = ["kitty", "bunny", "sentinel", "runeknight", "arcanist"].includes(el.closest("[data-skin]").dataset.skin);
         const inset = character && rect ? rect.width * .1 : 0;
-        return { skin: el.closest("[data-skin]").dataset.skin, label: el.getAttribute("aria-label"), number: number?.textContent, fits: !text || text.left >= rect.left + inset - 1 && text.right <= rect.right - inset + 1 && text.bottom <= rect.bottom + 1, foreground: face && getComputedStyle(face).color, background: getComputedStyle(el).backgroundColor, characters: el.querySelectorAll("svg").length };
+        return { skin: el.closest("[data-skin]").dataset.skin, label: el.getAttribute("aria-label"), number: number?.textContent, fits: !text || text.left >= rect.left + inset - 1 && text.right <= rect.right - inset + 1 && text.bottom <= rect.bottom + 1, foreground: face && getComputedStyle(face).color, background: getComputedStyle(el).backgroundColor, characters: el.querySelectorAll(":scope > span > svg").length };
       }));
       for (const item of measurements) {
         assert.equal(item.fits, true, `${item.skin}: ${item.label}, board ${width}`);
