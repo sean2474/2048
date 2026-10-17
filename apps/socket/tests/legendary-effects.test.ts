@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { GameAudio } from "../../web/src/lib/game-audio";
-import { SKINS } from "schema/loadout";
+import { SKINS, type SkinTokens } from "schema/loadout";
 import { PROFILE_ICONS } from "schema/profile-icons";
 import { readFileSync } from "node:fs";
 
@@ -27,7 +27,7 @@ test("legendary merges have distinct voices; other cues and mute stay unchanged"
     await audio.unlock();
     const signatures = new Set<string>();
     for (const skin of SKINS) {
-      notes.length = 0; audio.stop(); audio.play("merge", skin.id);
+      notes.length = 0; audio.stop(); audio.play("merge", skin.tokens);
       if (skin.rarity === "legendary") {
         assert.ok(notes.length >= 2 && notes.length <= 3);
         assert.notDeepEqual(notes.map(note => note.frequency), [440, 880]);
@@ -35,9 +35,15 @@ test("legendary merges have distinct voices; other cues and mute stay unchanged"
       } else assert.deepEqual(notes.map(note => note.frequency), [440, 880]);
     }
     assert.equal(signatures.size, SKINS.filter(skin => skin.rarity === "legendary").length);
-    notes.length = 0; audio.stop(); audio.play("xblock", "arcanist");
+    for (const character of ["fox", "dragon", "phoenix"] as SkinTokens["character"][]) {
+      notes.length = 0; audio.stop(); audio.play("merge", { ...SKINS[0].tokens, character });
+      assert.notDeepEqual(notes.map(note => note.frequency), [440, 880]);
+      assert.equal(signatures.has(JSON.stringify(notes)), false);
+      signatures.add(JSON.stringify(notes));
+    }
+    notes.length = 0; audio.stop(); audio.play("xblock", SKINS.find(skin => skin.id === "arcanist")!.tokens);
     assert.deepEqual(notes.map(note => note.frequency), [720]);
-    notes.length = 0; audio.stop(); audio.setSettings({ muted: true, volume: .45 }); audio.play("merge", "sentinel");
+    notes.length = 0; audio.stop(); audio.setSettings({ muted: true, volume: .45 }); audio.play("merge", SKINS.find(skin => skin.id === "sentinel")!.tokens);
     assert.equal(notes.length, 0);
   } finally {
     audio.dispose();

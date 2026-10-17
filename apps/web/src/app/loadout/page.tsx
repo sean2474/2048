@@ -5,8 +5,8 @@ import { PageHeading } from "@/components/widget/page-heading";
 import { GameEmblem } from "@/components/widget/game-emblem";
 import { useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, LockKeyhole, Palette, UserRound } from "lucide-react";
-import { SKINS, SKIN_RARITIES, type SkinId, type SkinRarity } from "schema/loadout";
-import { GUEST_PROFILE_ICON, PROFILE_ICONS, type PlayerIconId } from "schema/profile-icons";
+import { SKIN_RARITIES, type SkinId, type SkinRarity } from "schema/loadout";
+import { GUEST_PROFILE_ICON, type PlayerIconId } from "schema/profile-icons";
 import { ProfileIcon } from "@/components/widget/profile-icon";
 import { useI18n } from "ui/i18n";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { usePlayer } from "@/hooks/use-player";
 import { useLoadout } from "@/hooks/use-loadout";
 import { useAchievements } from "@/hooks/use-achievements";
-import { achievementForItem } from "schema/achievements";
+import { useCatalog } from "@/hooks/catalog-provider";
 import { useCosmetics } from "@/hooks/use-cosmetics";
-import { SHOP_ITEMS } from "schema/economy";
 import { SkinPreview } from "@/components/2048/skin-preview";
 import { SkinMergePreview } from "@/components/2048/skin-merge-preview";
 import { trackGameEvent } from "@/lib/analytics";
@@ -36,6 +35,8 @@ function CatalogCard({ name, selected, locked, disabled, onClick, children }: { 
 export default function LoadoutPage() {
   const { t, locale } = useI18n();
   const { user } = usePlayer();
+  const catalog = useCatalog();
+  const { skins, profileIcons, achievementForItem } = catalog;
   const achievements = useAchievements(user);
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const { skin, icon, selectSkin, selectIcon, storageError, ready, saving, scope } = useLoadout();
@@ -51,20 +52,24 @@ export default function LoadoutPage() {
 
   const owns = (kind: "skin" | "icon", id: string) => {
     if (guest) return kind === "skin" ? id === "classic" : id === "guest";
-    const achievement = achievementForItem(kind, id);
-    return achievement ? Boolean(achievements.data?.unlocks.some(item => item.achievementId === achievement.id)) : cosmetics.owns(kind, id);
+    return cosmetics.owns(kind, id) || catalog.achievements.some(item => {
+      const reward = item.reward;
+      return (kind === "skin" ? "skinId" in reward && reward.skinId === id : "iconId" in reward && reward.iconId === id)
+        && achievements.data?.unlocks.some(unlock => unlock.achievementId === item.id);
+    });
   };
   const balance = cosmetics.data?.balance;
-  const filteredSkins = SKINS.filter(item => (rarity === "all" || item.rarity === rarity) && (!ownedOnly || owns("skin", item.id)));
+  const filteredSkins = skins.filter(item => (item.status === "published" || owns("skin", item.id) || item.id === skin.id) && (rarity === "all" || item.rarity === rarity) && (!ownedOnly || owns("skin", item.id)));
   const pageCount = Math.ceil(filteredSkins.length / PAGE_SIZE);
   const currentPage = Math.min(skinPage, Math.max(0, pageCount - 1));
-  const icons = guest ? [GUEST_PROFILE_ICON, ...PROFILE_ICONS] : PROFILE_ICONS;
-  const detailSkin = detail?.category === "skins" ? SKINS.find(item => item.id === detail.id) : undefined;
-  const detailIcon = detail?.category === "icons" ? [GUEST_PROFILE_ICON, ...PROFILE_ICONS].find(item => item.id === detail.id) : undefined;
+  const icons = guest ? [GUEST_PROFILE_ICON, ...profileIcons.filter(item => item.status === "published")] : profileIcons.filter(item => item.status === "published" || owns("icon", item.id) || item.id === icon.id);
+  const detailSkin = detail?.category === "skins" ? skins.find(item => item.id === detail.id) : undefined;
+  const detailIcon = detail?.category === "icons" ? [GUEST_PROFILE_ICON, ...profileIcons].find(item => item.id === detail.id) : undefined;
   const detailName = detailSkin?.name ?? detailIcon?.name ?? "My loadout";
-  const detailAchievement = detail ? achievementForItem(detail.category === "skins" ? "skin" : "icon", detail.id) : undefined;
-  const detailIncluded = detail && SHOP_ITEMS.some(item => item.kind === (detail.category === "skins" ? "skin" : "icon") && item.id === detail.id && item.price === 0);
+  const detailAchievement = detail ? achievementForItem(detail.category === "skins" ? "skin" : "icon", detail.id, achievements.data?.unlocks.map(item => item.achievementId)) : undefined;
+  const detailIncluded = detail && (detail.category === "skins" ? skins : profileIcons).some(item => item.id === detail.id && item.acquisition === "free");
   const detailOwned = Boolean(detail && owns(detail.category === "skins" ? "skin" : "icon", detail.id));
+  const detailUnavailable = !detailOwned && !detailAchievement && (detailSkin?.acquisition === "achievement" || detailIcon && "acquisition" in detailIcon && detailIcon.acquisition === "achievement");
   const detailSelected = detail?.category === "skins" ? detail.id === skin.id : detail?.id === icon.id;
 
   function openDetail(event: MouseEvent<HTMLButtonElement>, next: Detail) {
@@ -138,9 +143,9 @@ export default function LoadoutPage() {
           <DialogDescription className="leading-6">{t(detailSkin ? "Skins change appearance only." : detailIcon?.id === "guest" ? "Guests always use this icon." : "Shown on your profile and match intro.")}</DialogDescription>
         </DialogHeader>
         {detailOpen && detailSkin?.rarity === "legendary" && <SkinMergePreview key={detailSkin.id} skin={detailSkin} />}
-        <div className="space-y-1 border-t pt-3"><h3 className="flex items-center gap-2 text-sm font-bold">{detailOwned ? <Check aria-hidden="true" className="size-4" /> : <LockKeyhole aria-hidden="true" className="size-4" />}{t("Unlock conditions")}</h3><p className="text-sm text-muted-foreground">{t(detailAchievement ? detailAchievement.description : detailOwned ? guest || detailIncluded ? "Included by default" : "Owned" : guest ? "Log in to unlock this item." : "Available in the coin shop.")}</p>{detailAchievement && detailOwned && <p className="pt-1 text-xs text-primary">{t("Permanently unlocked")}</p>}</div>
+        <div className="space-y-1 border-t pt-3"><h3 className="flex items-center gap-2 text-sm font-bold">{detailOwned ? <Check aria-hidden="true" className="size-4" /> : <LockKeyhole aria-hidden="true" className="size-4" />}{t("Unlock conditions")}</h3><p className="text-sm text-muted-foreground">{t(detailUnavailable ? "Currently unavailable" : detailAchievement ? detailAchievement.description : detailOwned ? guest || detailIncluded ? "Included by default" : "Owned" : guest ? "Log in to unlock this item." : "Available in the coin shop.")}</p>{detailAchievement && detailOwned && <p className="pt-1 text-xs text-primary">{t("Permanently unlocked")}</p>}</div>
         {storageError && <p role="alert" className="text-sm text-destructive">{t(storageError)}</p>}
-        <DialogFooter>{!detailOwned ? <Button asChild><Link href={guest ? "/login" : detailAchievement ? `/achievements#${detailAchievement.id}` : "/shop"}>{t(guest ? "Log in" : detailAchievement ? "Unlock through achievements" : "Buy in shop")}</Link></Button> : <Button disabled={!ready || saving || detailSelected || guest} onClick={() => { void equipDetail(); }}>{t(detailSelected ? "Equipped" : "Equip")}</Button>}</DialogFooter>
+        <DialogFooter>{!detailOwned ? detailUnavailable ? <Button disabled>{t("Currently unavailable")}</Button> : <Button asChild><Link href={guest ? "/login" : detailAchievement ? `/achievements#${detailAchievement.id}` : "/shop"}>{t(guest ? "Log in" : detailAchievement ? "Unlock through achievements" : "Buy in shop")}</Link></Button> : <Button disabled={!ready || saving || detailSelected || guest} onClick={() => { void equipDetail(); }}>{t(detailSelected ? "Equipped" : "Equip")}</Button>}</DialogFooter>
       </DialogContent>
     </Dialog>
   </main>;

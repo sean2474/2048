@@ -7,6 +7,7 @@ import { useI18n } from "ui/i18n";
 import { Button } from "@/components/ui/button";
 import { SoundToggle } from "@/components/widget/audio-controls";
 import { useAudio } from "@/hooks/audio-provider";
+import { boardBackground } from "@/lib/catalog-assets";
 import { NumberTile } from "./number-tile";
 import { MergeFlair } from "./merge-flair";
 import { trackGameEvent } from "@/lib/analytics";
@@ -29,7 +30,7 @@ export function SkinMergePreview({ skin }: { skin: Skin & { id: SkinId } }) {
 
   return <div className="space-y-3" data-skin-preview={skin.id} data-phase={phase}>
     <figure className="py-2" aria-label={t("Two equal 2 tiles merge into one 4 tile")}>
-      <div aria-hidden="true" className="mx-auto grid w-44 grid-cols-2 gap-2 p-3" style={{ background: skin.tokens.boardBackground, borderRadius: `calc(${skin.tokens.tileRadius} + .75rem)` }}>
+      <div aria-hidden="true" className="mx-auto grid w-44 grid-cols-2 gap-2 p-3" style={{ background: boardBackground(skin.tokens), borderRadius: `calc(${skin.tokens.tileRadius} + .75rem)` }}>
         <div className="relative size-[72px]" style={{ background: skin.tokens.emptyBackground, borderRadius: skin.tokens.tileRadius }}>
           <div className="relative size-full text-2xl" data-merge-effect={merged ? skin.tokens.character : undefined} style={{ borderRadius: skin.tokens.tileRadius }}>
             <NumberTile value={merged ? 4 : 2} tokens={skin.tokens} />

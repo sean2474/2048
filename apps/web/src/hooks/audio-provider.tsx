@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import type { SkinId } from "schema/loadout";
 import { AUDIO_STORAGE_KEY, DEFAULT_AUDIO, GameAudio, parseAudioSettings, type AudioSettings, type GameSound } from "@/lib/game-audio";
 
+import { useCatalog } from "./catalog-provider";
+
 type AudioContextValue = AudioSettings & { ready: boolean; storageError: boolean; unavailable: boolean; saveAudio: (patch: Partial<AudioSettings>) => void; play: (sound: GameSound, skinId?: SkinId) => void };
 const Context = createContext<AudioContextValue | null>(null);
 
@@ -16,6 +18,9 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const current = useRef(settings);
   const engine = useRef<GameAudio | null>(null);
   const pathname = usePathname();
+  const catalog = useCatalog();
+  const catalogRef = useRef(catalog);
+  catalogRef.current = catalog;
 
   useEffect(() => {
     const audio = new GameAudio();
@@ -52,7 +57,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => { engine.current?.stop(); }, [pathname]);
-  const play = useCallback((sound: GameSound, skinId?: SkinId) => { engine.current?.play(sound, skinId); }, []);
+  const play = useCallback((sound: GameSound, skinId?: SkinId) => { engine.current?.play(sound, skinId ? catalogRef.current.skin(skinId).tokens : undefined); }, []);
   const saveAudio = useCallback((patch: Partial<AudioSettings>) => {
     const next = parseAudioSettings(JSON.stringify({ ...current.current, ...patch }));
     current.current = next;

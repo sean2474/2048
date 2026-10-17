@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Check, LockKeyhole, Palette, UserRound } from "lucide-react";
-import { SHOP_ITEMS } from "schema/economy";
-import { SKINS, SKIN_RARITIES, type SkinRarity } from "schema/loadout";
-import { PROFILE_ICONS } from "schema/profile-icons";
+import { useCatalog } from "@/hooks/catalog-provider";
+import { SKIN_RARITIES, type SkinRarity } from "schema/loadout";
 import { useI18n } from "ui/i18n";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -24,6 +23,8 @@ type Category = "skin" | "icon";
 export default function ShopPage() {
   const { t, locale } = useI18n();
   const { user } = usePlayer();
+  const { skins, profileIcons, error: catalogError, loading: catalogLoading } = useCatalog();
+  const shopItems = [...skins.map(item => ({ ...item, kind: "skin" as const })), ...profileIcons.map(item => ({ ...item, kind: "icon" as const }))].filter(item => item.status === "published" && item.acquisition !== "achievement");
   const cosmetics = useCosmetics(user);
   const [category, setCategory] = useState<Category>("skin");
   const [rarity, setRarity] = useState<SkinRarity | "all">("all");
@@ -31,8 +32,9 @@ export default function ShopPage() {
   const [detail, setDetail] = useState<string | null>(null);
   const [purchased, setPurchased] = useState<string | null>(null);
   const userId = user && !user.is_anonymous ? user.id : undefined;
-  const items = SHOP_ITEMS.filter(item => item.kind === category && (item.kind === "icon" || rarity === "all" || SKINS.find(skin => skin.id === item.id)?.rarity === rarity));
+  const items = shopItems.filter(item => item.kind === category && (item.kind === "icon" || rarity === "all" || skins.find(skin => skin.id === item.id)?.rarity === rarity));
   const pages = Math.ceil(items.length / PAGE_SIZE);
+  const currentPage = Math.min(page, Math.max(0, pages - 1));
   const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
 
   return <main className="mx-auto max-w-[1040px] space-y-5 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
@@ -52,9 +54,9 @@ export default function ShopPage() {
     </div>
     <section id="shop-panel" role="tabpanel" aria-labelledby={`shop-${category}-tab`} className="space-y-4">
       {category === "skin" && <div role="group" aria-label={t("Filter by rarity")} className="flex flex-wrap gap-1">{(["all", ...Object.keys(SKIN_RARITIES)] as Array<SkinRarity | "all">).map(value => <Button key={value} variant="ghost" aria-pressed={rarity === value} aria-controls="shop-items" onClick={() => { setRarity(value); setPage(0); trackGameEvent("skin_filter_changed", { rarity: value, source: "shop" }); }} className={rarity === value ? "bg-primary/10 text-primary" : "text-muted-foreground"}>{t(value === "all" ? "All skins" : SKIN_RARITIES[value].name)}</Button>)}</div>}
-      <ul id="shop-items" className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">{items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(item => {
-        const skin = item.kind === "skin" ? SKINS.find(skin => skin.id === item.id) : undefined;
-        const icon = item.kind === "icon" ? PROFILE_ICONS.find(icon => icon.id === item.id) : undefined;
+      <ul id="shop-items" className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">{items.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(item => {
+        const skin = item.kind === "skin" ? skins.find(skin => skin.id === item.id) : undefined;
+        const icon = item.kind === "icon" ? profileIcons.find(icon => icon.id === item.id) : undefined;
         const name = t(skin?.name ?? icon!.name);
         const key = `${item.kind}:${item.id}`;
         const included = item.price === 0;
@@ -75,13 +77,13 @@ export default function ShopPage() {
             {purchased === `${userId}:${key}` && <p role="status" className="text-sm font-semibold text-primary">{t("Purchase complete.")}</p>}
             {cosmetics.purchaseError ? <p role="alert" className="text-sm text-destructive">{t(cosmetics.purchaseError)}</p> : !owned && !included && insufficient && <p className="text-sm text-muted-foreground">{t("Not enough coins.")}</p>}
             <DialogFooter>
-              {!userId ? user === undefined ? <Button disabled>{t("Loading…")}</Button> : <Button asChild><Link href="/login">{t("Log in")}</Link></Button> : !included && !owned && <Button disabled={cosmetics.buying || cosmetics.loading || !cosmetics.data || insufficient} onClick={() => { void cosmetics.purchase(item.kind, item.id).then(success => { if (success) setPurchased(`${userId}:${key}`); }); }}>{t(cosmetics.buying ? "Purchasing…" : "Buy for {count} coins", { count: item.price.toLocaleString(numberLocale) })}</Button>}
+              {!userId ? user === undefined ? <Button disabled>{t("Loading…")}</Button> : <Button asChild><Link href="/login">{t("Log in")}</Link></Button> : !included && !owned && <Button disabled={catalogError || catalogLoading || cosmetics.buying || cosmetics.loading || !cosmetics.data || insufficient} onClick={() => { void cosmetics.purchase(item.kind, item.id, item.price).then(success => { if (success) setPurchased(`${userId}:${key}`); }); }}>{t(cosmetics.buying ? "Purchasing…" : "Buy for {count} coins", { count: item.price.toLocaleString(numberLocale) })}</Button>}
               {(included || owned) && <Button asChild variant="outline"><Link href="/loadout" data-analytics-link="/loadout">{t("View in loadout")}</Link></Button>}
             </DialogFooter>
           </DialogContent>
         </Dialog></li>;
       })}</ul>
-      {pages > 1 && <nav aria-label={t("Catalog pages")} className="flex items-center justify-center gap-3"><Button variant="outline" disabled={page === 0} onClick={() => setPage(page - 1)}>{t("Previous page")}</Button><p role="status" className="text-xs tabular-nums">{t("Page {page} of {count}", { page: page + 1, count: pages })}</p><Button variant="outline" disabled={page + 1 >= pages} onClick={() => setPage(page + 1)}>{t("Next page")}</Button></nav>}
+      {pages > 1 && <nav aria-label={t("Catalog pages")} className="flex items-center justify-center gap-3"><Button variant="outline" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>{t("Previous page")}</Button><p role="status" className="text-xs tabular-nums">{t("Page {page} of {count}", { page: currentPage + 1, count: pages })}</p><Button variant="outline" disabled={currentPage + 1 >= pages} onClick={() => setPage(currentPage + 1)}>{t("Next page")}</Button></nav>}
     </section>
   </main>;
 }

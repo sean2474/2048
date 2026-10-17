@@ -4,7 +4,9 @@ export type SkinTokens = {
   tileRadius: string;
   tilePattern?: "dots" | "gingham" | "pinstripe" | "weave" | "runes" | "sunrise" | "magic-circle" | "shield" | "crossguard" | "laurel" | "compass";
   tilePalette?: readonly string[];
-  character?: "cat" | "bunny" | "sentinel" | "runeknight" | "arcanist" | "diamond" | "crown";
+  boardImagePath?: string;
+  tileImagePath?: string;
+  character?: "cat" | "bunny" | "sentinel" | "runeknight" | "arcanist" | "fox" | "dragon" | "phoenix" | "diamond" | "crown";
 };
 
 export const SKIN_RARITIES = {
@@ -14,7 +16,7 @@ export const SKIN_RARITIES = {
   legendary: { name: "Legendary", description: "Signature tiles and merge effects." },
 } as const;
 export type SkinRarity = keyof typeof SKIN_RARITIES;
-export type Skin = { id: string; name: string; description: string; rarity: SkinRarity; price: 0; tokens: SkinTokens };
+export type Skin = { id: string; name: string; description: string; rarity: SkinRarity; price: number; tokens: SkinTokens };
 
 export const SKINS = [
   { id: "classic", name: "Classic", description: "Default board and tiles.", rarity: "common", price: 0,
@@ -75,7 +77,7 @@ export const SKINS = [
     tokens: { boardBackground: "radial-gradient(ellipse at top, #87719d, #392d54 75%)", emptyBackground: "#9b88ad", tileRadius: "0.5rem", character: "crown", tilePalette: ["#e8dcec", "#dccbec", "#d1c9eb", "#d9c4df", "#e6cdcd", "#eed9b0"] } },
 ] as const satisfies readonly Skin[];
 
-export type SkinId = (typeof SKINS)[number]["id"];
+export type SkinId = string;
 
 export const ABILITIES = [
   { id: "clear-x", summary: "Remove one X block from your board.", name: "Clear X", role: "Recovery", description: "Remove exactly one X block automatically, starting with the oldest. This is the default ability for everyone.", tradeoff: "Hard blocks and incoming attacks stay unchanged. If there is no X block, no charge is spent.", status: "active", price: null },

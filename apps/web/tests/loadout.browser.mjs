@@ -1,15 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createRequire } from "node:module";
-import { mockAccount } from "./browser-fixtures.mjs";
+import { mockAccount, mockCatalog } from "./browser-fixtures.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
-const origin = "http://[::1]:3001";
+const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
 
 test("guest loadout is fixed, locked cards explain access, and owned filters keep defaults", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const context = await browser.newContext({ locale: "ko-KR", viewport: { width: 1440, height: 900 } });
     const page = await context.newPage(), errors = [];
+    await mockCatalog(page);
     page.on("pageerror", error => errors.push(error.message));
     await page.goto(`${origin}/loadout`);
     const current = page.getByRole("region", { name: "현재 선택" });
@@ -17,7 +18,7 @@ test("guest loadout is fixed, locked cards explain access, and owned filters kee
     assert.match(await current.innerText(), /클래식/);
     assert.equal(await page.locator("#skin-results button").count(), 12);
     await page.getByRole("button", { name: "다음 페이지", exact: true }).click();
-    assert.equal(await page.locator("#skin-results button").count(), 10);
+    assert.equal(await page.locator("#skin-results button").count(), 12);
     await page.getByRole("checkbox", { name: "보유 중인 것만" }).check();
     assert.equal(await page.locator("#skin-results button").count(), 1);
     assert.equal(await page.getByRole("navigation", { name: "목록 페이지" }).count(), 0);
@@ -27,7 +28,7 @@ test("guest loadout is fixed, locked cards explain access, and owned filters kee
     await page.getByRole("tab", { name: "아이콘", exact: true }).click();
     assert.equal(await page.locator("#icons-panel button").count(), 1);
     await page.getByRole("checkbox", { name: "보유 중인 것만" }).uncheck();
-    assert.equal(await page.locator("#icons-panel button").count(), 9);
+    assert.equal(await page.locator("#icons-panel button").count(), 15);
     const locked = page.getByRole("button", { name: "불꽃 여우 · 잠김 · 해금 조건 보기", exact: true });
     await locked.click();
     const dialog = page.getByRole("dialog");
@@ -73,6 +74,7 @@ test("account skin and abilities are selected from details and persist", async (
   try {
     const context = await browser.newContext({ locale: "ko-KR" });
     const page = await context.newPage();
+    await mockCatalog(page);
     const account = await mockAccount(page);
     await page.goto(`${origin}/loadout`);
     await page.getByRole("button", { name: "페이퍼 · 자세히 보기", exact: true }).click();

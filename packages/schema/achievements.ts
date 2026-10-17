@@ -5,7 +5,7 @@ type AchievementReward = {
   id: string;
   name: string;
   description: string;
-  metric: "attendance_streak" | "wins" | "highest_tile" | "rank_tier";
+  metric: "attendance_streak" | "wins" | "highest_tile" | "solo_time" | "solo_tile" | "rank_tier";
   target: number;
   reward: { kind: "skin"; skinId: SkinId } | { kind: "icon"; iconId: ProfileIconId } | { kind: "set"; skinId: SkinId; iconId: ProfileIconId };
 };
@@ -23,12 +23,14 @@ export const ACHIEVEMENT_REWARDS = [
   { id: "rank-master", name: "Master collector", description: "Reach Master in ranked play.", metric: "rank_tier", target: 6, reward: { kind: "set", skinId: "rank-master", iconId: "rank-master" } },
 ] as const satisfies readonly AchievementReward[];
 
-export type AchievementId = (typeof ACHIEVEMENT_REWARDS)[number]["id"];
+export type AchievementId = string;
 export type AchievementState = {
   attendance: { streak: number; bestStreak: number; lastDay: string | null; today: string; checkedInToday: boolean; nextCheckInAt: string };
   wins: number;
   highestTile: number;
   highestRank?: number;
+  soloBestMs?: number | null;
+  soloHighestTile?: number;
   unlocks: { achievementId: AchievementId; unlockedAt: string }[];
 };
 
@@ -36,4 +38,23 @@ export function achievementForItem(kind: "skin" | "icon", id: string) {
   return ACHIEVEMENT_REWARDS.find(({ reward }) => kind === "skin"
     ? "skinId" in reward && reward.skinId === id
     : "iconId" in reward && reward.iconId === id);
+}
+
+
+export function achievementProgress(item: Pick<AchievementReward, "id" | "metric" | "target">, data: AchievementState) {
+  const unlocked = data.unlocks.some(unlock => unlock.achievementId === item.id);
+  const current = item.metric === "attendance_streak" ? data.attendance.streak
+    : item.metric === "wins" ? data.wins
+    : item.metric === "rank_tier" ? data.highestRank ?? 0
+    : item.metric === "solo_time" ? data.soloBestMs ?? 0
+    : item.metric === "solo_tile" ? data.soloHighestTile ?? 0 : data.highestTile;
+  const fraction = item.metric === "solo_time" ? current > 0 ? item.target / current : 0 : current / item.target;
+  return { unlocked, current, percent: unlocked ? 100 : Math.min(100, Math.max(0, Math.floor(fraction * 100))) };
+}
+
+export function formatAchievementTime(ms: number) {
+  const centiseconds = Math.floor(Math.max(0, ms) / 10);
+  const minutes = String(Math.floor(centiseconds / 6000)).padStart(2, "0");
+  const seconds = String(Math.floor(centiseconds / 100) % 60).padStart(2, "0");
+  return `${minutes}:${seconds}.${String(centiseconds % 100).padStart(2, "0")}`;
 }
