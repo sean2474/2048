@@ -9,7 +9,6 @@ export const DEFAULT_KEYBINDINGS: Readonly<Keybindings> = Object.freeze({
   right: "KeyD",
   ability: "Digit1",
 });
-export const KEYBINDINGS_STORAGE_KEY = "duo.keybindings.v1";
 
 type KeyEvent = Pick<KeyboardEvent, "code" | "altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "isComposing" | "repeat" | "defaultPrevented">;
 
@@ -39,16 +38,6 @@ export function upgradeKeybindings(value: unknown): unknown {
   const ability = hasAbility && old.ability !== "Digit3" ? old.ability
     : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(digit => `Digit${digit}`).find(code => !Object.values(movement).includes(code));
   return { ...movement, ability };
-}
-
-export function parseKeybindings(raw: string | null): Keybindings {
-  try {
-    const value = upgradeKeybindings(raw === null ? null : JSON.parse(raw));
-    if (isKeybindings(value)) return value;
-  } catch {
-    // A damaged browser preference must not disable game controls.
-  }
-  return { ...DEFAULT_KEYBINDINGS };
 }
 
 export function keyLabel(code: string): string {

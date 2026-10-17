@@ -19,7 +19,7 @@ The page boundary follows where data and interaction belong. Server pages own st
 | `/auth/error` | Error explanation and navigation | Shared optional controls only |
 | `/play/online`, `/play/ranked` | Route selects the queue mode | Existing live matchmaking screen: socket status, timer, cancellation and match introduction |
 | `/loadout`, `/shop` | Shared layout and provider seed | Interactive filters, previews, selections and purchases remain direct client pages; animated legendary previews load only when opened |
-| `/achievements` | Shared layout and provider seed | Attendance, progress filters and claims remain a direct client page; sorted progress is memoized |
+| `/achievements` | Shared layout and provider seed | Automatic attendance/unlock synchronization, retry and progress filters remain client-side; sorted progress is memoized |
 | `/solo`, `/play/[id]`, `/test` | Shared layout and provider seed | Stateful game boards, keyboard/touch input, overlays and live timing intentionally remain client pages |
 
 The remaining client page roots are intentional, not relocated whole-page wrappers. Their actual rendering/request improvements are separate from the server-page split. `test` is the existing local interactive practice route.

@@ -34,17 +34,8 @@ export const ClientMessageSchema = z.discriminatedUnion("t", [
   C2S.findMatch, C2S.cancelMatch, C2S.createRoomWithCode, C2S.joinRoomWithCode,
   C2S.joinRoom, C2S.input, C2S.ability, C2S.surrender,
 ]);
-export type ClientMsg = z.infer<typeof ClientMessageSchema>;
-export type JoinRoom = z.infer<typeof C2S.joinRoom>;
-export type InputMsg = z.infer<typeof C2S.input>;
-export type SurrenderMsg = z.infer<typeof C2S.surrender>;
+export type Effect = { type: "addBlock"; blockType: AttackType };
 
-export type Effect =
-  | { type: "none" }
-  | { type: "addBlock"; blockType: AttackType }
-  | { type: "removeBlock"; blockType: AttackType };
-
-// 블록 타입 정의
 export type BlockType = "normal" | "xblock" | "hardblock";
 
 export type Cell = {

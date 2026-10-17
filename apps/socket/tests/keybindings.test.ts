@@ -1,21 +1,19 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { bindingCodeFromEvent, createMovementRepeater, DEFAULT_KEYBINDINGS, isKeybindings, keyLabel, parseKeybindings, resolveKeyAction } from "../../web/src/lib/keybindings";
+import { bindingCodeFromEvent, createMovementRepeater, DEFAULT_KEYBINDINGS, isKeybindings, keyLabel, resolveKeyAction, upgradeKeybindings } from "../../web/src/lib/keybindings";
 
 const key = (code: string, options = {}) => ({ code, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, isComposing: false, repeat: false, defaultPrevented: false, ...options });
 
-test("stored bindings require five unique letter or number codes and recover from corruption", () => {
+test("bindings require five unique letter or number codes and preserve current customizations", () => {
   const custom = { ...DEFAULT_KEYBINDINGS, up: "KeyI", ability: "KeyF" };
   assert.deepEqual(DEFAULT_KEYBINDINGS, { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD", ability: "Digit1" });
   assert.equal(isKeybindings(custom), true);
-  assert.deepEqual(parseKeybindings(JSON.stringify(custom)), custom);
-  assert.deepEqual(parseKeybindings(JSON.stringify({ ...custom, ability: "Digit3" })), { ...custom, ability: "Digit3" });
+  assert.deepEqual(upgradeKeybindings(custom), custom);
+  assert.deepEqual(upgradeKeybindings({ ...custom, ability: "Digit3" }), { ...custom, ability: "Digit3" });
   for (const value of [null, [], {}, { ...custom, up: "ArrowUp" }, { ...custom, up: custom.down }, { ...custom, down: "Enter" }, { ...custom, extra: "KeyZ" }]) {
     assert.equal(isKeybindings(value), false);
-    assert.deepEqual(parseKeybindings(JSON.stringify(value)), DEFAULT_KEYBINDINGS);
+    assert.equal(isKeybindings(upgradeKeybindings(value)), false);
   }
-  assert.deepEqual(parseKeybindings("{damaged"), DEFAULT_KEYBINDINGS);
-  assert.deepEqual(parseKeybindings(null), DEFAULT_KEYBINDINGS);
 });
 
 test("all arrows remain available with character shortcuts off and only movement or ability can be bound", () => {
@@ -56,15 +54,15 @@ test("old attack keys are removed while movement and customized ability keys sur
   const old = { ...movement, xblock: "Digit1", hardblock: "Digit2" };
   for (const value of [old, { ...old, ability: "Digit3" }]) {
     assert.equal(isKeybindings(value), false);
-    assert.deepEqual(parseKeybindings(JSON.stringify(value)), { ...movement, ability: "Digit1" });
+    assert.deepEqual(upgradeKeybindings(value), { ...movement, ability: "Digit1" });
   }
-  assert.deepEqual(parseKeybindings(JSON.stringify({ ...old, ability: "KeyF" })), { ...movement, ability: "KeyF" });
+  assert.deepEqual(upgradeKeybindings({ ...old, ability: "KeyF" }), { ...movement, ability: "KeyF" });
   const occupied = { ...movement, up: "Digit1", xblock: "KeyX", hardblock: "KeyH" };
   for (const value of [occupied, { ...occupied, ability: "Digit3" }]) {
-    assert.deepEqual(parseKeybindings(JSON.stringify(value)), { ...movement, up: "Digit1", ability: "Digit2" });
+    assert.deepEqual(upgradeKeybindings(value), { ...movement, up: "Digit1", ability: "Digit2" });
   }
   for (const bad of [{ ...old, up: "KeyK" }, { ...old, up: "ArrowUp" }, { ...old, ability: null }, { ...old, extra: "KeyZ" }, { down: "KeyK", left: "KeyJ", right: "KeyL", xblock: "Digit1", hardblock: "Digit2" }]) {
-    assert.deepEqual(parseKeybindings(JSON.stringify(bad)), DEFAULT_KEYBINDINGS);
+    assert.equal(isKeybindings(upgradeKeybindings(bad)), false);
   }
 });
 

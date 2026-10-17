@@ -5,7 +5,7 @@ import { DEFAULT_ABILITY_ID } from "schema/loadout";
 export type ApplyResult = {
   board: Board;
   scoreDelta: number;
-  mergedMaxTile: number;   // 이번 턴에 만들어진 가장 큰 타일(공격 트리거용)
+  mergedMaxTile: number;
   moved: boolean;          // 유효한 이동 여부
   pendingEffects: Effect[];
 };
@@ -275,27 +275,9 @@ export function attacksFromMerges(board: Board): AttackCounts {
 
 export function applyEffects(board: Board, effects: Effect[], rng: () => number, size: number = SIZE): Board {
   let newBoard = board;
-  
   for (const effect of effects) {
-    if (effect.type === "none") continue;
-    
-    if (effect.type === "addBlock") {
-      // 상대방 보드에 방해 블록 추가
-      const blockType = effect.blockType || "xblock"; // xblock 또는 hardblock
-      
-      newBoard = spawnRandom(newBoard, undefined, blockType, rng, size);
-    }
-    
-    if (effect.type === "removeBlock") {
-      // X블록 제거 로직 (나중에 구현 가능)
-      const blocks = active(newBoard).filter(t => getBlockType(t) === effect.blockType);
-      const chosen = blocks[Math.floor(rng() * blocks.length)];
-      const removeIds = new Set(chosen ? [chosen.id] : []);
-
-      newBoard = newBoard.filter(t => !removeIds.has(t.id));
-    }
+    newBoard = spawnRandom(newBoard, undefined, effect.blockType, rng, size);
   }
-  
   return newBoard;
 }
 
@@ -320,7 +302,7 @@ export function applyPendingEffects(board: Board, effects: Effect[], rng: () => 
   let result = board;
   const pending: Effect[] = [];
   for (const effect of effects) {
-    if (effect.type === "addBlock" && emptyCoords(result, size).length === 0) pending.push(effect);
+    if (emptyCoords(result, size).length === 0) pending.push(effect);
     else result = applyEffects(result, [effect], rng, size);
   }
   return { board: result, pending };

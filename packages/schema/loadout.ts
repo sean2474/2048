@@ -108,4 +108,3 @@ export const DEFAULT_ABILITY_ID = "clear-x" satisfies AbilityId;
 export const RETIRED_ABILITY_IDS: readonly string[] = ["shield", "break-hard", "self-shuffle", "opponent-shuffle", "delay-attack", "peek-next", "choose-next", "convert-ticket", "push-obstacle", "bomb-tile", "purge", "tile-swap", "combo-chain"];
 
 export const MAX_COIN_BALANCE = Number.MAX_SAFE_INTEGER;
-export type PlayerWallet = { player_id: string; balance: number; created_at: string };
