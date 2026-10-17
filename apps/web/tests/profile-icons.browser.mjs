@@ -67,6 +67,7 @@ test("account catalog icons persist and preserve settings on failed saves", asyn
     page.setDefaultTimeout(10000);
     page.on("pageerror", error => errors.push(error.message));
     const account = await mockAccount(page);
+    account.cosmetics.purchases = ["dragon", "rabbit"].map(item_id => ({ kind: "icon", item_id }));
     await page.goto(`${origin}/loadout`);
     await page.getByRole("tab", { name: /아이콘/ }).click();
     await page.locator("#icons-panel button").filter({ hasText: "비취 드래곤" }).click();

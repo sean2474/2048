@@ -4,6 +4,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 import { PROFILE_ICONS } from "schema/profile-icons";
 import { achievementForItem } from "schema/achievements";
+import { SHOP_ITEMS } from "schema/economy";
 import { ABILITIES, RETIRED_ABILITY_IDS, SKINS } from "schema/loadout";
 import { DEFAULT_SETTINGS, isSettings, isSettingsPatch, parseGuestSettings, settingsFromRow, settingsToRow, SettingsStore, type Settings } from "../../web/src/lib/preferences";
 
@@ -247,6 +248,10 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
         await assert.rejects(db.query("update public.player_preferences set skin_id=$1 where player_id=$2", [skin.id, A]), /Achievement required/);
         continue;
       }
+      if (SHOP_ITEMS.some(item => item.kind === "skin" && item.id === skin.id && item.price > 0)) {
+        await assert.rejects(db.query("update public.player_preferences set skin_id=$1 where player_id=$2", [skin.id, A]), /Purchase required/);
+        continue;
+      }
       await db.query("update public.player_preferences set skin_id=$1 where player_id=$2", [skin.id, A]);
       assert.deepEqual((await db.query("select skin_id from public.player_preferences")).rows, [{ skin_id: skin.id }]);
     }
@@ -257,6 +262,10 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
     for (const icon of PROFILE_ICONS) {
       if (achievementForItem("icon", icon.id)) {
         await assert.rejects(db.query("update public.player_preferences set icon_id=$1 where player_id=$2", [icon.id, A]), /Achievement required/);
+        continue;
+      }
+      if (SHOP_ITEMS.some(item => item.kind === "icon" && item.id === icon.id && item.price > 0)) {
+        await assert.rejects(db.query("update public.player_preferences set icon_id=$1 where player_id=$2", [icon.id, A]), /Purchase required/);
         continue;
       }
       await db.query("update public.player_preferences set icon_id=$1 where player_id=$2", [icon.id, A]);

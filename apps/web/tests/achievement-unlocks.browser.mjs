@@ -50,7 +50,7 @@ test("30th attendance unlocks a permanent profile, duplicate click is blocked, a
     await page.getByRole("region", { name: "현재 선택" }).getByText("출근왕", { exact: true }).waitFor();
     await page.getByRole("tab", { name: "아이콘", exact: true }).click();
     await page.getByRole("checkbox", { name: "보유 중인 것만" }).check();
-    assert.equal(await page.locator("#icons-panel button").count(), 7);
+    assert.equal(await page.locator("#icons-panel button").count(), 2);
     await page.getByRole("tab", { name: "보드 스킨", exact: true }).click();
     await page.getByRole("button", { name: "희귀", exact: true }).click();
     await page.getByRole("button", { name: "새벽의 서약 · 자세히 보기", exact: true }).click();
@@ -94,7 +94,7 @@ test("locked rewards stay previewable, ownership errors fail closed, and attenda
     failRead = false;
     await page.getByRole("button", { name: "해금 정보 다시 불러오기" }).click();
     await page.getByRole("checkbox", { name: "보유 중인 것만" }).check();
-    assert.equal(await page.locator("#icons-panel button").count(), 6);
+    assert.equal(await page.locator("#icons-panel button").count(), 1);
     assert.equal(account.row.icon_id, "fox");
     await page.goto(`${origin}/achievements`);
     await page.getByRole("button", { name: "오늘 출석하기", exact: true }).click();

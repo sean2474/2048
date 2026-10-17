@@ -20,6 +20,7 @@ test("rarity filters, persistence, paging and readable character tiles", async (
     const errors = [];
     page.on("pageerror", error => errors.push(error.message));
     const account = await mockAccount(page);
+    account.cosmetics.purchases = ["confetti", "gingham", "pinstripe", "weave", "runes", "meadow", "tide", "aurora", "obsidian", "astral", "kitty", "bunny", "sentinel", "runeknight", "arcanist"].map(item_id => ({ kind: "skin", item_id }));
     await page.goto("http://[::1]:3001/loadout");
     await page.locator("#skin-results button:enabled").first().waitFor();
     assert.equal(await page.locator("#skin-results button").count(), 12);

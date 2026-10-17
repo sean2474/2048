@@ -4,8 +4,7 @@ import { anchorHighest, applyMove, attacksFromMerges, clearOldestX, hasMoves, sw
 import { ABILITY_CHARGE, MAX_PENDING_ATTACKS, SLOW_DURATION_MS, SLOW_MOVE_MS, SLOW_WARNING_MS, type S2C, type EndReason, type Dir, type ActionRejected, type PublicPlayerState } from "schema/in-game";
 import { playerChannel, RECONNECT_TIMEOUT, type PlayerId, type Room, type PlayerState } from "./types";
 import { rooms, playerRoom, disconnectTimers, disconnectDeadlines } from "./state";
-import { DEFAULT_ABILITY_ID, type AbilityId, type SkinId } from "schema/loadout";
-import { achievementForItem } from "schema/achievements";
+import { DEFAULT_ABILITY_ID, SKINS, type AbilityId, type SkinId } from "schema/loadout";
 import { DEFAULT_PROFILE_ICON } from "schema/profile-icons";
 
 export function clearDisconnect(pid: PlayerId) {
@@ -23,7 +22,7 @@ export function joinRoom(pid: PlayerId, roomId: string, io: Server, skinId: Skin
   // Freeze the loadout on first join, including across reconnects.
   if (room.state[pid].skinId === undefined) {
     const account = room.accounts[pid];
-    room.state[pid].skinId = account && (!achievementForItem("skin", skinId) || account.skinId === skinId) ? skinId : "classic";
+    room.state[pid].skinId = account && (SKINS.some(skin => skin.id === skinId && skin.rarity === "common") || account.skinId === skinId) ? skinId : "classic";
     room.state[pid].ability.id = account ? abilityId : DEFAULT_ABILITY_ID;
   }
   clearDisconnect(pid);

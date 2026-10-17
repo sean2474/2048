@@ -9,7 +9,7 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = "http://[::1]:3001";
 const artifacts = fileURLToPath(new URL("../../../docs/economy-preview/", import.meta.url));
 
-test("planned shop and coin achievements stay browseable without spending or reward writes", async () => {
+test("shop browsing and planned achievements do not spend coins", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   await mkdir(artifacts, { recursive: true });
   try {
@@ -26,16 +26,17 @@ test("planned shop and coin achievements stay browseable without spending or rew
       await page.getByRole("heading", { name: "코인 상점", exact: true }).waitFor();
       assert.equal(await page.locator("#shop-items > li").count(), 12);
       await page.getByRole("button", { name: "다음 페이지", exact: true }).click();
-      assert.equal(await page.locator("#shop-items > li").count(), 7);
+      assert.equal(await page.locator("#shop-items > li").count(), 8);
       assert.equal(await page.getByRole("button", { name: "다음 페이지", exact: true }).isDisabled(), true);
       await page.getByRole("button", { name: "일반", exact: true }).click();
-      assert.equal(await page.locator("#shop-items > li").count(), 4);
+      assert.equal(await page.locator("#shop-items > li").count(), 5);
       await page.getByRole("button", { name: "레전더리", exact: true }).click();
       assert.equal(await page.locator("#shop-items > li").count(), 5);
       const card = page.getByRole("button", { name: "아케인 오더 · 상품 미리보기", exact: true });
       await card.focus(); await page.keyboard.press("Enter");
       const dialog = page.getByRole("dialog");
-      assert.equal(await dialog.getByRole("button", { name: "구매 준비 중" }).isDisabled(), true);
+      assert.equal(await dialog.getByRole("button", { name: "구매 준비 중" }).count(), 0);
+      assert.doesNotMatch(await dialog.innerText(), /예정 가격|현재 스킨은 로그인 후/);
       await dialog.getByRole("button", { name: "합성 효과 미리보기", exact: true }).click();
       await dialog.locator('[data-phase="finished"]').waitFor();
       assert.equal(await dialog.locator("[data-merge-effect]").innerText(), "4");

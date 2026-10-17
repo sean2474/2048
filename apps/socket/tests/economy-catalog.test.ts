@@ -6,15 +6,17 @@ import { SKINS } from "schema/loadout";
 import { PROFILE_ICONS } from "schema/profile-icons";
 import { economyMessages } from "../../web/src/lib/i18n/economy-messages";
 
-test("draft catalog references real cosmetics and never enables rewards or purchases", () => {
+test("shop includes free defaults and priced cosmetics without selling achievement rewards", () => {
   assert.equal(new Set(ACHIEVEMENTS.map(item => item.id)).size, ACHIEVEMENTS.length);
-  assert.equal(new Set(SHOP_ITEMS.map(item => item.skinId)).size, SHOP_ITEMS.length);
-  assert.equal(SHOP_ITEMS.length, 19);
-  assert.ok(SHOP_ITEMS.every(item => item.skinId !== "classic" && !achievementForItem("skin", item.skinId)));
+  assert.equal(new Set(SHOP_ITEMS.map(item => `${item.kind}:${item.id}`)).size, SHOP_ITEMS.length);
+  assert.equal(SHOP_ITEMS.length, 26);
+  assert.ok(SHOP_ITEMS.every(item => !achievementForItem(item.kind, item.id)));
+  assert.deepEqual(SHOP_ITEMS.filter(item => item.price === 0).map(item => item.id).sort(), ["charcoal", "classic", "espresso", "fox", "paper", "slate"]);
   for (const item of SHOP_ITEMS) {
-    assert.ok(SKINS.some(skin => skin.id === item.skinId));
-    assert.equal(item.status, "planned");
-    assert.ok(Number.isSafeInteger(item.plannedPrice) && item.plannedPrice > 0);
+    const cosmetic = item.kind === "skin" ? SKINS.find(skin => skin.id === item.id) : PROFILE_ICONS.find(icon => icon.id === item.id);
+    assert.ok(cosmetic);
+    assert.ok(Number.isSafeInteger(item.price) && item.price >= 0);
+    assert.equal(item.price, item.kind === "icon" ? item.id === "fox" ? 0 : 150 : { common: 0, rare: 300, epic: 600, legendary: 1200 }[SKINS.find(skin => skin.id === item.id)!.rarity]);
   }
   for (const achievement of ACHIEVEMENTS) {
     assert.equal(achievement.status, "planned");
@@ -25,6 +27,4 @@ test("draft catalog references real cosmetics and never enables rewards or purch
     if (reward.kind === "coins") assert.ok(Number.isSafeInteger(reward.amount) && reward.amount > 0);
     else assert.ok(PROFILE_ICONS.some(icon => icon.id === reward.iconId));
   }
-  // Planning prices must not silently revoke today's free catalog access.
-  assert.ok(SKINS.every(skin => skin.price === 0));
 });

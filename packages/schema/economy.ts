@@ -1,5 +1,5 @@
 import { SKINS, type SkinId, type SkinRarity } from "./loadout";
-import type { ProfileIconId } from "./profile-icons";
+import { PROFILE_ICONS, type ProfileIconId } from "./profile-icons";
 import { achievementForItem } from "./achievements";
 
 type Achievement = {
@@ -22,7 +22,11 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: "ranked-placement", name: "First placement", description: "Complete your first 10 ranked matches.", metric: "placement_complete", target: 1, reward: { kind: "coins", amount: 100 }, status: "planned" },
 ];
 
-const plannedPrices: Record<SkinRarity, number> = { common: 150, rare: 300, epic: 600, legendary: 1200 };
-export const SHOP_ITEMS: readonly { skinId: SkinId; plannedPrice: number; status: "planned" }[] = SKINS
-  .filter(skin => skin.id !== "classic" && !achievementForItem("skin", skin.id))
-  .map(skin => ({ skinId: skin.id, plannedPrice: plannedPrices[skin.rarity], status: "planned" }));
+export type ShopItem = { kind: "skin"; id: SkinId; price: number } | { kind: "icon"; id: ProfileIconId; price: number };
+const skinPrices: Record<SkinRarity, number> = { common: 0, rare: 300, epic: 600, legendary: 1200 };
+export const SHOP_ITEMS: readonly ShopItem[] = [
+  ...SKINS.filter(skin => !achievementForItem("skin", skin.id))
+    .map(skin => ({ kind: "skin" as const, id: skin.id, price: skinPrices[skin.rarity] })),
+  ...PROFILE_ICONS.filter(icon => !achievementForItem("icon", icon.id))
+    .map(icon => ({ kind: "icon" as const, id: icon.id, price: icon.id === "fox" ? 0 : 150 })),
+];

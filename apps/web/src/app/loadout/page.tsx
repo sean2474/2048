@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { PageHeading } from "@/components/widget/page-heading";
 import { GameEmblem } from "@/components/widget/game-emblem";
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, LockKeyhole, Palette, UserRound } from "lucide-react";
-import { SKINS, SKIN_RARITIES, type PlayerWallet, type SkinId, type SkinRarity } from "schema/loadout";
+import { SKINS, SKIN_RARITIES, type SkinId, type SkinRarity } from "schema/loadout";
 import { GUEST_PROFILE_ICON, PROFILE_ICONS, type PlayerIconId } from "schema/profile-icons";
 import { ProfileIcon } from "@/components/widget/profile-icon";
 import { useI18n } from "ui/i18n";
@@ -15,7 +15,8 @@ import { usePlayer } from "@/hooks/use-player";
 import { useLoadout } from "@/hooks/use-loadout";
 import { useAchievements } from "@/hooks/use-achievements";
 import { achievementForItem } from "schema/achievements";
-import { createClient } from "@/lib/supabase/client";
+import { useCosmetics } from "@/hooks/use-cosmetics";
+import { SHOP_ITEMS } from "schema/economy";
 import { SkinPreview } from "@/components/2048/skin-preview";
 import { SkinMergePreview } from "@/components/2048/skin-merge-preview";
 import { trackGameEvent } from "@/lib/analytics";
@@ -38,10 +39,7 @@ export default function LoadoutPage() {
   const achievements = useAchievements(user);
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const { skin, icon, selectSkin, selectIcon, storageError, ready, saving, scope } = useLoadout();
-  const [wallet, setWallet] = useState<PlayerWallet | null>(null);
-  const [walletError, setWalletError] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [attempt, setAttempt] = useState(0);
+  const cosmetics = useCosmetics(user);
   const [category, setCategory] = useState<Category>("skins");
   const [skinPage, setSkinPage] = useState(0);
   const [rarity, setRarity] = useState<SkinRarity | "all">("all");
@@ -51,29 +49,12 @@ export default function LoadoutPage() {
   const detailTrigger = useRef<HTMLButtonElement | null>(null);
   const guest = scope === "guest";
 
-  useEffect(() => {
-    let active = true;
-    setWallet(null); setWalletError(false);
-    if (!userId) { setLoading(false); return; }
-    setLoading(true);
-    const read = async () => {
-      try {
-        const { data, error } = await createClient().from("player_wallets").select("player_id,balance,created_at").eq("player_id", userId).maybeSingle();
-        if (error || !data || !Number.isSafeInteger(data.balance) || data.balance < 0) throw new Error("Wallet unavailable");
-        if (active) setWallet(data as PlayerWallet);
-      } catch { if (active) setWalletError(true); }
-      finally { if (active) setLoading(false); }
-    };
-    void read();
-    return () => { active = false; };
-  }, [userId, attempt]);
-
   const owns = (kind: "skin" | "icon", id: string) => {
     if (guest) return kind === "skin" ? id === "classic" : id === "guest";
     const achievement = achievementForItem(kind, id);
-    return !achievement || Boolean(achievements.data?.unlocks.some(item => item.achievementId === achievement.id));
+    return achievement ? Boolean(achievements.data?.unlocks.some(item => item.achievementId === achievement.id)) : cosmetics.owns(kind, id);
   };
-  const balance = wallet && wallet.player_id === userId ? wallet.balance : undefined;
+  const balance = cosmetics.data?.balance;
   const filteredSkins = SKINS.filter(item => (rarity === "all" || item.rarity === rarity) && (!ownedOnly || owns("skin", item.id)));
   const pageCount = Math.ceil(filteredSkins.length / PAGE_SIZE);
   const currentPage = Math.min(skinPage, Math.max(0, pageCount - 1));
@@ -82,6 +63,7 @@ export default function LoadoutPage() {
   const detailIcon = detail?.category === "icons" ? [GUEST_PROFILE_ICON, ...PROFILE_ICONS].find(item => item.id === detail.id) : undefined;
   const detailName = detailSkin?.name ?? detailIcon?.name ?? "My loadout";
   const detailAchievement = detail ? achievementForItem(detail.category === "skins" ? "skin" : "icon", detail.id) : undefined;
+  const detailIncluded = detail && SHOP_ITEMS.some(item => item.kind === (detail.category === "skins" ? "skin" : "icon") && item.id === detail.id && item.price === 0);
   const detailOwned = Boolean(detail && owns(detail.category === "skins" ? "skin" : "icon", detail.id));
   const detailSelected = detail?.category === "skins" ? detail.id === skin.id : detail?.id === icon.id;
 
@@ -105,7 +87,7 @@ export default function LoadoutPage() {
     <PageHeading icon="loadout" title={t("My loadout")}><Button asChild variant="outline"><Link href="/find-match" data-analytics-link="/find-match"><ArrowLeft aria-hidden="true" />{t("Find match")}</Link></Button></PageHeading>
 
     <section aria-labelledby="wallet-title" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card px-4 py-2">
-      <div className="flex items-center gap-2"><GameEmblem kind="coin" className="size-8" /><h2 id="wallet-title" className="text-xs text-muted-foreground">{t("My coins")}</h2>{user === undefined || userId && loading ? <p role="status" className="text-xs">{t("Loading balance…")}</p> : !userId ? <Link href="/login" data-analytics-link="/login" aria-label={t("Sign in to view your balance")} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2">{t("Log in")}</Link> : walletError || balance === undefined ? <div role="alert" className="flex flex-wrap items-center gap-2"><p className="text-xs text-destructive">{t("Could not load your coin balance.")}</p><Button variant="outline" size="sm" onClick={() => setAttempt(value => value + 1)}>{t("Try again")}</Button></div> : <p className="text-lg font-extrabold tabular-nums">{balance.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}</p>}</div>
+      <div className="flex items-center gap-2"><GameEmblem kind="coin" className="size-8" /><h2 id="wallet-title" className="text-xs text-muted-foreground">{t("My coins")}</h2>{user === undefined || userId && cosmetics.loading ? <p role="status" className="text-xs">{t("Loading balance…")}</p> : !userId ? <Link href="/login" data-analytics-link="/login" aria-label={t("Sign in to view your balance")} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2">{t("Log in")}</Link> : cosmetics.error || balance === undefined ? <div role="alert" className="flex flex-wrap items-center gap-2"><p className="text-xs text-destructive">{t("Could not load your cosmetics.")}</p><Button variant="outline" size="sm" onClick={() => void cosmetics.reload()}>{t("Try again")}</Button></div> : <p className="text-lg font-extrabold tabular-nums">{balance.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}</p>}</div>
       <div className="flex flex-wrap gap-2"><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/achievements" data-analytics-link="/achievements">{t("Achievements")}</Link></Button><Button asChild variant="ghost" size="sm" className="text-xs"><Link href="/shop" data-analytics-link="/shop">{t("Coin shop")}</Link></Button></div>
     </section>
 
@@ -156,9 +138,9 @@ export default function LoadoutPage() {
           <DialogDescription className="leading-6">{t(detailSkin ? "Skins change appearance only." : detailIcon?.id === "guest" ? "Guests always use this icon." : "Shown on your profile and match intro.")}</DialogDescription>
         </DialogHeader>
         {detailOpen && detailSkin?.rarity === "legendary" && <SkinMergePreview key={detailSkin.id} skin={detailSkin} />}
-        <div className="space-y-1 border-t pt-3"><h3 className="flex items-center gap-2 text-sm font-bold">{detailOwned ? <Check aria-hidden="true" className="size-4" /> : <LockKeyhole aria-hidden="true" className="size-4" />}{t("Unlock conditions")}</h3><p className="text-sm text-muted-foreground">{t(detailAchievement ? detailAchievement.description : detailOwned ? guest ? "Included by default" : "Unlocked with your account" : "Log in to unlock this item.")}</p>{detailAchievement && detailOwned && <p className="pt-1 text-xs text-primary">{t("Permanently unlocked")}</p>}</div>
+        <div className="space-y-1 border-t pt-3"><h3 className="flex items-center gap-2 text-sm font-bold">{detailOwned ? <Check aria-hidden="true" className="size-4" /> : <LockKeyhole aria-hidden="true" className="size-4" />}{t("Unlock conditions")}</h3><p className="text-sm text-muted-foreground">{t(detailAchievement ? detailAchievement.description : detailOwned ? guest || detailIncluded ? "Included by default" : "Owned" : guest ? "Log in to unlock this item." : "Available in the coin shop.")}</p>{detailAchievement && detailOwned && <p className="pt-1 text-xs text-primary">{t("Permanently unlocked")}</p>}</div>
         {storageError && <p role="alert" className="text-sm text-destructive">{t(storageError)}</p>}
-        <DialogFooter>{!detailOwned ? <Button asChild><Link href={guest ? "/login" : `/achievements#${detailAchievement?.id ?? "achievement-rewards"}`}>{t(guest ? "Log in" : "Unlock through achievements")}</Link></Button> : <Button disabled={!ready || saving || detailSelected || guest} onClick={() => { void equipDetail(); }}>{t(detailSelected ? "Equipped" : "Equip")}</Button>}</DialogFooter>
+        <DialogFooter>{!detailOwned ? <Button asChild><Link href={guest ? "/login" : detailAchievement ? `/achievements#${detailAchievement.id}` : "/shop"}>{t(guest ? "Log in" : detailAchievement ? "Unlock through achievements" : "Buy in shop")}</Link></Button> : <Button disabled={!ready || saving || detailSelected || guest} onClick={() => { void equipDetail(); }}>{t(detailSelected ? "Equipped" : "Equip")}</Button>}</DialogFooter>
       </DialogContent>
     </Dialog>
   </main>;

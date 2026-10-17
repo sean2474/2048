@@ -88,7 +88,7 @@ test("WebSocket handshakes reject unapproved origins and allow configured origin
   }
 });
 test("private rooms, malformed messages, membership checks, surrender and replay", async t => {
-  const server = await setup(t, { resolveAccount }), a = await server.connect(undefined, "alice"), b = await server.connect(), outsider = await server.connect();
+  const server = await setup(t, { resolveAccount: async token => ({ ...await resolveAccount(token), skinId: "kitty" }) }), a = await server.connect(undefined, "alice"), b = await server.connect(), outsider = await server.connect();
   const invalid = packet(a.socket, m => m.t === "reject");
   a.socket.emit("message", null); assert.equal((await invalid).t, "reject");
   const waiting = packet(a.socket, m => m.t === "waitingForPlayer");
@@ -128,7 +128,7 @@ test("private rooms, malformed messages, membership checks, surrender and replay
   assert.equal((await replay).t, "matchFound");
 });
 for (const mode of ["casual", "ranked"] as const) test(`${mode} keeps player skins distinct through updates, reconnect and result`, async t => {
-  const server = await setup(t, { resolveAccount, readRating: async () => 1200, writeMatch: async () => {} });
+  const server = await setup(t, { resolveAccount: async token => ({ ...await resolveAccount(token), skinId: token === "alice" ? "sentinel" : "arcanist" }), readRating: async () => 1200, writeMatch: async () => {} });
   const { a, b, roomId } = await server.pair("alice", "bob", mode, ["sentinel", "arcanist"]);
   const updated = [a, b].map(p => packet(p.socket, m => m.t === "state" && !m.paused));
   a.socket.emit("message", { t: "joinRoom", roomId, skinId: "kitty" });
@@ -149,7 +149,7 @@ for (const mode of ["casual", "ranked"] as const) test(`${mode} keeps player ski
   assert.deepEqual(loss.t === "end" && [loss.you.skinId, loss.opp?.skinId], ["sentinel", "arcanist"]);
   assert.deepEqual(win.t === "end" && [win.you.skinId, win.opp?.skinId], ["arcanist", "sentinel"]);
 });
-for (const skinId of ["dawn-oath", "rune-sanctum"] as const) test(`reward skin ${skinId} requires the server-resolved equipped skin and stays frozen`, async t => {
+for (const skinId of ["dawn-oath", "rune-sanctum", "confetti", "meadow", "kitty"] as const) test(`purchased or earned skin ${skinId} requires the server-resolved equipped skin and stays frozen`, async t => {
   const otherSkin = skinId === "dawn-oath" ? "rune-sanctum" : "dawn-oath";
   let savedSkin: SkinId = skinId;
   const server = await setup(t, { resolveAccount: async token => ({ ...await resolveAccount(token), skinId: token === "alice" ? savedSkin : otherSkin }) });
@@ -175,6 +175,15 @@ test("guests and accounts without authoritative preferences cannot request rewar
   const states = [a, b].map(player => packet(player.socket, message => message.t === "state" && !message.paused));
   a.socket.emit("message", { t: "joinRoom", roomId, skinId: "rune-sanctum" });
   for (const state of await Promise.all(states) as ServerState[]) assert.deepEqual([state.you.skinId, state.opp?.skinId], ["classic", "classic"]);
+});
+test("unowned paid skins cannot be forged while common skins remain free", async t => {
+  const server = await setup(t, { resolveAccount });
+  const { a, b, roomId } = await server.pair("alice", "bob", "casual", ["confetti", "espresso"]);
+  const states = [a, b].map(player => packet(player.socket, message => message.t === "state" && !message.paused));
+  a.socket.emit("message", { t: "joinRoom", roomId });
+  const [own, rival] = await Promise.all(states) as ServerState[];
+  assert.deepEqual([own.you.skinId, own.opp?.skinId], ["classic", "espresso"]);
+  assert.deepEqual([rival.you.skinId, rival.opp?.skinId], ["espresso", "classic"]);
 });
 for (const profile of ["account", "default", "guest"] as const) test(`public ${profile} icons remain authoritative through updates, reconnect and results`, async t => {
   const server = await setup(t, {

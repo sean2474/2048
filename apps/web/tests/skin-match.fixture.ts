@@ -7,7 +7,7 @@ const server = createGameServer({
   resolveAccount: async token => {
     const id = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString()).sub;
     if (!token.endsWith(".fixture") || !ids.includes(id)) throw Error("Unknown fixture account");
-    return { id, name: id === ids[0] ? "Rune Knight" : "Classic Rival", iconId: "fox" };
+    return { id, name: id === ids[0] ? "Rune Knight" : "Classic Rival", iconId: "fox", skinId: id === ids[0] ? "arcanist" : "classic" };
   },
   readSuspensions: async () => [],
 });
