@@ -66,6 +66,8 @@ for (const history of ["fresh", "staging", "production"] as const) {
     assert.ok(catalog.profileIcons.some(item => item.id === "achievement-king"));
     if (history === "production") {
       assert.equal((await db.query<{ status: string }>("select status from private.cosmetic_catalog where item_id='storm-fox'")).rows[0].status, "draft", "administrator-edited seed drafts stay draft");
+      assert.equal((await db.query<{ status: string }>("select status from private.achievement_catalog where item_id='solo-4min'")).rows[0].status, "draft", "an achievement cannot publish before its reward");
+      assert.ok(!catalog.achievements.some(item => item.id === "solo-4min"));
     }
     await as(db, "authenticated", A, async () => {
       const state = await rpc<AchievementState>(db, "achievement_state");
@@ -100,6 +102,12 @@ for (const history of ["fresh", "staging", "production"] as const) {
     for (const name of forwardMigrations) await db.exec(await read(name));
     assert.equal((await db.query("select * from public.solo_progress")).rows.length, 1);
     assert.equal((await db.query("select * from public.daily_quest_rewards")).rows.length, 1);
+    if (history === "production") {
+      assert.equal((await db.query<{ status: string }>("select status from private.achievement_catalog where item_id='solo-4min'")).rows[0].status, "draft", "replaying the migration preserves unavailable rewards");
+      await db.exec("update private.cosmetic_catalog set status='published',published_once=true,revision=3 where item_id='storm-fox'");
+      await db.exec(await read(forwardMigrations[0]));
+      assert.equal((await db.query<{ status: string }>("select status from private.achievement_catalog where item_id='solo-4min'")).rows[0].status, "published");
+    }
   });
 }
 
@@ -124,5 +132,38 @@ test("collection rewards use editable catalog thresholds without counting collec
     await db.query("insert into public.player_preferences(player_id,icon_id) values($1,'achievement-king')", [B]);
     const state = await rpc<AchievementState>(db, "sync_achievements");
     assert.ok(state.unlocks.some(unlock => unlock.achievementId === "achievement-king"));
+  });
+});
+
+test("all award entry points share the player lock before unlock uniqueness and foreign-key checks", async t => {
+  const db = await database(t, "staging");
+  // PGlite has one connection; assert the installed lock boundary, not simulated concurrency.
+  const guard = (await db.query<{ source: string }>("select prosrc as source from pg_proc where oid='private.guard_catalog_unlock()'::regprocedure")).rows[0].source.replace(/--[^\n]*/g, "");
+  assert.match(guard, /begin\s+perform id from public\.players where id=new\.player_id for no key update;/i);
+  const trigger = (await db.query<{ definition: string }>("select pg_get_triggerdef(oid) as definition from pg_trigger where tgrelid='public.achievement_unlocks'::regclass and tgname='guard_catalog_unlock'")).rows[0].definition;
+  assert.match(trigger, /BEFORE INSERT ON public\.achievement_unlocks FOR EACH ROW EXECUTE FUNCTION private\.guard_catalog_unlock\(\)/);
+  for (const role of ["anon", "authenticated", "service_role"]) {
+    assert.equal((await db.query<{ allowed: boolean }>("select has_function_privilege($1,'private.guard_catalog_unlock()','execute') as allowed", [role])).rows[0].allowed, false);
+  }
+
+  for (let days = 6; days > 0; days--) await db.query("select private.check_in_at($1,now()-$2::integer*interval '1 day')", [B, days]);
+  await as(db, "authenticated", B, () => rpc(db, "check_in"));
+  await as(db, "service_role", "", async () => {
+    await rpc(db, "record_solo", [RUN, B, 550000, 100, 10000]);
+    await rpc(db, "record_solo_endless", [RUN, B, 2048]);
+    await db.query("select public.record_match($1,now()-interval '1 minute',now(),'surrender',1::smallint,$2::jsonb,'casual')", [RUN,
+      JSON.stringify([{ userId: B, score: 2048, maxTile: 1024 }, { userId: A, score: 100, maxTile: 64 }])]);
+  });
+  await as(db, "authenticated", B, async () => {
+    const state = await rpc<AchievementState>(db, "sync_achievements");
+    assert.equal(state.achievementCount, 5);
+    assert.deepEqual(state.unlocks.map(item => item.achievementId).sort(), ["achievement-king", "checkin-7", "endless-2048", "solo-10min", "solo-first", "tile-2048-reward"]);
+    assert.deepEqual((await rpc<AchievementState>(db, "sync_achievements")).unlocks, state.unlocks);
+  });
+  await as(db, "authenticated", A, () => rpc(db, "admin_save_achievement", [JSON.stringify({ id: "one-win", name: "One win", status: "published", metric: "wins", target: 1, reward: { kind: "icon", iconId: "victory-vanguard" } }), 0]));
+  await as(db, "authenticated", B, async () => {
+    const state = await rpc<AchievementState>(db, "sync_achievements");
+    assert.equal(state.achievementCount, 6);
+    assert.ok(state.unlocks.some(item => item.achievementId === "one-win"), "public sync awards newly published achievements");
   });
 });

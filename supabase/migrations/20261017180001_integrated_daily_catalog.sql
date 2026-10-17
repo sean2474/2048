@@ -132,13 +132,27 @@ begin
  on conflict do nothing;
 end;$$;
 
+create or replace function private.guard_catalog_unlock() returns trigger
+language plpgsql security definer set search_path='' as $$
+declare item private.achievement_catalog; current_value bigint;
+begin
+  -- Match and solo writers lock players first; every unlock must do so before uniqueness/FK checks.
+  perform id from public.players where id=new.player_id for no key update;
+  if exists(select 1 from public.achievement_unlocks where player_id=new.player_id and achievement_id=new.achievement_id) then return null;end if;
+  select * into item from private.achievement_catalog where item_id=new.achievement_id;
+  if found then
+    current_value:=private.catalog_metric(new.player_id,item.definition->>'metric');
+    if item.status<>'published' or (case when item.definition->>'metric'='solo_time' then current_value<=0 or current_value>(item.definition->>'target')::bigint else current_value<(item.definition->>'target')::bigint end) then return null;end if;
+  end if;
+  return new;
+end; $$;
+
 create or replace function private.award_collection_achievements() returns trigger
 language plpgsql security definer set search_path='' as $$
 begin
   -- Collection rewards cannot count themselves or recursively unlock another collection reward.
   if exists(select 1 from private.achievement_catalog where item_id=new.achievement_id and definition->>'metric'='achievements') then return new; end if;
   if not exists(select 1 from auth.users where id=new.player_id and not coalesce(is_anonymous,false)) then return new; end if;
-  perform id from public.players where id=new.player_id for no key update;
   insert into public.achievement_unlocks(player_id,achievement_id)
     select new.player_id,c.item_id from private.achievement_catalog c
     where c.status='published' and c.definition->>'metric'='achievements'
@@ -155,6 +169,7 @@ insert into public.achievement_unlocks(player_id,achievement_id)
   select u.id,c.item_id from auth.users u cross join private.achievement_catalog c
   where not coalesce(u.is_anonymous,false) and c.status='published' and c.definition->>'metric'='achievements'
     and private.catalog_metric(u.id,'achievements') >= (c.definition->>'target')::bigint
+  order by u.id,c.item_id
   on conflict do nothing;
 
 commit;
