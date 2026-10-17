@@ -5,6 +5,8 @@ import { PGlite } from "@electric-sql/pglite";
 import { CatalogSchema, CosmeticInputSchema, AchievementInputSchema } from "schema/catalog";
 const ADMIN="11111111-1111-4111-8111-111111111111", A="22222222-2222-4222-8222-222222222222", B="33333333-3333-4333-8333-333333333333";
 const migration="20261017160000_content_catalog.sql", migrations=new URL("../../../supabase/migrations/",import.meta.url);
+// Test the original pre-catalog deployment; integrated-migrations covers the final solo/daily histories.
+const laterFeatures = new Set(["20261017080304_solo_time_attack.sql", "20261017083751_solo_modes_4x4.sql", "20261017093226_solo_progress.sql", "20261017150000_daily_quests_and_achievement_king.sql", "20261017150001_backfill_achievement_king.sql"]);
 const icon={kind:"icon",id:"new-icon",name:"새 아이콘 🧩 O'Brien",description:"New reward",imagePath:"icons/new-icon.webp",color:"#123456",acquisition:"coins",price:150,status:"draft",sortOrder:0};
 const reward={id:"wins-100",name:"100 wins",description:"Win 100 eligible games",metric:"wins",target:100,reward:{kind:"icon",iconId:"new-icon"},status:"draft",sortOrder:0};
 async function database(t: {after:(callback:()=>Promise<void>)=>void}, beforeUpgrade?: (db: PGlite) => Promise<void>) {
@@ -16,7 +18,7 @@ async function database(t: {after:(callback:()=>Promise<void>)=>void}, beforeUpg
  create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
  create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text,metadata jsonb default '{"mimetype":"image/webp"}');alter table storage.objects enable row level security;
  grant usage on schema storage to anon,authenticated;grant select,insert,update,delete on storage.objects to anon,authenticated;`);
- for(const f of(await readdir(migrations)).filter(f=>f.endsWith('.sql')&&f<migration).sort())await db.exec(await readFile(new URL(f,migrations),'utf8'));
+ for(const f of(await readdir(migrations)).filter(f=>f.endsWith('.sql')&&f<migration&&!laterFeatures.has(f)).sort())await db.exec(await readFile(new URL(f,migrations),'utf8'));
  await db.query("insert into auth.users(id) values($1),($2),($3)",[ADMIN,A,B]);await db.query("insert into public.admin_roles(user_id) values($1)",[ADMIN]);
  await db.query("update public.player_wallets set balance=2000 where player_id=$1",[A]);
  await db.query("insert into public.cosmetic_purchases(player_id,kind,item_id,price_paid) values($1,'skin','kitty',1200)",[A]);

@@ -11,7 +11,7 @@ Reaching a ranked tier permanently unlocks a matching board skin and profile ico
 | Diamond | 1600–1799 | `rank-diamond` | Legendary |
 | Master | 1800 or higher | `rank-master` | Legendary |
 
-An established peak requires `season_ratings.placement_games = 10` and a non-null `peak_rating`. Provisional ratings do not qualify. The highest qualifying peak across all seasons drives `achievement_state().highestRank` (0 for no established rank, 1–6 for Bronze–Master).
+An established peak requires completed lifetime evaluation (`season_ratings.placement_games = 10`, not ten new games every season) and a non-null `peak_rating`. Provisional ratings do not qualify. The highest qualifying peak across all seasons drives `achievement_state().highestRank` (0 for no established rank, 1–6 for Bronze–Master).
 
 The database awards sets after trusted season-rating writes. Match retries are idempotent, late old-season results can qualify, and demotion or a new season does not remove ownership. The migration backfills existing established season peaks. It extends existing cosmetic and achievement constraints, preserving separately deployed solo rewards, and leaves the existing achievement-progress calculation in place.
 

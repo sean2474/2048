@@ -2,7 +2,9 @@
 
 Common skins (Classic, Slate, Paper, Charcoal, Espresso) and the default Ember Fox profile icon are included with an account. Guests retain Classic and the guest icon. Achievement cosmetics keep their existing unlock conditions.
 
-| Item | Coins |
+Prices below are the initial catalog values. Administrators may edit published prices; the live DB catalog is authoritative. See [Content catalog](content-catalog.md).
+
+| Item | Initial coins |
 | --- | ---: |
 | Rare skin | 300 |
 | Epic skin | 600 |
@@ -11,9 +13,9 @@ Common skins (Classic, Slate, Paper, Charcoal, Espresso) and the default Ember F
 
 The shop shows included, owned and locked items. A successful purchase updates the balance and ownership immediately; equipping remains in My loadout.
 
-`purchase_cosmetic` chooses the authenticated purchaser and database price. It locks that player's wallet, checks duplicate ownership, then charges coins and records ownership in one transaction. Retries of a completed purchase do not charge again. Clients cannot write wallets or purchase records directly. Preferences reject unowned paid equipment; Socket.IO accepts common skins or the account's server-resolved equipped skin.
+`purchase_cosmetic(p_kind, p_item_id, p_expected_price)` chooses the authenticated purchaser and reads the database price. It locks the catalog entry and the player's wallet, checks ownership and the confirmed price, then charges coins and records ownership in one transaction. A changed price is rejected before charging so the user can confirm it again. Retries of a completed purchase do not charge again. Clients cannot write wallets or purchase records directly. Preferences reject unowned paid equipment; Socket.IO accepts common skins or the account's server-resolved equipped skin.
 
-The migration resets previously free, now-paid equipped items to Classic/Ember Fox. It preserves other preferences, common skins and earned achievement cosmetics. Apply the migration before deploying the web and socket changes. The purchase trigger is separate from the achievement trigger, including solo reward extensions.
+The initial purchase migration reset previously free, now-paid equipped items to Classic/Ember Fox. It preserves other preferences, common skins and earned achievement cosmetics. Apply the migration before deploying the web and socket changes. The purchase trigger is separate from the achievement trigger, including solo reward extensions.
 
 Validation includes catalog/DB parity, RLS, insufficient funds, duplicate retries, rollback, account deletion, maximum safe balances, purchase/equip browser flows, account switches, and 320–1440px layouts. `apps/socket/tests/cosmetic-remote-smoke.ts` additionally exercises concurrent HTTP RPC calls on staging using disposable accounts and a temporary operator-seeded wallet; it refuses production and cleans up its fixtures.
 

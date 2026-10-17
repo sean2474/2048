@@ -6,7 +6,7 @@ export const CURRENT_ROOM_KEY = "duo.currentRoom";
 export { matchModeLabel } from "./match-labels";
 // A private per-tab capability, independent of a public profile/user ID.
 // sessionStorage survives reloads but allows separate tabs to play each other.
-export function createGameSocket() {
+export function createGameSocket(spectator = false, soloToken?: string) {
   let sessionToken = sessionStorage.getItem("duo.sessionToken");
   if (!sessionToken || !/^[a-f0-9]{64}$/.test(sessionToken)) {
     sessionToken = Array.from(crypto.getRandomValues(new Uint8Array(32)), byte => byte.toString(16).padStart(2, "0")).join("");
@@ -15,10 +15,10 @@ export function createGameSocket() {
   return io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000", {
     auth: async done => {
       try {
-        if (!isSupabaseConfigured()) { done({ sessionToken }); return; }
+        if (!isSupabaseConfigured()) { done({ sessionToken, soloToken, spectator }); return; }
         const { data: { session }, error } = await createClient().auth.getSession();
         if (error) throw error;
-        done({ sessionToken, ...(session ? { accessToken: session.access_token } : {}) });
+        done({ sessionToken, soloToken, spectator, ...(session ? { accessToken: session.access_token } : {}) });
       } catch { done({ sessionToken, authError: true }); }
     }, autoConnect: false, timeout: 8000, reconnectionAttempts: 5,
   });

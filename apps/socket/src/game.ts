@@ -1,8 +1,10 @@
+import { allowMove } from "./move-limit";
 import type { Account, MatchRecord, ResultStatus } from "schema/results";
 import type { Server } from "socket.io";
 import { anchorHighest, applyMove, attacksFromMerges, clearOldestX, hasMoves, swap32 } from "game-core";
 import { ABILITY_CHARGE, MAX_PENDING_ATTACKS, SLOW_DURATION_MS, SLOW_MOVE_MS, SLOW_WARNING_MS, type S2C, type EndReason, type Dir, type ActionRejected, type PublicPlayerState } from "schema/in-game";
-import { playerChannel, RECONNECT_TIMEOUT, type PlayerId, type Room, type PlayerState } from "./types";
+import { playerChannel, spectatorChannel, RECONNECT_TIMEOUT, type PlayerId, type Room, type PlayerState } from "./types";
+import type { End, ServerState } from "schema/in-game";
 import { rooms, playerRoom, disconnectTimers, disconnectDeadlines } from "./state";
 import { DEFAULT_ABILITY_ID, type AbilityId, type SkinId } from "schema/loadout";
 import { DEFAULT_PROFILE_ICON } from "schema/profile-icons";
@@ -50,6 +52,7 @@ export function handleInput(pid: PlayerId, dir: Dir, io: Server) {
     io.to(playerChannel(pid)).emit("message", { t: "actionRejected", reason: "slowed" } satisfies S2C);
     return;
   }
+  if (!allowMove(me.moveTimes ??= [], now)) return;
   const result = applyMove(me.board, dir, room.rng, me.pending, me.ability.spawnPauseMoves === 0);
   if (!result.moved) return;
   const generated = attacksFromMerges(result.board);
@@ -164,10 +167,13 @@ export function endGame(room: Room, winner: PlayerId | null, reason: EndReason, 
   for (const pid of room.players) {
     const opp = room.players.find(p => p !== pid)!;
     const recording: ResultStatus = !room.accounts[pid] ? "guest" : room.persistResult ? "saving" : "unavailable";
-    io.to(playerChannel(pid)).emit("message", {
+    const end: End = {
       t: "end", matchId: room.id, mode: room.mode, recording, winner: winner === null ? "draw" : winner === pid ? "you" : "opp",
       reason, you: publicState(room.state[pid], room.accounts[pid]), opp: publicState(room.state[opp], room.accounts[opp]),
-    } satisfies S2C);
+    };
+    io.to(playerChannel(pid)).emit("message", end);
+    io.to(spectatorChannel(room.id, pid)).emit("spectate", { state: end });
+    io.in(spectatorChannel(room.id, pid)).socketsLeave(spectatorChannel(room.id, pid));
     clearDisconnect(pid);
     playerRoom.delete(pid);
   }
@@ -185,7 +191,7 @@ export function endGame(room: Room, winner: PlayerId | null, reason: EndReason, 
 function publicState(state: PlayerState, account: Account | null): PublicPlayerState {
   return { iconId: account ? account.iconId ?? DEFAULT_PROFILE_ICON : "guest", skinId: state.skinId ?? "classic", board: state.board, score: state.score, maxTile: state.maxTile, attacksSent: { ...state.telemetry.sent }, ability: { ...state.ability } };
 }
-export function snapshot(room: Room, viewer: PlayerId): S2C {
+export function snapshot(room: Room, viewer: PlayerId): ServerState {
   const opponent = room.players.find(p => p !== viewer)!;
   const deadlines = room.players.flatMap(p => disconnectDeadlines.has(p) ? [disconnectDeadlines.get(p)!] : []);
   return {
@@ -202,5 +208,9 @@ export function snapshot(room: Room, viewer: PlayerId): S2C {
   };
 }
 export function broadcast(room: Room, io: Server) {
-  for (const pid of room.players) io.to(playerChannel(pid)).emit("message", snapshot(room, pid));
+  for (const pid of room.players) {
+    const state = snapshot(room, pid);
+    io.to(playerChannel(pid)).emit("message", state);
+    io.to(spectatorChannel(room.id, pid)).emit("spectate", { state });
+  }
 }

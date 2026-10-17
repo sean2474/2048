@@ -7,17 +7,19 @@ import { fileURLToPath } from "node:url";
 import { mockAccount, trackAudio } from "./browser-fixtures.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const artifacts = fileURLToPath(new URL("../../../docs/legendary-motion", import.meta.url));
-const origin = "http://[::1]:3001";
+const origin = process.env.TEST_WEB_ORIGIN || "http://[::1]:3001";
 
 test("legendary details preview the viewed skin, replay, cancel and respect audio/motion settings", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   fs.mkdirSync(artifacts, { recursive: true });
   try {
     const context = await browser.newContext({ locale: "en-US", viewport: { width: 375, height: 812 } });
+    context.setDefaultTimeout(12000);
     await trackAudio(context);
     const page = await context.newPage(), errors = [], measurements = [];
     page.on("pageerror", error => errors.push(error.message));
     const account = await mockAccount(page); account.row.locale = "en";
+    account.cosmetics.purchases = ["kitty", "bunny", "sentinel", "runeknight", "arcanist"].map(item_id => ({ kind: "skin", item_id }));
     await page.goto(`${origin}/loadout`);
     await page.getByRole("button", { name: "Legendary", exact: true }).click();
     for (const [skin, name, effect, animation, frequencies] of [
@@ -49,7 +51,7 @@ test("legendary details preview the viewed skin, replay, cancel and respect audi
       await dialog.getByRole("button", { name: "Replay merge effect", exact: true }).waitFor();
       await dialog.getByRole("button", { name: "Replay merge effect", exact: true }).click();
       await page.waitForFunction(count => window.audioProbe.notes.length === count, frequencies.length * 2);
-      assert.deepEqual(await page.evaluate(() => window.audioProbe.notes), [...frequencies, ...frequencies]);
+      assert.deepEqual(await page.evaluate(() => window.audioProbe.notes), [...frequencies, ...frequencies.map(note => note * 1.125)]);
       assert.equal(account.row.skin_id, "classic");
       await merged.evaluate(el => { for (const animation of el.getAnimations({ subtree: true })) { animation.pause(); animation.currentTime = 100; } });
       for (const [width, height] of skin === "arcanist" ? [[1440, 900], [768, 1024], [375, 812]] : [[375, 812]]) {
@@ -95,6 +97,7 @@ test("guests can preview locked skins without audio hardware or changing their l
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const context = await browser.newContext({ locale: "ko-KR", viewport: { width: 375, height: 812 } });
+    context.setDefaultTimeout(12000);
     await context.addInitScript(() => { window.AudioContext = undefined; window.webkitAudioContext = undefined; });
     const page = await context.newPage();
     await page.goto(`${origin}/loadout`);

@@ -27,7 +27,9 @@ export async function catalogAssetPlan(): Promise<Asset[]> {
   const files = (await readdir(directory, { withFileTypes: true })).filter(file => file.name.endsWith(".svg")).sort((a, b) => a.name.localeCompare(b.name));
   if (!files.length) throw new Error("No catalog seed assets found");
   return Promise.all(files.map(async file => {
-    const path = CatalogImagePathSchema.parse(`profile-icons/${file.name}`);
+    // The original attendance portrait is immutable in already deployed buckets.
+    const filename = file.name === "attendance-king.svg" ? "attendance-king-v2.svg" : file.name;
+    const path = CatalogImagePathSchema.parse(`profile-icons/${filename}`);
     if (!file.isFile()) throw new Error(`Seed asset is not a regular file: ${path}`);
     const bytes = await readFile(new URL(file.name, directory));
     validateSeedSvg(bytes);

@@ -1,0 +1,76 @@
+   ▲ Next.js 15.5.28 (Turbopack)
+
+   Creating an optimized production build ...
+(node:67055) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:67056) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:67057) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ Finished writing to disk in 192ms
+ ✓ Compiled successfully in 1513ms
+   Linting and checking validity of types ...
+
+   We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+   The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+     - include was updated to add '.next/performance-benchmark/types/**/*.ts'
+
+ ⨯ ESLint: Failed to load plugin 'react-hooks' declared in ' » eslint-config-next/core-web-vitals » /Users/sean2474/.codex/worktrees/performance-measurements/2048/node_modules/.pnpm/eslint-config-next@15.5.28_eslint@9.37.0_jiti@2.6.1__typescript@5.9.3/node_modules/eslint-config-next/index.js': Cannot find module 'eslint-plugin-react-hooks' Require stack: - /Users/sean2474/.codex/worktrees/performance-measurements/2048/apps/web/__placeholder__.js Referenced from: /Users/sean2474/.codex/worktrees/performance-measurements/2048/node_modules/.pnpm/eslint-config-next@15.5.28_eslint@9.37.0_jiti@2.6.1__typescript@5.9.3/node_modules/eslint-config-next/index.js
+   Collecting page data ...
+   Generating static pages (0/28) ...
+   Generating static pages (7/28)
+   Generating static pages (14/28)
+   Generating static pages (21/28)
+ ✓ Generating static pages (28/28)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                         Size  First Load JS
+┌ ƒ /                            7.78 kB         261 kB
+├ ƒ /_not-found                      0 B         253 kB
+├ ƒ /achievements                10.1 kB         263 kB
+├ ƒ /auth/callback                   0 B            0 B
+├ ƒ /auth/error                      0 B         253 kB
+├ ƒ /feedback                    4.31 kB         257 kB
+├ ƒ /find-match                  4.22 kB         257 kB
+├ ƒ /forgot-password                 0 B         256 kB
+├ ƒ /friends                     8.64 kB         262 kB
+├ ƒ /history                      1.1 kB         254 kB
+├ ƒ /how-to-play                     0 B         253 kB
+├ ○ /icon.ico                        0 B            0 B
+├ ƒ /leaderboard                 1.21 kB         254 kB
+├ ƒ /loadout                     12.8 kB         266 kB
+├ ƒ /login                        3.6 kB         257 kB
+├ ƒ /play/[id]                     21 kB         274 kB
+├ ƒ /play/create                 5.26 kB         258 kB
+├ ƒ /play/join                   5.29 kB         258 kB
+├ ƒ /play/online                     0 B         259 kB
+├ ƒ /play/ranked                     0 B         259 kB
+├ ƒ /reset-password                  0 B         256 kB
+├ ƒ /settings                    10.3 kB         263 kB
+├ ƒ /shop                        11.4 kB         264 kB
+├ ƒ /signup                       3.6 kB         257 kB
+├ ƒ /solo                        16.7 kB         270 kB
+├ ƒ /test                        10.5 kB         264 kB
+├ ƒ /tutorial                    16.5 kB         270 kB
+└ ƒ /watch/[id]                  10.3 kB         263 kB
++ First Load JS shared by all     267 kB
+  ├ chunks/190a181a88844795.js   14.6 kB
+  ├ chunks/41fa34e4c1b8c425.js   10.9 kB
+  ├ chunks/4919ebd398246555.js   17.2 kB
+  ├ chunks/57fee1d978d6010c.js     22 kB
+  ├ chunks/a6d768fd4158f11d.js     12 kB
+  ├ chunks/b50b4c9d432f1218.js     54 kB
+  ├ chunks/c22cffe93da93b1d.js   59.2 kB
+  └ chunks/cd4407d14d9881b3.js     14 kB
+  ├ chunks/cebf44e8ebb3ab9b.js   11.1 kB
+  ├ chunks/f290c0a96f22069c.js   14.5 kB
+  ├ chunks/e9d2921fe1a8872b.css  13.8 kB
+  └ other shared chunks (total)  23.6 kB
+
+
+ƒ Middleware                     73.5 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { HistoryMatch, LeaderboardRow } from "schema/results";
 import { SEASON_QUALIFYING_GAMES } from "schema/ranking";
 import { ArrowRight, GraduationCap } from "lucide-react";
+import { FriendsSummary } from "@/components/widget/friends-summary";
+import { DailyQuests } from "@/components/widget/daily-quests";
 import { Button } from "@/components/ui/button";
 import { PageHeading } from "@/components/widget/page-heading";
 import { GameEmblem } from "@/components/widget/game-emblem";
@@ -26,6 +28,8 @@ export default async function DashboardPage() {
       {userId ? <Suspense fallback={<ProfileSkeleton label={t("Loading ranked record…")} />}><PlayerProfile userId={userId} /></Suspense> : <GuestProfile t={t} />}
       <section aria-label={t("Game preview")} className="mx-auto w-full max-w-[380px] min-w-0"><DemoBoard /></section>
     </div>
+    <DailyQuests userId={userId ?? null} />
+    <FriendsSummary userId={userId ?? null} />
     {userId && <>
       <LiveRecords tables="player_ratings,match_participants" filter={`player_id=eq.${userId}`} />
       <Suspense fallback={<RecordsSkeleton label={t("Loading recent matches…")} />}><RecentMatches userId={userId} /></Suspense>

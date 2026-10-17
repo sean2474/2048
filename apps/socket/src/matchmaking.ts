@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import seedrandom from "seedrandom";
 import { createAbilityState, newBoard } from "game-core";
 import type { MatchFound, MatchMode, MatchProfile } from "schema/in-game";
+import type { Account } from "schema/results";
 import { DEFAULT_PROFILE_ICON } from "schema/profile-icons";
 import { playerChannel, type PlayerId, type Room } from "./types";
 import { matchmakingQueue, waitingByCode, rooms, playerRoom, playerSockets, playerAccounts } from "./state";
@@ -98,9 +99,9 @@ async function pairWaitingPlayers(io: Server, persistResult: MatchWriter | undef
     }
   }
 }
-export function createMatch(p1: PlayerId, p2: PlayerId, io: Server, event: "matchFound" | "roomReady", persistResult?: MatchWriter, mode: MatchMode = "casual") {
+export function createMatch(p1: PlayerId, p2: PlayerId, io: Server, event: "matchFound" | "roomReady", persistResult?: MatchWriter, mode: MatchMode = "casual", accounts: ReadonlyMap<PlayerId, Account | null> = playerAccounts) {
   const profiles = Object.fromEntries([p1, p2].map(pid => {
-    const account = playerAccounts.get(pid);
+    const account = accounts.get(pid);
     const queued = matchmakingQueue.find(entry => entry.pid === pid);
     const profile: MatchProfile = {
       name: account?.name ?? "Guest",
@@ -115,7 +116,7 @@ export function createMatch(p1: PlayerId, p2: PlayerId, io: Server, event: "matc
   const first = newBoard(rng), second = first.map(t => ({ ...t }));
   const room: Room = {
     startedAt: new Date().toISOString(), persistResult,
-    accounts: { [p1]: playerAccounts.get(p1) ?? null, [p2]: playerAccounts.get(p2) ?? null },
+    accounts: { [p1]: accounts.get(p1) ?? null, [p2]: accounts.get(p2) ?? null },
     id, mode, players: [p1, p2], ready: new Set(), rng, open: true,
     state: {
       [p1]: { board: first, score: 0, maxTile: Math.max(...first.map(t => t.value)), pending: [], ability: createAbilityState(), telemetry: { moves: 0, charged: { xblock: 0, hardblock: 0 }, sent: { xblock: 0, hardblock: 0 }, received: { xblock: 0, hardblock: 0 } } },
@@ -128,4 +129,5 @@ export function createMatch(p1: PlayerId, p2: PlayerId, io: Server, event: "matc
     io.to(playerChannel(pid)).emit("message", { t: event, roomId: id, mode, players: { you: profiles[pid], opp: profiles[pid === p1 ? p2 : p1] } } satisfies MatchFound);
     waitForPlayer(pid, io);
   }
+  return id;
 }

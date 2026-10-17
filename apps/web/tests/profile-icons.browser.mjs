@@ -164,7 +164,7 @@ test("match reveal shows real payloads, handles reduced motion, skips, errors an
         await intro.waitFor();
         assert.equal(await intro.getByText("Unranked", { exact: true }).count(), 2);
         assert.ok((await intro.locator(".match-intro-icon").first().boundingBox()).height >= 90);
-        await intro.getByRole("button", { name: "Enter now", exact: true }).click();
+        assert.equal(await intro.getByRole("button", { name: "Enter now", exact: true }).count(), 0);
         await page.waitForURL(`**/play/${roomId}`);
       }
       await context.close();

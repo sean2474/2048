@@ -1,5 +1,7 @@
 # UI refresh — 2026-10-16
 
+> 2026-10-16 UI 개편 당시 계약이다. 수동 공격·읽기 전용 지갑·예정 능력과 작업 분담은 과거 범위이며 현재 [설정](settings.md)·[게임](game-design.md)·[꾸미기](loadout-and-economy.md)를 따른다.
+
 Scope: game home/header, authentication, mode selection and lobbies, live match/result, leaderboard/history/help, and the separate administration app. Preserve game rules, auth, routes, server/RPC contracts, confirmation and error recovery. No new dependency or feature.
 
 Direction: a thoughtful tabletop puzzle with a competitive edge. Warm ivory #f6f3eb, white panels, dark ink #282b28, terracotta #a4432d for primary actions, muted olive #52634b for secondary signals. Rounded 12–20px corners, fine warm borders, restrained shadows, 8/16/24/32px rhythm. Use system typography with tight bold headings and tabular score numerals; no unavailable remote font, gradients, fake user counts or decorative artwork. Real 5×5 tiles are the main visual.
