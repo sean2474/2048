@@ -9,6 +9,7 @@ import { SOLO_SIZE, formatSoloTime, type SoloMode } from "schema/solo";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { SoloClock } from "@/components/2048/solo-clock";
 import { BoardView } from "@/components/2048/board";
 import { SkinPreview } from "@/components/2048/skin-preview";
 import { PageHeading } from "@/components/widget/page-heading";
@@ -90,7 +91,7 @@ export default function SoloPage() {
         onPointerDown={event => { if (!(event.target instanceof HTMLElement && event.target.closest("button,a"))) controls.current?.focus({ preventScroll: true }); }}>
         <p id="solo-instructions" className="sr-only">{t("Use arrow keys, swipe your board or use the direction buttons below.")}</p>
         <dl className="mb-3 grid grid-cols-[1.5fr_1fr_1fr] gap-3 rounded-xl border bg-card px-3 py-2 sm:mb-5 sm:p-4">
-          <div><dt className="flex items-center gap-1.5 text-xs text-muted-foreground">{endless ? <InfinityIcon aria-hidden="true" className="size-3.5" /> : <Timer aria-hidden="true" className="size-3.5" />}{t(endless ? "Highest tile" : "Time")}</dt><dd className="mt-1 text-xl font-extrabold tabular-nums tracking-tight sm:text-3xl">{endless ? run?.maxTile ?? "—" : formatSoloTime(run ? solo.elapsed : 0)}</dd></div>
+          <div><dt className="flex items-center gap-1.5 text-xs text-muted-foreground">{endless ? <InfinityIcon aria-hidden="true" className="size-3.5" /> : <Timer aria-hidden="true" className="size-3.5" />}{t(endless ? "Highest tile" : "Time")}</dt><dd className="mt-1 text-xl font-extrabold tabular-nums tracking-tight sm:text-3xl">{endless ? run?.maxTile ?? "—" : <SoloClock state={run} receivedAt={solo.receivedAt} />}</dd></div>
           <div><dt className="text-xs text-muted-foreground">{t("Score")}</dt><dd className="mt-1 font-bold tabular-nums">{run?.score ?? 0}</dd></div>
           <div><dt className="text-xs text-muted-foreground">{t("Moves")}</dt><dd className="mt-1 font-bold tabular-nums">{run?.moves ?? 0}</dd></div>
         </dl>

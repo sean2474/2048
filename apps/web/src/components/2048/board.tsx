@@ -1,12 +1,12 @@
 "use client";
-import { useRef, type CSSProperties } from "react";
+import { memo, useRef, type CSSProperties } from "react";
 import { type Board, type Dir, SIZE } from "@/types";
 import { Tile } from "./tile";
 import { useI18n } from "ui/i18n";
 import { type SkinId } from "schema/loadout";
 import { useCatalog } from "@/hooks/catalog-provider";
 import { boardBackground } from "@/lib/catalog-assets";
-export function BoardView({ board, onMove, label = "Game board", skinId = "classic", size = SIZE }: { board: Board; onMove?: (dir: Dir) => void; label?: string; skinId?: SkinId; size?: number }) {
+export const BoardView = memo(function BoardView({ board, onMove, label = "Game board", skinId = "classic", size = SIZE }: { board: Board; onMove?: (dir: Dir) => void; label?: string; skinId?: SkinId; size?: number }) {
   const { t } = useI18n();
   const skin = useCatalog().skin(skinId);
   const start = useRef<{ x: number; y: number } | null>(null);
@@ -36,4 +36,4 @@ export function BoardView({ board, onMove, label = "Game board", skinId = "class
     </div>
     <div className="relative w-full h-full font-bold" style={{ padding: "var(--pad)" }}>{board.map(tile => <Tile key={tile.id} tile={tile} tokens={skin.tokens} />)}</div>
   </div>;
-}
+});

@@ -12,8 +12,7 @@ export function useSolo(account: string | null | undefined) {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-  const received = useRef(0);
+  const [receivedAt, setReceivedAt] = useState(0);
   const send = useCallback((command: SoloCommand) => {
     const client = socket.current;
     if (!client?.connected || pending.current) return;
@@ -26,13 +25,13 @@ export function useSolo(account: string | null | undefined) {
       setError(reply.error === "move_rate_limited" ? null : reply.error ?? null);
       if (!reply.error || reply.state) {
         current.current = reply.state; setState(reply.state);
-        received.current = performance.now(); setElapsed(reply.state?.elapsedMs ?? 0);
+        setReceivedAt(performance.now());
       }
     });
   }, []);
   useEffect(() => {
     if (account === undefined) return;
-    current.current = null; setState(null); setElapsed(0); setError(null); setConnected(false); setWorking(false);
+    current.current = null; setState(null); setReceivedAt(0); setError(null); setConnected(false); setWorking(false);
     let client: Socket;
     try {
       let token = localStorage.getItem("duo.soloToken");
@@ -57,16 +56,15 @@ export function useSolo(account: string | null | undefined) {
   }, [account, send]);
   useEffect(() => {
     if (!state) return;
-    const timer = state.status === "playing" ? window.setInterval(() => setElapsed(state.elapsedMs + performance.now() - received.current), 50) : undefined;
     const warn = (event: BeforeUnloadEvent) => { if (state.progress === "error" || state.progress === "unavailable") event.preventDefault(); };
     window.addEventListener("beforeunload", warn);
-    return () => { window.clearInterval(timer); window.removeEventListener("beforeunload", warn); };
+    return () => { window.removeEventListener("beforeunload", warn); };
   }, [state]);
-  const move = (dir: "up" | "down" | "left" | "right") => {
+  const move = useCallback((dir: "up" | "down" | "left" | "right") => {
     const run = current.current;
     if (run?.status === "playing") send({ t: "move", id: run.id, seq: run.seq + 1, dir });
-  };
-  return { state, elapsed, connected, error, working, move, start: (mode: SoloMode) => send({ t: "start", mode }),
+  }, [send]);
+  return { state, receivedAt, connected, error, working, move, start: (mode: SoloMode) => send({ t: "start", mode }),
     save: () => { if (current.current) send({ t: "save", id: current.current.id }); },
     reconnect: () => { socket.current?.connect(); send({ t: "state" }); } };
 }

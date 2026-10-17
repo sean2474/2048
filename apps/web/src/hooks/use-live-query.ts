@@ -21,19 +21,28 @@ export function useLiveQuery<T>({ table, filter, enabled = true, load }: Options
     if (!enabled) { setLoading(false); return; }
     if (!isSupabaseConfigured()) { setError("Account services are not configured yet."); setLoading(false); return; }
     const client = createClient();
-    let active = true, request = 0;
+    let active = true, pending = false, queued = false;
     let debounce: ReturnType<typeof setTimeout> | undefined;
     setLoading(true);
     async function refresh() {
-      const current = ++request;
+      if (!active) return;
+      if (pending) { queued = true; return; }
+      pending = true;
       try {
         const rows = await load(client);
-        if (active && current === request) { setData(rows); setError(""); }
+        if (active) { setData(rows); setError(""); }
       } catch {
-        if (active && current === request) setError("Unable to load records. Please try again.");
-      } finally { if (active && current === request) setLoading(false); }
+        if (active) setError("Unable to load records. Please try again.");
+      } finally {
+        pending = false;
+        if (active) setLoading(false);
+        if (queued) { queued = false; schedule(); }
+      }
     }
-    const schedule = () => { clearTimeout(debounce); debounce = setTimeout(() => void refresh(), 150); };
+    const schedule = () => {
+      if (!active || document.visibilityState === "hidden") return;
+      clearTimeout(debounce); debounce = setTimeout(() => void refresh(), 150);
+    };
     void refresh();
     // Widgets watching the same rows still need independent subscription lifetimes.
     const channel = client.channel(`duo:${tables}:${filter || "all"}:${subscriptionId}`);
@@ -49,11 +58,12 @@ export function useLiveQuery<T>({ table, filter, enabled = true, load }: Options
         if (status !== "SUBSCRIBED") setLive(false);
       });
     // Recover missed updates after network sleep even if a channel stayed subscribed.
-    const interval = setInterval(() => void refresh(), 30_000);
+    const interval = setInterval(schedule, 30_000);
+    document.addEventListener("visibilitychange", schedule);
     window.addEventListener("online", schedule);
     return () => {
       active = false; clearInterval(interval); clearTimeout(debounce);
-      window.removeEventListener("online", schedule); void client.removeChannel(channel);
+      window.removeEventListener("online", schedule); document.removeEventListener("visibilitychange", schedule); void client.removeChannel(channel);
     };
   }, [tables, filter, enabled, load, retry, subscriptionId]);
   return { data, loading, error: t(error), live, reload: () => setRetry(value => value + 1) };
