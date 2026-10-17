@@ -51,3 +51,5 @@ NODE_PATH=/path/to/playwright/node_modules BENCH_REMOTE_TARGET=staging \
 Compare complete local runs with `node apps/web/tests/performance-compare.mjs docs/full-performance/before/raw.json docs/full-performance/after/raw.json`. It rejects mixed machine/browser/configuration or different page-case coverage and reports raw/gzip initial JavaScript, preference query counts, native timings, observed readiness bounds and game samples.
 
 `resultPacketToOverlayMs` records the first observed mounted overlay geometry; opacity animation may still be running. New deployed runs separately record `resultPacketToAnimationCompleteMs` after finite overlay animations finish and two animation frames pass. Screenshots are then taken of the settled result. This extra measurement was not present in the local before/after capture.
+
+For a diagnosed harness failure, `BENCH_REMOTE_CASES=desktop:natural` (or comma-separated known device:ending cases) restricts a rerun. Always set a separate `BENCH_OUTPUT` for that attempt and preserve the initial failure evidence. The raw report records the requested subset; do not present a subset as full coverage.
