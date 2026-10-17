@@ -6,6 +6,8 @@ import { getI18n } from "@/lib/i18n/server";
 import { SettingsProvider } from "@/hooks/settings-provider";
 import { AudioProvider } from "@/hooks/audio-provider";
 import { CatalogProvider, CatalogNotice } from "@/hooks/catalog-provider";
+import { AchievementsProvider } from "@/hooks/use-achievements";
+import { FriendPresenceProvider } from "@/hooks/friend-presence-provider";
 import { GameAnalytics } from "@/components/widget/analytics";
 import { PlayerProvider } from "@/hooks/use-player";
 import { getAccount } from "@/lib/supabase/account";
@@ -30,10 +32,14 @@ export default async function RootLayout({
           <CatalogProvider>
           <SettingsProvider initialGuestLocale={guestLocale}>
           <AudioProvider>
+          <AchievementsProvider>
+          <FriendPresenceProvider>
           <Header />
           <div className="mx-auto max-w-[1040px] px-4"><CatalogNotice /></div>
           {children}
           <GameAnalytics />
+          </FriendPresenceProvider>
+          </AchievementsProvider>
           </AudioProvider>
           </SettingsProvider>
           </CatalogProvider>

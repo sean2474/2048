@@ -33,5 +33,7 @@
 }
 
 @media (max-width: 639px) {
+  .game-page-heading { gap: .75rem; padding-bottom: .75rem; }
   .game-page-heading > div:first-child { flex-basis: 100%; }
+  .match-selection .game-menu-link { min-height: 3.5rem; }
 }

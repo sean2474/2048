@@ -9,7 +9,7 @@ import { MatchIntro } from "@/components/widget/match-intro";
 import { useLobby } from "@/hooks/use-lobby";
 export default function CreateRoomPage() {
   const { t } = useI18n();
-  const { joinCode, status, error, retry, match, enterMatch } = useLobby("createRoomWithCode");
+  const { joinCode, status, error, retry, match } = useLobby("createRoomWithCode");
   const [copyStatus, setCopyStatus] = useState("");
   async function copy() {
     try { await navigator.clipboard.writeText(joinCode); setCopyStatus("Code copied!"); }
@@ -32,5 +32,5 @@ export default function CreateRoomPage() {
       <div className="space-y-3">{error && <Button className="w-full" onClick={retry}>{t("Try again")}</Button>}
       <Button asChild variant="outline" className="w-full"><Link href="/find-match"><ArrowLeft aria-hidden="true" />{t("Cancel")}</Link></Button></div>
     </section>
-  <MatchIntro match={match} onEnter={enterMatch} /></main>;
+  <MatchIntro match={match} /></main>;
 }

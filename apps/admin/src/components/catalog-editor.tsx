@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 type Kind = "skin" | "icon" | "achievement";
 type Editor = CosmeticInput | AchievementInput;
 const empty: ContentCatalog = { skins: [], profileIcons: [], achievements: [] };
-const metrics = { attendance_streak: "Consecutive attendance days", wins: "Eligible match wins", highest_tile: "Highest match tile", rank_tier: "Highest established tier", solo_time: "Best solo finish time (milliseconds)", solo_tile: "Highest endless tile" };
+const metrics = { attendance_streak: "Consecutive attendance days", wins: "Eligible match wins", highest_tile: "Highest match tile", rank_tier: "Highest established tier", solo_time: "Best solo finish time (milliseconds)", solo_tile: "Highest endless tile", achievements: "Other achievements unlocked" };
 const patterns = ["dots", "gingham", "pinstripe", "weave", "runes", "sunrise", "magic-circle", "shield", "crossguard", "laurel", "compass"] as const;
 const characters = ["cat", "bunny", "sentinel", "runeknight", "arcanist", "diamond", "crown", "fox", "dragon", "phoenix"] as const;
 

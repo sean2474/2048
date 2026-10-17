@@ -33,9 +33,6 @@
 .match-intro-progress { height: 3px; margin: 20px 0 4px; overflow: hidden; background: #d8ddcf; }
 .match-intro-progress span { display: block; height: 100%; background: #9d8151; transform-origin: left; animation: match-intro-progress 3.2s linear both; }
 .match-intro-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; font-size: 10px; color: var(--muted-foreground); }
-.match-intro-bottom button { display: inline-flex; flex-shrink: 0; align-items: center; gap: 6px; min-height: 44px; padding: 0 8px; border-radius: 4px; color: var(--primary); font-size: 11px; }
-.match-intro-bottom button:hover { background: var(--muted); }
-.match-intro-bottom button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 @keyframes match-intro-reveal { from { opacity: 0; } to { opacity: 1; } }
 @keyframes match-intro-left { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes match-intro-right { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }

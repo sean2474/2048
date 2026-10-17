@@ -37,7 +37,7 @@ export default function LoadoutPage() {
   const { user } = usePlayer();
   const catalog = useCatalog();
   const { skins, profileIcons, achievementForItem } = catalog;
-  const achievements = useAchievements(user);
+  const achievements = useAchievements();
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const { skin, icon, selectSkin, selectIcon, storageError, ready, saving, scope } = useLoadout();
   const cosmetics = useCosmetics(user);
