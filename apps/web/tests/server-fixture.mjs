@@ -21,7 +21,9 @@ function session(id) {
 }
 
 // Both SSR and browser requests use this loopback-only fixture. No real account or DB is touched.
-export async function startServerFixture({ handle, port = 0 } = {}) {
+export async function startServerFixture({ handle, port = 0, app = "web" } = {}) {
+  if (!["web", "admin"].includes(app)) throw new Error("Unknown fixture app");
+  const appRoot = app === "admin" ? fileURLToPath(new URL("../../admin/", import.meta.url)) : webRoot;
   const requests = [];
   const api = createServer(async (request, response) => {
     const url = new URL(request.url, "http://127.0.0.1");
@@ -40,7 +42,7 @@ export async function startServerFixture({ handle, port = 0 } = {}) {
         else if (url.pathname === "/auth/v1/user") { data = id ? user(id) : { message: "Invalid fixture session" }; status = id ? 200 : 401; }
         else if (url.pathname === "/auth/v1/logout") data = {};
         else if (url.pathname.endsWith("/players")) data = id ? [{ ...user(id), name: id === fixturePlayer ? "Fixture Challenger" : "Second Player", username: null, image_path: null, updated_at: user(id).created_at }] : [];
-        else if (url.pathname.endsWith("/player_preferences")) data = [{ player_id: id, locale: "en", skin_id: "classic", icon_id: "orb", ability_id: null, custom_shortcuts: false, keybindings: {} }];
+        else if (url.pathname.endsWith("/player_preferences")) data = [{ player_id: id, locale: "en", skin_id: "classic", icon_id: "orb", ability_id: null, custom_shortcuts: false, keybindings: { up: "KeyW", down: "KeyS", left: "KeyA", right: "KeyD", ability: "Digit1" } }];
         else if (url.pathname.endsWith("/player_wallets")) data = [{ player_id: id, balance: 12 }];
         else if (url.pathname.endsWith("/rpc/content_catalog")) data = { skins: [], profileIcons: [], achievements: [] };
         else if (url.pathname.endsWith("/rank_seasons")) data = [fixtureSeason, fixtureOldSeason];
@@ -59,7 +61,7 @@ export async function startServerFixture({ handle, port = 0 } = {}) {
   }
   const origin = `http://127.0.0.1:${port}`;
   const child = spawn(process.execPath, [require.resolve("next/dist/bin/next"), "dev", "--turbopack", "--hostname", "127.0.0.1", "--port", String(port)], {
-    cwd: webRoot, env: { ...process.env, NEXT_DIST_DIR: `.next/ssr-tests-${port}`, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${api.address().port}`, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "fixture-public-key", NEXT_PUBLIC_SOCKET_URL: "http://127.0.0.1:1", NEXT_PUBLIC_APP_ENV: "development", NEXT_PUBLIC_VERCEL_ENV: "development", NEXT_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"],
+    cwd: appRoot, env: { ...process.env, NEXT_DIST_DIR: `.next/ssr-tests-${port}`, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${api.address().port}`, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "fixture-public-key", NEXT_PUBLIC_SOCKET_URL: "http://127.0.0.1:1", NEXT_PUBLIC_APP_ENV: "development", NEXT_PUBLIC_VERCEL_ENV: "development", NEXT_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"],
   });
   let logs = ""; child.stdout.on("data", chunk => { logs += chunk; }); child.stderr.on("data", chunk => { logs += chunk; });
   const close = async () => {
@@ -74,6 +76,6 @@ export async function startServerFixture({ handle, port = 0 } = {}) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
   } catch (error) { await close(); throw error; }
-  const cookie = (id = fixturePlayer) => ({ name: "sb-127-auth-token", value: `base64-${Buffer.from(JSON.stringify(session(id))).toString("base64url")}`, url: origin });
+  const cookie = (id = fixturePlayer) => ({ name: app === "admin" ? "sb-2048-admin-auth" : "sb-127-auth-token", value: `base64-${Buffer.from(JSON.stringify(session(id))).toString("base64url")}`, url: origin });
   return { origin, requests, cookie, close };
 }
