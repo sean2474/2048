@@ -53,8 +53,8 @@ export async function measureMatch(browser, origin, device, fixture, { surrender
       const code = await pages[0].getByTestId('join-code').innerText();
       assert.match(code, /^[A-Z0-9]{6}$/);
       await pages[1].goto(`${origin}/play/join`);
-      await pages[1].locator('#room-code').fill(code);
-      await pages[1].locator('form button[type="submit"]').click();
+      await pages[1].locator('#room-code:visible').fill(code);
+      await pages[1].locator('form button[type="submit"]:visible').click();
     } else await Promise.all(pages.map(page => page.goto(`${origin}/play/online`)));
     const matched = await Promise.all(found);
     assert.equal(matched[0].message.roomId, matched[1].message.roomId);
