@@ -18,7 +18,7 @@
 
 Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루트의 `pnpm-lock.yaml`, 워크스페이스 설정과 공통 `packages`를 함께 빌드하도록 Root Directory 밖 소스 포함을 허용한다. Next.js preset과 앱별 `build` 스크립트를 사용한다.
 
-`2048-web`·`2048-admin`의 **Preview 환경 변수도 staging DB·소켓**을 사용한다. 전용 staging 프로젝트의 Vercel Production 배포는 운영 게임이 아니다. `NEXT_PUBLIC_APP_ENV=staging`으로 구분한다. Git 연동이나 배포 버튼을 실행하기 전 프로젝트·대상 환경·커밋을 확인한다. 이 문서는 특정 브랜치에 자동 배포된다고 가정하지 않는다.
+`2048-web`·`2048-admin`의 **Preview 환경 변수도 staging DB·소켓**을 사용한다. 전용 staging 프로젝트의 Vercel Production 배포는 운영 게임이 아니다. `NEXT_PUBLIC_APP_ENV=staging`으로 구분한다. Vercel의 운영 웹·관리자는 `main`, 전용 테스트 웹은 `staging` 브랜치를 추적한다. 기능 변경은 staging에서 검증한 뒤 main에 반영한다. Git 푸시는 Vercel 웹 배포를 트리거하며 Fly 소켓은 아래 명령으로 별도 배포한다. 배포 전 프로젝트·대상 환경·커밋을 확인한다.
 
 ## 환경 변수와 접근 경계
 
