@@ -17,7 +17,7 @@ test("guest loadout is fixed, locked cards explain access, and owned filters kee
     assert.match(await current.innerText(), /클래식/);
     assert.equal(await page.locator("#skin-results button").count(), 12);
     await page.getByRole("button", { name: "다음 페이지", exact: true }).click();
-    assert.equal(await page.locator("#skin-results button").count(), 8);
+    assert.equal(await page.locator("#skin-results button").count(), 10);
     await page.getByRole("checkbox", { name: "보유 중인 것만" }).check();
     assert.equal(await page.locator("#skin-results button").count(), 1);
     assert.equal(await page.getByRole("navigation", { name: "목록 페이지" }).count(), 0);
@@ -27,12 +27,11 @@ test("guest loadout is fixed, locked cards explain access, and owned filters kee
     await page.getByRole("tab", { name: "아이콘", exact: true }).click();
     assert.equal(await page.locator("#icons-panel button").count(), 1);
     await page.getByRole("checkbox", { name: "보유 중인 것만" }).uncheck();
-    assert.equal(await page.locator("#icons-panel button").count(), 7);
+    assert.equal(await page.locator("#icons-panel button").count(), 9);
     const locked = page.getByRole("button", { name: "불꽃 여우 · 잠김 · 해금 조건 보기", exact: true });
     await locked.click();
     const dialog = page.getByRole("dialog");
     await dialog.getByText("로그인하면 사용할 수 있어요.").waitFor();
-    assert.match(await dialog.innerText(), /업적 달성/);
     assert.equal(await dialog.getByRole("link", { name: "로그인", exact: true }).getAttribute("href"), "/login");
     await page.keyboard.press("Escape");
     await dialog.waitFor({ state: "hidden" });

@@ -5,6 +5,8 @@ export const PROFILE_ICONS = [
   { id: "cat", name: "Star Cat", color: "#b28a42" },
   { id: "rabbit", name: "Cloud Rabbit", color: "#b57892" },
   { id: "robot", name: "Tile Bot", color: "#548da7" },
+  { id: "attendance-king", name: "Attendance King", color: "#b68a43" },
+  { id: "victory-vanguard", name: "Victory Vanguard", color: "#4c7e78" },
 ] as const;
 
 export type ProfileIconId = (typeof PROFILE_ICONS)[number]["id"];

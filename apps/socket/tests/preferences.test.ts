@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 import { PROFILE_ICONS } from "schema/profile-icons";
+import { achievementForItem } from "schema/achievements";
 import { ABILITIES, RETIRED_ABILITY_IDS, SKINS } from "schema/loadout";
 import { DEFAULT_SETTINGS, isSettings, isSettingsPatch, parseGuestSettings, settingsFromRow, settingsToRow, SettingsStore, type Settings } from "../../web/src/lib/preferences";
 
@@ -242,6 +243,10 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
     await db.query("update public.player_preferences set ability_id='frost-wave' where player_id=$1", [A]);
     assert.deepEqual((await db.query("select player_id,locale,skin_id,ability_id from public.player_preferences")).rows, [{ player_id: A, locale: "en", skin_id: "paper", ability_id: "frost-wave" }]);
     for (const skin of SKINS) {
+      if (achievementForItem("skin", skin.id)) {
+        await assert.rejects(db.query("update public.player_preferences set skin_id=$1 where player_id=$2", [skin.id, A]), /Achievement required/);
+        continue;
+      }
       await db.query("update public.player_preferences set skin_id=$1 where player_id=$2", [skin.id, A]);
       assert.deepEqual((await db.query("select skin_id from public.player_preferences")).rows, [{ skin_id: skin.id }]);
     }
@@ -250,6 +255,10 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
       assert.deepEqual((await db.query("select ability_id from public.player_preferences")).rows, [{ ability_id: ability.id }]);
     }
     for (const icon of PROFILE_ICONS) {
+      if (achievementForItem("icon", icon.id)) {
+        await assert.rejects(db.query("update public.player_preferences set icon_id=$1 where player_id=$2", [icon.id, A]), /Achievement required/);
+        continue;
+      }
       await db.query("update public.player_preferences set icon_id=$1 where player_id=$2", [icon.id, A]);
       assert.deepEqual((await db.query("select icon_id from public.player_preferences")).rows, [{ icon_id: icon.id }]);
     }

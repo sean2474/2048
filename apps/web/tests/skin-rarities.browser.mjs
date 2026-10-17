@@ -24,12 +24,12 @@ test("rarity filters, persistence, paging and readable character tiles", async (
     await page.locator("#skin-results button:enabled").first().waitFor();
     assert.equal(await page.locator("#skin-results button").count(), 12);
     await page.getByRole("button", { name: "다음 페이지", exact: true }).click();
-    assert.equal(await page.locator("#skin-results button").count(), 8);
+    assert.equal(await page.locator("#skin-results button").count(), 10);
     assert.equal(await page.getByRole("button", { name: "다음 페이지", exact: true }).isDisabled(), true);
     const measurements = [];
     for (const [width, height] of [[1440, 900], [768, 1024], [375, 812]]) {
       await page.setViewportSize({ width, height });
-      for (const [rarity, name, count] of [["all", "전체", 12], ["common", "일반", 5], ["rare", "희귀", 5], ["epic", "에픽", 5], ["legendary", "레전더리", 5]]) {
+      for (const [rarity, name, count] of [["all", "전체", 12], ["common", "일반", 5], ["rare", "희귀", 6], ["epic", "에픽", 6], ["legendary", "레전더리", 5]]) {
         const filter = page.getByRole("group", { name: "스킨 등급 필터" }).getByRole("button", { name, exact: true });
         await filter.click();
         assert.equal(await filter.getAttribute("aria-pressed"), "true");

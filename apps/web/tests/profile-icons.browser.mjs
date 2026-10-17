@@ -44,7 +44,7 @@ async function mockMatch(page, { mode = "casual", rating = 1460, opponentName = 
         sent.push(message);
         if (["findMatch", "createRoomWithCode", "joinRoomWithCode"].includes(message.t)) {
           const match = { t: message.t === "findMatch" ? "matchFound" : "roomReady", roomId, mode,
-            players: { you: { name: iconId === "guest" ? "Guest" : "타일탐험가", iconId, rating }, opp: { name: iconId === "guest" ? "Guest" : opponentName, iconId: iconId === "guest" ? "guest" : "owl", rating: rating === null ? null : 1688 } } };
+            players: { you: { name: iconId === "guest" ? "Guest" : "타일탐험가", iconId, rating, ...(rating === null ? {} : { rank: { tier: "Platinum", placement_games: 10 } }) }, opp: { name: iconId === "guest" ? "Guest" : opponentName, iconId: iconId === "guest" ? "guest" : "owl", rating: rating === null ? null : 1688, ...(rating === null ? {} : { rank: { tier: "Diamond", placement_games: 10 } }) } } };
           const packet = `42${JSON.stringify(["message", fail ? { t: "error", reason: "code_not_found" } : match])}`;
           push(duplicate ? `${packet}\x1e${packet}` : packet);
         } else if (message.t === "joinRoom") {

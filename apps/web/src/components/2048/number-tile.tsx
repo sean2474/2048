@@ -7,6 +7,8 @@ const PATTERNS = {
   pinstripe: "repeating-linear-gradient(135deg, transparent 0 9%, #5e4c3b30 9% 12%, transparent 12% 21%)",
   weave: "repeating-linear-gradient(0deg, #5e4c3b20 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, #ffffff55 0 1px, transparent 1px 4px)",
   runes: undefined,
+  sunrise: undefined,
+  "magic-circle": undefined,
 };
 
 // Shared by the catalog and game so previews always match the equipped skin.
@@ -18,6 +20,8 @@ export function NumberTile({ value, tokens }: { value: number; tokens: SkinToken
 
   return <span aria-hidden="true" className="relative grid size-full place-items-center overflow-hidden font-extrabold tracking-tight" style={{ backgroundColor: background, backgroundImage: pattern, backgroundSize: tokens.tilePattern === "dots" ? "22% 22%" : undefined, color: palette ? "#493b40" : tileFg(value), borderRadius: tokens.tileRadius }}>
     {tokens.tilePattern === "runes" && <svg viewBox="0 0 100 100" className="absolute inset-0 size-full" aria-hidden="true" fill="none" stroke="#5e4c3b66" strokeWidth="2" strokeLinecap="square"><path d="M12 28V10l9 6-9 6m60-10h17l-8 8 8 8M12 72l8 8-8 8m9-16v16m53-8h16m-8-8v16" /></svg>}
+    {tokens.tilePattern === "sunrise" && <svg viewBox="0 0 100 100" className="absolute inset-0 size-full" aria-hidden="true" focusable="false" fill="none" stroke="#6b492b80" strokeWidth="2" strokeLinecap="round"><path d="M29 24a21 21 0 0 1 42 0M20 24h60M50 4v7M19 9l7 7M81 9l-7 7M11 37h8M81 37h8M12 78h76M25 86h50" /></svg>}
+    {tokens.tilePattern === "magic-circle" && <svg viewBox="0 0 100 100" className="absolute inset-0 size-full" aria-hidden="true" focusable="false" fill="none" stroke="#385b5680" strokeWidth="2"><circle cx="50" cy="50" r="40" /><path d="m50 7 6 8-6 8-6-8Zm0 70 6 8-6 8-6-8ZM7 50l8-6 8 6-8 6Zm70 0 8-6 8 6-8 6ZM14 27V14h13m46 0h13v13M14 73v13h13m46 0h13V73" /></svg>}
     {tokens.character && <svg viewBox="0 0 100 100" className="absolute inset-0 size-full" fill="none" aria-hidden="true" focusable="false">
       {armored ? <>
         <path d="m9 29 12-17h58l12 17v51L79 94H21L9 80Z" fill="#33434e" stroke="#202d38" strokeWidth="2" />

@@ -54,7 +54,7 @@ test("admin RPCs require database membership; profile grants cannot elevate role
     assert.equal(await rpc("public.is_game_admin()"), true);
     const empty = await rpc<AdminOverview>("public.admin_overview()");
     assert.equal(empty.totals.matches, 0); assert.equal(empty.totals.avgMoves, null);
-    assert.deepEqual(empty.modes, []); assert.deepEqual(empty.daily, []);
+    assert.deepEqual(empty.modes, []); assert.equal(empty.daily.length, 31); assert.ok(empty.daily.every(day => day.matches === 0));
     const literal = await rpc<AdminPlayersResult>("public.admin_players($1,0)", ["_%"]);
     assert.equal(literal.total, 1); assert.equal(literal.players[0].id, A);
     assert.equal((await rpc<AdminPlayersResult>("public.admin_players($1,0)", ["' OR 1=1 --"])).total, 0);

@@ -110,7 +110,7 @@ export type RecordingUpdate = { t: "recordStatus"; matchId: string; status: "sav
 export type ActionRejected = { t: "actionRejected"; reason: "no_charge" | "incoming_full" | "paused" | "ability_not_ready" | "ability_no_target" | "ability_active" | "slowed" };
 export type S2C = ServerState | Reject | End | RecordingUpdate | ActionRejected;
 
-export type MatchProfile = { name: string; iconId: PlayerIconId; rating: number | null };
+export type MatchProfile = { name: string; iconId: PlayerIconId; rating: number | null; rank?: import("./ranking").RankProgress };
 export type MatchFound = { t: "matchFound" | "roomReady"; roomId: string; mode: MatchMode; players: { you: MatchProfile; opp: MatchProfile } };
 export type LobbyMessage =
   | MatchFound

@@ -1,0 +1,59 @@
+{
+  "contract": "contract.md",
+  "targetViewports": [
+    "1440x900",
+    "768x1024",
+    "375x812"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Named filters expose aria-pressed. Enter opens a product and Escape restores card focus. Decorative icons are aria-hidden; disabled purchase buttons cannot dispatch a transaction."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Browser assertions show no page overflow at all three viewports. Inspected mobile shop and desktop achievements: shared line icons, readable numbers, fixed page size and compact three-column mobile cards."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "not-applicable",
+      "reason": "The draft catalogs are local static definitions; no remote progress or transaction request is made."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "The six collapsed planned definitions explicitly say progress is not tracked. The shop says purchases are not active. Active cosmetic achievements are verified separately in achievement-rewards/evidence.json."
+    },
+    "error": {
+      "status": "not-applicable",
+      "reason": "No network read or mutation drives the static shop or collapsed draft definitions; the active achievement page has separate error evidence in achievement-rewards/evidence.json."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Filtering Common shows four items, Legendary five; pagination displays 12 then seven items. Filtering from the second page resets it."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Guest and signed-in journeys passed: loadout link, catalog filters, keyboard dialog, merge to 4, pagination, achievements and responsive captures. Catalog references and translations pass the focused schema test."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Neither guest nor account browsing sends any REST mutation. The fictional account remains equipped with Classic; purchases are disabled."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "1440x900",
+      "artifact": "shop-1440x900.png",
+      "observation": "Desktop shop preserves its planned prices and disabled purchase control; the two achievement-only boards are excluded."
+    },
+    {
+      "viewport": "768x1024",
+      "artifact": "shop-768x1024.png",
+      "observation": "Four-column catalog reuses numeric tile art and separates planned prices from active free access."
+    },
+    {
+      "viewport": "375x812",
+      "artifact": "shop-375x812.png",
+      "observation": "Three-column mobile catalog stays inside the viewport with wrapped filters and 12-item pagination."
+    }
+  ]
+}

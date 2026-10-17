@@ -1,6 +1,7 @@
 import { mkdir, readFile, readdir, rename, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { MatchRecordSchema, type MatchRecord } from "schema/results";
+import type { ResultStoreDiagnostics } from "schema/admin";
 export type MatchWriter = (record: MatchRecord) => Promise<void>;
 
 // Persist before sending to Supabase. Failed jobs survive restarts and RPC retries
@@ -10,6 +11,20 @@ export class ResultStore {
   private pendingRanked = new Map<string, Array<string | null>>();
   private pendingAccounts = new Map<string, Array<string | null>>();
   private unpersisted = new Map<string, MatchRecord>();
+  private pendingResults = new Map<string, string>();
+  private lastRemoteSuccessAt: string | null = null;
+  private readErrorAt: string | null = null;
+  private writeFailures = new Map<string, string>();
+  diagnostics(): ResultStoreDiagnostics {
+    return {
+      pending: [...this.pendingResults].map(([id, endedAt]) => ({ id, endedAt })).sort((a, b) => a.endedAt.localeCompare(b.endedAt)),
+      pendingCount: this.pendingResults.size,
+      blockedRankedAccounts: new Set([...this.pendingRanked.values()].flat().filter(Boolean)).size,
+      lastRemoteSuccessAt: this.lastRemoteSuccessAt,
+      readErrorAt: this.readErrorAt,
+      writeErrorAt: [...this.writeFailures.values()].sort().at(-1) ?? null,
+    };
+  }
   private timer?: ReturnType<typeof setInterval>;
   private retryJob?: Promise<void>;
   constructor(private directory: string, private writeRemote: MatchWriter, private report: (message: string) => void = console.error) {}
@@ -36,28 +51,38 @@ export class ResultStore {
     return [...this.pendingAccounts.values()].some(accounts => accounts.includes(userId));
   }
   private trackRanked(record: MatchRecord) {
+    this.pendingResults.set(record.id, record.endedAt);
     this.pendingAccounts.set(record.id, record.participants.map(p => p.userId));
     if (record.mode === "ranked") this.pendingRanked.set(record.id, record.participants.map(p => p.userId));
   }
   private async readRecord(file: string) {
-    const record = MatchRecordSchema.parse(JSON.parse(await readFile(join(this.directory, file), "utf8")));
-    if (`${record.id}.json` !== file) throw new Error("Invalid outbox filename");
-    return record;
+    try {
+      const record = MatchRecordSchema.parse(JSON.parse(await readFile(join(this.directory, file), "utf8")));
+      if (`${record.id}.json` !== file) throw new Error("Invalid outbox filename");
+      this.trackRanked(record);
+      return record;
+    } catch (error) { this.readErrorAt = new Date().toISOString(); throw error; }
   }
   private deliver(record: MatchRecord, persist = false): Promise<void> {
     const existing = this.inFlight.get(record.id);
     if (existing) return existing;
     const job = (async () => {
       if (persist) {
-        await mkdir(this.directory, { recursive: true, mode: 0o700 });
-        const destination = join(this.directory, `${record.id}.json`);
-        const temporary = `${destination}.tmp`;
-        await writeFile(temporary, JSON.stringify(record), { mode: 0o600, flush: true });
-        await rename(temporary, destination);
-        this.unpersisted.delete(record.id);
+        try {
+          await mkdir(this.directory, { recursive: true, mode: 0o700 });
+          const destination = join(this.directory, `${record.id}.json`);
+          const temporary = `${destination}.tmp`;
+          await writeFile(temporary, JSON.stringify(record), { mode: 0o600, flush: true });
+          await rename(temporary, destination);
+          this.unpersisted.delete(record.id);
+          this.writeFailures.delete(record.id);
+        } catch (error) { this.writeFailures.set(record.id, new Date().toISOString()); throw error; }
       }
       await this.writeRemote(record);
-      await unlink(join(this.directory, `${record.id}.json`));
+      this.lastRemoteSuccessAt = new Date().toISOString();
+      try { await unlink(join(this.directory, `${record.id}.json`)); this.writeFailures.delete(record.id); }
+      catch (error) { this.writeFailures.set(record.id, new Date().toISOString()); throw error; }
+      this.pendingResults.delete(record.id);
       this.pendingRanked.delete(record.id);
       this.pendingAccounts.delete(record.id);
     })();
@@ -77,6 +102,7 @@ export class ResultStore {
       catch { this.report(`Match result still pending: ${record.id}.json`); }
     }
     try {
+      this.readErrorAt = null;
       for (const file of await readdir(this.directory)) {
         if (!file.endsWith(".json")) continue;
         try {
@@ -86,7 +112,7 @@ export class ResultStore {
           this.report(`Match result still pending: ${file}`);
         }
       }
-    } catch { this.report("Cannot read the match result outbox"); }
+    } catch { this.readErrorAt = new Date().toISOString(); this.report("Cannot read the match result outbox"); }
   }
   async close() {
     clearInterval(this.timer);

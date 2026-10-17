@@ -1,3 +1,6 @@
+import type { RankSnapshot } from "schema/ranking";
+import { operationsHandler } from "./operations";
+import type { ResultStoreDiagnostics } from "schema/admin";
 import type { AccountResolver, SuspensionReader } from "./supabase";
 import type { MatchWriter } from "./result-store";
 import { createServer } from "node:http";
@@ -12,9 +15,9 @@ import { joinRoom, handleInput, handleAttack, handleAbility, handleSurrender, wa
 import { accountDeletionHandler, type DeleteAccount } from "./account-deletion";
 import { feedbackHandler, type FeedbackWriter } from "./feedback";
 
-export function createGameServer(options: { resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; readRating?: (userId: string) => Promise<number>; hasPendingRanked?: (userId: string) => boolean; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount; hasPendingAccount?: (userId: string) => boolean } = {}) {
+export function createGameServer(options: { checkAdmin?: (token: string) => Promise<boolean>; readStore?: () => ResultStoreDiagnostics; resolveAccount?: AccountResolver; writeMatch?: MatchWriter; writeFeedback?: FeedbackWriter; readRating?: (userId: string) => Promise<number | RankSnapshot>; hasPendingRanked?: (userId: string) => boolean; readSuspensions?: SuspensionReader; deleteAccount?: DeleteAccount; hasPendingAccount?: (userId: string) => boolean } = {}) {
   const pendingWrites = new Set<Promise<void>>();
-  const ratingLookups = new Map<string, Promise<number>>();
+  const ratingLookups = new Map<string, Promise<number | RankSnapshot>>();
   const suspensionLookups = new Map<string, Promise<string[]>>();
   let closing = false;
   const deletingAccounts = new Set<string>();
@@ -25,7 +28,9 @@ export function createGameServer(options: { resolveAccount?: AccountResolver; wr
     void job.finally(() => pendingWrites.delete(job)).catch(() => {});
     return job;
   } : undefined;
+  const operations = operationsHandler(options, new Date().toISOString());
   const httpServer = createServer((req, res) => {
+    if (req.url === "/admin/operations") { void operations(req, res); return; }
     if (req.url === "/account/delete") { void deleteAccount(req, res); return; }
     if (req.url === "/feedback") { void submitFeedback(req, res); return; }
     res.writeHead(req.url === "/health" ? 200 : 404, { "Content-Type": "application/json" });
@@ -45,7 +50,7 @@ export function createGameServer(options: { resolveAccount?: AccountResolver; wr
       }
     },
   });
-  const checkAccess: MatchAccess = async (players, requestCurrent) => {
+  const checkAccess: MatchAccess = async (players, requestCurrent, phase) => {
     const snapshots = players.map(pid => ({ pid, socket: playerSockets.get(pid), account: playerAccounts.get(pid)?.id }));
     const current = () => !closing && requestCurrent() && snapshots.every(({ pid, socket, account }) =>
       !!socket && playerSockets.get(pid) === socket && playerAccounts.get(pid)?.id === account && (!account || !deletingAccounts.has(account)));
@@ -53,6 +58,23 @@ export function createGameServer(options: { resolveAccount?: AccountResolver; wr
     const ids = [...new Set(snapshots.flatMap(player => player.account ? [player.account] : []))].sort();
     if (!ids.length) return "allowed";
     try {
+      if (phase === "ratings") {
+        if (!options.readRating) throw Error("ranked_unavailable");
+        const entries = players.map(pid => matchmakingQueue.find(entry => entry.pid === pid));
+        // A manual season transition can happen while either player waits in the queue.
+        const ranks = Promise.all(players.map(pid => options.readRating!(playerAccounts.get(pid)!.id)));
+        let stopRanks: () => void;
+        const stoppedRanks = new Promise<null>(resolve => { stopRanks = () => resolve(null); accessStops.add(stopRanks); });
+        const values = await Promise.race([ranks, stoppedRanks]).finally(() => accessStops.delete(stopRanks!));
+        if (!values || !current()) return "stale";
+        if (values.some(value => !Number.isSafeInteger(typeof value === "number" ? value : value.rating))) throw Error("invalid_rating");
+        for (const [index, value] of values.entries()) {
+          const rating = typeof value === "number" ? value : value.rating;
+          entries[index]!.rating = rating;
+          playerAccounts.set(players[index], { ...playerAccounts.get(players[index])!, rating, ...(typeof value !== "number" ? { rank: value.rank } : {}) });
+        }
+        return "allowed";
+      }
       if (!options.readSuspensions) throw Error("account_check_not_configured");
       const key = ids.join(",");
       let lookup = suspensionLookups.get(key);
@@ -138,10 +160,12 @@ export function createGameServer(options: { resolveAccount?: AccountResolver; wr
               ratingLookups.set(account!.id, lookup);
               void lookup.finally(() => ratingLookups.delete(account!.id)).catch(() => {});
             }
-            const rating = await lookup;
+            const snapshot = await lookup;
+            const rating = typeof snapshot === "number" ? snapshot : snapshot.rating;
             if (!currentRequest()) return;
             if (options.hasPendingRanked?.(account!.id)) { socket.emit("message", { t: "error", reason: "ranked_result_pending" }); return; }
             if (!Number.isSafeInteger(rating)) throw new Error("invalid_rating");
+            if (typeof snapshot !== "number") playerAccounts.set(pid, { ...account!, rating, rank: snapshot.rank });
             findMatch(pid, io, persistResult, "ranked", rating, checkAccess);
           }).catch(() => {
             if (currentRequest()) socket.emit("message", { t: "error", reason: "ranked_unavailable" });

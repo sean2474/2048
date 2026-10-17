@@ -132,8 +132,10 @@ test("profile names sync to standings, deletion removes owned data and anonymize
   const dir = new URL("../../../supabase/migrations/", import.meta.url);
   for (const file of (await readdir(dir)).filter(file => file.endsWith(".sql")).sort()) await db.exec(await readFile(new URL(file, dir), "utf8"));
   await db.query("insert into auth.users(id) values($1),($2)", [A, B]);
-  await db.query("insert into public.player_ratings(player_id,display_name) values($1,'Old')", [A]);
+  await db.query("insert into public.player_ratings(player_id,display_name,season_id) select $1,'Old',id from public.rank_seasons where ends_at is null", [A]);
+  await db.query("insert into public.season_ratings(player_id,display_name,season_id) select $1,'Old',id from public.rank_seasons where ends_at is null", [A]);
   await db.query("update public.players set name='New name' where id=$1", [A]);
+  assert.equal((await db.query<{ display_name: string }>("select display_name from public.season_ratings where player_id=$1", [A])).rows[0].display_name, "New name");
   assert.equal((await db.query<{ display_name: string }>("select display_name from public.player_ratings where player_id=$1", [A])).rows[0].display_name, "New name");
   await db.exec(`insert into public.matches(id,started_at,ended_at,reason,winner_slot,mode) values('${B}',now(),now(),'surrender',1,'friend');`);
   await db.query("insert into public.match_participants(match_id,slot,player_id,display_name,score,max_tile,result) values($1,1,$2,'Old',0,2,'win'),($1,2,$3,'Keep name',0,2,'loss')", [B, A, B]);
@@ -141,4 +143,5 @@ test("profile names sync to standings, deletion removes owned data and anonymize
   assert.deepEqual((await db.query("select player_id,display_name from public.match_participants order by slot")).rows, [{ player_id: null, display_name: "Deleted player" }, { player_id: B, display_name: "Keep name" }]);
   assert.equal((await db.query("select * from public.player_wallets where player_id=$1", [A])).rows.length, 0);
   assert.equal((await db.query("select * from public.player_ratings where player_id=$1", [A])).rows.length, 0);
+  assert.equal((await db.query("select * from public.season_ratings where player_id=$1", [A])).rows.length, 0);
 });

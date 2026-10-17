@@ -41,9 +41,10 @@ export function TierIcon({ tier, className = "size-10" }: { tier: Tier; classNam
   </svg>;
 }
 
-export function TierBadge({ rating, className = "" }: { rating: number; className?: string }) {
+export function TierBadge({ rating, tier: earnedTier, className = "" }: { rating: number; tier?: Tier | null; className?: string }) {
   const { t } = useI18n();
-  const tier = ratingTier(rating);
+  const tier = earnedTier === undefined ? ratingTier(rating) : earnedTier;
+  if (tier === null) return <span className={`inline-flex rounded-lg bg-muted px-2.5 py-1 text-xs font-bold text-muted-foreground ${className}`}>{t("Evaluating")}</span>;
   return <span className={`inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded-lg py-0.5 pr-2.5 pl-1 text-xs font-bold ${colors[tier].badge} ${className}`}>
     <TierIcon tier={tier} className="size-8" />{t(tier)}
   </span>;

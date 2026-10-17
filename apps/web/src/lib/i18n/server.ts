@@ -1,3 +1,4 @@
+import { rankMessages } from "./rank-messages";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { LOCALE_COOKIE, translate, type Values } from "ui/locale";
@@ -12,6 +13,9 @@ import { settingsMessages } from "./settings-messages";
 import { preferencesMessages } from "./preferences-messages";
 import { detectRequestLocale } from "./request-locale";
 import { feedbackMessages } from "./feedback-messages";
+import { authMessages } from "./auth-messages";
+import { economyMessages } from "./economy-messages";
+import { achievementMessages } from "./achievement-messages";
 
 export const getI18n = cache(async () => {
   const jar = await cookies();
@@ -31,6 +35,6 @@ export const getI18n = cache(async () => {
       }
     } catch { /* Render with the guest locale while the client offers a retry. */ }
   }
-  const dictionary = { ...messages, ...gameMessages, ...controlsMessages, ...tutorialMessages, ...settingsMessages, ...preferencesMessages, ...feedbackMessages };
+  const dictionary = { ...messages, ...rankMessages, ...gameMessages, ...controlsMessages, ...tutorialMessages, ...settingsMessages, ...preferencesMessages, ...feedbackMessages, ...economyMessages, ...authMessages, ...achievementMessages };
   return { locale, guestLocale, messages: dictionary, t: (key: string, values?: Values) => translate(locale, dictionary, key, values) };
 });

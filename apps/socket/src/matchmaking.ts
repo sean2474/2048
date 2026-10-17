@@ -20,9 +20,9 @@ export function canQueue(pid: PlayerId, io: Server) {
   return false;
 }
 export type MatchAccessResult = "allowed" | "suspended" | "unavailable" | "stale";
-export type MatchAccess = (players: PlayerId[], current: () => boolean) => Promise<MatchAccessResult>;
+export type MatchAccess = (players: PlayerId[], current: () => boolean, phase?: "ratings") => Promise<MatchAccessResult>;
 const guestAccess: MatchAccess = async (players, current) => !current() ? "stale" : players.every(pid => !playerAccounts.get(pid)) ? "allowed" : "unavailable";
-const matching = new WeakMap<Server, Promise<void>>();
+const matching = new WeakMap<Server, Map<"casual" | "ranked", Promise<void>>>();
 
 export function findMatch(pid: PlayerId, io: Server, persistResult?: MatchWriter, mode: "casual" | "ranked" = "casual", rating = 1200, checkAccess: MatchAccess = guestAccess) {
   if (!canQueue(pid, io)) return;
@@ -45,23 +45,32 @@ export function findMatch(pid: PlayerId, io: Server, persistResult?: MatchWriter
 }
 
 export function matchWaitingPlayers(io: Server, persistResult?: MatchWriter, now = Date.now(), checkAccess: MatchAccess = guestAccess): Promise<void> {
-  const running = matching.get(io);
-  if (running) return running;
-  const job = pairWaitingPlayers(io, persistResult, now, checkAccess);
-  matching.set(io, job);
-  void job.finally(() => matching.delete(io)).catch(() => {});
-  return job;
+  let modes = matching.get(io);
+  if (!modes) { modes = new Map(); matching.set(io, modes); }
+  const jobs = (["casual", "ranked"] as const).map(mode => {
+    const running = modes.get(mode);
+    if (running) return running;
+    const job = pairWaitingPlayers(io, persistResult, now, checkAccess, mode);
+    modes.set(mode, job);
+    void job.finally(() => modes.delete(mode)).catch(() => {});
+    return job;
+  });
+  return Promise.all(jobs).then(() => {});
 }
 
-async function pairWaitingPlayers(io: Server, persistResult: MatchWriter | undefined, now: number, checkAccess: MatchAccess) {
+async function pairWaitingPlayers(io: Server, persistResult: MatchWriter | undefined, now: number, checkAccess: MatchAccess, mode: "casual" | "ranked") {
   for (let i = matchmakingQueue.length - 1; i >= 0; i--) {
     if (!playerSockets.has(matchmakingQueue[i].pid)) matchmakingQueue.splice(i, 1);
   }
+  const ranked = mode === "ranked" ? matchmakingQueue.filter(entry => entry.mode === "ranked" && playerAccounts.get(entry.pid)?.rank) : [];
+  if (ranked.length >= 2 && await checkAccess(ranked.map(entry => entry.pid),
+    () => ranked.every(entry => matchmakingQueue.includes(entry) && !playerRoom.has(entry.pid)), "ratings") !== "allowed") return;
   let matched = true;
   while (matched) {
     matched = false;
     for (let i = 0; i < matchmakingQueue.length && !matched; i++) {
       const first = matchmakingQueue[i];
+      if (first.mode !== mode) continue;
       let best = -1, distance = Infinity;
       for (let j = i + 1; j < matchmakingQueue.length; j++) {
         const candidate = matchmakingQueue[j];
@@ -69,8 +78,8 @@ async function pairWaitingPlayers(io: Server, persistResult: MatchWriter | undef
         const gap = Math.abs(first.rating - candidate.rating);
         if (first.mode === "ranked") {
           if (!persistResult || playerAccounts.get(first.pid)?.id === playerAccounts.get(candidate.pid)?.id) continue;
-          const waited = Math.max(now - first.joinedAt, now - candidate.joinedAt);
-          if (gap > 150 + Math.floor(waited / 10_000) * 100) continue;
+          const waited = Math.max(0, Math.min(now - first.joinedAt, now - candidate.joinedAt));
+          if (gap > Math.min(300, 150 + Math.floor(waited / 10_000) * 50)) continue;
         }
         if (best < 0 || first.mode === "ranked" && gap < distance) { best = j; distance = gap; }
       }
@@ -97,6 +106,7 @@ export function createMatch(p1: PlayerId, p2: PlayerId, io: Server, event: "matc
       name: account?.name ?? "Guest",
       iconId: account ? account.iconId ?? DEFAULT_PROFILE_ICON : "guest",
       rating: mode === "ranked" && queued ? queued.rating : account?.rating ?? null,
+      ...(account?.rank ? { rank: account.rank } : {}),
     };
     return [pid, profile];
   }));

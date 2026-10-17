@@ -4,6 +4,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 import { ABILITIES, DEFAULT_ABILITY_ID, MAX_COIN_BALANCE, RETIRED_ABILITY_IDS, SKINS, SKIN_RARITIES } from "schema/loadout";
 import { messages } from "../../web/src/lib/i18n/messages";
+import { achievementMessages } from "../../web/src/lib/i18n/achievement-messages";
 
 const A = "11111111-1111-4111-8111-111111111111";
 const B = "22222222-2222-4222-8222-222222222222";
@@ -15,7 +16,7 @@ test("loadout catalog keeps free skins and five localized active abilities witho
   assert.deepEqual([...new Set(SKINS.map(skin => skin.rarity))], Object.keys(SKIN_RARITIES));
   assert.ok(SKINS.filter(skin => skin.rarity === "legendary").every(skin => skin.tokens.character));
   assert.ok(SKINS.every(skin => skin.price === 0));
-  for (const skin of SKINS) for (const text of [skin.name, skin.description]) assert.ok(messages[text], `Missing Korean skin copy: ${text}`);
+  for (const skin of SKINS) for (const text of [skin.name, skin.description]) assert.ok(messages[text] ?? achievementMessages[text], `Missing Korean skin copy: ${text}`);
   assert.deepEqual(SKINS[0].tokens, { boardBackground: "#cbc5b6", emptyBackground: "#e1dccf", tileRadius: "0.5rem" });
   assert.equal(new Set(ABILITIES.map(ability => ability.id)).size, ABILITIES.length);
   assert.deepEqual(ABILITIES.map(ability => ability.id), ["clear-x", "spawn-pause", "frost-wave", "anchor-tile", "swap-32"]);

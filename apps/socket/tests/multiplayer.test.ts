@@ -132,6 +132,33 @@ for (const mode of ["casual", "ranked"] as const) test(`${mode} keeps player ski
   assert.deepEqual(loss.t === "end" && [loss.you.skinId, loss.opp?.skinId], ["sentinel", "arcanist"]);
   assert.deepEqual(win.t === "end" && [win.you.skinId, win.opp?.skinId], ["arcanist", "sentinel"]);
 });
+for (const skinId of ["dawn-oath", "rune-sanctum"] as const) test(`reward skin ${skinId} requires the server-resolved equipped skin and stays frozen`, async t => {
+  const otherSkin = skinId === "dawn-oath" ? "rune-sanctum" : "dawn-oath";
+  let savedSkin: SkinId = skinId;
+  const server = await setup(t, { resolveAccount: async token => ({ ...await resolveAccount(token), skinId: token === "alice" ? savedSkin : otherSkin }) });
+  const { a, b, roomId } = await server.pair("alice", "bob", "casual", [skinId, skinId]);
+  const states = [a, b].map(player => packet(player.socket, message => message.t === "state" && !message.paused));
+  a.socket.emit("message", { t: "joinRoom", roomId, skinId: otherSkin });
+  const [own, opponent] = await Promise.all(states) as ServerState[];
+  assert.deepEqual([own.you.skinId, own.opp?.skinId], [skinId, "classic"]);
+  assert.deepEqual([opponent.you.skinId, opponent.opp?.skinId], ["classic", skinId]);
+  const paused = packet(b.socket, message => message.t === "state" && message.paused);
+  a.socket.disconnect(); await paused;
+  savedSkin = "classic";
+  const restored = await server.connect(a.token, "alice");
+  const resumes = [restored, b].map(player => packet(player.socket, message => message.t === "state" && !message.paused));
+  restored.socket.emit("message", { t: "joinRoom", roomId, skinId: "classic" });
+  const [resumed, rival] = await Promise.all(resumes) as ServerState[];
+  assert.deepEqual([resumed.you.skinId, resumed.opp?.skinId], [skinId, "classic"]);
+  assert.deepEqual([rival.you.skinId, rival.opp?.skinId], ["classic", skinId]);
+});
+test("guests and accounts without authoritative preferences cannot request reward skins", async t => {
+  const server = await setup(t, { resolveAccount });
+  const { a, b, roomId } = await server.pair(undefined, "alice", "casual", ["dawn-oath", "rune-sanctum"]);
+  const states = [a, b].map(player => packet(player.socket, message => message.t === "state" && !message.paused));
+  a.socket.emit("message", { t: "joinRoom", roomId, skinId: "rune-sanctum" });
+  for (const state of await Promise.all(states) as ServerState[]) assert.deepEqual([state.you.skinId, state.opp?.skinId], ["classic", "classic"]);
+});
 test("reconnect pauses both players and restores the same board without new socket loops", async t => {
   const server = await setup(t), { a, b, roomId } = await server.pair();
   const room = rooms.get(roomId)!;
@@ -284,7 +311,7 @@ test("ranked and casual queues stay separate and only ranked records carry ranke
   assert.equal(records[0].mode, "ranked");
 });
 
-test("one account cannot queue in ranked twice and ratings widen with waiting time", async t => {
+test("one account cannot queue in ranked twice and rating gaps stop at 300", async t => {
   const writer = async () => {};
   const server = await setup(t, { resolveAccount, readRating: async id => id === accounts.alice.id ? 1200 : 2100, writeMatch: writer });
   const a = await server.connect(undefined, "alice"), clone = await server.connect(undefined, "alice"), b = await server.connect(undefined, "bob");
@@ -297,10 +324,43 @@ test("one account cannot queue in ranked twice and ratings widen with waiting ti
   b.socket.emit("message", { t: "findMatch", mode: "ranked" });
   await eventually(() => matchmakingQueue.length === 2);
   assert.equal(rooms.size, 0);
-  const found = packet(a.socket, m => m.t === "matchFound");
-  await matchWaitingPlayers(server.io, writer, Date.now() + 80_000, async (_players, current) => current() ? "allowed" : "stale");
+  await matchWaitingPlayers(server.io, writer, Date.now() + 3_600_000, async (_players, current) => current() ? "allowed" : "stale");
+  assert.equal(rooms.size, 0);
+  assert.equal(matchmakingQueue.length, 2);
+});
+
+for (const gap of [151, 200, 250, 300, 301]) test(`ranked gap ${gap} respects both waits and the expansion boundary`, async t => {
+  const writer = async () => {};
+  const server = await setup(t, { resolveAccount, readRating: async id => id === accounts.alice.id ? 1200 : 1200 + gap, writeMatch: writer });
+  const a = await server.connect(undefined, "alice"), b = await server.connect(undefined, "bob");
+  a.socket.emit("message", { t: "findMatch", mode: "ranked" });
+  await eventually(() => matchmakingQueue.length === 1);
+  b.socket.emit("message", { t: "findMatch", mode: "ranked" });
+  await eventually(() => matchmakingQueue.length === 2);
+  const now = Date.now();
+  matchmakingQueue.find(entry => entry.pid === playerId(a.token))!.joinedAt = now - 60_000;
+  matchmakingQueue.find(entry => entry.pid === playerId(b.token))!.joinedAt = now;
+  const access = async (_players: string[], current: () => boolean) => current() ? "allowed" as const : "stale" as const;
+  await matchWaitingPlayers(server.io, writer, now, access);
+  assert.equal(rooms.size, 0, "The longer wait cannot widen a new arrival's range");
+  if (gap > 300) {
+    await matchWaitingPlayers(server.io, writer, now + 3_600_000, access);
+    assert.equal(rooms.size, 0, "The maximum gap stays capped even after an hour");
+    return;
+  }
+  const requiredWait = Math.ceil((gap - 150) / 50) * 10_000;
+  await matchWaitingPlayers(server.io, writer, now + requiredWait - 1, access);
+  assert.equal(rooms.size, 0, "The range does not expand before the full interval");
+  const found = packet(a.socket, message => message.t === "matchFound");
+  await matchWaitingPlayers(server.io, writer, now + requiredWait, access);
   assert.equal((await found).t, "matchFound");
   assert.equal(matchmakingQueue.length, 0);
+});
+
+test("ranked players at the initial 150-point boundary can match immediately", async t => {
+  const server = await setup(t, { resolveAccount, readRating: async id => id === accounts.alice.id ? 1200 : 1350, writeMatch: async () => {} });
+  const { roomId } = await server.pair("alice", "bob", "ranked");
+  assert.ok(rooms.has(roomId));
 });
 
 test("cancelled ranked lookup cannot requeue a player after switching to a friend room", async t => {
@@ -469,6 +529,7 @@ test("six saved attacks can fire without moving and a full queue preserves furth
   assert.deepEqual(await full, { t: "actionRejected", reason: "incoming_full" });
   assert.equal(me.attacks.xblock, 1);
   assert.equal(opponent.pending.length, 6);
+  opponent.board = [{ id: 820_000, row: 0, col: 0, value: 2 }];
   handleInput(playerId(b.token), "right", server.io);
   assert.equal(opponent.pending.length, 0);
   assert.equal(opponent.board.filter(tile => tile.blockType === "xblock").length, 3);
@@ -482,7 +543,7 @@ test("six saved attacks can fire without moving and a full queue preserves furth
 test("match intro shares only public profiles and uses verified icons and current ranked ratings", async t => {
   const server = await setup(t, {
     resolveAccount: async token => ({ ...await resolveAccount(token), iconId: token === "alice" ? "dragon" : "owl", rating: 999 }),
-    readRating: async id => id === accounts.alice.id ? 1460 : 1500,
+    readRating: async id => ({ rating: id === accounts.alice.id ? 1460 : 1500, rank: { tier: "Platinum", placement_games: 10 } }),
     writeMatch: async () => {},
   });
   const a = await server.connect(undefined, "alice", "robot"), b = await server.connect(undefined, "bob", "cat");
@@ -491,7 +552,8 @@ test("match intro shares only public profiles and uses verified icons and curren
   const [first, second] = await Promise.all([foundA, foundB]);
   if (first.t !== "matchFound" || second.t !== "matchFound") throw Error("No match");
   assert.equal(first.mode, "ranked");
-  assert.deepEqual(first.players, { you: { name: "Alice", iconId: "dragon", rating: 1460 }, opp: { name: "Bob", iconId: "owl", rating: 1500 } });
+  const rank = { tier: "Platinum", placement_games: 10 };
+  assert.deepEqual(first.players, { you: { name: "Alice", iconId: "dragon", rating: 1460, rank }, opp: { name: "Bob", iconId: "owl", rating: 1500, rank } });
   assert.deepEqual(second.players, { you: first.players.opp, opp: first.players.you });
   assert.equal(JSON.stringify(first).includes(accounts.alice.id), false);
   const room = rooms.get(first.roomId)!;
@@ -500,6 +562,69 @@ test("match intro shares only public profiles and uses verified icons and curren
   await eventually(() => room.ready.size === 1);
   handleInput(playerId(a.token), "down", server.io);
   assert.deepEqual(room.state[playerId(a.token)].board, before, "Skipping the intro cannot start play before the opponent joins");
+});
+
+test("waiting players refresh lifetime Elo after a late result without resetting placement", async t => {
+  let settled = false;
+  const rank = { tier: "Diamond" as const, placement_games: 10 };
+  const server = await setup(t, {
+    resolveAccount,
+    readRating: async () => ({ rating: settled ? 1784 : 1800, rank: settled ? rank : { ...rank, tier: "Master" } }),
+    writeMatch: async () => {},
+  });
+  const a = await server.connect(undefined, "alice");
+  a.socket.emit("message", { t: "findMatch", mode: "ranked" });
+  await eventually(() => matchmakingQueue.length === 1);
+  settled = true;
+  const b = await server.connect(undefined, "bob");
+  const found = packet(a.socket, message => message.t === "matchFound");
+  b.socket.emit("message", { t: "findMatch", mode: "ranked" });
+  const match = await found; if (match.t !== "matchFound") throw Error("No match");
+  assert.deepEqual(match.players.you.rank, rank); assert.equal(match.players.you.rating, 1784);
+  assert.deepEqual(match.players.opp.rank, rank);
+});
+
+for (const action of ["cancel", "close"] as const) test(`rank refresh preserves ${action} while database lookup is pending`, async t => {
+  const rank = { tier: null, placement_games: 0 };
+  let reads = 0;
+  const pending: Array<(value: { rating: number; rank: typeof rank }) => void> = [];
+  const server = await setup(t, { resolveAccount, writeMatch: async () => {}, readRating: async () => {
+    if (++reads <= 2) return { rating: 1200, rank };
+    return new Promise(resolve => pending.push(resolve));
+  } });
+  const a = await server.connect(undefined, "alice"), b = await server.connect(undefined, "bob");
+  for (const player of [a, b]) player.socket.emit("message", { t: "findMatch", mode: "ranked" });
+  await eventually(() => pending.length === 2);
+  if (action === "close") await server.close();
+  else { a.socket.emit("message", { t: "cancelMatch" }); await eventually(() => matchmakingQueue.length === 1); }
+  for (const resolve of pending) resolve({ rating: 1200, rank });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(rooms.size, 0);
+  assert.equal(matchmakingQueue.some(entry => entry.pid === playerId(a.token)), false);
+});
+
+test("new casual arrivals can match while ranked rating refresh is waiting on the database", async t => {
+  const rank = { tier: null, placement_games: 0 };
+  let reads = 0;
+  const pending: Array<(value: { rating: number; rank: typeof rank }) => void> = [];
+  const server = await setup(t, { resolveAccount, writeMatch: async () => {}, readRating: async () => {
+    if (++reads <= 2) return { rating: 1200, rank };
+    return new Promise(resolve => pending.push(resolve));
+  } });
+  const a = await server.connect(undefined, "alice"), b = await server.connect(undefined, "bob");
+  for (const player of [a, b]) player.socket.emit("message", { t: "findMatch", mode: "ranked" });
+  await eventually(() => pending.length === 2);
+  const guest = await server.connect();
+  guest.socket.emit("message", { t: "findMatch", mode: "casual" });
+  await eventually(() => matchmakingQueue.some(entry => entry.pid === playerId(guest.token)));
+  const laterGuest = await server.connect();
+  const found = packet(guest.socket, message => message.t === "matchFound");
+  laterGuest.socket.emit("message", { t: "findMatch", mode: "casual" });
+  const match = await found; if (match.t !== "matchFound") throw Error("No match");
+  assert.equal(match.mode, "casual"); assert.equal(rooms.size, 1);
+  assert.equal(matchmakingQueue.filter(entry => entry.mode === "ranked").length, 2);
+  for (const resolve of pending) resolve({ rating: 1200, rank });
+  await eventually(() => rooms.size === 2);
 });
 
 test("guest match intro ignores claimed catalog icons and always uses the guest icon", async t => {

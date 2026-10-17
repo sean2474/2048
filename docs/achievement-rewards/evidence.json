@@ -1,0 +1,19 @@
+{
+  "contract": "contract.md",
+  "targetViewports": ["375x812", "768x1024", "1440x900"],
+  "accessibility": { "status": "pass", "evidence": "Named progress elements, decorative artwork hidden from assistive technology, status/error announcements, disabled pending check-in, keyboard detail open and post-equip focus return verified by achievement-unlocks.browser.mjs. Existing loadout keyboard and dialog regressions pass." },
+  "responsive": { "status": "pass", "evidence": "375/768/1440 width assertions pass after responsive layout settles. Inspected all three captures and English mobile: wrapped copy, two-column tablet/desktop, one-column mobile, no clipped text. Native progress colors use the existing primary token." },
+  "contentStates": {
+    "loading": { "status": "pass", "evidence": "loading.png and delayed-RPC browser scenario show loading copy and a disabled check-in without invented progress." },
+    "empty": { "status": "pass", "evidence": "The failure/retry scenario starts with authenticated zero progress; after a successful check-in it shows one day. Account-switch test confirms all-zero progress of the second account, while guest views omit progress entirely." },
+    "error": { "status": "pass", "evidence": "error.png and checkin-error.png distinguish failed reads from failed attendance writes. Both recovery paths pass without false grants." },
+    "partial": { "status": "pass", "evidence": "partial-loadout.png: wallet and existing free catalog remain usable when unlock lookup fails; achievement rewards remain locked." },
+    "success": { "status": "pass", "evidence": "unlocked.png shows the 30th-day reward notice and completed button. Profile and seven-day board equip survive reload and broken attendance streak. Double-click submits one mutation." },
+    "permission": { "status": "pass", "evidence": "guest captures offer login without false counters. locked-dialog.png exposes the condition without an equip action. SQL and socket tests independently reject forged equip requests. Delayed read and check-in responses from the old account cannot affect the new account." }
+  },
+  "renderedEvidence": [
+    { "viewport": "375x812", "artifact": "active-375x812.png", "observation": "Attendance button, current streak, next profile reward and four collection cards fit the single-column layout." },
+    { "viewport": "768x1024", "artifact": "active-768x1024.png", "observation": "Two-column collection keeps the reward portrait, condition and progress aligned without crowding." },
+    { "viewport": "1440x900", "artifact": "active-1440x900.png", "observation": "Desktop hierarchy follows the existing rank-page heading and warm palette; permanent unlocks and unfinished goals are distinguishable." }
+  ]
+}

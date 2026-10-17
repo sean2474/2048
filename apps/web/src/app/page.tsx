@@ -6,6 +6,8 @@ import { GameEmblem } from "@/components/widget/game-emblem";
 import { useCallback } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { HistoryMatch, LeaderboardRow } from "schema/results";
+import { SEASON_QUALIFYING_GAMES } from "schema/ranking";
+import { RankProgress } from "@/components/widget/rank-progress";
 import { TierBadge } from "@/components/widget/tier-badge";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +22,7 @@ export default function DashboardPage() {
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const loadRating = useCallback(async (client: SupabaseClient) => {
     if (!userId) return [];
-    const { data, error } = await client.from("player_ratings").select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile").eq("player_id", userId).maybeSingle();
+    const { data, error } = await client.from("player_ratings").select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating,rank_seasons(name)").eq("player_id", userId).maybeSingle().returns<LeaderboardRow>();
     if (error) throw error;
     return data ? [data as LeaderboardRow] : [];
   }, [userId]);
@@ -45,9 +47,14 @@ export default function DashboardPage() {
           <div className="mt-5 flex flex-wrap gap-3"><Button asChild variant="outline"><Link href="/login">{t("Log in")}</Link></Button><Button asChild variant="ghost"><Link href="/signup">{t("Create account")}</Link></Button></div>
         </> : <>
           <div className="mb-6"><p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("Your player profile")}</p><h2 id="profile-title" className="break-words text-2xl font-extrabold tracking-tight">{player?.name || t("Player")}</h2></div>
-          {ratingQuery.error ? <div role="alert" className="space-y-3"><p className="text-sm leading-6 text-destructive">{ratingQuery.error}</p><Button variant="outline" onClick={ratingQuery.reload}>{t("Retry rating")}</Button></div> : ratingQuery.loading ? <p role="status" className="min-h-32 text-sm text-muted-foreground">{t("Loading ranked record…")}</p> : !rating || rating.games_played === 0 ? <div className="space-y-3 border-t pt-5"><p className="flex items-center gap-2 font-semibold"><GameEmblem kind="crown" className="size-8" />{t("Unrated")}</p><p className="text-sm leading-6 text-muted-foreground">{t("Finish your first ranked match to establish your tier and ranked record.")}</p><Button asChild variant="outline"><Link href="/play/ranked">{t("Play ranked")}<ArrowRight aria-hidden="true" /></Link></Button></div> : <>
-            <div className="flex items-end justify-between gap-4 border-y py-5"><div><TierBadge rating={rating.rating} className="mb-2" /><p className="text-4xl font-extrabold tabular-nums tracking-tight">{rating.rating.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}<span className="ml-2 text-xs font-medium tracking-normal text-muted-foreground">{t("Elo")}</span></p></div><p className="text-right text-xs leading-5 text-muted-foreground">{t("Ranked record")}<br />{t(rating.games_played === 1 ? "{count} match" : "{count} matches", { count: rating.games_played })}</p></div>
-            <dl className="mt-5 grid grid-cols-3 gap-4">{[{ label: t("Wins"), value: rating.wins }, { label: t("Losses"), value: rating.losses }, { label: t("Draws"), value: rating.draws }].map(item => <div key={item.label}><dt className="text-xs text-muted-foreground">{item.label}</dt><dd className="mt-1 text-xl font-bold tabular-nums">{item.value}</dd></div>)}</dl>
+          {ratingQuery.error ? <div role="alert" className="space-y-3"><p className="text-sm leading-6 text-destructive">{ratingQuery.error}</p><Button variant="outline" onClick={ratingQuery.reload}>{t("Retry rating")}</Button></div> : ratingQuery.loading ? <p role="status" className="min-h-32 text-sm text-muted-foreground">{t("Loading ranked record…")}</p> : !rating ? <div className="space-y-3 border-t pt-5"><p className="flex items-center gap-2 font-semibold"><GameEmblem kind="crown" className="size-8" />{t("Unrated")}</p><p className="text-sm leading-6 text-muted-foreground">{t("Your first 10 ranked matches establish your tier. Elo carries over between seasons.")}</p><Button asChild variant="outline"><Link href="/play/ranked">{t("Play ranked")}<ArrowRight aria-hidden="true" /></Link></Button></div> : <>
+            <div className="flex items-end justify-between gap-4 border-y py-5"><div><p className="mb-2 text-xs font-semibold text-muted-foreground">{rating.rank_seasons?.name}</p><TierBadge rating={rating.rating} tier={rating.tier} className="mb-2" /><p className="text-4xl font-extrabold tabular-nums tracking-tight">{rating.rating.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}<span className="ml-2 text-xs font-medium tracking-normal text-muted-foreground">{t("Elo")}</span></p></div><p className="text-right text-xs leading-5 text-muted-foreground">{t("Ranked record")}<br />{t(rating.games_played === 1 ? "{count} match" : "{count} matches", { count: rating.games_played })}</p></div>
+            <div className="mt-4"><RankProgress rank={rating} rating={rating.rating} /></div>
+            <div className="mt-4 space-y-3 rounded-xl border bg-muted/30 p-4">
+              <p className="text-sm font-semibold">{rating.games_played >= SEASON_QUALIFYING_GAMES ? t("Season standings unlocked") : t("Season participation: {played}/{total}", { played: rating.games_played, total: SEASON_QUALIFYING_GAMES })}</p>
+              <p className="text-xs leading-5 text-muted-foreground">{t("Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.")}</p>
+              <div className="flex flex-wrap items-center gap-2 border-t pt-3"><span className="text-xs font-semibold text-muted-foreground">{t("Season best")}</span>{rating.peak_rating == null ? <span className="text-xs text-muted-foreground">{t("No official result this season")}</span> : <><TierBadge rating={rating.peak_rating} /><span className="text-xs font-semibold tabular-nums">{rating.peak_rating.toLocaleString(locale)} ELO</span></>}</div>
+            </div><dl className="mt-5 grid grid-cols-3 gap-4">{[{ label: t("Wins"), value: rating.wins }, { label: t("Losses"), value: rating.losses }, { label: t("Draws"), value: rating.draws }].map(item => <div key={item.label}><dt className="text-xs text-muted-foreground">{item.label}</dt><dd className="mt-1 text-xl font-bold tabular-nums">{item.value}</dd></div>)}</dl>
           </>}
         </>}
       </section>

@@ -1,0 +1,719 @@
+[
+  {
+    "width": 500,
+    "tiles": [
+      {
+        "skin": "dawn-oath",
+        "value": "2",
+        "label": "2 tile, row 1, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "4",
+        "label": "4 tile, row 1, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "8",
+        "label": "8 tile, row 1, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "16",
+        "label": "16 tile, row 1, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "32",
+        "label": "32 tile, row 1, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "64",
+        "label": "64 tile, row 2, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "128",
+        "label": "128 tile, row 2, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "256",
+        "label": "256 tile, row 2, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "512",
+        "label": "512 tile, row 2, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "1024",
+        "label": "1024 tile, row 2, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "2048",
+        "label": "2048 tile, row 3, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "4096",
+        "label": "4096 tile, row 3, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "8192",
+        "label": "8192 tile, row 3, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "16384",
+        "label": "16384 tile, row 3, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "32768",
+        "label": "32768 tile, row 3, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "label": "X block, movable obstacle, row 4, column 1",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "dawn-oath",
+        "label": "Hard block, fixed obstacle, row 4, column 2",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "2",
+        "label": "2 tile, row 1, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "4",
+        "label": "4 tile, row 1, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "8",
+        "label": "8 tile, row 1, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "16",
+        "label": "16 tile, row 1, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "32",
+        "label": "32 tile, row 1, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "64",
+        "label": "64 tile, row 2, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "128",
+        "label": "128 tile, row 2, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "256",
+        "label": "256 tile, row 2, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "512",
+        "label": "512 tile, row 2, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "1024",
+        "label": "1024 tile, row 2, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "2048",
+        "label": "2048 tile, row 3, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "4096",
+        "label": "4096 tile, row 3, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "8192",
+        "label": "8192 tile, row 3, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "16384",
+        "label": "16384 tile, row 3, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "32768",
+        "label": "32768 tile, row 3, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "label": "X block, movable obstacle, row 4, column 1",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "rune-sanctum",
+        "label": "Hard block, fixed obstacle, row 4, column 2",
+        "fits": true,
+        "decorations": 0
+      }
+    ]
+  },
+  {
+    "width": 343,
+    "tiles": [
+      {
+        "skin": "dawn-oath",
+        "value": "2",
+        "label": "2 tile, row 1, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "4",
+        "label": "4 tile, row 1, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "8",
+        "label": "8 tile, row 1, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "16",
+        "label": "16 tile, row 1, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "32",
+        "label": "32 tile, row 1, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "64",
+        "label": "64 tile, row 2, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "128",
+        "label": "128 tile, row 2, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "256",
+        "label": "256 tile, row 2, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "512",
+        "label": "512 tile, row 2, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "1024",
+        "label": "1024 tile, row 2, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "2048",
+        "label": "2048 tile, row 3, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "4096",
+        "label": "4096 tile, row 3, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "8192",
+        "label": "8192 tile, row 3, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "16384",
+        "label": "16384 tile, row 3, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "32768",
+        "label": "32768 tile, row 3, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "label": "X block, movable obstacle, row 4, column 1",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "dawn-oath",
+        "label": "Hard block, fixed obstacle, row 4, column 2",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "2",
+        "label": "2 tile, row 1, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "4",
+        "label": "4 tile, row 1, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "8",
+        "label": "8 tile, row 1, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "16",
+        "label": "16 tile, row 1, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "32",
+        "label": "32 tile, row 1, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "64",
+        "label": "64 tile, row 2, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "128",
+        "label": "128 tile, row 2, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "256",
+        "label": "256 tile, row 2, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "512",
+        "label": "512 tile, row 2, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "1024",
+        "label": "1024 tile, row 2, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "2048",
+        "label": "2048 tile, row 3, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "4096",
+        "label": "4096 tile, row 3, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "8192",
+        "label": "8192 tile, row 3, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "16384",
+        "label": "16384 tile, row 3, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "32768",
+        "label": "32768 tile, row 3, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "label": "X block, movable obstacle, row 4, column 1",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "rune-sanctum",
+        "label": "Hard block, fixed obstacle, row 4, column 2",
+        "fits": true,
+        "decorations": 0
+      }
+    ]
+  },
+  {
+    "width": 210,
+    "tiles": [
+      {
+        "skin": "dawn-oath",
+        "value": "2",
+        "label": "2 tile, row 1, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "4",
+        "label": "4 tile, row 1, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "8",
+        "label": "8 tile, row 1, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "16",
+        "label": "16 tile, row 1, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "32",
+        "label": "32 tile, row 1, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "64",
+        "label": "64 tile, row 2, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "128",
+        "label": "128 tile, row 2, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "256",
+        "label": "256 tile, row 2, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "512",
+        "label": "512 tile, row 2, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "1024",
+        "label": "1024 tile, row 2, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "2048",
+        "label": "2048 tile, row 3, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "4096",
+        "label": "4096 tile, row 3, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "8192",
+        "label": "8192 tile, row 3, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "16384",
+        "label": "16384 tile, row 3, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "value": "32768",
+        "label": "32768 tile, row 3, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "dawn-oath",
+        "label": "X block, movable obstacle, row 4, column 1",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "dawn-oath",
+        "label": "Hard block, fixed obstacle, row 4, column 2",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "2",
+        "label": "2 tile, row 1, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "4",
+        "label": "4 tile, row 1, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "8",
+        "label": "8 tile, row 1, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "16",
+        "label": "16 tile, row 1, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "32",
+        "label": "32 tile, row 1, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "64",
+        "label": "64 tile, row 2, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "128",
+        "label": "128 tile, row 2, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "256",
+        "label": "256 tile, row 2, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "512",
+        "label": "512 tile, row 2, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "1024",
+        "label": "1024 tile, row 2, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "2048",
+        "label": "2048 tile, row 3, column 1",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "4096",
+        "label": "4096 tile, row 3, column 2",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "8192",
+        "label": "8192 tile, row 3, column 3",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "16384",
+        "label": "16384 tile, row 3, column 4",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "value": "32768",
+        "label": "32768 tile, row 3, column 5",
+        "fits": true,
+        "decorations": 1
+      },
+      {
+        "skin": "rune-sanctum",
+        "label": "X block, movable obstacle, row 4, column 1",
+        "fits": true,
+        "decorations": 0
+      },
+      {
+        "skin": "rune-sanctum",
+        "label": "Hard block, fixed obstacle, row 4, column 2",
+        "fits": true,
+        "decorations": 0
+      }
+    ]
+  }
+]

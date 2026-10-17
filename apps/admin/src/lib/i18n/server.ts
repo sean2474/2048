@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
 import { LOCALE_COOKIE, normalizeLocale, translate, type Values } from "ui/locale";
-import { messages } from "./messages";
+import { messages as baseMessages } from "./messages";
+import { rankMessages } from "./rank-messages";
+const messages = { ...baseMessages, ...rankMessages };
 
 export async function getI18n() {
   const locale = normalizeLocale((await cookies()).get(LOCALE_COOKIE)?.value);

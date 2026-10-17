@@ -13,12 +13,12 @@
     {
       "width": 1440,
       "rarity": "rare",
-      "count": 5
+      "count": 6
     },
     {
       "width": 1440,
       "rarity": "epic",
-      "count": 5
+      "count": 6
     },
     {
       "width": 1440,
@@ -38,12 +38,12 @@
     {
       "width": 768,
       "rarity": "rare",
-      "count": 5
+      "count": 6
     },
     {
       "width": 768,
       "rarity": "epic",
-      "count": 5
+      "count": 6
     },
     {
       "width": 768,
@@ -63,12 +63,12 @@
     {
       "width": 375,
       "rarity": "rare",
-      "count": 5
+      "count": 6
     },
     {
       "width": 375,
       "rarity": "epic",
-      "count": 5
+      "count": 6
     },
     {
       "width": 375,
@@ -3099,6 +3099,308 @@
           "foreground": null,
           "background": "rgb(44, 44, 44)",
           "characters": 0
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "2 tile, row 1, column 1",
+          "number": "2",
+          "fits": true,
+          "foreground": "rgb(119, 110, 101)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "4 tile, row 1, column 2",
+          "number": "4",
+          "fits": true,
+          "foreground": "rgb(119, 110, 101)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "8 tile, row 1, column 3",
+          "number": "8",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "16 tile, row 1, column 4",
+          "number": "16",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "32 tile, row 1, column 5",
+          "number": "32",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "64 tile, row 2, column 1",
+          "number": "64",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "128 tile, row 2, column 2",
+          "number": "128",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "256 tile, row 2, column 3",
+          "number": "256",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "512 tile, row 2, column 4",
+          "number": "512",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "1024 tile, row 2, column 5",
+          "number": "1024",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "2048 tile, row 3, column 1",
+          "number": "2048",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "4096 tile, row 3, column 2",
+          "number": "4096",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "8192 tile, row 3, column 3",
+          "number": "8192",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "16384 tile, row 3, column 4",
+          "number": "16384",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "32768 tile, row 3, column 5",
+          "number": "32768",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "X block, movable obstacle, row 4, column 1",
+          "fits": true,
+          "foreground": "rgb(255, 255, 255)",
+          "background": "rgb(255, 107, 107)",
+          "characters": 0
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "Hard block, fixed obstacle, row 4, column 2",
+          "fits": true,
+          "foreground": null,
+          "background": "rgb(44, 44, 44)",
+          "characters": 0
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "2 tile, row 1, column 1",
+          "number": "2",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "4 tile, row 1, column 2",
+          "number": "4",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "8 tile, row 1, column 3",
+          "number": "8",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "16 tile, row 1, column 4",
+          "number": "16",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "32 tile, row 1, column 5",
+          "number": "32",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "64 tile, row 2, column 1",
+          "number": "64",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "128 tile, row 2, column 2",
+          "number": "128",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "256 tile, row 2, column 3",
+          "number": "256",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "512 tile, row 2, column 4",
+          "number": "512",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "1024 tile, row 2, column 5",
+          "number": "1024",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "2048 tile, row 3, column 1",
+          "number": "2048",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "4096 tile, row 3, column 2",
+          "number": "4096",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "8192 tile, row 3, column 3",
+          "number": "8192",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "16384 tile, row 3, column 4",
+          "number": "16384",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "32768 tile, row 3, column 5",
+          "number": "32768",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "X block, movable obstacle, row 4, column 1",
+          "fits": true,
+          "foreground": "rgb(255, 255, 255)",
+          "background": "rgb(255, 107, 107)",
+          "characters": 0
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "Hard block, fixed obstacle, row 4, column 2",
+          "fits": true,
+          "foreground": null,
+          "background": "rgb(44, 44, 44)",
+          "characters": 0
         }
       ]
     },
@@ -6124,6 +6426,308 @@
           "foreground": null,
           "background": "rgb(44, 44, 44)",
           "characters": 0
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "2 tile, row 1, column 1",
+          "number": "2",
+          "fits": true,
+          "foreground": "rgb(119, 110, 101)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "4 tile, row 1, column 2",
+          "number": "4",
+          "fits": true,
+          "foreground": "rgb(119, 110, 101)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "8 tile, row 1, column 3",
+          "number": "8",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "16 tile, row 1, column 4",
+          "number": "16",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "32 tile, row 1, column 5",
+          "number": "32",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "64 tile, row 2, column 1",
+          "number": "64",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "128 tile, row 2, column 2",
+          "number": "128",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "256 tile, row 2, column 3",
+          "number": "256",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "512 tile, row 2, column 4",
+          "number": "512",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "1024 tile, row 2, column 5",
+          "number": "1024",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "2048 tile, row 3, column 1",
+          "number": "2048",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "4096 tile, row 3, column 2",
+          "number": "4096",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "8192 tile, row 3, column 3",
+          "number": "8192",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "16384 tile, row 3, column 4",
+          "number": "16384",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "32768 tile, row 3, column 5",
+          "number": "32768",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "X block, movable obstacle, row 4, column 1",
+          "fits": true,
+          "foreground": "rgb(255, 255, 255)",
+          "background": "rgb(255, 107, 107)",
+          "characters": 0
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "Hard block, fixed obstacle, row 4, column 2",
+          "fits": true,
+          "foreground": null,
+          "background": "rgb(44, 44, 44)",
+          "characters": 0
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "2 tile, row 1, column 1",
+          "number": "2",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "4 tile, row 1, column 2",
+          "number": "4",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "8 tile, row 1, column 3",
+          "number": "8",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "16 tile, row 1, column 4",
+          "number": "16",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "32 tile, row 1, column 5",
+          "number": "32",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "64 tile, row 2, column 1",
+          "number": "64",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "128 tile, row 2, column 2",
+          "number": "128",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "256 tile, row 2, column 3",
+          "number": "256",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "512 tile, row 2, column 4",
+          "number": "512",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "1024 tile, row 2, column 5",
+          "number": "1024",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "2048 tile, row 3, column 1",
+          "number": "2048",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "4096 tile, row 3, column 2",
+          "number": "4096",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "8192 tile, row 3, column 3",
+          "number": "8192",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "16384 tile, row 3, column 4",
+          "number": "16384",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "32768 tile, row 3, column 5",
+          "number": "32768",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "X block, movable obstacle, row 4, column 1",
+          "fits": true,
+          "foreground": "rgb(255, 255, 255)",
+          "background": "rgb(255, 107, 107)",
+          "characters": 0
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "Hard block, fixed obstacle, row 4, column 2",
+          "fits": true,
+          "foreground": null,
+          "background": "rgb(44, 44, 44)",
+          "characters": 0
         }
       ]
     },
@@ -9144,6 +9748,308 @@
         },
         {
           "skin": "arcanist",
+          "label": "Hard block, fixed obstacle, row 4, column 2",
+          "fits": true,
+          "foreground": null,
+          "background": "rgb(44, 44, 44)",
+          "characters": 0
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "2 tile, row 1, column 1",
+          "number": "2",
+          "fits": true,
+          "foreground": "rgb(119, 110, 101)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "4 tile, row 1, column 2",
+          "number": "4",
+          "fits": true,
+          "foreground": "rgb(119, 110, 101)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "8 tile, row 1, column 3",
+          "number": "8",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "16 tile, row 1, column 4",
+          "number": "16",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "32 tile, row 1, column 5",
+          "number": "32",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "64 tile, row 2, column 1",
+          "number": "64",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "128 tile, row 2, column 2",
+          "number": "128",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "256 tile, row 2, column 3",
+          "number": "256",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "512 tile, row 2, column 4",
+          "number": "512",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "1024 tile, row 2, column 5",
+          "number": "1024",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "2048 tile, row 3, column 1",
+          "number": "2048",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "4096 tile, row 3, column 2",
+          "number": "4096",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "8192 tile, row 3, column 3",
+          "number": "8192",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "16384 tile, row 3, column 4",
+          "number": "16384",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "32768 tile, row 3, column 5",
+          "number": "32768",
+          "fits": true,
+          "foreground": "rgb(249, 246, 242)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "X block, movable obstacle, row 4, column 1",
+          "fits": true,
+          "foreground": "rgb(255, 255, 255)",
+          "background": "rgb(255, 107, 107)",
+          "characters": 0
+        },
+        {
+          "skin": "dawn-oath",
+          "label": "Hard block, fixed obstacle, row 4, column 2",
+          "fits": true,
+          "foreground": null,
+          "background": "rgb(44, 44, 44)",
+          "characters": 0
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "2 tile, row 1, column 1",
+          "number": "2",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "4 tile, row 1, column 2",
+          "number": "4",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "8 tile, row 1, column 3",
+          "number": "8",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "16 tile, row 1, column 4",
+          "number": "16",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "32 tile, row 1, column 5",
+          "number": "32",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "64 tile, row 2, column 1",
+          "number": "64",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "128 tile, row 2, column 2",
+          "number": "128",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "256 tile, row 2, column 3",
+          "number": "256",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "512 tile, row 2, column 4",
+          "number": "512",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "1024 tile, row 2, column 5",
+          "number": "1024",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "2048 tile, row 3, column 1",
+          "number": "2048",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "4096 tile, row 3, column 2",
+          "number": "4096",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "8192 tile, row 3, column 3",
+          "number": "8192",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "16384 tile, row 3, column 4",
+          "number": "16384",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "32768 tile, row 3, column 5",
+          "number": "32768",
+          "fits": true,
+          "foreground": "rgb(73, 59, 64)",
+          "background": "rgba(0, 0, 0, 0)",
+          "characters": 1
+        },
+        {
+          "skin": "rune-sanctum",
+          "label": "X block, movable obstacle, row 4, column 1",
+          "fits": true,
+          "foreground": "rgb(255, 255, 255)",
+          "background": "rgb(255, 107, 107)",
+          "characters": 0
+        },
+        {
+          "skin": "rune-sanctum",
           "label": "Hard block, fixed obstacle, row 4, column 2",
           "fits": true,
           "foreground": null,

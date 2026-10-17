@@ -11,8 +11,10 @@ const C = "33333333-3333-4333-8333-333333333333";
 const MATCH = "44444444-4444-4444-8444-444444444444";
 
 test("rating tiers use stable boundaries and legacy records default to casual", async () => {
-  const { INITIAL_RATING, ratingTier } = await import("schema/ranking");
+  const { INITIAL_RATING, PLACEMENT_GAMES, SEASON_QUALIFYING_GAMES, ratingTier } = await import("schema/ranking");
   assert.equal(INITIAL_RATING, 1200);
+  assert.equal(PLACEMENT_GAMES, 10);
+  assert.equal(SEASON_QUALIFYING_GAMES, 10);
   assert.deepEqual([-50, 999, 1000, 1199, 1200, 1399, 1400, 1599, 1600, 1799, 1800, 10000].map(ratingTier),
     ["Bronze", "Bronze", "Silver", "Silver", "Gold", "Gold", "Platinum", "Platinum", "Diamond", "Diamond", "Master", "Master"]);
   const record = { id: MATCH, startedAt: "2026-10-15T01:00:00Z", endedAt: "2026-10-15T01:05:00Z", reason: "surrender", winnerSlot: 1,
@@ -23,13 +25,16 @@ test("rating tiers use stable boundaries and legacy records default to casual", 
 });
 
 test("Supabase services read authoritative ratings, fail closed, and send explicit modes", async t => {
+  const rank = { tier: null, placement_games: 0 };
+  const earnedRank = { tier: "Platinum", placement_games: 10 };
   let body: unknown = [], status = 200, profileName = "플레이어 🧩 O'Brien";
+  let preferences: unknown = [{ icon_id: "dragon", skin_id: "dawn-oath" }], preferencesStatus = 200;
   const requests: { url: string; body?: string }[] = [];
   t.mock.method(globalThis, "fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
     requests.push({ url: String(input), body: init?.body as string | undefined });
     if (body instanceof Error) throw body;
-    if (String(input).includes("/rest/v1/player_preferences")) return new Response(JSON.stringify([{ icon_id: "dragon" }]), { status: 200, headers: { "Content-Type": "application/json" } });
-    if (String(input).includes("/rest/v1/player_ratings") && body && typeof body === "object" && "id" in body) return new Response(JSON.stringify([{ rating: 1420 }]), { status: 200, headers: { "Content-Type": "application/json" } });
+    if (String(input).includes("/rest/v1/player_preferences")) return new Response(JSON.stringify(preferences), { status: preferencesStatus, headers: { "Content-Type": "application/json" } });
+    if (String(input).includes("/rest/v1/player_ratings") && body && typeof body === "object" && "id" in body) return new Response(JSON.stringify([{ rating: 1420, ...earnedRank }]), { status: 200, headers: { "Content-Type": "application/json" } });
     if (String(input).includes("/rest/v1/players") && status === 200) return new Response(JSON.stringify({ name: profileName }), { status, headers: { "Content-Type": "application/json" } });
     return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
   });
@@ -39,19 +44,26 @@ test("Supabase services read authoritative ratings, fail closed, and send explic
   const services = createSupabaseServices({ ...env, SUPABASE_SECRET_KEY: "server-test-key" });
   assert.ok(services.readRating && services.writeMatch && services.resolveAccount);
   body = { id: A, user_metadata: { name: "  플레이어 🧩 O'Brien  " } };
-  assert.deepEqual(await services.resolveAccount("test-access-token"), { id: A, name: "플레이어 🧩 O'Brien", iconId: "dragon", rating: 1420 });
+  assert.deepEqual(await services.resolveAccount("test-access-token"), { id: A, name: "플레이어 🧩 O'Brien", iconId: "dragon", skinId: "dawn-oath", rating: 1420, rank: earnedRank });
+  assert.equal(new URL(requests.find(request => request.url.includes("/player_preferences"))!.url).searchParams.get("select"), "icon_id,skin_id");
   body = { id: A, user_metadata: { name: "  " } };
   profileName = "새 닉네임";
-  assert.deepEqual(await services.resolveAccount("test-access-token"), { id: A, name: "새 닉네임", iconId: "dragon", rating: 1420 });
+  assert.deepEqual(await services.resolveAccount("test-access-token"), { id: A, name: "새 닉네임", iconId: "dragon", skinId: "dawn-oath", rating: 1420, rank: earnedRank });
+  for (const row of [[], [{ icon_id: "dragon" }], [{ icon_id: "dragon", skin_id: "unknown" }]]) {
+    preferences = row;
+    assert.equal((await services.resolveAccount("test-access-token")).skinId, "classic");
+  }
+  preferences = { code: "42501", message: "access denied" }; preferencesStatus = 403;
+  assert.equal((await services.resolveAccount("test-access-token")).skinId, "classic");
   body = { id: A, is_anonymous: true };
   await assert.rejects(services.resolveAccount("test-access-token"), /invalid_account/);
   body = { message: "invalid token" }; status = 401;
   await assert.rejects(services.resolveAccount("test-access-token"), /invalid_account/);
   body = []; status = 200;
-  assert.equal(await services.readRating(A), 1200);
-  assert.ok(requests.at(-1)?.url.includes("/rest/v1/player_ratings?select=rating&player_id=eq."));
+  assert.deepEqual(await services.readRating(A), { rating: 1200, rank });
+  assert.equal(new URL(requests.at(-1)!.url).searchParams.get("select"), "rating,tier,placement_games");
   body = [{ rating: 1440 }];
-  assert.equal(await services.readRating(A), 1440);
+  assert.deepEqual(await services.readRating(A), { rating: 1440, rank });
   body = { code: "42501", message: "access denied" }; status = 403;
   await assert.rejects(services.readRating(A), /Rating lookup failed/);
   body = new Error("offline");

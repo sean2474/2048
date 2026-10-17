@@ -17,7 +17,10 @@ export async function mockAccount(page, id = "10000000-0000-4000-8000-0000000000
     headers.cookie = (headers.cookie ?? "").split("; ").filter(part => !part.startsWith("sb-")).join("; ");
     return route.continue({ headers });
   });
-  const fixture = { row, failSave: false };
+  const fixture = { row, failSave: false, achievements: {
+    attendance: { streak: 0, bestStreak: 0, lastDay: null, today: "2026-10-17", checkedInToday: false, nextCheckInAt: "2026-10-17T15:00:00+00:00" },
+    wins: 0, highestTile: 0, unlocks: [],
+  } };
   await page.route("https://*.supabase.co/**", async route => {
     const request = route.request(), url = new URL(request.url());
     let value;
@@ -28,10 +31,11 @@ export async function mockAccount(page, id = "10000000-0000-4000-8000-0000000000
         Object.assign(row, request.postDataJSON());
       }
       value = row;
-    } else if (url.pathname.endsWith("/players")) value = { id, name: "타일탐험가", image_path: null };
+    } else if (url.pathname.endsWith("/rpc/achievement_state")) value = fixture.achievements;
+    else if (url.pathname.endsWith("/players")) value = { id, name: "타일탐험가", image_path: null };
     else if (url.pathname.endsWith("/player_wallets")) value = { player_id: id, balance: 0, created_at: user.created_at };
     else value = null;
-    const body = url.pathname.startsWith("/auth/") || request.headers().accept?.includes("vnd.pgrst.object") ? value : value ? [value] : [];
+    const body = url.pathname.startsWith("/auth/") || url.pathname.includes("/rpc/") || request.headers().accept?.includes("vnd.pgrst.object") ? value : value ? [value] : [];
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
   });
   return fixture;

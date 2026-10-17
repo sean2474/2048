@@ -2,7 +2,7 @@ export type SkinTokens = {
   boardBackground: string;
   emptyBackground: string;
   tileRadius: string;
-  tilePattern?: "dots" | "gingham" | "pinstripe" | "weave" | "runes";
+  tilePattern?: "dots" | "gingham" | "pinstripe" | "weave" | "runes" | "sunrise" | "magic-circle";
   tilePalette?: readonly string[];
   character?: "cat" | "bunny" | "sentinel" | "runeknight" | "arcanist";
 };
@@ -57,6 +57,10 @@ export const SKINS = [
     tokens: { boardBackground: "linear-gradient(135deg, #6c6260, #35343e)", emptyBackground: "#888180", tileRadius: "0.4rem", character: "runeknight", tilePalette: ["#c6bdac", "#b6baca", "#d2bda2", "#b4c9c7", "#c4b2d4", "#d9bf8b"] } },
   { id: "arcanist", name: "Arcane Order", description: "Wizard character tiles.", rarity: "legendary", price: 0,
     tokens: { boardBackground: "radial-gradient(ellipse at top, #776490, #302d49)", emptyBackground: "#82768f", tileRadius: "0.5rem", character: "arcanist", tilePalette: ["#b2a5d1", "#a3b7d5", "#9ec6bf", "#c7b1cf", "#cbbd9c", "#bcb3dd"] } },
+  { id: "dawn-oath", name: "Dawn Oath", description: "Rising-sun borders earned through seven days of attendance.", rarity: "rare", price: 0,
+    tokens: { boardBackground: "#cbc5b6", emptyBackground: "#e1dccf", tileRadius: "0.5rem", tilePattern: "sunrise" } },
+  { id: "rune-sanctum", name: "Rune Sanctum", description: "Jade stone and engraved magic circles for a 2048 milestone.", rarity: "epic", price: 0,
+    tokens: { boardBackground: "repeating-linear-gradient(90deg, transparent 0 23%, #b9d7ca12 23% 24%, transparent 24% 25%), radial-gradient(ellipse at top, #658a7f, #243e3d)", emptyBackground: "#52736a", tileRadius: "0.4rem", tilePattern: "magic-circle", tilePalette: ["#e7eee1", "#cddfcf", "#b4d8ca", "#b8d4da", "#cbcce1", "#e4d6aa"] } },
 ] as const satisfies readonly Skin[];
 
 export type SkinId = (typeof SKINS)[number]["id"];

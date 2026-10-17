@@ -45,7 +45,7 @@ export function MatchLobby({ mode }: { mode: "casual" | "ranked" }) {
       <div className="lobby-status" data-error={!!error}>
         <div className="lobby-search-track" aria-hidden="true"><span /></div>
         <div className="lobby-status-line">{error || !canSearch && user !== undefined ? <ShieldAlert size={18} aria-hidden="true" /> : <Search size={18} aria-hidden="true" />}<p role={error ? "alert" : "status"}>{canSearch ? error || status : t(accountStatus)}</p></div>
-        <p className="lobby-help">{t(ranked ? "Ranked matches affect Elo." : "Casual matches do not affect Elo.")}</p>
+        <p className="lobby-help">{t(ranked ? "Ranked matches affect Elo. Your first 10 matches establish your tier; after that, tiers change automatically with Elo. Elo and your established tier carry over between seasons. Complete 10 ranked matches each season to enter its standings." : "Casual matches do not affect Elo.")}</p>
       </div>
       <div className="lobby-actions">
         {canSearch && error && <Button className="lobby-primary" onClick={retry}>{t("Try again")}<ArrowRight aria-hidden="true" /></Button>}

@@ -2,10 +2,10 @@
 
 import { useI18n } from "ui/i18n";
 import Link from "next/link";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LeaderboardRow } from "schema/results";
-import { ratingTier } from "schema/ranking";
+import { ratingTier, SEASON_QUALIFYING_GAMES, type RankSeason } from "schema/ranking";
 import { useLiveQuery } from "@/hooks/use-live-query";
 import { Button } from "@/components/ui/button";
 import { TierBadge, TierIcon } from "@/components/widget/tier-badge";
@@ -14,12 +14,20 @@ import "@/styles/leaderboard.css";
 
 export default function LeaderboardPage() {
   const { t, locale } = useI18n();
+  const [selectedSeason, setSelectedSeason] = useState("current");
   const load = useCallback(async (client: SupabaseClient) => {
-    const { data, error } = await client.from("player_ratings").select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile").gt("games_played", 0).order("rating", { ascending: false }).order("games_played", { ascending: false }).order("player_id").limit(50);
+    const seasonsResult = await client.from("rank_seasons").select("id,name,starts_at,ends_at").order("starts_at", { ascending: false });
+    if (seasonsResult.error) throw seasonsResult.error;
+    const seasons = seasonsResult.data as RankSeason[];
+    const season = selectedSeason === "current" ? seasons.find(row => row.ends_at === null) : seasons.find(row => row.id === selectedSeason);
+    if (!season) throw new Error("Season unavailable");
+    const { data, error } = await client.from(season.ends_at === null ? "player_ratings" : "season_ratings").select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating").eq("season_id", season.id).gte("games_played", SEASON_QUALIFYING_GAMES).order("rating", { ascending: false }).order("games_played", { ascending: false }).order("player_id").limit(50);
     if (error) throw error;
-    return data as LeaderboardRow[];
-  }, []);
-  const { data, loading, error, live, reload } = useLiveQuery({ table: "player_ratings", load });
+    return [{ seasons, season, rows: data as LeaderboardRow[] }];
+  }, [selectedSeason]);
+  const query = useLiveQuery({ table: "player_ratings", load });
+  const { loading, error, live, reload } = query;
+  const data = query.data[0]?.rows ?? [], seasons = query.data[0]?.seasons ?? [], season = query.data[0]?.season;
   const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
 
   return <main className="mx-auto max-w-[1120px] space-y-7 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
@@ -41,7 +49,7 @@ export default function LeaderboardPage() {
     <section aria-labelledby="tier-guide-title" className="rounded-xl border bg-card px-3 py-4 sm:px-6">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 px-2">
         <h2 id="tier-guide-title" className="text-xs font-bold tracking-wide">{t("Competitive tiers")}</h2>
-        <span className="text-[11px] text-muted-foreground">{t("Tiers by Elo")}</span>
+        <span className="text-[11px] text-muted-foreground">{t("Elo tier thresholds")}</span>
       </div>
       <dl className="rank-tier-trail grid grid-cols-3 gap-y-3 sm:grid-cols-6">
         {[0, 1000, 1200, 1400, 1600, 1800].map(rating => <div key={rating} className="relative flex flex-col items-center text-center">
@@ -51,20 +59,23 @@ export default function LeaderboardPage() {
       </dl>
     </section>
 
+    <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-semibold">{season?.name ?? t("Season standings")}{season?.ends_at && <span className="ml-2 font-normal text-muted-foreground">{t("Archived season")}</span>}</p><label className="flex items-center gap-2 text-sm">{t("Season")}<select aria-label={t("Season")} value={selectedSeason} onChange={event => setSelectedSeason(event.target.value)} className="min-h-11 rounded-lg border bg-card px-3"><option value="current">{t("Current season")}</option>{seasons.filter(row => row.ends_at !== null).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label></div>
+
     {!error && !loading && data.length > 0 && <section aria-labelledby="podium-title">
       <h2 id="podium-title" className="mb-4 flex items-center gap-2 text-sm font-bold"><Crown aria-hidden="true" className="size-4 text-[#936a25]" />{t("Top 3 players")}</h2>
       <ol className={`rank-podium grid items-end gap-2 sm:gap-4 ${data.length === 1 ? "mx-auto max-w-sm grid-cols-1" : data.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
         {data.slice(0, 3).map((row, index) => <li key={row.player_id} className={`rank-podium-place min-w-0 text-center ${data.length >= 3 ? ["order-2", "order-1", "order-3"][index] : ""}`} data-place={index + 1}>
           <div className="px-1 pb-3 pt-4 sm:px-4">
             <p className="mb-1 flex min-h-5 items-center justify-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-[#6d5730]">{index === 0 && <Crown aria-hidden="true" className="size-3.5" />}{t(["1st place", "2nd place", "3rd place"][index])}</p>
-            <TierIcon tier={ratingTier(row.rating)} className={`mx-auto ${index === 0 ? "size-20 sm:size-24" : "size-16 sm:size-20"}`} />
+            <TierIcon tier={row.tier!} className={`mx-auto ${index === 0 ? "size-20 sm:size-24" : "size-16 sm:size-20"}`} />
             <h3 title={row.display_name} className="mt-1 truncate text-sm font-extrabold sm:text-base">{row.display_name}</h3>
-            <p className="mt-1 text-[10px] font-medium text-muted-foreground sm:text-xs">{t(ratingTier(row.rating))}</p>
+            <p className="mt-1 text-[10px] font-medium text-muted-foreground sm:text-xs">{t(row.tier!)}</p>
           </div>
           <div className="rank-podium-score px-1 py-3 sm:py-4"><span className="text-xl font-extrabold tabular-nums tracking-tight sm:text-2xl">{row.rating.toLocaleString(numberLocale)}</span><span className="ml-1 text-[10px] font-semibold opacity-70">{t("Elo")}</span></div>
         </li>)}
       </ol>
     </section>}
+
 
     <section aria-labelledby="standings-title" className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -73,7 +84,7 @@ export default function LeaderboardPage() {
       </div>
       {error ? <div role="alert" className="space-y-4 rounded-2xl border bg-card p-8"><p className="text-sm leading-6 text-destructive">{t(error)}</p><Button onClick={reload}>{t("Try again")}</Button></div>
         : loading ? <div role="status" className="flex min-h-60 items-center justify-center gap-3 rounded-2xl border bg-card text-sm text-muted-foreground"><Loader2 aria-hidden="true" className="size-5 animate-spin motion-reduce:animate-none" />{t("Loading leaderboard…")}</div>
-        : !data.length ? <div className="space-y-4 rounded-2xl border border-dashed border-[#cfc5ae] bg-card px-6 py-10 text-center"><TierIcon tier="Bronze" className="mx-auto size-24" /><h2 className="text-xl font-bold tracking-tight">{t("No ranked players yet.")}</h2><p className="text-sm leading-6 text-muted-foreground">{t("Players appear here after completing a ranked match.")}</p><Button asChild><Link href="/play/ranked">{t("Play ranked")}<ArrowRight aria-hidden="true" /></Link></Button></div>
+        : !data.length ? <div className="space-y-4 rounded-2xl border border-dashed border-[#cfc5ae] bg-card px-6 py-10 text-center"><TierIcon tier="Bronze" className="mx-auto size-24" /><h2 className="text-xl font-bold tracking-tight">{t("No ranked players yet.")}</h2><p className="text-sm leading-6 text-muted-foreground">{t("Players appear here after completing 10 ranked matches in this season.")}</p><Button asChild><Link href="/play/ranked">{t("Play ranked")}<ArrowRight aria-hidden="true" /></Link></Button></div>
         : <div role="region" aria-label={t("Ranked player standings")} tabIndex={0} className="overflow-x-auto rounded-2xl border bg-card shadow-[0_4px_0_#e8e3d7] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
           <table className="rank-table w-full text-left text-sm">
             <caption className="sr-only">{t("2048 Duo ranked player standings")}</caption>
@@ -84,8 +95,8 @@ export default function LeaderboardPage() {
               const winRate = row.games_played ? Math.round(row.wins / row.games_played * 100) : 0;
               return <tr key={row.player_id} className="border-t transition-colors hover:bg-[#f8f7f0]" data-place={index + 1}>
                 <td><span className="rank-position inline-grid size-8 place-items-center rounded-lg text-xs font-extrabold tabular-nums text-muted-foreground">{String(index + 1).padStart(2, "0")}</span></td>
-                <th scope="row" className="font-semibold"><span title={row.display_name} className="block max-w-28 truncate sm:max-w-52">{row.display_name}</span><TierBadge rating={row.rating} className="mt-1 md:hidden" /></th>
-                <td className="hidden md:table-cell"><TierBadge rating={row.rating} /></td>
+                <th scope="row" className="font-semibold"><span title={row.display_name} className="block max-w-28 truncate sm:max-w-52">{row.display_name}</span><TierBadge tier={row.tier} rating={row.rating} className="mt-1 md:hidden" /></th>
+                <td className="hidden md:table-cell"><TierBadge tier={row.tier} rating={row.rating} /></td>
                 <td className="text-right text-base font-extrabold tabular-nums tracking-tight">{row.rating.toLocaleString(numberLocale)}</td>
                 <td className="hidden text-right tabular-nums lg:table-cell">{row.wins}</td>
                 <td className="hidden text-right tabular-nums text-muted-foreground lg:table-cell">{row.games_played}</td>
@@ -94,7 +105,7 @@ export default function LeaderboardPage() {
             })}</tbody>
           </table>
         </div>}
-      <p className="px-1 text-xs leading-6 text-muted-foreground">{t("Top 50 by Elo, then ranked matches played. Casual and friend matches never change your rating.")}</p>
+      <p className="px-1 text-xs leading-6 text-muted-foreground">{t("Top 50 after 10 ranked matches this season, ordered by Elo then matches played. Tiers follow Elo automatically. Elo carries over between seasons. Casual and friend matches never change your rating.")}</p>
     </section>
     <Button asChild variant="ghost"><Link href="/"><ArrowLeft aria-hidden="true" />{t("Back to dashboard")}</Link></Button>
   </main>;

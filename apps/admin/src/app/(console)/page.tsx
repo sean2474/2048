@@ -2,6 +2,8 @@
 
 import { useI18n } from "ui/i18n";
 
+import { OperationsNotice } from "@/components/operations-notice";
+import { adminTime } from "@/lib/investigation";
 import { useEffect, useState } from "react";
 import type { AdminMode, AdminOverview } from "schema/admin";
 import { createClient } from "@/lib/supabase/client";
@@ -44,11 +46,13 @@ export default function AdminPage() {
         </div>
       </div>
     </div>
+    <OperationsNotice />
     {error ? <p role="alert" className="admin-error">{t(error)}</p> : loading ? <p role="status" className="admin-state">{t("Loading statistics…")}</p> : data && <>
+      <p className="text-xs leading-6 text-muted-foreground">{data.periodStart && data.periodEnd && `${adminTime(data.periodStart, locale)} – ${adminTime(data.periodEnd, locale)}`}<br />{t("The first and last dates are partial days. Participating accounts counts unique linked accounts in completed matches, not all registrations. Elapsed time includes ready and reconnect waits.")}</p>
       <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           ["Completed matches", number(data.totals.matches)], ["Ranked matches", number(data.totals.rankedMatches)],
-          ["Registered players", number(data.totals.players)], ["Average duration", data.totals.avgDurationSeconds === null ? t("Not measured") : t("{seconds} sec", { seconds: number(data.totals.avgDurationSeconds) })],
+          ["Participating accounts", number(data.totals.players)], ["Average duration", data.totals.avgDurationSeconds === null ? t("Not measured") : t("{seconds} sec", { seconds: number(data.totals.avgDurationSeconds) })],
         ].map(([label, value], index) => <div key={label} className={`admin-panel p-4 sm:p-6 ${index === 0 ? "border-primary/20" : ""}`}><dt className="text-xs leading-5 text-muted-foreground">{t(label)}</dt><dd className={`mt-3 text-2xl font-bold tracking-tight tabular-nums break-words sm:text-3xl ${index === 0 ? "text-primary" : ""}`}>{value}</dd></div>)}
       </dl>
       <dl className="grid grid-cols-2 gap-x-6 gap-y-4 px-1 lg:grid-cols-4">

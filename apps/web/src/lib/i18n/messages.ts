@@ -340,7 +340,6 @@ export const messages: Record<string, string> = {
   "Send X": "X 공격",
   "Send hard": "하드 공격",
   "Sign Up": "회원가입",
-  "Sign in and meet players near your Elo rating. Wins, losses and draws adjust your Elo; your tier follows that rating.": "로그인하면 비슷한 Elo의 상대와 대결할 수 있습니다. 승리·패배·무승부에 따라 Elo가 조정되고, 그 점수로 티어가 결정됩니다.",
   "Sign in before starting a game to save your results.": "게임을 시작하기 전에 로그인하면 결과가 저장됩니다.",
   "Sign in for ranked": "로그인하고 랭크전 시작",
   "Sign in to keep your match history and track your Elo, tier, and ranked results.": "로그인하면 대전 기록과 Elo, 티어, 랭크 전적을 저장할 수 있습니다.",

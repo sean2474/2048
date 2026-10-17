@@ -1,9 +1,15 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import type { End } from "schema/in-game";
+import type { HistoryMatch } from "schema/results";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { usePlayer } from "@/hooks/use-player";
+import { useLiveQuery } from "@/hooks/use-live-query";
+import { TierBadge } from "./tier-badge";
+import { RankProgress } from "./rank-progress";
 import { useI18n } from "ui/i18n";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -32,6 +38,16 @@ function resultText(game: End) {
 export function MatchResult({ game, names }: { game: End; names: { you: string; opp: string } }) {
   const { t, locale } = useI18n();
   const [open, setOpen] = useState(true);
+  const { user } = usePlayer();
+  const userId = user?.id;
+  const loadRank = useCallback(async (client: SupabaseClient) => {
+    if (!userId || game.recording === "saving") return [];
+    const { data, error } = await client.from("match_participants").select("rating_before,rating_after,rating_delta,tier_after,placement_games").eq("match_id", game.matchId).eq("player_id", userId);
+    if (error) throw error;
+    return data as HistoryMatch["match_participants"];
+  }, [game.matchId, game.recording, userId]);
+  const rankQuery = useLiveQuery({ table: "match_participants", filter: `match_id=eq.${game.matchId}`, enabled: game.mode === "ranked" && !!userId && game.recording !== "unavailable", load: loadRank });
+  const savedRank = rankQuery.data[0];
   const summary = useRef<HTMLHeadingElement>(null);
   const outcome = game.winner === "you" ? "victory" : game.winner === "opp" ? "defeat" : "draw";
   const title = t(game.winner === "you" ? "You win!" : game.winner === "draw" ? "Draw" : "You lose.");
@@ -60,6 +76,20 @@ export function MatchResult({ game, names }: { game: End; names: { you: string; 
             <span className="match-end-score-vs" aria-hidden="true">VS</span>
             <div data-winner={game.winner === "opp"}><p className="match-end-side">{t("Opponent")}</p><p className="match-end-name" title={names.opp}>{names.opp === "Guest" ? t("Guest") : names.opp === "Opponent" ? t("Opponent") : names.opp}</p><p className="match-end-score">{game.opp ? game.opp.score.toLocaleString(locale) : "—"}</p><p className="match-end-score-label">{t("Score")}</p></div>
           </div>
+          {game.mode === "ranked" && <div className="my-3 space-y-2 rounded-xl border bg-card p-3 text-left">
+            {game.recording === "unavailable" ? <p role="status" className="text-xs text-muted-foreground">{t("Rank cannot update because match storage is unavailable.")}</p>
+              : rankQuery.error ? <><p role="alert" className="text-xs text-destructive">{rankQuery.error}</p><Button size="sm" variant="outline" onClick={rankQuery.reload}>{t("Retry rating")}</Button></>
+              : savedRank?.rating_after != null ? <>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <TierBadge rating={savedRank.rating_after} tier={savedRank.tier_after ?? null} />
+                  <div className="text-right tabular-nums">
+                    <p className="text-sm font-bold">{savedRank.rating_before} → {savedRank.rating_after} ELO</p>
+                    {savedRank.rating_delta != null && <p className="text-xs text-muted-foreground">{t("Rating change")}: <strong className="text-foreground">{savedRank.rating_delta > 0 ? "+" : savedRank.rating_delta < 0 ? "−" : ""}{Math.abs(savedRank.rating_delta).toLocaleString(locale)} ELO</strong></p>}
+                  </div>
+                </div>
+                <RankProgress rank={{ tier: savedRank.tier_after ?? null, placement_games: savedRank.placement_games ?? 0 }} rating={savedRank.rating_after} />
+              </> : <p role="status" className="text-xs text-muted-foreground">{t("Your rank updates after the result is saved.")}</p>}
+          </div>}
           <div className="match-end-actions">{actions}</div>
           <p className="match-end-recording" role="status">{t(recordingText[game.recording])}</p>
           <DialogClose asChild><button type="button" className="match-end-dismiss">{t("View final board")}<ChevronDown size={15} aria-hidden="true" /></button></DialogClose>

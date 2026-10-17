@@ -18,11 +18,13 @@ test("rank badges, podium, responsive standings, translations and recovery", asy
     page.on("pageerror", error => errors.push(error.message));
     const fixtures = [1864, 1672, 1428, 1280, 1080, 864].map((rating, index) => ({
       player_id: `rank-test-${index}`, display_name: ["말랑한왕관", "구름고양이", "아주긴닉네임도순위표밖으로넘치면안돼요", "<img src=x onerror=alert(1)>", "Silver tile", "새싹"][index],
-      rating, wins: 20 - index, losses: index, draws: 0, games_played: 20, highest_score: 2048, highest_tile: 512,
+      tier: ["Master", "Diamond", "Platinum", "Gold", "Silver", "Bronze"][index], placement_games: 10, season_id: "11111111-1111-4111-8111-111111111111",
+      rating, peak_rating: rating, wins: 20 - index, losses: index, draws: 0, games_played: 20, highest_score: 2048, highest_tile: 512,
     }));
     let rows = fixtures;
     let mode = "success";
     let releaseLoading;
+    await page.route("**/rest/v1/rank_seasons?*", route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify([{ id: "11111111-1111-4111-8111-111111111111", name: "Season 1", starts_at: "2026-10-01T00:00:00Z", ends_at: null }]) }));
     await page.route("**/rest/v1/player_ratings?*", async route => {
       if (mode === "loading") await new Promise(resolve => { releaseLoading = resolve; });
       await route.fulfill({ status: mode === "error" ? 500 : 200, contentType: "application/json", body: JSON.stringify(mode === "error" ? { message: "Test failure" } : rows) });

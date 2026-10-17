@@ -1,5 +1,7 @@
 import { z } from "zod";
 import type { ProfileIconId } from "./profile-icons";
+import type { SkinId } from "./loadout";
+import type { RankProgress, Tier } from "./ranking";
 import { MatchModeSchema, type MatchMode } from "./in-game";
 const AttackCountsSchema = z.object({ xblock: z.number().int().min(0).max(1_000_000_000), hardblock: z.number().int().min(0).max(1_000_000_000) }).strict();
 export const MatchTelemetrySchema = z.object({
@@ -16,10 +18,10 @@ export const MatchRecordSchema = z.object({
 }).refine(record => (record.reason === "draw") === (record.winnerSlot === null))
   .refine(record => Date.parse(record.endedAt) >= Date.parse(record.startedAt));
 export type MatchRecord = z.input<typeof MatchRecordSchema>;
-export type Account = { id: string; name: string; iconId?: ProfileIconId; rating?: number | null };
+export type Account = { id: string; name: string; iconId?: ProfileIconId; skinId?: SkinId; rating?: number | null; rank?: RankProgress };
 export type ResultStatus = "guest" | "saving" | "saved" | "delayed" | "unavailable";
-export type LeaderboardRow = { player_id: string; display_name: string; rating: number; wins: number; losses: number; draws: number; games_played: number; highest_score: number; highest_tile: number };
+export type LeaderboardRow = RankProgress & { player_id: string; display_name: string; rating: number; peak_rating: number | null; wins: number; losses: number; draws: number; games_played: number; highest_score: number; highest_tile: number; season_id: string; rank_seasons?: { name: string } };
 export type HistoryMatch = {
-  id: string; started_at: string; ended_at: string; reason: MatchRecord["reason"]; ranked: boolean; mode: MatchMode | "legacy";
-  match_participants: { slot: number; player_id: string | null; display_name: string; score: number; max_tile: number; result: "win" | "loss" | "draw"; rating_before: number | null; rating_after: number | null; rating_delta: number | null }[];
+  id: string; started_at: string; ended_at: string; reason: MatchRecord["reason"]; ranked: boolean; mode: MatchMode | "legacy"; rank_seasons?: { name: string } | null;
+  match_participants: { slot: number; player_id: string | null; display_name: string; score: number; max_tile: number; result: "win" | "loss" | "draw"; rating_before: number | null; rating_after: number | null; rating_delta: number | null; tier_after?: Tier | null; placement_games?: number | null }[];
 };
