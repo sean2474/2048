@@ -5,6 +5,7 @@ import { I18nProvider } from "ui/i18n";
 import { getI18n } from "@/lib/i18n/server";
 import { SettingsProvider } from "@/hooks/settings-provider";
 import { AudioProvider } from "@/hooks/audio-provider";
+import { CatalogProvider, CatalogNotice } from "@/hooks/catalog-provider";
 import { GameAnalytics } from "@/components/widget/analytics";
 import { PlayerProvider } from "@/hooks/use-player";
 import { getAccount } from "@/lib/supabase/account";
@@ -26,13 +27,16 @@ export default async function RootLayout({
       <body className={`antialiased`}>
         <I18nProvider initialLocale={locale} messages={messages}>
           <PlayerProvider initialAccount={account}>
+          <CatalogProvider>
           <SettingsProvider initialGuestLocale={guestLocale}>
           <AudioProvider>
           <Header />
+          <div className="mx-auto max-w-[1040px] px-4"><CatalogNotice /></div>
           {children}
           <GameAnalytics />
           </AudioProvider>
           </SettingsProvider>
+          </CatalogProvider>
           </PlayerProvider>
         </I18nProvider>
       </body>

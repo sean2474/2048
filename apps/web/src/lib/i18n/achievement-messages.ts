@@ -1,4 +1,13 @@
 export const achievementMessages: Record<string, string> = {
+  "Currently unavailable": "현재 획득 불가",
+  "Price changed. Review the updated price before buying.": "가격이 변경됐어요. 새 가격을 확인하고 다시 구매해 주세요.",
+  "Best time: {time}": "최고 기록: {time}",
+  "No solo finish yet": "아직 완주 기록이 없어요",
+  "Target time: {time}": "목표 기록: {time}",
+  "{days}-day reward": "{days}일 보상",
+  "Could not load the collection. Your purchases are safe.": "컬렉션을 불러오지 못했어요. 구매 기록은 그대로 유지돼요.",
+  "Reload collection": "컬렉션 다시 불러오기",
+  "Loading collection…": "컬렉션 불러오는 중…",
   "Signature tiles and merge effects.": "전용 타일과 합성 이펙트.",
   "Bronze collector": "브론즈 컬렉터",
   "Reach Bronze in ranked play.": "경쟁전에서 브론즈 이상 달성 · 배치 완료 후",

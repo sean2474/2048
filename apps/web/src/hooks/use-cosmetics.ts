@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
-import { SHOP_ITEMS } from "schema/economy";
+import { useCatalog } from "./catalog-provider";
 import { createClient } from "@/lib/supabase/client";
 
 type CosmeticKind = "skin" | "icon";
@@ -15,6 +15,7 @@ function isCosmeticState(value: unknown): value is CosmeticState {
 }
 
 export function useCosmetics(user: User | null | undefined) {
+  const catalog = useCatalog();
   const userId = user && !user.is_anonymous ? user.id : undefined;
   const [result, setResult] = useState<{ userId: string; data: CosmeticState } | null>(null);
   const [error, setError] = useState(false);
@@ -48,16 +49,16 @@ export function useCosmetics(user: User | null | undefined) {
     return () => { generation.current++; window.removeEventListener("focus", refresh); document.removeEventListener("visibilitychange", refresh); };
   }, [reload]);
 
-  const owns = (kind: CosmeticKind, id: string) => Boolean(userId && (SHOP_ITEMS.some(item => item.kind === kind && item.id === id && item.price === 0)
+  const owns = (kind: CosmeticKind, id: string) => Boolean(userId && ((kind === "skin" ? catalog.skins : catalog.profileIcons).some(item => item.id === id && item.acquisition === "free" && item.publishedOnce)
     || data?.purchases.some(item => item.kind === kind && item.item_id === id)));
 
-  async function purchase(kind: CosmeticKind, id: string) {
-    if (!userId || !data || pending.current || owns(kind, id)) return;
+  async function purchase(kind: CosmeticKind, id: string, expectedPrice: number) {
+    if (!userId || !data || pending.current || owns(kind, id) || catalog.error || catalog.loading || !Number.isSafeInteger(expectedPrice) || expectedPrice <= 0 || !(kind === "skin" ? catalog.skins : catalog.profileIcons).some(item => item.id === id && item.status === "published" && item.acquisition === "coins")) return;
     pending.current = true;
     const request = ++version.current;
     setBuying(true); setPurchaseError(null);
     try {
-      const response = await createClient().rpc("purchase_cosmetic", { p_kind: kind, p_item_id: id });
+      const response = await createClient().rpc("purchase_cosmetic", { p_kind: kind, p_item_id: id, p_expected_price: expectedPrice });
       if (response.error) throw response.error;
       if (!isCosmeticState(response.data) || !("purchased" in response.data) || typeof response.data.purchased !== "boolean") throw new Error("Invalid purchase response");
       if (request === version.current) {
@@ -67,7 +68,10 @@ export function useCosmetics(user: User | null | undefined) {
     } catch (cause) {
       if (request === version.current) {
         const message = cause && typeof cause === "object" && "message" in cause ? cause.message : "";
-        setPurchaseError(message === "Not enough coins" ? "Not enough coins." : "Could not complete your purchase. Please try again.");
+        if (message === "Price changed. Review the updated price before buying.") {
+          setPurchaseError(message);
+          void catalog.reload();
+        } else setPurchaseError(message === "Not enough coins" ? "Not enough coins." : "Could not complete your purchase. Please try again.");
       }
     } finally {
       if (request === version.current) { pending.current = false; setBuying(false); setLoading(false); }

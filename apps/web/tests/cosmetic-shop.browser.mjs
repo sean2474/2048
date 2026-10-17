@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { mockAccount, authCookieName } from "./browser-fixtures.mjs";
+import { mockAccount, mockCatalog, authCookieName } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
@@ -19,6 +19,7 @@ test("common skins are included, paid skins and profiles unlock only after one c
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const page = await browser.newPage({ locale: "ko-KR", reducedMotion: "reduce" });
+    await mockCatalog(page);
     page.setDefaultTimeout(8000);
     const account = await mockAccount(page), errors = [], calls = [];
     account.cosmetics.balance = 1000;
@@ -85,6 +86,7 @@ test("shop rejects unavailable or malformed ownership, handles purchase errors, 
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const page = await browser.newPage({ locale: "ko-KR" });
+    await mockCatalog(page);
     page.setDefaultTimeout(8000);
     const account = await mockAccount(page);
     account.cosmetics.balance = 300;
@@ -126,6 +128,7 @@ test("shop supports guest login and mobile catalogs without overflow", async () 
   try {
     for (const authenticated of [false, true]) {
       const page = await browser.newPage({ locale: "ko-KR", reducedMotion: "reduce" });
+    await mockCatalog(page);
       if (authenticated) (await mockAccount(page)).cosmetics.balance = 150;
       await page.goto(`${origin}/shop`);
       await page.getByRole("heading", { name: "코인 상점", exact: true }).waitFor();
@@ -162,6 +165,7 @@ test("switching accounts discards delayed purchase ownership and balance", async
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const page = await browser.newPage({ locale: "ko-KR" });
+    await mockCatalog(page);
     page.setDefaultTimeout(8000);
     const account = await mockAccount(page);
     account.cosmetics.balance = 1000;
@@ -202,6 +206,7 @@ test("loading and invalid cosmetic responses keep purchases disabled while defau
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const page = await browser.newPage({ locale: "ko-KR", reducedMotion: "reduce" });
+    await mockCatalog(page);
     page.setDefaultTimeout(8000);
     await mockAccount(page);
     let release, first = true, response = null;

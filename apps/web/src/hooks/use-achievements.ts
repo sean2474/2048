@@ -21,7 +21,7 @@ export function useAchievements(user: User | null | undefined) {
     const request = ++version.current;
     setLoading(true); setError(false);
     try {
-      const response = await createClient().rpc("achievement_state", {}, { get: true });
+      const response = await createClient().rpc("sync_achievements");
       if (response.error || !response.data?.attendance || !Array.isArray(response.data.unlocks)) throw new Error("Achievements unavailable");
       if (request === version.current) setResult({ userId, data: response.data as AchievementState });
     } catch { if (request === version.current) setError(true); }
