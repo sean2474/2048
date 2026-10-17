@@ -6,7 +6,7 @@ All web page, navigation and bundle rows come from the quiet-host rerun. Admin, 
 
 Native browser timings are primary. Observed-ready is a post-load upper bound including Playwright checks and two animation frames; it is not first data readiness. Mobile is desktop viewport/touch emulation. Database data is a loopback fixture; the real local Socket.IO server handles matches.
 
-| App / route / device / account / cache | n | TTFB median ms | Load median ms | LCP median ms | Observed-ready upper bound median / p95 ms |
+| App / route / device / account / cache | n | TTFB median ms | Load median ms | Provisional observed LCP median ms | Observed-ready upper bound median / p95 ms |
 |---|---:|---:|---:|---:|---:|
 | web / / / desktop / account / cold | 5 | 10.1 | 55.3 | 200.0 | 243.8 / 416.9 |
 | web / / / desktop / account / warm | 5 | 11.0 | 24.6 | 64.0 | 80.4 / 86.6 |
@@ -156,3 +156,5 @@ Native browser timings are primary. Observed-ready is a post-load upper bound in
 720 page samples; 155 client navigations; 4 actual two-player games; 2 solo clock checks; 39 initial JS bundle entries. Failures: 0.
 
 Natural-match duration reflects random tiles and automated play policy. Surrender is measured separately. Local packet latency cannot establish deployed latency. Complete input timings, exact bundle bytes, request paths/counts and all game/clock samples are retained in raw.json.
+
+Raw observed LCP uses a variable observation horizon and must not support before/after LCP conclusions. Native FCP, TTFB and load comparisons are in ../comparison.md.

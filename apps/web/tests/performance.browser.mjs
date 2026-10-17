@@ -18,6 +18,8 @@ const label = process.env.BENCH_LABEL ?? 'local';
 assert.match(label, /^[a-z0-9-]+$/);
 const runs = Number(process.env.BENCH_RUNS ?? 5);
 assert.ok(Number.isInteger(runs) && runs >= 1 && runs <= 20);
+const observationWindowMs = Number(process.env.BENCH_OBSERVE_MS ?? 0);
+assert.ok(Number.isInteger(observationWindowMs) && observationWindowMs >= 0 && observationWindowMs <= 10000);
 const basePort = Number(process.env.BENCH_PORT ?? 3410);
 assert.ok(Number.isInteger(basePort) && basePort > 1024 && basePort < 65530);
 const ports = { web: basePort, admin: basePort + 1, api: basePort + 2, socket: basePort + 3 };
@@ -29,6 +31,7 @@ const apps = requestedApp ? [requestedApp] : ['web', 'admin'];
 const children = [];
 let browser, fixture;
 const report = { label, measuredAt: new Date().toISOString(), commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), environment: { mode: 'local-production-build', node: process.version, platform: platform(), arch: arch(), cpu: cpus()[0]?.model, browser: null, runs, throttling: 'none', backend: 'loopback fixture data + real local Socket.IO; no external database or network latency simulation', cold: 'fresh context with empty HTTP cache; warm server process', warm: 'same-context reload', mobile: 'viewport/touch emulation on desktop CPU, not real phone' }, coverage: [], bundles: [], pages: [], navigation: [], games: [], solo: [], failures: [] };
+report.environment.observationWindowMs = observationWindowMs;
 await mkdir(output, { recursive: true });
 
 async function launchApp(app) {
@@ -82,6 +85,7 @@ async function measurePages(origin, entries, device) {
           const response = cache === 'cold' ? await page.goto(origin + entry.path, { waitUntil: 'load' }) : await page.reload({ waitUntil: 'load' });
           assert.equal(response.status(), 200);
           await ready(page, entry);
+          if (observationWindowMs) await page.waitForFunction(horizon => performance.now() >= horizon, observationWindowMs);
           const metrics = await page.evaluate(readMetrics);
           assert.ok(metrics.ttfbMs >= 0 && metrics.loadMs > 0 && metrics.observedDataReadyMs >= metrics.headingMs);
           assert.deepEqual(errors, [], `Browser errors on ${entry.app}${entry.path}`);
