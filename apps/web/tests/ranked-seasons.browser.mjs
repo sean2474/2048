@@ -72,9 +72,9 @@ test("lifetime evaluation, season qualification, peak rank and archived snapshot
   Object.assign(row, { draws: 1, games_played: 10 });
   await page.reload(); await page.getByRole("rowheader", { name: /Fixture Challenger/ }).waitFor();
   assert.match(await page.locator("tbody").innerText(), /Gold/); assert.doesNotMatch(await page.locator("tbody").innerText(), /Platinum/);
-  const season = page.getByRole("combobox", { name: "Season", exact: true }); await season.focus(); assert.equal(await season.evaluate(el => el === document.activeElement), true); await season.selectOption(old.id);
+  const season = page.getByRole("button", { name: /^Season:/ }); await season.focus(); assert.equal(await season.evaluate(el => el === document.activeElement), true); await season.click(); await page.getByRole("menuitem", { name: old.name, exact: true }).click();
   await page.getByRole("rowheader", { name: /Archived Champion/ }).waitFor(); assert.match(await page.locator("tbody").innerText(), /Master/); await page.getByText("Archived season", { exact: true }).waitFor();
-  await season.selectOption("current"); await page.getByRole("rowheader", { name: /Fixture Challenger/ }).waitFor();
+  await season.click(); await page.getByRole("menuitem", { name: "Current season", exact: true }).click(); await page.getByRole("rowheader", { name: /Fixture Challenger/ }).waitFor();
   await season.blur();
   for (const [width, height] of [[375, 812], [768, 1024], [1440, 900]]) {
     await page.setViewportSize({ width, height });

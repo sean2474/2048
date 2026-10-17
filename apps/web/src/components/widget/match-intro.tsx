@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Swords } from "lucide-react";
+import { Swords } from "lucide-react";
 import type { MatchFound } from "schema/in-game";
 import { useI18n } from "ui/i18n";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -10,10 +10,10 @@ import { RankProgress } from "./rank-progress";
 import { matchModeLabel } from "@/lib/multiplayer";
 import "@/styles/match-intro.css";
 
-export function MatchIntro({ match, onEnter }: { match: MatchFound | null; onEnter: () => void }) {
+export function MatchIntro({ match }: { match: MatchFound | null }) {
   const { t, locale } = useI18n();
   if (!match) return null;
-  return <Dialog open onOpenChange={open => { if (!open) onEnter(); }}>
+  return <Dialog open>
     <DialogContent className="match-intro translate-x-0 translate-y-0" showCloseButton={false}>
       <div className="match-intro-content">
         <header className="match-intro-heading">
@@ -36,7 +36,7 @@ export function MatchIntro({ match, onEnter }: { match: MatchFound | null; onEnt
         </div>
         <footer className="match-intro-footer">
           <div className="match-intro-progress" aria-hidden="true"><span /></div>
-          <div className="match-intro-bottom"><p role="status">{t("Entering the arena…")}</p><button type="button" onClick={onEnter}>{t("Enter now")}<ArrowRight size={14} aria-hidden="true" /></button></div>
+          <div className="match-intro-bottom"><p role="status">{t("Entering the arena…")}</p></div>
         </footer>
       </div>
     </DialogContent>

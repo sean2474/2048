@@ -69,5 +69,5 @@ export function useLobby(mode: Mode, code?: string, matchMode: "casual" | "ranke
     connection.connect();
     return () => { clearTimeout(introTimer); enterMatch.current = () => {}; connection.removeAllListeners(); connection.disconnect(); };
   }, [mode, code, matchMode, enabled, attempt, router]);
-  return { joinCode, status: t(status), error: t(error), match, enterMatch: () => enterMatch.current(), retry: () => setAttempt(value => value + 1) };
+  return { joinCode, status: t(status), error: t(error), match, retry: () => setAttempt(value => value + 1) };
 }
