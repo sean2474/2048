@@ -23,6 +23,7 @@ export const catalogMessages: Record<string, string> = {
   "Image upload failed. Use an image up to 4096 × 4096 and try again.": "업로드하지 못했습니다. 4096 × 4096 이하의 이미지로 다시 시도하세요.",
   "Best solo finish time (milliseconds)": "솔로 최단 완료 시간 (밀리초)",
   "Highest endless tile": "무한 모드 최고 타일",
+  "Other achievements unlocked": "다른 업적 달성 개수",
   "Achievement condition": "업적 조건", "Target": "목표값",
   "Consecutive attendance days": "연속 출석일", "Eligible match wins": "유효 대전 승수",
   "Highest match tile": "대전 최고 타일", "Highest established tier": "배치 완료 후 최고 티어",
