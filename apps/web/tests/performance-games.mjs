@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { setTimeout as delay } from 'node:timers/promises';
-import { fixtureCookies } from './performance-fixture.mjs';
+import { fixtureCookies, PLAYER, RIVAL } from './performance-fixture.mjs';
 
 export function packets(page) {
   const events = [], waiters = new Set();
@@ -37,8 +37,9 @@ async function inputProbe(page) {
 export async function measureMatch(browser, origin, device, fixture, { surrender = false, maxMoves = 2000 } = {}) {
   const contexts = await Promise.all([0, 1].map(() => browser.newContext({ locale: 'en-US', viewport: device.viewport, isMobile: device.mobile, hasTouch: device.mobile })));
   const pages = await Promise.all(contexts.map(context => context.newPage()));
-  await Promise.all(contexts.map(context => context.addCookies([{ name: 'duo.locale', value: 'en', url: origin }])));
+  await Promise.all(contexts.map((context, index) => context.addCookies(fixtureCookies(origin, 'web', index ? RIVAL : PLAYER))));
   const streams = pages.map(packets), errors = [];
+  let spectator, watchReadyMs = null;
   pages.forEach(page => page.on('pageerror', error => errors.push(error.message)));
   const latest = index => [...streams[index].events].reverse().find(event => event.direction === 'received' && ['state', 'end'].includes(event.message.t));
   try {
@@ -52,6 +53,15 @@ export async function measureMatch(browser, origin, device, fixture, { surrender
     await Promise.all(pages.map(page => page.locator('.match-screen .game-you [data-skin]').waitFor()));
     const boardAt = performance.now();
     await Promise.all(pages.map(inputProbe));
+    if (!surrender) {
+      spectator = await browser.newContext({ locale: 'en-US', viewport: device.viewport, isMobile: device.mobile, hasTouch: device.mobile });
+      await spectator.addCookies(fixtureCookies(origin, 'web', PLAYER));
+      const watchPage = await spectator.newPage(), watchAt = performance.now();
+      await watchPage.goto(`${origin}/watch/${RIVAL}`);
+      await watchPage.locator('.game-stage .game-you [data-skin]').waitFor();
+      watchReadyMs = performance.now() - watchAt;
+      await spectator.close(); spectator = null;
+    }
     const ends = streams.map(stream => stream.wait(event => event.direction === 'received' && event.message.t === 'end', 240000));
     // Attach rejection handling immediately while actual moves run.
     const ended = Promise.all(ends); ended.catch(() => {});
@@ -66,9 +76,9 @@ export async function measureMatch(browser, origin, device, fixture, { surrender
         const index = moves % 2, page = pages[index], state = latest(index)?.message;
         assert.equal(state?.t, 'state');
         const directions = ['left', 'up', 'right', 'down'];
-        const candidates = directions.filter(dir => fixture.applyMove(state.you.board, dir, () => .5, [], false).moved);
+        const candidates = directions.map(dir => ({ dir, result: fixture.applyMove(state.you.board, dir, () => .5, [], false) })).filter(item => item.result.moved).sort((a, b) => a.result.scoreDelta - b.result.scoreDelta);
         assert.ok(candidates.length, 'Server should end a locked board');
-        const dir = candidates[moves % candidates.length];
+        const dir = candidates[0].dir;
         const pending = streams.map(stream => stream.wait(event => event.direction === 'received' && ['state', 'end'].includes(event.message.t) && (event.message.t === 'end' || !event.message.paused)));
         const sentAt = performance.now();
         if (device.mobile) await page.getByRole('button', { name: `Move ${dir}`, exact: true }).click();
@@ -91,13 +101,13 @@ export async function measureMatch(browser, origin, device, fixture, { surrender
     assert.deepEqual(errors, []);
     const inputPaintMs = (await Promise.all(pages.map(page => page.evaluate(() => window.__inputTimes)))).flat();
     const record = fixture.matches.find(match => match.id === matched[0].message.roomId);
-    return { device: device.name, kind: surrender ? 'surrender' : 'natural', roomId: matched[0].message.roomId, reason: results[0].message.reason, moves: moves + (surrender ? 0 : 1), queueNavigationToFoundMs: matched[1].at - queueAt, secondQueueRequestToFoundMs: matched[1].at - Math.max(...streams.map(stream => stream.events.find(event => event.direction === 'sent' && event.message.t === 'findMatch').at)), introAndJoinMs: Math.max(...started.map(event => event.at)) - Math.max(...matched.map(event => event.at)), firstBoardMs: boardAt - queueAt, playableDurationMs: results[0].at - Math.max(...started.map(event => event.at)), roomWallDurationMs: record ? Date.parse(record.endedAt) - Date.parse(record.startedAt) : null, resultPacketToOverlayMs: resultPaintAt - Math.max(...results.map(event => event.at)), surrenderToResultMs: surrenderAt === null ? null : results[0].at - surrenderAt, inputs, inputPaintMs };
-  } finally { streams.forEach(stream => stream.close()); await Promise.all(contexts.map(context => context.close())); }
+    return { device: device.name, kind: surrender ? 'surrender' : 'natural', policy: 'alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards', watchReadyMs, roomId: matched[0].message.roomId, reason: results[0].message.reason, moves: moves + (surrender ? 0 : 1), queueNavigationToFoundMs: matched[1].at - queueAt, secondQueueRequestToFoundMs: matched[1].at - Math.max(...streams.map(stream => stream.events.find(event => event.direction === 'sent' && event.message.t === 'findMatch').at)), introAndJoinMs: Math.max(...started.map(event => event.at)) - Math.max(...matched.map(event => event.at)), firstBoardMs: boardAt - queueAt, playableDurationMs: results[0].at - Math.max(...started.map(event => event.at)), roomWallDurationMs: record ? Date.parse(record.endedAt) - Date.parse(record.startedAt) : null, resultPacketToOverlayMs: resultPaintAt - Math.max(...results.map(event => event.at)), surrenderToResultMs: surrenderAt === null ? null : results[0].at - [...streams[0].events].reverse().find(event => event.direction === 'sent' && event.message.t === 'surrender').at, inputs, inputPaintMs };
+  } finally { streams.forEach(stream => stream.close()); if (spectator) await spectator.close(); await Promise.all(contexts.map(context => context.close())); }
 }
 
 export async function measureSolo(browser, origin, device) {
   const context = await browser.newContext({ locale: 'en-US', viewport: device.viewport, isMobile: device.mobile, hasTouch: device.mobile });
-  await context.addCookies(fixtureCookies(origin, 'web'));
+  await context.addCookies(fixtureCookies(origin, 'web', device.mobile ? RIVAL : PLAYER));
   const page = await context.newPage();
   try {
     await page.goto(`${origin}/solo`);

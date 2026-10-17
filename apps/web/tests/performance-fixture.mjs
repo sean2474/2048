@@ -75,6 +75,9 @@ export async function startPerformanceFixture({ root, webPort, adminPort, apiPor
       else if (name === 'admin_player') data = { player, matches: [], audit: [] };
       else if (name === 'admin_audit_entries') data = { entries: [{ id: MATCH, createdAt: created, actorId: PLAYER, playerId: RIVAL, actorExists: true, playerExists: true, action: 'suspend', reason: 'Benchmark audit note' }], hasMore: false, nextCursor: null };
       else if (name === 'feedback') { data = [{ id: MATCH, created_at: created, player_id: PLAYER, category: 'bug', subject: 'Benchmark feedback', message: 'Benchmark report', page_path: '/', locale: 'en', display_name: player.name, email: player.email }]; response.setHeader('content-range', '0-0/1'); }
+      else if (name === 'sync_daily_quests') data = { playerId: id, day: '2026-10-17', nextResetAt: '2026-10-17T15:00:00Z', balance: 1200, awarded: 0, quests: ['check-in', 'play-3', 'win-1'].map(id => ({ id, progress: id === 'check-in' ? 1 : 0, rewardedAt: id === 'check-in' ? created : null })) };
+      else if (['my_season_rank', 'my_solo_rank'].includes(name)) data = 1;
+      else if (name === 'social_messages') data = [];
       else if (name === 'social_players') data = [{ id: RIVAL, name: 'Benchmark Rival', icon_id: 'orb', relationship: 'friend', unread: 0 }];
       else if (['solo_leaderboard', 'solo_records', 'daily_quests', 'daily_quest_state'].includes(name)) data = [];
       else { unknown.push(url.pathname); response.writeHead(501, { 'content-type': 'application/json' }); response.end(JSON.stringify({ message: `Benchmark fixture missing ${name}` })); return; }

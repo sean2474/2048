@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { spawn, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { resolve, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { cpus, platform, arch } from 'node:os';
+import { gzipSync } from 'node:zlib';
 import { fixtureCookies, startPerformanceFixture } from './performance-fixture.mjs';
 import { discoverPages, routeCase } from './performance-routes.mjs';
 import { installProbe, readMetrics, summarize } from './performance-metrics.mjs';
@@ -27,7 +28,7 @@ assert.ok(!requestedApp || ['web', 'admin'].includes(requestedApp));
 const apps = requestedApp ? [requestedApp] : ['web', 'admin'];
 const children = [];
 let browser, fixture;
-const report = { label, measuredAt: new Date().toISOString(), commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), environment: { mode: 'local-production-build', node: process.version, platform: platform(), arch: arch(), cpu: cpus()[0]?.model, browser: null, runs, throttling: 'none', backend: 'loopback fixture data + real local Socket.IO; no external database or network latency simulation', cold: 'fresh context with empty HTTP cache; warm server process', warm: 'same-context reload', mobile: 'viewport/touch emulation on desktop CPU, not real phone' }, coverage: [], pages: [], games: [], solo: [], failures: [] };
+const report = { label, measuredAt: new Date().toISOString(), commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), environment: { mode: 'local-production-build', node: process.version, platform: platform(), arch: arch(), cpu: cpus()[0]?.model, browser: null, runs, throttling: 'none', backend: 'loopback fixture data + real local Socket.IO; no external database or network latency simulation', cold: 'fresh context with empty HTTP cache; warm server process', warm: 'same-context reload', mobile: 'viewport/touch emulation on desktop CPU, not real phone' }, coverage: [], bundles: [], pages: [], navigation: [], games: [], solo: [], failures: [] };
 await mkdir(output, { recursive: true });
 
 async function launchApp(app) {
@@ -40,6 +41,15 @@ async function launchApp(app) {
   let buildLog = ''; build.stdout.on('data', chunk => { buildLog += chunk; }); build.stderr.on('data', chunk => { buildLog += chunk; });
   const [buildCode] = await once(build, 'exit'); await writeFile(join(output, `${app}-build.log`), buildLog);
   assert.equal(buildCode, 0, `${app} production build failed; see ${app}-build.log`);
+  const dist = join(appRoot, app === 'web' ? '.next/performance-benchmark' : '.next');
+  const manifest = JSON.parse(await readFile(join(dist, 'app-build-manifest.json'), 'utf8'));
+  for (const [entry, chunks] of Object.entries(manifest.pages)) {
+    if (!entry.endsWith('/page')) continue;
+    const files = [...new Set(chunks.filter(file => file.endsWith('.js')))];
+    const bytes = await Promise.all(files.map(file => readFile(join(dist, file))));
+    const route = '/' + entry.split('/').filter(part => part && !part.startsWith('(') && part !== 'page').join('/');
+    report.bundles.push({ app, route, files, jsBytes: bytes.reduce((sum, buffer) => sum + buffer.length, 0), gzipBytes: bytes.reduce((sum, buffer) => sum + gzipSync(buffer).length, 0), definition: 'Unique initial app-build-manifest JS chunks; raw bytes and sum of individually gzipped chunks. Runtime lazy imports excluded.' });
+  }
   const child = spawn(process.execPath, [next, 'start', '--hostname', '127.0.0.1', '--port', String(ports[app])], { cwd: appRoot, env, stdio: ['ignore', 'pipe', 'pipe'] });
   children.push(child);
   let logs = ''; child.stdout.on('data', chunk => { logs += chunk; }); child.stderr.on('data', chunk => { logs += chunk; });
@@ -77,7 +87,7 @@ async function measurePages(origin, entries, device) {
           assert.deepEqual(errors, [], `Browser errors on ${entry.app}${entry.path}`);
           const alerts = await page.locator('[role="alert"]:visible').allTextContents();
           assert.ok(!alerts.some(text => /could not|failed|unavailable|unable to|error/i.test(text)), `Unexpected data error: ${alerts.join(' ')}`);
-          report.pages.push({ app: entry.app, route: entry.route, path: entry.path, state: entry.state ?? 'ready', auth: entry.auth, device: device.name, run: run + 1, cache, ...metrics, backendRequests: fixture.requests.slice(requestStart).map(request => request.path) });
+          report.pages.push({ app: entry.app, route: entry.route, path: entry.path, state: entry.state ?? 'ready', auth: entry.auth, device: device.name, run: run + 1, cache, ...metrics, preferencesQueries: fixture.requests.slice(requestStart).filter(request => request.path.endsWith('/player_preferences')).length, backendRequests: fixture.requests.slice(requestStart).map(request => request.path) });
           if (run === 0 && cache === 'cold') await page.screenshot({ path: join(output, `${entry.app}-${entry.path.replace(/[^a-z0-9]/gi, '_')}-${device.name}.png`), fullPage: true });
         }
       } catch (error) {
@@ -92,6 +102,29 @@ async function measurePages(origin, entries, device) {
   }
 }
 
+async function measureNavigation(origin, entries, device) {
+  const context = await browser.newContext({ locale: 'en-US', viewport: device.viewport, isMobile: device.mobile, hasTouch: device.mobile });
+  await context.addCookies(fixtureCookies(origin, entries[0].app));
+  const page = await context.newPage();
+  try {
+    for (const entry of entries.filter(entry => entry.auth && !entry.journey && entry.path !== '/')) {
+      for (let run = 0; run < runs; run++) {
+        await page.goto(origin); await ready(page, routeCase(entry.app, '/'));
+        const link = page.locator(`a[href="${entry.path}"]:visible`).first();
+        if (!await link.count()) break;
+        await page.evaluate(() => {
+          window.__navigationClick = null;
+          document.addEventListener('click', event => { if (event.target.closest('a')) window.__navigationClick = performance.now(); }, { once: true, capture: true });
+        });
+        await link.click(); await page.waitForURL(origin + entry.path); await ready(page, entry);
+        const dataReadyMs = await page.evaluate(() => window.__navigationClick === null ? null : performance.now() - window.__navigationClick);
+        assert.ok(dataReadyMs !== null && dataReadyMs >= 0, 'Must observe an actual client link click');
+        report.navigation.push({ app: entry.app, route: entry.route, device: device.name, run: run + 1, dataReadyMs, source: '/', cache: 'client-navigation-with-normal-prefetch' });
+      }
+    }
+  } finally { await context.close(); }
+}
+
 try {
   fixture = await startPerformanceFixture({ root, webPort: ports.web, adminPort: ports.admin, apiPort: ports.api, socketPort: ports.socket });
   browser = await chromium.launch({ channel: 'chrome', headless: true }); report.environment.browser = browser.version();
@@ -101,15 +134,15 @@ try {
     const origin = await launchApp(app);
     const filter = process.env.BENCH_ROUTES?.split(',');
     const selected = filter ? entries.filter(entry => filter.includes(entry.route)) : entries;
-    for (const device of devices) await measurePages(origin, selected, device);
+    for (const device of devices) { await measurePages(origin, selected, device); if (!filter) await measureNavigation(origin, entries, device); }
     if (app === 'web' && process.env.BENCH_GAMES !== '0') {
       for (const device of devices) {
         for (const surrender of [false, true]) {
-          try { report.games.push(await measureMatch(browser, origin, device, fixture, { surrender })); }
-          catch (error) { report.failures.push({ journey: surrender ? 'surrender' : 'natural-match', device: device.name, error: String(error) }); }
+          try { console.log(`Measuring ${device.name} ${surrender ? 'surrender' : 'natural'} match`); report.games.push(await measureMatch(browser, origin, device, fixture, { surrender })); await writeFile(join(output, 'raw.json'), JSON.stringify(report, null, 2)); }
+          catch (error) { report.failures.push({ journey: surrender ? 'surrender' : 'natural-match', device: device.name, error: String(error) }); console.error(String(error)); }
         }
         if (allRoutes.includes('/solo')) try { report.solo.push(await measureSolo(browser, origin, device)); }
-        catch (error) { report.failures.push({ journey: 'solo-clock', device: device.name, error: String(error) }); }
+        catch (error) { report.failures.push({ journey: 'solo-clock', device: device.name, error: String(error) }); console.error(String(error)); }
       }
     }
   }

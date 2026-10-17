@@ -52,7 +52,7 @@ const adminReady = {
 };
 export function routeCase(app, route) {
   if (app === 'web' && route === '/play/[id]') return { app, route, journey: 'real-match' };
-  if (app === 'web' && route === '/watch/[id]') return { app, route, path: `/watch/${RIVAL}`, auth: true, ready: { text: 'not in a spectatable match' }, state: 'offline-player' };
+  if (app === 'web' && route === '/watch/[id]') return { app, route, path: `/watch/${RIVAL}`, auth: true, ready: { text: 'No match available to watch' }, state: 'offline-player' };
   const publicRoute = ['/login', '/signup', '/forgot-password', '/reset-password', '/auth/error'].includes(route);
   return { app, route, path: route.replace('[id]', route.startsWith('/matches') ? MATCH : PLAYER), auth: !publicRoute, ready: (app === 'web' ? webReady : adminReady)[route] ?? { selector: 'main' }, ...(route === '/test' ? { state: 'legacy-route' } : route === '/reset-password' ? { state: 'no-recovery-session' } : {}) };
 }
