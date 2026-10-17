@@ -1,5 +1,7 @@
 # Skin expansion and competitive UI details
 
+> 20개 스킨 확장 당시의 계약·검증 기록이다. 무료 제공 범위와 음색 수는 당시 상태다. 현재 [꾸미기](../loadout-and-economy.md)·[카탈로그](../content-catalog.md)·[시각 기준](../visual-asset-guide.md)을 따른다.
+
 - Twenty skins available to accounts at no coin cost, five per rarity. Add material, sci-fi, armor and magic themes without replacing existing selections.
 - Shared preview/game number rendering, readable numeric plates, unchanged obstacle identity, compact twelve-card paging and rarity filters.
 - Match participants carry their own validated skin ID. Both perspectives, reconnects and results must preserve that assignment.
