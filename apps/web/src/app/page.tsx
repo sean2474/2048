@@ -9,7 +9,7 @@ import { PageHeading } from "@/components/widget/page-heading";
 import { GameEmblem } from "@/components/widget/game-emblem";
 import { DemoBoard } from "@/components/widget/demo-board";
 import { RankProgress } from "@/components/widget/rank-progress";
-import { TierBadge } from "@/components/widget/tier-badge";
+import { TierBadge } from "@/components/widget/server-tier-badge";
 import { ProfileSkeleton, RecordsSkeleton } from "@/components/widget/records-skeleton";
 import { LiveRecords, RefreshButton } from "@/components/widget/refresh-records";
 import { getI18n } from "@/lib/i18n/server";
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   return <main className="mx-auto max-w-[1040px] space-y-6 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
     <PageHeading icon="profile" title={t("Dashboard")}><Button asChild variant="outline"><Link href="/tutorial" data-analytics-link="/tutorial"><GraduationCap aria-hidden="true" />{t("Play tutorial")}</Link></Button><Button asChild><Link href="/find-match" data-analytics-link="/find-match">{t("Find match")}<ArrowRight aria-hidden="true" /></Link></Button></PageHeading>
     <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-8">
-      <Suspense fallback={<ProfileSkeleton label={t("Loading ranked record…")} />}><PlayerProfile /></Suspense>
+      {userId ? <Suspense fallback={<ProfileSkeleton label={t("Loading ranked record…")} />}><PlayerProfile userId={userId} /></Suspense> : <GuestProfile t={t} />}
       <section aria-label={t("Game preview")} className="mx-auto w-full max-w-[380px] min-w-0"><DemoBoard /></section>
     </div>
     {userId && <>
@@ -33,32 +33,35 @@ export default async function DashboardPage() {
   </main>;
 }
 
-async function PlayerProfile() {
-  const [{ t, locale }, { user, player }] = await Promise.all([getI18n(), getAccount()]);
-  const userId = user && !user.is_anonymous ? user.id : undefined;
-  const client = userId ? await createClient() : null;
-  const { data: rating, error } = client ? await client.from("player_ratings")
-    .select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating,rank_seasons(name)")
-    .eq("player_id", userId!).maybeSingle().returns<LeaderboardRow>() : { data: null, error: null };
+function GuestProfile({ t }: { t: Awaited<ReturnType<typeof getI18n>>["t"] }) {
   return <section aria-labelledby="profile-title" className="game-panel min-w-0 bg-card p-6 sm:p-8">
-        {!userId ? <>
           <div className="mb-5 flex items-center gap-3"><GameEmblem kind="profile" className="size-12" /><h2 id="profile-title" className="text-xl font-bold">{t("Guest")}</h2></div>
           <p className="text-sm leading-7 text-muted-foreground">{t("Guests can play casual and friend matches.")}</p>
           <p className="mt-4 border-t pt-4 text-sm leading-7 text-muted-foreground">{t("Sign in to keep your match history and track your Elo, tier, and ranked results.")}</p>
           <div className="mt-5 flex flex-wrap gap-3"><Button asChild variant="outline"><Link href="/login" data-analytics-link="/login">{t("Log in")}</Link></Button><Button asChild variant="ghost"><Link href="/signup" data-analytics-link="/signup">{t("Create account")}</Link></Button></div>
-        </> : <>
+  </section>;
+}
+
+async function PlayerProfile({ userId }: { userId: string }) {
+  const client = await createClient();
+  const [{ t, locale }, { player }, { data: rating, error }] = await Promise.all([
+    getI18n(), getAccount(),
+    client.from("player_ratings")
+      .select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating,rank_seasons(name)")
+      .eq("player_id", userId).maybeSingle().returns<LeaderboardRow>(),
+  ]);
+  return <section aria-labelledby="profile-title" className="game-panel min-w-0 bg-card p-6 sm:p-8">
           <div className="mb-6"><p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("Your player profile")}</p><h2 id="profile-title" className="break-words text-2xl font-extrabold tracking-tight">{player?.name || t("Player")}</h2></div>
           {error ? <div role="alert" className="space-y-3"><p className="text-sm leading-6 text-destructive">{t("Unable to load records. Please try again.")}</p><RefreshButton label="Retry rating" /></div> : !rating ? <div className="space-y-3 border-t pt-5"><p className="flex items-center gap-2 font-semibold"><GameEmblem kind="crown" className="size-8" />{t("Unrated")}</p><p className="text-sm leading-6 text-muted-foreground">{t("Your first 10 ranked matches establish your tier. Elo carries over between seasons.")}</p><Button asChild variant="outline"><Link href="/play/ranked" data-analytics-link="/play/ranked">{t("Play ranked")}<ArrowRight aria-hidden="true" /></Link></Button></div> : <>
-            <div className="flex items-end justify-between gap-4 border-y py-5"><div><p className="mb-2 text-xs font-semibold text-muted-foreground">{rating.rank_seasons?.name}</p><TierBadge rating={rating.rating} tier={rating.tier} className="mb-2" /><p className="text-4xl font-extrabold tabular-nums tracking-tight">{rating.rating.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}<span className="ml-2 text-xs font-medium tracking-normal text-muted-foreground">{t("Elo")}</span></p></div><p className="text-right text-xs leading-5 text-muted-foreground">{t("Ranked record")}<br />{t(rating.games_played === 1 ? "{count} match" : "{count} matches", { count: rating.games_played })}</p></div>
+            <div className="flex items-end justify-between gap-4 border-y py-5"><div><p className="mb-2 text-xs font-semibold text-muted-foreground">{rating.rank_seasons?.name}</p><TierBadge t={t} rating={rating.rating} tier={rating.tier} className="mb-2" /><p className="text-4xl font-extrabold tabular-nums tracking-tight">{rating.rating.toLocaleString(locale === "ko" ? "ko-KR" : "en-US")}<span className="ml-2 text-xs font-medium tracking-normal text-muted-foreground">{t("Elo")}</span></p></div><p className="text-right text-xs leading-5 text-muted-foreground">{t("Ranked record")}<br />{t(rating.games_played === 1 ? "{count} match" : "{count} matches", { count: rating.games_played })}</p></div>
             <div className="mt-4"><RankProgress rank={rating} rating={rating.rating} /></div>
             <div className="mt-4 space-y-3 rounded-xl border bg-muted/30 p-4">
               <p className="text-sm font-semibold">{rating.games_played >= SEASON_QUALIFYING_GAMES ? t("Season standings unlocked") : t("Season participation: {played}/{total}", { played: rating.games_played, total: SEASON_QUALIFYING_GAMES })}</p>
               <p className="text-xs leading-5 text-muted-foreground">{t("Elo and your established tier carry over. Play 10 ranked matches each season to enter its standings.")}</p>
-              <div className="flex flex-wrap items-center gap-2 border-t pt-3"><span className="text-xs font-semibold text-muted-foreground">{t("Season best")}</span>{rating.peak_rating == null ? <span className="text-xs text-muted-foreground">{t("No official result this season")}</span> : <><TierBadge rating={rating.peak_rating} /><span className="text-xs font-semibold tabular-nums">{rating.peak_rating.toLocaleString(locale)} ELO</span></>}</div>
+              <div className="flex flex-wrap items-center gap-2 border-t pt-3"><span className="text-xs font-semibold text-muted-foreground">{t("Season best")}</span>{rating.peak_rating == null ? <span className="text-xs text-muted-foreground">{t("No official result this season")}</span> : <><TierBadge t={t} rating={rating.peak_rating} /><span className="text-xs font-semibold tabular-nums">{rating.peak_rating.toLocaleString(locale)} ELO</span></>}</div>
             </div><dl className="mt-5 grid grid-cols-3 gap-4">{[{ label: t("Wins"), value: rating.wins }, { label: t("Losses"), value: rating.losses }, { label: t("Draws"), value: rating.draws }].map(item => <div key={item.label}><dt className="text-xs text-muted-foreground">{item.label}</dt><dd className="mt-1 text-xl font-bold tabular-nums">{item.value}</dd></div>)}</dl>
           </>}
-        </>}
-      </section>;
+  </section>;
 }
 
 async function RecentMatches({ userId }: { userId: string }) {

@@ -1,3 +1,4 @@
+import { startServerFixture } from "./server-fixture.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
@@ -15,33 +16,34 @@ test("lifetime evaluation, season qualification, peak rank and archived snapshot
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   t.after(() => browser.close());
   const context = await browser.newContext({ locale: "en-US", viewport: { width: 1440, height: 900 } });
-  await context.addCookies([{ name: "duo-locale", value: "en", url: origin }]);
   const page = await context.newPage(), errors = []; page.on("pageerror", error => errors.push(error.message));
-  const account = await mockAccount(page, id); account.row.locale = "en";
   const row = { player_id: id, display_name: "Fixture Challenger", rating: 1399, wins: 8, losses: 1, draws: 0, games_played: 9, highest_score: 2048, highest_tile: 512, season_id: current.id, rank_seasons: { name: current.name }, tier: null, placement_games: 9, peak_rating: null };
   let fail = false, empty = false;
-  await page.route("**/rest/v1/**", async route => {
-    const url = new URL(route.request().url()); let value;
+  const fixture = await startServerFixture({ handle: async (url, request) => {
+    let value;
     if (url.pathname.endsWith("/rank_seasons")) value = [current, old];
     else if (url.pathname.endsWith("/player_ratings")) {
       assert.doesNotMatch(url.searchParams.get("select"), /promotion_/);
-      if (fail) return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ message: "Fixture unavailable" }) });
+      if (fail) return { status: 503, data: { message: "Fixture unavailable" } };
       const standings = url.searchParams.has("games_played");
       if (standings) {
         assert.equal(url.searchParams.get("games_played"), "gte.10");
         assert.equal(url.searchParams.has("placement_games"), false);
       }
       value = empty || (standings && row.games_played < 10) ? [] : [{ ...row }];
-      if (route.request().headers().accept?.includes("vnd.pgrst.object")) value = value[0] ?? null;
+      if (request.headers.accept?.includes("vnd.pgrst.object")) value = value[0] ?? null;
     } else if (url.pathname.endsWith("/season_ratings")) {
       assert.equal(url.searchParams.get("games_played"), "gte.10");
       value = [{ ...row, display_name: "Archived Champion", season_id: old.id, tier: "Master", rating: 1900, placement_games: 10, games_played: 20, peak_rating: 1930 }];
     } else if (url.pathname.endsWith("/matches")) {
       assert.doesNotMatch(url.searchParams.get("select"), /promotion_/);
       value = [{ id: "33333333-3333-4333-8333-333333333333", started_at: old.starts_at, ended_at: "2026-10-10T00:00:00Z", reason: "surrender", ranked: true, mode: "ranked", rank_seasons: { name: old.name }, match_participants: [{ slot: 1, player_id: id, display_name: row.display_name, score: 100, max_tile: 64, result: "win", rating_before: 1190, rating_after: 1210, rating_delta: 20, tier_after: "Silver", placement_games: 5 }, { slot: 2, player_id: "44444444-4444-4444-8444-444444444444", display_name: "Opponent", score: 20, max_tile: 16, result: "loss" }] }];
-    } else return route.fallback();
-    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(value) });
-  });
+    } else return;
+    return { data: value };
+  } });
+  t.after(fixture.close);
+  const origin = fixture.origin;
+  await context.addCookies([fixture.cookie(id), { name: "duo-locale", value: "en", url: origin }]);
   await page.goto(origin); await page.getByText("Evaluating: 9/10", { exact: true }).waitFor();
   const profile = page.locator('section[aria-labelledby="profile-title"]');
   assert.match(await profile.innerText(), /1,399/); assert.doesNotMatch(await profile.innerText(), /Gold|Platinum/);

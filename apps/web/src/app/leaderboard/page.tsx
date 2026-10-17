@@ -9,7 +9,7 @@ import { LiveRecords, RefreshButton } from "@/components/widget/refresh-records"
 import { RecordsSkeleton } from "@/components/widget/records-skeleton";
 import { SeasonSelect } from "@/components/widget/season-select";
 import { Button } from "@/components/ui/button";
-import { TierBadge, TierIcon } from "@/components/widget/tier-badge";
+import { TierBadge, TierIcon } from "@/components/widget/server-tier-badge";
 import { ArrowLeft, ArrowRight, Crown, Swords, Trophy } from "lucide-react";
 import "@/styles/leaderboard.css";
 
@@ -109,8 +109,8 @@ async function Standings({ selectedSeason }: { selectedSeason: string }) {
               const winRate = row.games_played ? Math.round(row.wins / row.games_played * 100) : 0;
               return <tr key={row.player_id} className="border-t transition-colors hover:bg-[#f8f7f0]" data-place={index + 1}>
                 <td><span className="rank-position inline-grid size-8 place-items-center rounded-lg text-xs font-extrabold tabular-nums text-muted-foreground">{String(index + 1).padStart(2, "0")}</span></td>
-                <th scope="row" className="font-semibold"><span title={row.display_name} className="block max-w-28 truncate sm:max-w-52">{row.display_name}</span><TierBadge tier={row.tier} rating={row.rating} className="mt-1 md:hidden" /></th>
-                <td className="hidden md:table-cell"><TierBadge tier={row.tier} rating={row.rating} /></td>
+                <th scope="row" className="font-semibold"><span title={row.display_name} className="block max-w-28 truncate sm:max-w-52">{row.display_name}</span><TierBadge t={t} tier={row.tier} rating={row.rating} className="mt-1 md:hidden" /></th>
+                <td className="hidden md:table-cell"><TierBadge t={t} tier={row.tier} rating={row.rating} /></td>
                 <td className="text-right text-base font-extrabold tabular-nums tracking-tight">{row.rating.toLocaleString(numberLocale)}</td>
                 <td className="hidden text-right tabular-nums lg:table-cell">{row.wins}</td>
                 <td className="hidden text-right tabular-nums text-muted-foreground lg:table-cell">{row.games_played}</td>

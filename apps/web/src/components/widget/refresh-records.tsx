@@ -30,9 +30,11 @@ export function LiveRecords({ tables, filter, status = false }: { tables: string
     };
     let channel = client.channel(`records:${tables}:${filter ?? "all"}`);
     for (const table of tables.split(",")) channel = channel.on("postgres_changes", { event: "*", schema: "public", table, ...(filter ? { filter } : {}) }, refresh);
-    channel.subscribe(value => {
+    channel.on("system", {}, message => {
+      if (active && message.extension === "postgres_changes") setLive(message.status === "ok");
+    }).subscribe(value => {
       if (!active) return;
-      setLive(value === "SUBSCRIBED");
+      if (value !== "SUBSCRIBED") setLive(false);
       if (value === "SUBSCRIBED") {
         if (subscribed) refresh();
         subscribed = true;
