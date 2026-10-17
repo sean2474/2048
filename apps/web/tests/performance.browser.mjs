@@ -83,11 +83,11 @@ async function measurePages(origin, entries, device) {
           assert.equal(response.status(), 200);
           await ready(page, entry);
           const metrics = await page.evaluate(readMetrics);
-          assert.ok(metrics.ttfbMs >= 0 && metrics.loadMs > 0 && metrics.dataReadyMs >= metrics.headingMs);
+          assert.ok(metrics.ttfbMs >= 0 && metrics.loadMs > 0 && metrics.observedDataReadyMs >= metrics.headingMs);
           assert.deepEqual(errors, [], `Browser errors on ${entry.app}${entry.path}`);
           const alerts = await page.locator('[role="alert"]:visible').allTextContents();
           assert.ok(!alerts.some(text => /could not|failed|unavailable|unable to|error/i.test(text)), `Unexpected data error: ${alerts.join(' ')}`);
-          report.pages.push({ app: entry.app, route: entry.route, path: entry.path, state: entry.state ?? 'ready', auth: entry.auth, device: device.name, run: run + 1, cache, ...metrics, preferencesQueries: fixture.requests.slice(requestStart).filter(request => request.path.endsWith('/player_preferences')).length, backendRequests: fixture.requests.slice(requestStart).map(request => request.path) });
+          report.pages.push({ capturedAt: new Date().toISOString(), app: entry.app, route: entry.route, path: entry.path, state: entry.state ?? 'ready', auth: entry.auth, device: device.name, run: run + 1, cache, ...metrics, preferencesQueries: fixture.requests.slice(requestStart).filter(request => request.path.endsWith('/player_preferences')).length, backendRequests: fixture.requests.slice(requestStart).map(request => request.path) });
           if (run === 0 && cache === 'cold') await page.screenshot({ path: join(output, `${entry.app}-${entry.path.replace(/[^a-z0-9]/gi, '_')}-${device.name}.png`), fullPage: true });
         }
       } catch (error) {
@@ -117,9 +117,9 @@ async function measureNavigation(origin, entries, device) {
           document.addEventListener('click', event => { if (event.target.closest('a')) window.__navigationClick = performance.now(); }, { once: true, capture: true });
         });
         await link.click(); await page.waitForURL(origin + entry.path); await ready(page, entry);
-        const dataReadyMs = await page.evaluate(() => window.__navigationClick === null ? null : performance.now() - window.__navigationClick);
-        assert.ok(dataReadyMs !== null && dataReadyMs >= 0, 'Must observe an actual client link click');
-        report.navigation.push({ app: entry.app, route: entry.route, device: device.name, run: run + 1, dataReadyMs, source: '/', cache: 'client-navigation-with-normal-prefetch' });
+        const observedDataReadyMs = await page.evaluate(() => window.__navigationClick === null ? null : performance.now() - window.__navigationClick);
+        assert.ok(observedDataReadyMs !== null && observedDataReadyMs >= 0, 'Must observe an actual client link click');
+        report.navigation.push({ app: entry.app, route: entry.route, device: device.name, run: run + 1, observedDataReadyMs, source: '/', cache: 'client-navigation-with-normal-prefetch' });
       }
     }
   } finally { await context.close(); }
@@ -138,7 +138,7 @@ try {
     if (app === 'web' && process.env.BENCH_GAMES !== '0') {
       for (const device of devices) {
         for (const surrender of [false, true]) {
-          try { console.log(`Measuring ${device.name} ${surrender ? 'surrender' : 'natural'} match`); report.games.push(await measureMatch(browser, origin, device, fixture, { surrender })); await writeFile(join(output, 'raw.json'), JSON.stringify(report, null, 2)); }
+          try { console.log(`Measuring ${device.name} ${surrender ? 'surrender' : 'natural'} match`); report.games.push(await measureMatch(browser, origin, device, fixture, { surrender, screenshotPath: join(output, `game-${device.name}-${surrender ? 'surrender' : 'natural'}.png`) })); await writeFile(join(output, 'raw.json'), JSON.stringify(report, null, 2)); }
           catch (error) { report.failures.push({ journey: surrender ? 'surrender' : 'natural-match', device: device.name, error: String(error) }); console.error(String(error)); }
         }
         if (allRoutes.includes('/solo')) try { report.solo.push(await measureSolo(browser, origin, device)); }
@@ -149,7 +149,7 @@ try {
   report.environment.unknownFixtureRoutes = [...new Set(fixture.unknown)];
   report.summary = summarize(report.pages);
   await writeFile(join(output, 'raw.json'), JSON.stringify(report, null, 2));
-  const lines = ['# Local production performance measurements', '', `Commit: ${report.commit}`, `Chrome: ${report.environment.browser}; ${runs} repetitions; no CPU/network throttling.`, '', 'Backend data is a loopback fixture; game transport uses the real local Socket.IO server. Mobile means viewport/touch emulation. Paint values stop at data-ready and are lab samples, not field Core Web Vitals.', '', '| App / route / device / account / cache | n | Data ready median / p95 ms | TTFB median ms | LCP sample median ms |', '|---|---:|---:|---:|---:|', ...report.summary.map(row => `| ${row.key.replaceAll(' | ', ' / ')} | ${row.samples} | ${row.dataReadyMs?.median.toFixed(1)} / ${row.dataReadyMs?.p95.toFixed(1)} | ${row.ttfbMs?.median.toFixed(1)} | ${row.lcpMs?.median.toFixed(1) ?? 'not observed'} |`), '', `Failures: ${report.failures.length}. Complete per-run evidence, query counts, game timing and clock samples: raw.json.`, '', 'Match duration includes real moves until a server end condition. Surrender scenarios are separate. The deliberate 3.2-second intro is included only in intro/join and total entry metrics. Natural-match durations depend on random tiles and are not a performance improvement claim.', '', 'Not checked: real phone hardware, remote database latency, email delivery, field Speed Insights.'];
+  const lines = ['# Local production performance measurements', '', `Commit: ${report.commit}`, `Chrome: ${report.environment.browser}; ${runs} repetitions; no CPU/network throttling.`, '', 'Backend data is a loopback fixture; game transport uses the real local Socket.IO server. Mobile means viewport/touch emulation. Readiness is a post-load observed upper bound including automation round trips and paint checks, not first data arrival. Paint values stop at this observation and are lab samples, not field Core Web Vitals.', '', '| App / route / device / account / cache | n | Observed ready upper bound median / p95 ms | TTFB median ms | LCP sample median ms |', '|---|---:|---:|---:|---:|', ...report.summary.map(row => `| ${row.key.replaceAll(' | ', ' / ')} | ${row.samples} | ${row.observedDataReadyMs?.median.toFixed(1)} / ${row.observedDataReadyMs?.p95.toFixed(1)} | ${row.ttfbMs?.median.toFixed(1)} | ${row.lcpMs?.median.toFixed(1) ?? 'not observed'} |`), '', `Failures: ${report.failures.length}. Complete per-run evidence, query counts, game timing and clock samples: raw.json.`, '', 'Match duration includes real moves until a server end condition. Surrender scenarios are separate. The deliberate 3.2-second intro is included only in intro/join and total entry metrics. Natural-match durations depend on random tiles and are not a performance improvement claim.', '', 'Not checked: real phone hardware, remote database latency, email delivery, field Speed Insights.'];
   await writeFile(join(output, 'report.md'), lines.join('\n') + '\n');
   assert.deepEqual(report.failures, [], 'Some benchmark routes/journeys failed; raw.json retains partial evidence');
 } finally {

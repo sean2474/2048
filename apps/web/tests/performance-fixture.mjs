@@ -85,9 +85,17 @@ export async function startPerformanceFixture({ root, webPort, adminPort, apiPor
       response.writeHead(200, { 'content-type': 'application/json' }); response.end(JSON.stringify(data));
     } catch (error) { response.writeHead(500, { 'content-type': 'application/json' }); response.end(JSON.stringify({ message: String(error) })); }
   });
+  let game;
+  try {
   api.listen(apiPort, '127.0.0.1'); await once(api, 'listening');
   process.env.CORS_ORIGINS = `http://127.0.0.1:${webPort},http://127.0.0.1:${adminPort}`;
-  const game = createGameServer({ resolveAccount: async token => { assert.ok(token.endsWith('.fixture')); const { sub } = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()); assert.ok([PLAYER, RIVAL].includes(sub)); return { id: sub, name: sub === PLAYER ? 'Benchmark Player' : 'Benchmark Rival', skinId: 'classic', iconId: 'orb' }; }, readSuspensions: async () => [], readFriends: async () => [PLAYER, RIVAL], canSpectate: async () => true, readRating: async () => 1400, writeMatch: async record => { matches.push(record); }, writeSolo: async () => {} });
+  game = createGameServer({ resolveAccount: async token => { assert.ok(token.endsWith('.fixture')); const { sub } = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()); assert.ok([PLAYER, RIVAL].includes(sub)); return { id: sub, name: sub === PLAYER ? 'Benchmark Player' : 'Benchmark Rival', skinId: 'classic', iconId: 'orb' }; }, readSuspensions: async () => [], readFriends: async () => [PLAYER, RIVAL], canSpectate: async () => true, readRating: async () => 1400, writeMatch: async record => { matches.push(record); }, writeSolo: async () => {} });
   game.httpServer.listen(socketPort, '127.0.0.1'); await once(game.httpServer, 'listening');
   return { requests, unknown, matches, game, applyMove: load('packages/game-core/src/index.ts').applyMove, close: async () => { await game.close(); api.closeAllConnections(); await new Promise(resolveClose => api.close(resolveClose)); } };
+  } catch (error) {
+    if (game) await game.close().catch(() => {});
+    api.closeAllConnections();
+    if (api.listening) await new Promise(resolveClose => api.close(resolveClose));
+    throw error;
+  }
 }
