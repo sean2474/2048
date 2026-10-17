@@ -1,5 +1,7 @@
 # Legendary preview and line icons
 
+> 스킨 미리보기·아이콘 작업 당시 계약이다. 현재 공통 기준은 [시각 자산 가이드](../visual-asset-guide.md)와 [꾸미기](../loadout-and-economy.md)를 따른다.
+
 The loadout detail dialog lets players inspect a legendary skin's real merge motion and sound before equipping it. The primary action is an explicit, repeatable preview button. Guests can preview locked skins. Previewing never changes the equipped skin. Reuse NumberTile, legendary merge CSS and the existing audio engine, including mute, volume and reduced-motion preferences. Closing the dialog cancels pending playback.
 
 Replace all ten GameEmblem drawings with consistent monochrome outlines on a 24px grid. The user's screenshots reject octagonal metal frames and the crowded brush/sword drawings. Use simple silhouettes, rounded strokes and the existing palette; preserve the approved ranked tier artwork. Shared callers include the header, page headings, navigation, onboarding, match states and results. Keep adjacent text labels and decorative SVG semantics.

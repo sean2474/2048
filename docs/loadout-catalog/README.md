@@ -1,4 +1,6 @@
-# Current catalog update — 2026-10-16
+# Catalog iteration record — 2026-10-16
+
+> 꾸미기 목록을 도입하던 당시의 변경·검증 기록이다. 현재 수량·획득 경로·페이지 구성은 [꾸미기 가이드](../loadout-and-economy.md), 실제 콘텐츠는 [DB 카탈로그](../content-catalog.md)를 따른다.
 
 The current loadout page contains skins and circular profile icons only, in compact 3/4/6-column cards with a shared owned-only filter. Guest loadouts are fixed in shared settings and verified server match data. Locked cards show login requirements; achievement unlocks remain planned. Ability selection now lives in the Find match modal, with one-line summaries and expandable details. All concepts use one-button activation.
 
