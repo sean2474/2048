@@ -1,0 +1,3090 @@
+{
+  "measuredAt": "2026-10-17T11:41:43.576Z",
+  "target": "staging",
+  "origin": "https://2048-web-staging.vercel.app",
+  "harnessCommit": "36eedb95735411d9054812933ce9d2bc500540ba",
+  "browser": "155.0.8059.80",
+  "environment": "Actual network and deployed web/socket; no intercepted requests, seeded boards, auth fixture, or injected latency. Guest private friend rooms only.",
+  "games": [
+    {
+      "device": "desktop",
+      "kind": "natural",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "6463d29c-21c9-4fcf-b6a6-4ad86ca221e3",
+      "reason": "opponent_locked",
+      "moves": 305,
+      "roomCreationToReadyMs": 3362.450458,
+      "joinCodeRequestToReadyMs": 92.74533299999985,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 3579.099375,
+      "firstBoardMs": 6945.060666,
+      "playableDurationMs": 30906.99975,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 14.52100000000064,
+      "resultPacketToAnimationCompleteMs": 1067.794167,
+      "surrenderToResultMs": null,
+      "inputs": [
+        {
+          "selfStateMs": 42.14204199999949,
+          "opponentStateMs": 41.48791699999947
+        },
+        {
+          "selfStateMs": 38.885833999999704,
+          "opponentStateMs": 38.81212499999947
+        },
+        {
+          "selfStateMs": 39.480458,
+          "opponentStateMs": 39.41291699999965
+        },
+        {
+          "selfStateMs": 37.56587500000023,
+          "opponentStateMs": 37.482207999999446
+        },
+        {
+          "selfStateMs": 39.15350000000035,
+          "opponentStateMs": 37.140040999998746
+        },
+        {
+          "selfStateMs": 40.00287500000013,
+          "opponentStateMs": 39.91737499999908
+        },
+        {
+          "selfStateMs": 38.8809999999994,
+          "opponentStateMs": 40.21858400000019
+        },
+        {
+          "selfStateMs": 38.722499999999854,
+          "opponentStateMs": 39.91949999999997
+        },
+        {
+          "selfStateMs": 39.784333999999944,
+          "opponentStateMs": 39.63966699999946
+        },
+        {
+          "selfStateMs": 38.66520900000069,
+          "opponentStateMs": 39.89929200000006
+        },
+        {
+          "selfStateMs": 37.49250000000029,
+          "opponentStateMs": 39.63445800000045
+        },
+        {
+          "selfStateMs": 40.49108400000114,
+          "opponentStateMs": 40.428750000000946
+        },
+        {
+          "selfStateMs": 40.18937499999993,
+          "opponentStateMs": 40.122457999999824
+        },
+        {
+          "selfStateMs": 37.840792000000874,
+          "opponentStateMs": 39.38308400000096
+        },
+        {
+          "selfStateMs": 37.505167000001165,
+          "opponentStateMs": 37.442792000001646
+        },
+        {
+          "selfStateMs": 37.46308299999873,
+          "opponentStateMs": 38.98370799999975
+        },
+        {
+          "selfStateMs": 39.47804200000064,
+          "opponentStateMs": 39.410125000000335
+        },
+        {
+          "selfStateMs": 40.37645900000098,
+          "opponentStateMs": 40.29795899999954
+        },
+        {
+          "selfStateMs": 38.761875000000146,
+          "opponentStateMs": 38.03049999999894
+        },
+        {
+          "selfStateMs": 40.070834000000104,
+          "opponentStateMs": 41.78954199999862
+        },
+        {
+          "selfStateMs": 40.55379200000061,
+          "opponentStateMs": 40.42383400000108
+        },
+        {
+          "selfStateMs": 37.96004200000061,
+          "opponentStateMs": 39.476542000000336
+        },
+        {
+          "selfStateMs": 39.59412500000144,
+          "opponentStateMs": 39.21979200000169
+        },
+        {
+          "selfStateMs": 39.72899999999936,
+          "opponentStateMs": 39.63624999999956
+        },
+        {
+          "selfStateMs": 40.05149999999958,
+          "opponentStateMs": 38.14270800000122
+        },
+        {
+          "selfStateMs": 40.099583000001076,
+          "opponentStateMs": 39.981667000000016
+        },
+        {
+          "selfStateMs": 39.41033400000015,
+          "opponentStateMs": 39.26891699999942
+        },
+        {
+          "selfStateMs": 39.48283300000003,
+          "opponentStateMs": 39.40641700000015
+        },
+        {
+          "selfStateMs": 39.615750000000844,
+          "opponentStateMs": 39.49395800000093
+        },
+        {
+          "selfStateMs": 41.445834000000104,
+          "opponentStateMs": 41.26879200000076
+        },
+        {
+          "selfStateMs": 39.71624999999949,
+          "opponentStateMs": 39.6617499999993
+        },
+        {
+          "selfStateMs": 40.51283300000068,
+          "opponentStateMs": 40.43762500000048
+        },
+        {
+          "selfStateMs": 39.49529199999961,
+          "opponentStateMs": 39.39958300000035
+        },
+        {
+          "selfStateMs": 39.92595799999981,
+          "opponentStateMs": 39.852208000000246
+        },
+        {
+          "selfStateMs": 40.637957999999344,
+          "opponentStateMs": 40.554957999998805
+        },
+        {
+          "selfStateMs": 40.783542000001034,
+          "opponentStateMs": 40.691749999999956
+        },
+        {
+          "selfStateMs": 39.70445899999868,
+          "opponentStateMs": 39.591833999998926
+        },
+        {
+          "selfStateMs": 39.346457999999984,
+          "opponentStateMs": 39.28412500000013
+        },
+        {
+          "selfStateMs": 39.687041999999565,
+          "opponentStateMs": 39.56687500000044
+        },
+        {
+          "selfStateMs": 38.78045899999961,
+          "opponentStateMs": 38.50574999999844
+        },
+        {
+          "selfStateMs": 40.20916700000089,
+          "opponentStateMs": 40.157500000001164
+        },
+        {
+          "selfStateMs": 41.59858299999905,
+          "opponentStateMs": 41.442666999999346
+        },
+        {
+          "selfStateMs": 40.12070800000038,
+          "opponentStateMs": 40.03883300000052
+        },
+        {
+          "selfStateMs": 40.8884160000016,
+          "opponentStateMs": 40.79079100000126
+        },
+        {
+          "selfStateMs": 39.3432499999999,
+          "opponentStateMs": 39.25433299999895
+        },
+        {
+          "selfStateMs": 41.69929200000115,
+          "opponentStateMs": 41.61904200000026
+        },
+        {
+          "selfStateMs": 39.09679099999994,
+          "opponentStateMs": 39.00029100000029
+        },
+        {
+          "selfStateMs": 39.48854199999914,
+          "opponentStateMs": 39.40774999999849
+        },
+        {
+          "selfStateMs": 42.48604200000045,
+          "opponentStateMs": 44.2584169999991
+        },
+        {
+          "selfStateMs": 39.693874999999025,
+          "opponentStateMs": 39.57270799999969
+        },
+        {
+          "selfStateMs": 41.64950000000135,
+          "opponentStateMs": 41.5657910000009
+        },
+        {
+          "selfStateMs": 41.80674999999974,
+          "opponentStateMs": 41.72916599999917
+        },
+        {
+          "selfStateMs": 41.99116700000013,
+          "opponentStateMs": 41.8325420000001
+        },
+        {
+          "selfStateMs": 39.578959000000395,
+          "opponentStateMs": 39.48958400000083
+        },
+        {
+          "selfStateMs": 39.53650000000016,
+          "opponentStateMs": 39.30949999999939
+        },
+        {
+          "selfStateMs": 40.476832999998805,
+          "opponentStateMs": 40.39683299999888
+        },
+        {
+          "selfStateMs": 40.752041000001554,
+          "opponentStateMs": 40.6517500000009
+        },
+        {
+          "selfStateMs": 39.69408300000032,
+          "opponentStateMs": 39.58429199999955
+        },
+        {
+          "selfStateMs": 39.059832999999344,
+          "opponentStateMs": 38.98345800000061
+        },
+        {
+          "selfStateMs": 39.90374999999949,
+          "opponentStateMs": 41.6516249999986
+        },
+        {
+          "selfStateMs": 39.60112499999923,
+          "opponentStateMs": 39.52729199999885
+        },
+        {
+          "selfStateMs": 39.63941599999998,
+          "opponentStateMs": 40.44712499999878
+        },
+        {
+          "selfStateMs": 39.93000000000029,
+          "opponentStateMs": 39.70304099999885
+        },
+        {
+          "selfStateMs": 42.05854200000067,
+          "opponentStateMs": 41.963292000000365
+        },
+        {
+          "selfStateMs": 41.7231670000001,
+          "opponentStateMs": 41.64037499999904
+        },
+        {
+          "selfStateMs": 39.52008300000125,
+          "opponentStateMs": 39.44566699999996
+        },
+        {
+          "selfStateMs": 41.301000000001295,
+          "opponentStateMs": 39.32020900000134
+        },
+        {
+          "selfStateMs": 42.01816599999984,
+          "opponentStateMs": 41.92279099999905
+        },
+        {
+          "selfStateMs": 39.40979199999856,
+          "opponentStateMs": 39.2800419999985
+        },
+        {
+          "selfStateMs": 43.04887499999859,
+          "opponentStateMs": 42.81233299999985
+        },
+        {
+          "selfStateMs": 41.448334000000614,
+          "opponentStateMs": 41.255959000000075
+        },
+        {
+          "selfStateMs": 40.03912499999933,
+          "opponentStateMs": 41.342375000000175
+        },
+        {
+          "selfStateMs": 40.056000000000495,
+          "opponentStateMs": 41.77400000000125
+        },
+        {
+          "selfStateMs": 40.08525000000009,
+          "opponentStateMs": 41.88520799999969
+        },
+        {
+          "selfStateMs": 39.887040999999954,
+          "opponentStateMs": 39.79041599999982
+        },
+        {
+          "selfStateMs": 41.85570899999948,
+          "opponentStateMs": 41.75958399999945
+        },
+        {
+          "selfStateMs": 39.792999999999665,
+          "opponentStateMs": 41.563499999998385
+        },
+        {
+          "selfStateMs": 39.79754200000025,
+          "opponentStateMs": 39.72858400000041
+        },
+        {
+          "selfStateMs": 40.10429199999999,
+          "opponentStateMs": 40.011083999999755
+        },
+        {
+          "selfStateMs": 39.54454200000146,
+          "opponentStateMs": 39.440292000001136
+        },
+        {
+          "selfStateMs": 43.47741700000006,
+          "opponentStateMs": 43.28679199999897
+        },
+        {
+          "selfStateMs": 41.828708000000915,
+          "opponentStateMs": 38.82625000000007
+        },
+        {
+          "selfStateMs": 39.463042000001224,
+          "opponentStateMs": 39.28412500000013
+        },
+        {
+          "selfStateMs": 43.16795900000034,
+          "opponentStateMs": 43.08637500000077
+        },
+        {
+          "selfStateMs": 39.29054199999882,
+          "opponentStateMs": 39.2141249999986
+        },
+        {
+          "selfStateMs": 40.734042000000045,
+          "opponentStateMs": 40.60491700000057
+        },
+        {
+          "selfStateMs": 40.25645900000018,
+          "opponentStateMs": 40.20824999999968
+        },
+        {
+          "selfStateMs": 40.412208000001556,
+          "opponentStateMs": 40.33545800000138
+        },
+        {
+          "selfStateMs": 41.9688750000023,
+          "opponentStateMs": 41.88025000000198
+        },
+        {
+          "selfStateMs": 39.74524999999994,
+          "opponentStateMs": 39.65754199999719
+        },
+        {
+          "selfStateMs": 40.46662500000093,
+          "opponentStateMs": 40.40816700000141
+        },
+        {
+          "selfStateMs": 42.74895900000047,
+          "opponentStateMs": 42.67358400000012
+        },
+        {
+          "selfStateMs": 41.837916000000405,
+          "opponentStateMs": 41.540790999999444
+        },
+        {
+          "selfStateMs": 40.04320799999914,
+          "opponentStateMs": 42.41295799999716
+        },
+        {
+          "selfStateMs": 40.996125000001484,
+          "opponentStateMs": 40.88170900000114
+        },
+        {
+          "selfStateMs": 41.83104199999798,
+          "opponentStateMs": 43.424041999998735
+        },
+        {
+          "selfStateMs": 44.39087500000096,
+          "opponentStateMs": 44.30587500000183
+        },
+        {
+          "selfStateMs": 40.04091700000208,
+          "opponentStateMs": 41.70512500000041
+        },
+        {
+          "selfStateMs": 41.14274999999907,
+          "opponentStateMs": 41.036207999997714
+        },
+        {
+          "selfStateMs": 40.1172910000023,
+          "opponentStateMs": 40.021333000000595
+        },
+        {
+          "selfStateMs": 42.262290999999095,
+          "opponentStateMs": 41.97516600000017
+        },
+        {
+          "selfStateMs": 39.86695899999904,
+          "opponentStateMs": 39.815834000000905
+        },
+        {
+          "selfStateMs": 39.4753329999985,
+          "opponentStateMs": 40.241290999998455
+        },
+        {
+          "selfStateMs": 41.294042000001355,
+          "opponentStateMs": 41.22545900000114
+        },
+        {
+          "selfStateMs": 39.62024999999994,
+          "opponentStateMs": 42.82462499999747
+        },
+        {
+          "selfStateMs": 39.178124999998545,
+          "opponentStateMs": 39.112207999998645
+        },
+        {
+          "selfStateMs": 41.21583400000236,
+          "opponentStateMs": 39.458417000001646
+        },
+        {
+          "selfStateMs": 39.21612500000265,
+          "opponentStateMs": 39.14025000000038
+        },
+        {
+          "selfStateMs": 40.179917000001296,
+          "opponentStateMs": 42.81641700000182
+        },
+        {
+          "selfStateMs": 38.949375000000146,
+          "opponentStateMs": 38.86187499999869
+        },
+        {
+          "selfStateMs": 41.417334000001574,
+          "opponentStateMs": 41.32916699999987
+        },
+        {
+          "selfStateMs": 39.460959,
+          "opponentStateMs": 39.36687499999971
+        },
+        {
+          "selfStateMs": 40.09491600000183,
+          "opponentStateMs": 39.17974999999933
+        },
+        {
+          "selfStateMs": 42.220792000000074,
+          "opponentStateMs": 39.16525000000183
+        },
+        {
+          "selfStateMs": 39.78375000000233,
+          "opponentStateMs": 39.69829200000095
+        },
+        {
+          "selfStateMs": 42.68916700000045,
+          "opponentStateMs": 39.79999999999927
+        },
+        {
+          "selfStateMs": 43.34058300000106,
+          "opponentStateMs": 43.25445800000307
+        },
+        {
+          "selfStateMs": 43.12079099999755,
+          "opponentStateMs": 43.0610409999972
+        },
+        {
+          "selfStateMs": 42.4552909999984,
+          "opponentStateMs": 42.40379100000064
+        },
+        {
+          "selfStateMs": 39.74608299999818,
+          "opponentStateMs": 39.68254199999865
+        },
+        {
+          "selfStateMs": 40.529083000001265,
+          "opponentStateMs": 40.427999999999884
+        },
+        {
+          "selfStateMs": 40.784082999998645,
+          "opponentStateMs": 40.69487499999741
+        },
+        {
+          "selfStateMs": 42.431666000000405,
+          "opponentStateMs": 44.047207999999955
+        },
+        {
+          "selfStateMs": 40.44891599999755,
+          "opponentStateMs": 43.10399999999936
+        },
+        {
+          "selfStateMs": 43.47237500000119,
+          "opponentStateMs": 43.29716700000063
+        },
+        {
+          "selfStateMs": 42.39945799999987,
+          "opponentStateMs": 42.35533299999952
+        },
+        {
+          "selfStateMs": 43.887542000000394,
+          "opponentStateMs": 40.95270899999741
+        },
+        {
+          "selfStateMs": 41.66125000000102,
+          "opponentStateMs": 41.53233399999954
+        },
+        {
+          "selfStateMs": 39.53612500000236,
+          "opponentStateMs": 39.441625000003114
+        },
+        {
+          "selfStateMs": 38.991791000000376,
+          "opponentStateMs": 38.913000000000466
+        },
+        {
+          "selfStateMs": 40.609292000001005,
+          "opponentStateMs": 40.48400000000038
+        },
+        {
+          "selfStateMs": 40.93812500000058,
+          "opponentStateMs": 40.84575000000041
+        },
+        {
+          "selfStateMs": 42.18791599999895,
+          "opponentStateMs": 42.09941600000093
+        },
+        {
+          "selfStateMs": 41.05750000000262,
+          "opponentStateMs": 40.97029100000145
+        },
+        {
+          "selfStateMs": 43.21383400000195,
+          "opponentStateMs": 40.674417000001995
+        },
+        {
+          "selfStateMs": 42.483374999999796,
+          "opponentStateMs": 42.385707999997976
+        },
+        {
+          "selfStateMs": 41.5692089999975,
+          "opponentStateMs": 41.479708999999275
+        },
+        {
+          "selfStateMs": 42.39999999999782,
+          "opponentStateMs": 42.30104199999914
+        },
+        {
+          "selfStateMs": 42.203583999998955,
+          "opponentStateMs": 42.11804199999824
+        },
+        {
+          "selfStateMs": 42.20558300000266,
+          "opponentStateMs": 42.13237500000105
+        },
+        {
+          "selfStateMs": 40.61554099999921,
+          "opponentStateMs": 40.54095799999777
+        },
+        {
+          "selfStateMs": 41.76333400000294,
+          "opponentStateMs": 41.66845900000044
+        },
+        {
+          "selfStateMs": 42.39458299999751,
+          "opponentStateMs": 42.29849999999715
+        },
+        {
+          "selfStateMs": 42.87570799999958,
+          "opponentStateMs": 42.78325000000041
+        },
+        {
+          "selfStateMs": 40.46125000000029,
+          "opponentStateMs": 40.37662499999715
+        },
+        {
+          "selfStateMs": 44.27100000000064,
+          "opponentStateMs": 44.19154200000048
+        },
+        {
+          "selfStateMs": 41.218541999998706,
+          "opponentStateMs": 39.596166999999696
+        },
+        {
+          "selfStateMs": 40.56499999999869,
+          "opponentStateMs": 40.46249999999782
+        },
+        {
+          "selfStateMs": 40.62725000000137,
+          "opponentStateMs": 43.55433400000038
+        },
+        {
+          "selfStateMs": 39.58891700000095,
+          "opponentStateMs": 39.494291999999405
+        },
+        {
+          "selfStateMs": 42.02379099999962,
+          "opponentStateMs": 40.21945799999958
+        },
+        {
+          "selfStateMs": 40.31795899999997,
+          "opponentStateMs": 40.23479199999929
+        },
+        {
+          "selfStateMs": 42.306000000000495,
+          "opponentStateMs": 40.1461249999993
+        },
+        {
+          "selfStateMs": 41.47624999999971,
+          "opponentStateMs": 41.20545800000036
+        },
+        {
+          "selfStateMs": 40.706334000002244,
+          "opponentStateMs": 40.604834000001574
+        },
+        {
+          "selfStateMs": 42.36079199999949,
+          "opponentStateMs": 39.37012500000128
+        },
+        {
+          "selfStateMs": 39.47033299999748,
+          "opponentStateMs": 42.49270799999795
+        },
+        {
+          "selfStateMs": 41.55708400000003,
+          "opponentStateMs": 41.50487499999872
+        },
+        {
+          "selfStateMs": 39.83762499999648,
+          "opponentStateMs": 39.74333299999853
+        },
+        {
+          "selfStateMs": 42.695041999999376,
+          "opponentStateMs": 39.88695799999914
+        },
+        {
+          "selfStateMs": 39.024665999997524,
+          "opponentStateMs": 39.68820799999958
+        },
+        {
+          "selfStateMs": 42.69195899999977,
+          "opponentStateMs": 42.4776669999992
+        },
+        {
+          "selfStateMs": 42.54324999999881,
+          "opponentStateMs": 42.444791999998415
+        },
+        {
+          "selfStateMs": 41.58587499999703,
+          "opponentStateMs": 39.886374999998225
+        },
+        {
+          "selfStateMs": 44.79925000000003,
+          "opponentStateMs": 44.69679200000246
+        },
+        {
+          "selfStateMs": 43.86895899999945,
+          "opponentStateMs": 41.817416999998386
+        },
+        {
+          "selfStateMs": 42.969167000002926,
+          "opponentStateMs": 41.016333999999915
+        },
+        {
+          "selfStateMs": 40.80745899999965,
+          "opponentStateMs": 40.7264589999977
+        },
+        {
+          "selfStateMs": 41.38224999999875,
+          "opponentStateMs": 41.29912500000137
+        },
+        {
+          "selfStateMs": 42.060708000000886,
+          "opponentStateMs": 39.120458000001236
+        },
+        {
+          "selfStateMs": 41.663165999998455,
+          "opponentStateMs": 41.34191599999758
+        },
+        {
+          "selfStateMs": 40.917374999997264,
+          "opponentStateMs": 41.05970899999738
+        },
+        {
+          "selfStateMs": 40.010042000001704,
+          "opponentStateMs": 39.92054199999984
+        },
+        {
+          "selfStateMs": 41.13762499999939,
+          "opponentStateMs": 40.325708000000304
+        },
+        {
+          "selfStateMs": 41.72024999999849,
+          "opponentStateMs": 41.62483400000201
+        },
+        {
+          "selfStateMs": 43.083708000001934,
+          "opponentStateMs": 42.93891699999949
+        },
+        {
+          "selfStateMs": 41.63654199999655,
+          "opponentStateMs": 41.58616699999766
+        },
+        {
+          "selfStateMs": 42.488916999998764,
+          "opponentStateMs": 42.39104199999929
+        },
+        {
+          "selfStateMs": 40.315749999997934,
+          "opponentStateMs": 40.23033299999952
+        },
+        {
+          "selfStateMs": 43.70841699999801,
+          "opponentStateMs": 40.507166999999754
+        },
+        {
+          "selfStateMs": 41.08245900000111,
+          "opponentStateMs": 40.992417000001296
+        },
+        {
+          "selfStateMs": 41.76554100000067,
+          "opponentStateMs": 40.15245800000048
+        },
+        {
+          "selfStateMs": 40.2556250000016,
+          "opponentStateMs": 40.158792000001995
+        },
+        {
+          "selfStateMs": 39.40020800000275,
+          "opponentStateMs": 39.22612500000105
+        },
+        {
+          "selfStateMs": 42.617082999997365,
+          "opponentStateMs": 42.52720799999952
+        },
+        {
+          "selfStateMs": 41.77075000000332,
+          "opponentStateMs": 43.22083300000304
+        },
+        {
+          "selfStateMs": 40.748374999999214,
+          "opponentStateMs": 43.41095800000039
+        },
+        {
+          "selfStateMs": 40.54899999999907,
+          "opponentStateMs": 43.30016599999726
+        },
+        {
+          "selfStateMs": 44.39545900000303,
+          "opponentStateMs": 40.399750000000495
+        },
+        {
+          "selfStateMs": 41.00158400000146,
+          "opponentStateMs": 43.821875000001455
+        },
+        {
+          "selfStateMs": 40.279458000000886,
+          "opponentStateMs": 40.214749999999185
+        },
+        {
+          "selfStateMs": 41.68620800000281,
+          "opponentStateMs": 41.609166000002006
+        },
+        {
+          "selfStateMs": 40.8885420000006,
+          "opponentStateMs": 40.807583000001614
+        },
+        {
+          "selfStateMs": 39.83866699999999,
+          "opponentStateMs": 41.80566700000054
+        },
+        {
+          "selfStateMs": 39.51287500000035,
+          "opponentStateMs": 39.44187500000044
+        },
+        {
+          "selfStateMs": 42.1059580000001,
+          "opponentStateMs": 42.02499999999782
+        },
+        {
+          "selfStateMs": 43.07945800000016,
+          "opponentStateMs": 41.156417000001966
+        },
+        {
+          "selfStateMs": 40.00283400000262,
+          "opponentStateMs": 41.23529200000121
+        },
+        {
+          "selfStateMs": 40.87445799999841,
+          "opponentStateMs": 40.77195800000118
+        },
+        {
+          "selfStateMs": 41.7678330000017,
+          "opponentStateMs": 40.82891700000255
+        },
+        {
+          "selfStateMs": 41.78633300000001,
+          "opponentStateMs": 41.62924999999814
+        },
+        {
+          "selfStateMs": 42.94212499999776,
+          "opponentStateMs": 39.893874999997934
+        },
+        {
+          "selfStateMs": 43.39058300000033,
+          "opponentStateMs": 39.35545799999818
+        },
+        {
+          "selfStateMs": 41.79533299999821,
+          "opponentStateMs": 41.6987079999999
+        },
+        {
+          "selfStateMs": 42.71991699999853,
+          "opponentStateMs": 40.089625000000524
+        },
+        {
+          "selfStateMs": 44.47070800000074,
+          "opponentStateMs": 42.288958000001
+        },
+        {
+          "selfStateMs": 40.91883299999972,
+          "opponentStateMs": 40.762415999997756
+        },
+        {
+          "selfStateMs": 44.19233399999939,
+          "opponentStateMs": 43.98179199999868
+        },
+        {
+          "selfStateMs": 42.948457999998936,
+          "opponentStateMs": 42.81287499999962
+        },
+        {
+          "selfStateMs": 41.96354199999769,
+          "opponentStateMs": 41.80845899999986
+        },
+        {
+          "selfStateMs": 44.30841700000019,
+          "opponentStateMs": 44.21125000000029
+        },
+        {
+          "selfStateMs": 42.52604199999769,
+          "opponentStateMs": 43.96429200000057
+        },
+        {
+          "selfStateMs": 44.48595799999748,
+          "opponentStateMs": 44.394915999997465
+        },
+        {
+          "selfStateMs": 41.33758400000079,
+          "opponentStateMs": 41.26241700000173
+        },
+        {
+          "selfStateMs": 41.508333000001585,
+          "opponentStateMs": 41.41783299999952
+        },
+        {
+          "selfStateMs": 44.502542000001995,
+          "opponentStateMs": 44.414458999999624
+        },
+        {
+          "selfStateMs": 42.78879099999904,
+          "opponentStateMs": 42.69800000000032
+        },
+        {
+          "selfStateMs": 45.73695899999802,
+          "opponentStateMs": 45.650041999997484
+        },
+        {
+          "selfStateMs": 42.63108300000022,
+          "opponentStateMs": 42.540750000000116
+        },
+        {
+          "selfStateMs": 45.15454200000022,
+          "opponentStateMs": 44.56974999999875
+        },
+        {
+          "selfStateMs": 39.247542000000976,
+          "opponentStateMs": 39.152916999999434
+        },
+        {
+          "selfStateMs": 39.521583000001556,
+          "opponentStateMs": 41.25933300000179
+        },
+        {
+          "selfStateMs": 44.74433299999873,
+          "opponentStateMs": 40.93937499999811
+        },
+        {
+          "selfStateMs": 44.43054200000188,
+          "opponentStateMs": 41.44795900000099
+        },
+        {
+          "selfStateMs": 42.43133300000045,
+          "opponentStateMs": 42.337374999999156
+        },
+        {
+          "selfStateMs": 42.551000000003114,
+          "opponentStateMs": 42.483375000003434
+        },
+        {
+          "selfStateMs": 42.159458000001905,
+          "opponentStateMs": 42.06508300000132
+        },
+        {
+          "selfStateMs": 41.369291999999405,
+          "opponentStateMs": 41.28470799999923
+        },
+        {
+          "selfStateMs": 41.48474999999962,
+          "opponentStateMs": 41.39812499999971
+        },
+        {
+          "selfStateMs": 40.279374999998254,
+          "opponentStateMs": 40.18358299999818
+        },
+        {
+          "selfStateMs": 40.152750000001106,
+          "opponentStateMs": 40.05629200000112
+        },
+        {
+          "selfStateMs": 41.290249999998196,
+          "opponentStateMs": 41.21583299999838
+        },
+        {
+          "selfStateMs": 41.83654100000058,
+          "opponentStateMs": 39.456208000003244
+        },
+        {
+          "selfStateMs": 42.36874999999782,
+          "opponentStateMs": 42.281457999997656
+        },
+        {
+          "selfStateMs": 42.94645800000217,
+          "opponentStateMs": 42.86737500000163
+        },
+        {
+          "selfStateMs": 39.994291999999405,
+          "opponentStateMs": 39.91779200000019
+        },
+        {
+          "selfStateMs": 41.36566600000151,
+          "opponentStateMs": 41.236000000000786
+        },
+        {
+          "selfStateMs": 41.15987500000119,
+          "opponentStateMs": 41.072917000001326
+        },
+        {
+          "selfStateMs": 39.81616700000086,
+          "opponentStateMs": 39.66058300000077
+        },
+        {
+          "selfStateMs": 39.19929200000115,
+          "opponentStateMs": 39.0422499999986
+        },
+        {
+          "selfStateMs": 41.45491600000241,
+          "opponentStateMs": 41.31841600000189
+        },
+        {
+          "selfStateMs": 41.61870800000179,
+          "opponentStateMs": 41.5570000000007
+        },
+        {
+          "selfStateMs": 43.712374999999156,
+          "opponentStateMs": 43.63470799999777
+        },
+        {
+          "selfStateMs": 44.07345900000291,
+          "opponentStateMs": 43.984042000000045
+        },
+        {
+          "selfStateMs": 40.96912499999962,
+          "opponentStateMs": 40.809417000000394
+        },
+        {
+          "selfStateMs": 40.41404099999636,
+          "opponentStateMs": 43.20120799999859
+        },
+        {
+          "selfStateMs": 42.71162500000355,
+          "opponentStateMs": 42.58137500000157
+        },
+        {
+          "selfStateMs": 41.85170800000196,
+          "opponentStateMs": 41.75866600000154
+        },
+        {
+          "selfStateMs": 42.72883400000137,
+          "opponentStateMs": 42.34037499999977
+        },
+        {
+          "selfStateMs": 41.736166999995476,
+          "opponentStateMs": 41.49704199999542
+        },
+        {
+          "selfStateMs": 41.81616699999722,
+          "opponentStateMs": 44.3115420000031
+        },
+        {
+          "selfStateMs": 42.58954200000153,
+          "opponentStateMs": 42.2734169999967
+        },
+        {
+          "selfStateMs": 43.87304199999926,
+          "opponentStateMs": 43.75487499999872
+        },
+        {
+          "selfStateMs": 42.03187500000058,
+          "opponentStateMs": 41.88879199999792
+        },
+        {
+          "selfStateMs": 44.82974999999715,
+          "opponentStateMs": 41.86920899999677
+        },
+        {
+          "selfStateMs": 41.864332999997714,
+          "opponentStateMs": 41.779207999999926
+        },
+        {
+          "selfStateMs": 41.62195899999642,
+          "opponentStateMs": 41.54391700000269
+        },
+        {
+          "selfStateMs": 43.13749999999709,
+          "opponentStateMs": 42.941500000000815
+        },
+        {
+          "selfStateMs": 42.261333000002196,
+          "opponentStateMs": 43.694250000000466
+        },
+        {
+          "selfStateMs": 40.181125000002794,
+          "opponentStateMs": 42.23779099999956
+        },
+        {
+          "selfStateMs": 39.6315839999952,
+          "opponentStateMs": 42.4473749999961
+        },
+        {
+          "selfStateMs": 38.96208299999853,
+          "opponentStateMs": 38.88637500000186
+        },
+        {
+          "selfStateMs": 44.34850000000006,
+          "opponentStateMs": 44.187125000004016
+        },
+        {
+          "selfStateMs": 44.97350000000006,
+          "opponentStateMs": 44.693083999998635
+        },
+        {
+          "selfStateMs": 41.88987500000076,
+          "opponentStateMs": 43.64866599999368
+        },
+        {
+          "selfStateMs": 42.181375000000116,
+          "opponentStateMs": 44.00845799999661
+        },
+        {
+          "selfStateMs": 43.33950000000186,
+          "opponentStateMs": 43.242082999997365
+        },
+        {
+          "selfStateMs": 40.64174999999523,
+          "opponentStateMs": 40.54099999999744
+        },
+        {
+          "selfStateMs": 40.94933300000412,
+          "opponentStateMs": 40.86200000000099
+        },
+        {
+          "selfStateMs": 40.902916999999434,
+          "opponentStateMs": 40.805874999998196
+        },
+        {
+          "selfStateMs": 43.52804200000537,
+          "opponentStateMs": 40.87550000000192
+        },
+        {
+          "selfStateMs": 40.12329099999624,
+          "opponentStateMs": 40.00883299999987
+        },
+        {
+          "selfStateMs": 43.60712500000227,
+          "opponentStateMs": 43.51574999999866
+        },
+        {
+          "selfStateMs": 41.18266600000061,
+          "opponentStateMs": 43.088582999997016
+        },
+        {
+          "selfStateMs": 43.815042000001995,
+          "opponentStateMs": 40.6477090000044
+        },
+        {
+          "selfStateMs": 39.47183400000358,
+          "opponentStateMs": 39.62437499999942
+        },
+        {
+          "selfStateMs": 41.3818339999998,
+          "opponentStateMs": 41.3048340000023
+        },
+        {
+          "selfStateMs": 44.655750000005355,
+          "opponentStateMs": 44.593542000002344
+        },
+        {
+          "selfStateMs": 44.61224999999831,
+          "opponentStateMs": 44.54675000000134
+        },
+        {
+          "selfStateMs": 40.63945899999817,
+          "opponentStateMs": 40.58187499999622
+        },
+        {
+          "selfStateMs": 42.17837500000314,
+          "opponentStateMs": 42.109000000004016
+        },
+        {
+          "selfStateMs": 41.33841599999869,
+          "opponentStateMs": 43.0710409999956
+        },
+        {
+          "selfStateMs": 41.03379199999472,
+          "opponentStateMs": 40.95545899999706
+        },
+        {
+          "selfStateMs": 42.01495799999975,
+          "opponentStateMs": 43.49712500000169
+        },
+        {
+          "selfStateMs": 41.137792000001355,
+          "opponentStateMs": 41.053625000000466
+        },
+        {
+          "selfStateMs": 40.90133400000195,
+          "opponentStateMs": 43.605084000002535
+        },
+        {
+          "selfStateMs": 43.644708000007086,
+          "opponentStateMs": 40.73525000000518
+        },
+        {
+          "selfStateMs": 42.37533299999632,
+          "opponentStateMs": 42.29620799999975
+        },
+        {
+          "selfStateMs": 39.125207999997656,
+          "opponentStateMs": 41.715291000000434
+        },
+        {
+          "selfStateMs": 39.70575000000099,
+          "opponentStateMs": 39.61541600000055
+        },
+        {
+          "selfStateMs": 41.8572920000006,
+          "opponentStateMs": 40.36499999999796
+        },
+        {
+          "selfStateMs": 41.096708999997645,
+          "opponentStateMs": 41.00191700000141
+        },
+        {
+          "selfStateMs": 40.88249999999971,
+          "opponentStateMs": 43.25108299999556
+        },
+        {
+          "selfStateMs": 42.357208000001265,
+          "opponentStateMs": 39.743374999998196
+        },
+        {
+          "selfStateMs": 41.420791999997164,
+          "opponentStateMs": 38.831749999997555
+        },
+        {
+          "selfStateMs": 41.373124999998254,
+          "opponentStateMs": 39.052999999999884
+        },
+        {
+          "selfStateMs": 39.78729200000089,
+          "opponentStateMs": 39.70933299999888
+        },
+        {
+          "selfStateMs": 43.182333999997354,
+          "opponentStateMs": 43.08954200000153
+        },
+        {
+          "selfStateMs": 40.819666999996116,
+          "opponentStateMs": 40.72174999999697
+        },
+        {
+          "selfStateMs": 40.67779200000223,
+          "opponentStateMs": 40.54054200000246
+        },
+        {
+          "selfStateMs": 40.76937500000349,
+          "opponentStateMs": 40.68929100000241
+        },
+        {
+          "selfStateMs": 43.80120899999747,
+          "opponentStateMs": 43.710458999994444
+        },
+        {
+          "selfStateMs": 42.56766599999537,
+          "opponentStateMs": 44.22483300000022
+        },
+        {
+          "selfStateMs": 43.867000000005646,
+          "opponentStateMs": 40.91737500000454
+        },
+        {
+          "selfStateMs": 41.98887499999546,
+          "opponentStateMs": 39.33133299999463
+        }
+      ],
+      "inputPaintMs": [
+        68.40000009536743,
+        69,
+        64.69999980926514,
+        61.59999990463257,
+        56.90000009536743,
+        54.40000009536743,
+        66.5,
+        64.69999980926514,
+        61.5,
+        58,
+        71.59999990463257,
+        67.40000009536743,
+        63.69999980926514,
+        61.80000019073486,
+        58.09999990463257,
+        71.30000019073486,
+        66.2999997138977,
+        62.90000009536743,
+        59.10000038146973,
+        58.80000019073486,
+        70.59999990463257,
+        67.5,
+        63.5,
+        61,
+        58.59999990463257,
+        74.40000009536743,
+        72.10000038146973,
+        69.40000009536743,
+        69,
+        64,
+        61,
+        56.40000009536743,
+        70.2000002861023,
+        68.89999961853027,
+        64.80000019073486,
+        60.19999980926514,
+        57.69999980926514,
+        71.90000009536743,
+        69.59999990463257,
+        65.09999990463257,
+        62.30000019073486,
+        58.59999990463257,
+        71.19999980926514,
+        65.80000019073486,
+        64.5,
+        63.299999713897705,
+        74.60000038146973,
+        69.59999990463257,
+        66,
+        62.5,
+        76.30000019073486,
+        57.59999990463257,
+        56.700000286102295,
+        69.90000009536743,
+        66.59999990463257,
+        62.69999980926514,
+        60.5,
+        59.09999990463257,
+        73.09999990463257,
+        69.59999990463257,
+        67.7999997138977,
+        64,
+        60.5,
+        73.5,
+        70.59999990463257,
+        65.19999980926514,
+        63,
+        60.40000009536743,
+        74,
+        70.2999997138977,
+        68.40000009536743,
+        65.80000019073486,
+        63.90000009536743,
+        60.40000009536743,
+        73.7999997138977,
+        71.2000002861023,
+        67.19999980926514,
+        63.90000009536743,
+        61.09999990463257,
+        74.80000019073486,
+        56.200000286102295,
+        67.09999990463257,
+        66.7999997138977,
+        63.40000009536743,
+        60.59999990463257,
+        59.19999980926514,
+        58.30000019073486,
+        71.40000009536743,
+        67.89999961853027,
+        64.2000002861023,
+        62.89999961853027,
+        59.90000009536743,
+        73.59999990463257,
+        70.80000019073486,
+        68.2999997138977,
+        65.59999990463257,
+        61.5,
+        59.30000019073486,
+        74.09999990463257,
+        71.80000019073486,
+        69.2999997138977,
+        66.59999990463257,
+        62.90000009536743,
+        74.30000019073486,
+        70.30000019073486,
+        67.5,
+        63.80000019073486,
+        62.200000286102295,
+        58.700000286102295,
+        71.69999980926514,
+        67.90000009536743,
+        63.69999980926514,
+        63.69999980926514,
+        59.80000019073486,
+        73,
+        68.90000009536743,
+        66.5,
+        61.40000009536743,
+        59.90000009536743,
+        57.59999990463257,
+        70.09999990463257,
+        68.90000009536743,
+        66.5,
+        66,
+        62.39999961853027,
+        58.80000019073486,
+        72.59999990463257,
+        69.30000019073486,
+        67.09999990463257,
+        65.7999997138977,
+        63.59999990463257,
+        60.90000009536743,
+        74.59999990463257,
+        71.09999990463257,
+        67.59999990463257,
+        62.90000009536743,
+        59.5,
+        74.90000009536743,
+        70.30000019073486,
+        66.69999980926514,
+        62.80000019073486,
+        74,
+        72.7000002861023,
+        69.5,
+        66,
+        62.5,
+        60.200000286102295,
+        73.30000019073486,
+        70.09999990463257,
+        67.80000019073486,
+        67.89999961853027,
+        61.40000009536743,
+        62,
+        69.90000009536743,
+        68,
+        64.5,
+        61.299999713897705,
+        57,
+        70.5,
+        65.39999961853027,
+        66.09999990463257,
+        62,
+        58.39999961853027,
+        71,
+        65.90000009536743,
+        64.5,
+        61.09999990463257,
+        57.40000009536743,
+        70.30000019073486,
+        65.30000019073486,
+        62.700000286102295,
+        61.30000019073486,
+        57.200000286102295,
+        70.5,
+        67.30000019073486,
+        63.299999713897705,
+        59.69999980926514,
+        59.30000019073486,
+        73.80000019073486,
+        71.19999980926514,
+        71.59999990463257,
+        66.69999980926514,
+        64.10000038146973,
+        60.5,
+        73.5,
+        71.59999990463257,
+        67.80000019073486,
+        64.40000009536743,
+        62.09999990463257,
+        58.30000019073486,
+        72.59999990463257,
+        68.5,
+        64,
+        61.10000038146973,
+        74,
+        69.7999997138977,
+        67.19999980926514,
+        65.2000002861023,
+        61.90000009536743,
+        57.80000019073486,
+        69.40000009536743,
+        65.59999990463257,
+        62.89999961853027,
+        60.09999990463257,
+        59.5,
+        56.799999713897705,
+        70.5,
+        66.10000038146973,
+        62.5,
+        61,
+        75.10000038146973,
+        73.10000038146973,
+        71.5,
+        67.59999990463257,
+        64.09999990463257,
+        60.5,
+        72.39999961853027,
+        70.5,
+        65.2999997138977,
+        63.30000019073486,
+        59.39999961853027,
+        73.30000019073486,
+        71.7999997138977,
+        67.80000019073486,
+        66.09999990463257,
+        63.799999713897705,
+        61,
+        57.09999990463257,
+        70.09999990463257,
+        66.59999990463257,
+        63.40000009536743,
+        60.700000286102295,
+        73.40000009536743,
+        72,
+        67.40000009536743,
+        65.80000019073486,
+        64.39999961853027,
+        61.80000019073486,
+        59.39999961853027,
+        74.19999980926514,
+        70.59999990463257,
+        65.90000009536743,
+        65.7999997138977,
+        62.799999713897705,
+        58.5,
+        72.10000038146973,
+        70.80000019073486,
+        67.7999997138977,
+        64.90000009536743,
+        62.19999980926514,
+        59.10000038146973,
+        59,
+        72.7999997138977,
+        68.90000009536743,
+        64.89999961853027,
+        61.80000019073486,
+        73.7999997138977,
+        69.90000009536743,
+        66.5,
+        64.2999997138977,
+        62.59999990463257,
+        74.7999997138977,
+        70.5,
+        66.5,
+        64.7999997138977,
+        62.40000009536743,
+        58.89999961853027,
+        71.90000009536743,
+        69.09999990463257,
+        65.2999997138977,
+        62.299999713897705,
+        60.39999961853027,
+        56.80000019073486,
+        71.30000019073486,
+        68.80000019073486,
+        68.7000002861023,
+        64.30000019073486,
+        62.5,
+        58.80000019073486,
+        71.2000002861023,
+        69,
+        66.90000009536743,
+        64.40000009536743,
+        63.40000009536743,
+        77.5,
+        73.2999997138977,
+        68.5,
+        65.59999990463257,
+        63,
+        59.299999713897705,
+        56.30000019073486,
+        69.19999980926514,
+        65.39999961853027,
+        62.80000019073486,
+        75.30000019073486,
+        57.59999990463257,
+        70.5,
+        67.5,
+        63.90000009536743,
+        61.5,
+        74.69999980926514,
+        72.69999980926514,
+        68.5,
+        67,
+        64.40000009536743
+      ]
+    },
+    {
+      "device": "desktop",
+      "kind": "surrender",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "e84b6cd9-c79e-4e74-969e-152c5f19a9fa",
+      "reason": "surrender",
+      "moves": 0,
+      "roomCreationToReadyMs": 2597.261250000003,
+      "joinCodeRequestToReadyMs": 91.24425000000338,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 3386.667874999999,
+      "firstBoardMs": 5986.6656250000015,
+      "playableDurationMs": 328.760540999996,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 12.20049999999901,
+      "resultPacketToAnimationCompleteMs": 1056.99525,
+      "surrenderToResultMs": 37.469333000000915,
+      "inputs": [],
+      "inputPaintMs": []
+    },
+    {
+      "device": "mobile-emulation",
+      "kind": "natural",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "71882c1a-3b56-49af-a573-f128463a4c65",
+      "reason": "opponent_locked",
+      "moves": 292,
+      "roomCreationToReadyMs": 2101.7038749999992,
+      "joinCodeRequestToReadyMs": 91.94670800000313,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 3380.889374999999,
+      "firstBoardMs": 5486.355666999996,
+      "playableDurationMs": 29678.544708999994,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 19.123500000001513,
+      "resultPacketToAnimationCompleteMs": 1052.4747920000082,
+      "surrenderToResultMs": null,
+      "inputs": [
+        {
+          "selfStateMs": 39.09366600000067,
+          "opponentStateMs": 75.63054099999863
+        },
+        {
+          "selfStateMs": 38.75900000000547,
+          "opponentStateMs": 36.57170800000313
+        },
+        {
+          "selfStateMs": 36.707916999999725,
+          "opponentStateMs": 36.63533399999869
+        },
+        {
+          "selfStateMs": 36.92270799999824,
+          "opponentStateMs": 36.872167000001355
+        },
+        {
+          "selfStateMs": 38.78404099999898,
+          "opponentStateMs": 40.35250000000087
+        },
+        {
+          "selfStateMs": 39.02241700000013,
+          "opponentStateMs": 38.94837499999994
+        },
+        {
+          "selfStateMs": 38.259666999998444,
+          "opponentStateMs": 37.912875000001804
+        },
+        {
+          "selfStateMs": 39.63812500000495,
+          "opponentStateMs": 39.556125000002794
+        },
+        {
+          "selfStateMs": 37.23649999999907,
+          "opponentStateMs": 38.799332999995386
+        },
+        {
+          "selfStateMs": 36.54508299999725,
+          "opponentStateMs": 36.487708000000566
+        },
+        {
+          "selfStateMs": 38.80595899999753,
+          "opponentStateMs": 38.715917000001355
+        },
+        {
+          "selfStateMs": 39.48091700000077,
+          "opponentStateMs": 39.41387499999837
+        },
+        {
+          "selfStateMs": 39.73633300000074,
+          "opponentStateMs": 39.667083000000275
+        },
+        {
+          "selfStateMs": 38.357499999998254,
+          "opponentStateMs": 36.22387500000332
+        },
+        {
+          "selfStateMs": 40.10870900000009,
+          "opponentStateMs": 40.03837499999645
+        },
+        {
+          "selfStateMs": 36.62524999999732,
+          "opponentStateMs": 36.56079099999624
+        },
+        {
+          "selfStateMs": 38.178124999998545,
+          "opponentStateMs": 40.22200000000157
+        },
+        {
+          "selfStateMs": 39.592540999998164,
+          "opponentStateMs": 37.41558300000179
+        },
+        {
+          "selfStateMs": 37.09095900000102,
+          "opponentStateMs": 39.04883400000108
+        },
+        {
+          "selfStateMs": 40.10175000000163,
+          "opponentStateMs": 40.020292000001064
+        },
+        {
+          "selfStateMs": 39.63854100000026,
+          "opponentStateMs": 39.52083300000231
+        },
+        {
+          "selfStateMs": 39.58466700000281,
+          "opponentStateMs": 39.46733400000085
+        },
+        {
+          "selfStateMs": 39.31670800000575,
+          "opponentStateMs": 39.24237500000163
+        },
+        {
+          "selfStateMs": 40.46258400000079,
+          "opponentStateMs": 40.366125000000466
+        },
+        {
+          "selfStateMs": 39.628624999997555,
+          "opponentStateMs": 39.56908299999486
+        },
+        {
+          "selfStateMs": 40.15637499999866,
+          "opponentStateMs": 40.08983299999818
+        },
+        {
+          "selfStateMs": 39.456249999995634,
+          "opponentStateMs": 39.39045800000167
+        },
+        {
+          "selfStateMs": 39.61591700000281,
+          "opponentStateMs": 39.480750000002445
+        },
+        {
+          "selfStateMs": 39.589458000002196,
+          "opponentStateMs": 39.52887499999633
+        },
+        {
+          "selfStateMs": 38.8973330000008,
+          "opponentStateMs": 36.9989160000041
+        },
+        {
+          "selfStateMs": 39.49883299999783,
+          "opponentStateMs": 39.44233299999905
+        },
+        {
+          "selfStateMs": 36.853125000001455,
+          "opponentStateMs": 38.65970799999923
+        },
+        {
+          "selfStateMs": 39.41500000000087,
+          "opponentStateMs": 39.32525000000169
+        },
+        {
+          "selfStateMs": 38.76175000000512,
+          "opponentStateMs": 38.68120800000179
+        },
+        {
+          "selfStateMs": 37.73479100000259,
+          "opponentStateMs": 39.37029099999927
+        },
+        {
+          "selfStateMs": 40.38604099999793,
+          "opponentStateMs": 40.317833000000974
+        },
+        {
+          "selfStateMs": 39.8234999999986,
+          "opponentStateMs": 37.77475000000413
+        },
+        {
+          "selfStateMs": 37.56587500000023,
+          "opponentStateMs": 39.40483300000051
+        },
+        {
+          "selfStateMs": 39.542208999999275,
+          "opponentStateMs": 39.4855000000025
+        },
+        {
+          "selfStateMs": 39.94724999999744,
+          "opponentStateMs": 39.88704100000177
+        },
+        {
+          "selfStateMs": 39.44391700000415,
+          "opponentStateMs": 39.3685420000038
+        },
+        {
+          "selfStateMs": 40.98333299999649,
+          "opponentStateMs": 40.923915999999736
+        },
+        {
+          "selfStateMs": 39.74725000000035,
+          "opponentStateMs": 39.64383299999463
+        },
+        {
+          "selfStateMs": 38.627667000000656,
+          "opponentStateMs": 38.56300000000192
+        },
+        {
+          "selfStateMs": 40.340250000001106,
+          "opponentStateMs": 40.272250000001804
+        },
+        {
+          "selfStateMs": 39.52849999999307,
+          "opponentStateMs": 39.44041599999764
+        },
+        {
+          "selfStateMs": 40.36945900000137,
+          "opponentStateMs": 38.57808400000067
+        },
+        {
+          "selfStateMs": 40.22799999999552,
+          "opponentStateMs": 40.15837499999907
+        },
+        {
+          "selfStateMs": 41.17929199999344,
+          "opponentStateMs": 38.186041999993904
+        },
+        {
+          "selfStateMs": 39.43570799999725,
+          "opponentStateMs": 39.325582999998005
+        },
+        {
+          "selfStateMs": 39.7009160000016,
+          "opponentStateMs": 39.57329100000061
+        },
+        {
+          "selfStateMs": 41.755959000001894,
+          "opponentStateMs": 41.69320900000457
+        },
+        {
+          "selfStateMs": 39.016499999997905,
+          "opponentStateMs": 38.93716699999641
+        },
+        {
+          "selfStateMs": 37.66899999999441,
+          "opponentStateMs": 38.23370799999975
+        },
+        {
+          "selfStateMs": 40.70562500000233,
+          "opponentStateMs": 40.669832999999926
+        },
+        {
+          "selfStateMs": 40.0611659999995,
+          "opponentStateMs": 41.771999999997206
+        },
+        {
+          "selfStateMs": 39.7077500000014,
+          "opponentStateMs": 39.638207999996666
+        },
+        {
+          "selfStateMs": 38.89291599999706,
+          "opponentStateMs": 38.78679099999863
+        },
+        {
+          "selfStateMs": 40.032500000001164,
+          "opponentStateMs": 39.96254200000112
+        },
+        {
+          "selfStateMs": 38.59670799999731,
+          "opponentStateMs": 37.63799999999901
+        },
+        {
+          "selfStateMs": 39.92045800000051,
+          "opponentStateMs": 39.84820799999579
+        },
+        {
+          "selfStateMs": 38.533917000000656,
+          "opponentStateMs": 38.39729200000147
+        },
+        {
+          "selfStateMs": 37.8359580000033,
+          "opponentStateMs": 38.31708300000173
+        },
+        {
+          "selfStateMs": 40.238290999994206,
+          "opponentStateMs": 40.307207999998354
+        },
+        {
+          "selfStateMs": 38.20324999999866,
+          "opponentStateMs": 40.44741699999577
+        },
+        {
+          "selfStateMs": 37.99079199999687,
+          "opponentStateMs": 37.91687499999534
+        },
+        {
+          "selfStateMs": 38.96016600000439,
+          "opponentStateMs": 38.90649999999732
+        },
+        {
+          "selfStateMs": 37.66808300000412,
+          "opponentStateMs": 37.61433300000499
+        },
+        {
+          "selfStateMs": 38.13970799999515,
+          "opponentStateMs": 38.08112499999697
+        },
+        {
+          "selfStateMs": 39.40954200000124,
+          "opponentStateMs": 39.35087499999645
+        },
+        {
+          "selfStateMs": 41.10433400000329,
+          "opponentStateMs": 41.04166699999769
+        },
+        {
+          "selfStateMs": 39.263292000003275,
+          "opponentStateMs": 39.18841700000485
+        },
+        {
+          "selfStateMs": 37.7377919999999,
+          "opponentStateMs": 38.20183299999917
+        },
+        {
+          "selfStateMs": 39.12279099999432,
+          "opponentStateMs": 41.83033299999806
+        },
+        {
+          "selfStateMs": 38.70237499999348,
+          "opponentStateMs": 41.513499999993655
+        },
+        {
+          "selfStateMs": 40.144749999999476,
+          "opponentStateMs": 40.00945900000079
+        },
+        {
+          "selfStateMs": 40.6484580000033,
+          "opponentStateMs": 43.432125000006636
+        },
+        {
+          "selfStateMs": 39.018833000001905,
+          "opponentStateMs": 38.51216700000077
+        },
+        {
+          "selfStateMs": 41.04799999999523,
+          "opponentStateMs": 40.96099999999569
+        },
+        {
+          "selfStateMs": 42.1304999999993,
+          "opponentStateMs": 40.22937499999534
+        },
+        {
+          "selfStateMs": 39.567666000002646,
+          "opponentStateMs": 39.45675000000483
+        },
+        {
+          "selfStateMs": 41.60250000000087,
+          "opponentStateMs": 41.51383399999759
+        },
+        {
+          "selfStateMs": 40.00291699999798,
+          "opponentStateMs": 39.90058400000271
+        },
+        {
+          "selfStateMs": 39.58641599999828,
+          "opponentStateMs": 39.54641599999741
+        },
+        {
+          "selfStateMs": 38.67658300000039,
+          "opponentStateMs": 39.02216700000281
+        },
+        {
+          "selfStateMs": 39.12945800000307,
+          "opponentStateMs": 38.155375000002095
+        },
+        {
+          "selfStateMs": 41.20850000000064,
+          "opponentStateMs": 41.05229200000031
+        },
+        {
+          "selfStateMs": 39.300875000000815,
+          "opponentStateMs": 38.684457999996084
+        },
+        {
+          "selfStateMs": 40.42720900000131,
+          "opponentStateMs": 40.33837499999936
+        },
+        {
+          "selfStateMs": 39.91233300000022,
+          "opponentStateMs": 42.89262500000041
+        },
+        {
+          "selfStateMs": 41.58058300000266,
+          "opponentStateMs": 41.40779200000543
+        },
+        {
+          "selfStateMs": 42.20433299999422,
+          "opponentStateMs": 42.123249999996915
+        },
+        {
+          "selfStateMs": 41.775290999998106,
+          "opponentStateMs": 41.69820799999434
+        },
+        {
+          "selfStateMs": 42.267291999996814,
+          "opponentStateMs": 42.1707499999975
+        },
+        {
+          "selfStateMs": 39.73120900000504,
+          "opponentStateMs": 39.61945900000137
+        },
+        {
+          "selfStateMs": 40.23654100000567,
+          "opponentStateMs": 40.14766600000439
+        },
+        {
+          "selfStateMs": 42.332915999999386,
+          "opponentStateMs": 39.35383300000103
+        },
+        {
+          "selfStateMs": 39.621790999997756,
+          "opponentStateMs": 39.50200000000041
+        },
+        {
+          "selfStateMs": 42.20662500000617,
+          "opponentStateMs": 39.14679199999955
+        },
+        {
+          "selfStateMs": 39.759083000004466,
+          "opponentStateMs": 39.6797080000033
+        },
+        {
+          "selfStateMs": 43.435042000004614,
+          "opponentStateMs": 43.35354200000438
+        },
+        {
+          "selfStateMs": 38.80670800000371,
+          "opponentStateMs": 38.721457999999984
+        },
+        {
+          "selfStateMs": 39.9690000000046,
+          "opponentStateMs": 39.8894169999985
+        },
+        {
+          "selfStateMs": 39.51304200000595,
+          "opponentStateMs": 39.443708000006154
+        },
+        {
+          "selfStateMs": 41.88012500000332,
+          "opponentStateMs": 41.73262500000419
+        },
+        {
+          "selfStateMs": 40.737584000002244,
+          "opponentStateMs": 40.642667000000074
+        },
+        {
+          "selfStateMs": 39.23649999999907,
+          "opponentStateMs": 39.14745799999946
+        },
+        {
+          "selfStateMs": 38.29541700000118,
+          "opponentStateMs": 38.23012500000186
+        },
+        {
+          "selfStateMs": 39.60987500000192,
+          "opponentStateMs": 39.53500000000349
+        },
+        {
+          "selfStateMs": 39.72333300000173,
+          "opponentStateMs": 42.68812500000058
+        },
+        {
+          "selfStateMs": 40.35095899999578,
+          "opponentStateMs": 40.255083999996714
+        },
+        {
+          "selfStateMs": 40.435874999995576,
+          "opponentStateMs": 38.563499999996566
+        },
+        {
+          "selfStateMs": 43.08541599999444,
+          "opponentStateMs": 40.05187499999738
+        },
+        {
+          "selfStateMs": 42.18024999999761,
+          "opponentStateMs": 39.0122080000001
+        },
+        {
+          "selfStateMs": 39.41975000000093,
+          "opponentStateMs": 39.14824999999837
+        },
+        {
+          "selfStateMs": 39.44983299999876,
+          "opponentStateMs": 42.54266700000153
+        },
+        {
+          "selfStateMs": 43.419542000003275,
+          "opponentStateMs": 43.23099999999977
+        },
+        {
+          "selfStateMs": 42.06362499999523,
+          "opponentStateMs": 39.008999999998196
+        },
+        {
+          "selfStateMs": 41.26316699999734,
+          "opponentStateMs": 41.15475000000151
+        },
+        {
+          "selfStateMs": 41.81379100000049,
+          "opponentStateMs": 38.7980000000025
+        },
+        {
+          "selfStateMs": 41.17691599999671,
+          "opponentStateMs": 41.10679099999834
+        },
+        {
+          "selfStateMs": 40.04145900000003,
+          "opponentStateMs": 39.958499999993364
+        },
+        {
+          "selfStateMs": 39.96449999998731,
+          "opponentStateMs": 39.88154199998826
+        },
+        {
+          "selfStateMs": 40.78316700000141,
+          "opponentStateMs": 40.51875000000291
+        },
+        {
+          "selfStateMs": 40.568542000008165,
+          "opponentStateMs": 40.475333000009414
+        },
+        {
+          "selfStateMs": 39.258874999999534,
+          "opponentStateMs": 39.13629100000253
+        },
+        {
+          "selfStateMs": 40.13095799999428,
+          "opponentStateMs": 40.016124999994645
+        },
+        {
+          "selfStateMs": 41.40133399999468,
+          "opponentStateMs": 38.49700000000303
+        },
+        {
+          "selfStateMs": 38.96875,
+          "opponentStateMs": 38.88645799999358
+        },
+        {
+          "selfStateMs": 41.38179099999252,
+          "opponentStateMs": 41.266875000001164
+        },
+        {
+          "selfStateMs": 42.02262499999779,
+          "opponentStateMs": 41.924041999998735
+        },
+        {
+          "selfStateMs": 40.53295900000376,
+          "opponentStateMs": 40.41066700000374
+        },
+        {
+          "selfStateMs": 42.005999999993946,
+          "opponentStateMs": 41.92570799999521
+        },
+        {
+          "selfStateMs": 40.891875000001164,
+          "opponentStateMs": 40.76883299999463
+        },
+        {
+          "selfStateMs": 39.48741600000358,
+          "opponentStateMs": 39.410625000004075
+        },
+        {
+          "selfStateMs": 41.70166700000118,
+          "opponentStateMs": 43.69758300000103
+        },
+        {
+          "selfStateMs": 42.1812920000084,
+          "opponentStateMs": 40.25508400000399
+        },
+        {
+          "selfStateMs": 42.5604580000072,
+          "opponentStateMs": 42.47987500000454
+        },
+        {
+          "selfStateMs": 39.002917000005255,
+          "opponentStateMs": 38.92195800000627
+        },
+        {
+          "selfStateMs": 41.785250000000815,
+          "opponentStateMs": 41.70504200000141
+        },
+        {
+          "selfStateMs": 42.32145899999887,
+          "opponentStateMs": 39.447208999990835
+        },
+        {
+          "selfStateMs": 42.71249999999418,
+          "opponentStateMs": 39.64191700000083
+        },
+        {
+          "selfStateMs": 40.88004099999671,
+          "opponentStateMs": 39.99554099999659
+        },
+        {
+          "selfStateMs": 40.55183300000499,
+          "opponentStateMs": 40.47583300000406
+        },
+        {
+          "selfStateMs": 38.88479200001166,
+          "opponentStateMs": 38.78741699999955
+        },
+        {
+          "selfStateMs": 42.72874999999476,
+          "opponentStateMs": 39.395332999993116
+        },
+        {
+          "selfStateMs": 42.413083000006736,
+          "opponentStateMs": 40.43604200000118
+        },
+        {
+          "selfStateMs": 40.5978749999922,
+          "opponentStateMs": 43.452957999994396
+        },
+        {
+          "selfStateMs": 42.53816700000607,
+          "opponentStateMs": 42.44045799999731
+        },
+        {
+          "selfStateMs": 43.07666700000118,
+          "opponentStateMs": 42.980750000002445
+        },
+        {
+          "selfStateMs": 44.1712080000143,
+          "opponentStateMs": 44.090583000011975
+        },
+        {
+          "selfStateMs": 42.21837499999674,
+          "opponentStateMs": 38.888667000006535
+        },
+        {
+          "selfStateMs": 42.114667000001646,
+          "opponentStateMs": 39.06695900000341
+        },
+        {
+          "selfStateMs": 41.084499999997206,
+          "opponentStateMs": 40.95020900000236
+        },
+        {
+          "selfStateMs": 42.62720799999079,
+          "opponentStateMs": 42.551542000001064
+        },
+        {
+          "selfStateMs": 42.436166000014055,
+          "opponentStateMs": 42.34879100001126
+        },
+        {
+          "selfStateMs": 39.90600000000268,
+          "opponentStateMs": 41.95337499999732
+        },
+        {
+          "selfStateMs": 40.170833999989554,
+          "opponentStateMs": 39.91783399999258
+        },
+        {
+          "selfStateMs": 40.883041000008234,
+          "opponentStateMs": 40.70137500000419
+        },
+        {
+          "selfStateMs": 38.806375000000116,
+          "opponentStateMs": 38.73024999999325
+        },
+        {
+          "selfStateMs": 43.954790999996476,
+          "opponentStateMs": 40.850665999998455
+        },
+        {
+          "selfStateMs": 39.61379200000374,
+          "opponentStateMs": 39.50062500000058
+        },
+        {
+          "selfStateMs": 40.77925000000687,
+          "opponentStateMs": 40.694917000000714
+        },
+        {
+          "selfStateMs": 40.277625000002445,
+          "opponentStateMs": 40.197457999995095
+        },
+        {
+          "selfStateMs": 42.13150000000314,
+          "opponentStateMs": 42.25454200000968
+        },
+        {
+          "selfStateMs": 42.656666999988374,
+          "opponentStateMs": 42.577708999990136
+        },
+        {
+          "selfStateMs": 42.197832999998354,
+          "opponentStateMs": 44.74679200000537
+        },
+        {
+          "selfStateMs": 43.57620799999859,
+          "opponentStateMs": 43.49374999999418
+        },
+        {
+          "selfStateMs": 41.35700000000361,
+          "opponentStateMs": 41.278166000003694
+        },
+        {
+          "selfStateMs": 41.22741700000188,
+          "opponentStateMs": 41.14604200000758
+        },
+        {
+          "selfStateMs": 41.72174999999697,
+          "opponentStateMs": 41.633958000005805
+        },
+        {
+          "selfStateMs": 40.188374999997905,
+          "opponentStateMs": 41.99704100000963
+        },
+        {
+          "selfStateMs": 40.71099999999569,
+          "opponentStateMs": 42.24337500000547
+        },
+        {
+          "selfStateMs": 42.06954099998984,
+          "opponentStateMs": 40.01625000000058
+        },
+        {
+          "selfStateMs": 39.34108299999207,
+          "opponentStateMs": 42.48308299999917
+        },
+        {
+          "selfStateMs": 39.42170800000895,
+          "opponentStateMs": 41.06320800000685
+        },
+        {
+          "selfStateMs": 39.39712500000314,
+          "opponentStateMs": 39.31866699999955
+        },
+        {
+          "selfStateMs": 40.70891699999629,
+          "opponentStateMs": 40.61683300000732
+        },
+        {
+          "selfStateMs": 41.46125000000757,
+          "opponentStateMs": 41.374832999994396
+        },
+        {
+          "selfStateMs": 42.99179100000765,
+          "opponentStateMs": 42.90091599999869
+        },
+        {
+          "selfStateMs": 42.93920799999614,
+          "opponentStateMs": 42.846999999994296
+        },
+        {
+          "selfStateMs": 42.03100000000268,
+          "opponentStateMs": 38.87524999999732
+        },
+        {
+          "selfStateMs": 39.44754199999443,
+          "opponentStateMs": 42.47108400000434
+        },
+        {
+          "selfStateMs": 41.890958999996656,
+          "opponentStateMs": 38.865666999990935
+        },
+        {
+          "selfStateMs": 39.89945799999987,
+          "opponentStateMs": 39.78462500000023
+        },
+        {
+          "selfStateMs": 43.84366600000067,
+          "opponentStateMs": 41.97925000000396
+        },
+        {
+          "selfStateMs": 40.66754100000253,
+          "opponentStateMs": 40.16324999999779
+        },
+        {
+          "selfStateMs": 42.01575000000594,
+          "opponentStateMs": 38.96012499999779
+        },
+        {
+          "selfStateMs": 43.300208000000566,
+          "opponentStateMs": 43.20029199999408
+        },
+        {
+          "selfStateMs": 43.034874999997555,
+          "opponentStateMs": 40.80545899999561
+        },
+        {
+          "selfStateMs": 39.14450000000943,
+          "opponentStateMs": 39.064125000004424
+        },
+        {
+          "selfStateMs": 42.55304199999955,
+          "opponentStateMs": 42.46216700000514
+        },
+        {
+          "selfStateMs": 38.981500000008964,
+          "opponentStateMs": 38.88933299999917
+        },
+        {
+          "selfStateMs": 41.25733300000138,
+          "opponentStateMs": 41.14620800000557
+        },
+        {
+          "selfStateMs": 42.44724999999744,
+          "opponentStateMs": 42.3540420000063
+        },
+        {
+          "selfStateMs": 43.34404100000393,
+          "opponentStateMs": 39.878083000003244
+        },
+        {
+          "selfStateMs": 42.5717910000094,
+          "opponentStateMs": 42.479541000007885
+        },
+        {
+          "selfStateMs": 40.41391699999804,
+          "opponentStateMs": 40.322999999989406
+        },
+        {
+          "selfStateMs": 39.500874999997905,
+          "opponentStateMs": 42.633333999998285
+        },
+        {
+          "selfStateMs": 42.572667000000365,
+          "opponentStateMs": 39.24637499998789
+        },
+        {
+          "selfStateMs": 40.51829200000793,
+          "opponentStateMs": 40.41795899999852
+        },
+        {
+          "selfStateMs": 39.42929199998616,
+          "opponentStateMs": 42.085874999989755
+        },
+        {
+          "selfStateMs": 42.86662499999511,
+          "opponentStateMs": 42.783333999992465
+        },
+        {
+          "selfStateMs": 41.97120800000266,
+          "opponentStateMs": 38.435333000001265
+        },
+        {
+          "selfStateMs": 42.25724999999511,
+          "opponentStateMs": 42.19545799998741
+        },
+        {
+          "selfStateMs": 40.01408300000185,
+          "opponentStateMs": 41.952707999997074
+        },
+        {
+          "selfStateMs": 39.37916700000642,
+          "opponentStateMs": 42.7580830000079
+        },
+        {
+          "selfStateMs": 43.574915999997756,
+          "opponentStateMs": 43.499207999993814
+        },
+        {
+          "selfStateMs": 42.89066699999967,
+          "opponentStateMs": 39.403166999996756
+        },
+        {
+          "selfStateMs": 41.70608400000492,
+          "opponentStateMs": 38.75545900000725
+        },
+        {
+          "selfStateMs": 43.14179100000183,
+          "opponentStateMs": 43.00237500001094
+        },
+        {
+          "selfStateMs": 43.19137500000943,
+          "opponentStateMs": 43.10599999999977
+        },
+        {
+          "selfStateMs": 40.308124999995925,
+          "opponentStateMs": 40.2307909999945
+        },
+        {
+          "selfStateMs": 39.033874999993714,
+          "opponentStateMs": 38.950874999994994
+        },
+        {
+          "selfStateMs": 42.009875000003376,
+          "opponentStateMs": 38.989457999996375
+        },
+        {
+          "selfStateMs": 43.078125,
+          "opponentStateMs": 40.03695799999696
+        },
+        {
+          "selfStateMs": 40.86504099999729,
+          "opponentStateMs": 40.75483299999905
+        },
+        {
+          "selfStateMs": 41.14624999999069,
+          "opponentStateMs": 41.05441599999904
+        },
+        {
+          "selfStateMs": 38.87287500000093,
+          "opponentStateMs": 38.7955409999995
+        },
+        {
+          "selfStateMs": 39.76245799999742,
+          "opponentStateMs": 39.68083299999125
+        },
+        {
+          "selfStateMs": 42.90320799998881,
+          "opponentStateMs": 42.81287499998871
+        },
+        {
+          "selfStateMs": 41.33116699999664,
+          "opponentStateMs": 41.27220799999486
+        },
+        {
+          "selfStateMs": 43.139832999993814,
+          "opponentStateMs": 43.03429100000358
+        },
+        {
+          "selfStateMs": 42.170249999995576,
+          "opponentStateMs": 42.05724999999802
+        },
+        {
+          "selfStateMs": 43.414583999998285,
+          "opponentStateMs": 43.31904200000281
+        },
+        {
+          "selfStateMs": 44.28849999999511,
+          "opponentStateMs": 44.1493749999936
+        },
+        {
+          "selfStateMs": 42.044834000000264,
+          "opponentStateMs": 43.15795900000376
+        },
+        {
+          "selfStateMs": 39.85183400000096,
+          "opponentStateMs": 43.07425000000512
+        },
+        {
+          "selfStateMs": 39.3382500000007,
+          "opponentStateMs": 42.24762500000361
+        },
+        {
+          "selfStateMs": 42.80599999999686,
+          "opponentStateMs": 39.356082999991486
+        },
+        {
+          "selfStateMs": 39.01716699999815,
+          "opponentStateMs": 41.774666999990586
+        },
+        {
+          "selfStateMs": 42.091709000000264,
+          "opponentStateMs": 41.99945899999875
+        },
+        {
+          "selfStateMs": 38.515125000005355,
+          "opponentStateMs": 38.43162499999744
+        },
+        {
+          "selfStateMs": 43.64366700001119,
+          "opponentStateMs": 43.5250420000084
+        },
+        {
+          "selfStateMs": 41.41208399999596,
+          "opponentStateMs": 41.28891699999804
+        },
+        {
+          "selfStateMs": 43.80899999999383,
+          "opponentStateMs": 43.72145899999305
+        },
+        {
+          "selfStateMs": 41.15962500000023,
+          "opponentStateMs": 41.07820800000627
+        },
+        {
+          "selfStateMs": 40.50624999999127,
+          "opponentStateMs": 42.17370899999514
+        },
+        {
+          "selfStateMs": 38.92879200000607,
+          "opponentStateMs": 38.79475000000093
+        },
+        {
+          "selfStateMs": 39.509040999997524,
+          "opponentStateMs": 39.44041599999764
+        },
+        {
+          "selfStateMs": 43.28620899999805,
+          "opponentStateMs": 39.67612499999814
+        },
+        {
+          "selfStateMs": 38.900499999988824,
+          "opponentStateMs": 42.601041000001715
+        },
+        {
+          "selfStateMs": 44.20587499999965,
+          "opponentStateMs": 44.127542000001995
+        },
+        {
+          "selfStateMs": 43.5571670000063,
+          "opponentStateMs": 40.73775000000023
+        },
+        {
+          "selfStateMs": 42.44683299999451,
+          "opponentStateMs": 44.386707999990904
+        },
+        {
+          "selfStateMs": 39.79162499999802,
+          "opponentStateMs": 42.44650000000547
+        },
+        {
+          "selfStateMs": 45.113292000009096,
+          "opponentStateMs": 42.50483299999905
+        },
+        {
+          "selfStateMs": 40.875499999994645,
+          "opponentStateMs": 40.77558400000271
+        },
+        {
+          "selfStateMs": 42.264165999993565,
+          "opponentStateMs": 38.64049999999406
+        },
+        {
+          "selfStateMs": 41.17958300000464,
+          "opponentStateMs": 40.94791699999769
+        },
+        {
+          "selfStateMs": 40.54229199999827,
+          "opponentStateMs": 40.28779200000281
+        },
+        {
+          "selfStateMs": 39.94137499999488,
+          "opponentStateMs": 39.75429100000474
+        },
+        {
+          "selfStateMs": 39.05691700000898,
+          "opponentStateMs": 38.85579200000211
+        },
+        {
+          "selfStateMs": 42.931666999997105,
+          "opponentStateMs": 40.767791999998735
+        },
+        {
+          "selfStateMs": 42.21695899999759,
+          "opponentStateMs": 42.12049999998999
+        },
+        {
+          "selfStateMs": 42.264042000009795,
+          "opponentStateMs": 39.19308400001319
+        },
+        {
+          "selfStateMs": 42.602249999996275,
+          "opponentStateMs": 39.40870799998811
+        },
+        {
+          "selfStateMs": 42.43825000000652,
+          "opponentStateMs": 38.96641599999566
+        },
+        {
+          "selfStateMs": 41.538375000003725,
+          "opponentStateMs": 41.395417000007
+        },
+        {
+          "selfStateMs": 42.64708300000348,
+          "opponentStateMs": 42.57533300000068
+        },
+        {
+          "selfStateMs": 39.7175419999985,
+          "opponentStateMs": 42.5413750000007
+        },
+        {
+          "selfStateMs": 43.00649999998859,
+          "opponentStateMs": 42.919167000000016
+        },
+        {
+          "selfStateMs": 39.753333000000566,
+          "opponentStateMs": 39.675499999997555
+        },
+        {
+          "selfStateMs": 39.5570000000007,
+          "opponentStateMs": 42.75645899999654
+        },
+        {
+          "selfStateMs": 42.63062499999069,
+          "opponentStateMs": 42.54437499999767
+        },
+        {
+          "selfStateMs": 39.8490829999937,
+          "opponentStateMs": 41.79633299999114
+        },
+        {
+          "selfStateMs": 43.01733299999614,
+          "opponentStateMs": 42.915832999991835
+        },
+        {
+          "selfStateMs": 42.824958000011975,
+          "opponentStateMs": 39.08750000000873
+        },
+        {
+          "selfStateMs": 39.23645900000702,
+          "opponentStateMs": 40.848417000001064
+        },
+        {
+          "selfStateMs": 42.710957999996026,
+          "opponentStateMs": 42.62291599999298
+        },
+        {
+          "selfStateMs": 43.31895899999654,
+          "opponentStateMs": 43.19633400000748
+        },
+        {
+          "selfStateMs": 42.4033330000093,
+          "opponentStateMs": 42.30562500000815
+        },
+        {
+          "selfStateMs": 43.198583999997936,
+          "opponentStateMs": 43.10370900000271
+        },
+        {
+          "selfStateMs": 42.345707999993465,
+          "opponentStateMs": 38.853624999988824
+        },
+        {
+          "selfStateMs": 42.80266600000323,
+          "opponentStateMs": 42.717875000002095
+        },
+        {
+          "selfStateMs": 44.75058399999398,
+          "opponentStateMs": 44.68133399999351
+        },
+        {
+          "selfStateMs": 39.775207999991835,
+          "opponentStateMs": 42.697457999995095
+        },
+        {
+          "selfStateMs": 42.929541000004974,
+          "opponentStateMs": 42.86516600000323
+        },
+        {
+          "selfStateMs": 43.21424999998999,
+          "opponentStateMs": 43.14016699999047
+        },
+        {
+          "selfStateMs": 42.870624999995925,
+          "opponentStateMs": 42.79108300000371
+        },
+        {
+          "selfStateMs": 42.65525000001071,
+          "opponentStateMs": 42.57462500000838
+        },
+        {
+          "selfStateMs": 43.705832999999984,
+          "opponentStateMs": 43.61987500000396
+        },
+        {
+          "selfStateMs": 44.11458300000231,
+          "opponentStateMs": 44.026124999989406
+        },
+        {
+          "selfStateMs": 43.69233400000667,
+          "opponentStateMs": 43.604208999997354
+        },
+        {
+          "selfStateMs": 43.81670799999847,
+          "opponentStateMs": 43.72904099999869
+        },
+        {
+          "selfStateMs": 42.427249999993364,
+          "opponentStateMs": 42.33233299999847
+        },
+        {
+          "selfStateMs": 43.814125000004424,
+          "opponentStateMs": 40.821375000014086
+        },
+        {
+          "selfStateMs": 41.32362500000454,
+          "opponentStateMs": 41.22612500000105
+        },
+        {
+          "selfStateMs": 42.53566700000374,
+          "opponentStateMs": 42.43033400000422
+        },
+        {
+          "selfStateMs": 41.650041999993846,
+          "opponentStateMs": 41.552249999993364
+        },
+        {
+          "selfStateMs": 42.62391700000444,
+          "opponentStateMs": 42.52950000000419
+        },
+        {
+          "selfStateMs": 44.13737499999115,
+          "opponentStateMs": 41.26983399999153
+        }
+      ],
+      "inputPaintMs": [
+        128.40000009536743,
+        64.39999961853027,
+        64.59999990463257,
+        63.09999990463257,
+        63.10000038146973,
+        63.5,
+        65.19999980926514,
+        64.59999990463257,
+        64.80000019073486,
+        64.90000009536743,
+        64.30000019073486,
+        64.40000009536743,
+        64.7999997138977,
+        64.5,
+        64.7999997138977,
+        64.90000009536743,
+        63.5,
+        63.60000038146973,
+        64.7000002861023,
+        65.2000002861023,
+        64.59999990463257,
+        64.69999980926514,
+        64.69999980926514,
+        63.30000019073486,
+        63.40000009536743,
+        63.69999980926514,
+        64.40000009536743,
+        64.89999961853027,
+        64.59999990463257,
+        64.19999980926514,
+        64.7999997138977,
+        64.80000019073486,
+        63.40000009536743,
+        63.59999990463257,
+        64.59999990463257,
+        64.90000009536743,
+        64.30000019073486,
+        64.19999980926514,
+        64.5,
+        64.5,
+        64.2999997138977,
+        64.5,
+        63.40000009536743,
+        65.09999990463257,
+        63.90000009536743,
+        64.69999980926514,
+        64.80000019073486,
+        64.5,
+        64,
+        64.7000002861023,
+        64.19999980926514,
+        63.10000038146973,
+        64.80000019073486,
+        64.60000038146973,
+        64.80000019073486,
+        64.09999990463257,
+        62.799999713897705,
+        64.90000009536743,
+        64.30000019073486,
+        65,
+        64.90000009536743,
+        64.39999961853027,
+        63.09999990463257,
+        63.799999713897705,
+        64.59999990463257,
+        64.39999961853027,
+        64,
+        64.7000002861023,
+        64.7000002861023,
+        64.90000009536743,
+        64.40000009536743,
+        64.7000002861023,
+        64.7999997138977,
+        63.700000286102295,
+        63.5,
+        64.5,
+        64.69999980926514,
+        64.30000019073486,
+        64.39999961853027,
+        64.60000038146973,
+        63.90000009536743,
+        64.39999961853027,
+        63.80000019073486,
+        64.10000038146973,
+        64.10000038146973,
+        64.2000002861023,
+        63.80000019073486,
+        64.7000002861023,
+        64.7999997138977,
+        64.69999980926514,
+        64.59999990463257,
+        63.90000009536743,
+        64.59999990463257,
+        64.5,
+        64.40000009536743,
+        64.59999990463257,
+        63.5,
+        65.69999980926514,
+        63.09999990463257,
+        64.5,
+        64.5,
+        64.60000038146973,
+        64.89999961853027,
+        64.80000019073486,
+        64.40000009536743,
+        63.5,
+        64.59999990463257,
+        64.5,
+        65,
+        64.40000009536743,
+        64.40000009536743,
+        63.40000009536743,
+        64.2999997138977,
+        63.89999961853027,
+        63.39999961853027,
+        64.5,
+        64.90000009536743,
+        63.69999980926514,
+        64.7000002861023,
+        63.90000009536743,
+        64.90000009536743,
+        64.80000019073486,
+        64.40000009536743,
+        65,
+        64.30000019073486,
+        64.5,
+        64.5,
+        64,
+        63.09999990463257,
+        63.40000009536743,
+        65,
+        63.299999713897705,
+        64.30000019073486,
+        63.30000019073486,
+        64.7000002861023,
+        64.7000002861023,
+        64.69999980926514,
+        65.40000009536743,
+        64.90000009536743,
+        64.80000019073486,
+        63.59999990463257,
+        63.700000286102295,
+        64.2999997138977,
+        63.59999990463257,
+        63.59999990463257,
+        64.7999997138977,
+        64.09999990463257,
+        64.69999980926514,
+        64.60000038146973,
+        63.39999961853027,
+        64.5,
+        64.59999990463257,
+        64.59999990463257,
+        64.40000009536743,
+        62.799999713897705,
+        64.7000002861023,
+        63.5,
+        64.39999961853027,
+        64.39999961853027,
+        64.2999997138977,
+        64.90000009536743,
+        64.40000009536743,
+        63.700000286102295,
+        64.2000002861023,
+        64.7000002861023,
+        64.10000038146973,
+        64.30000019073486,
+        64.59999990463257,
+        64.30000019073486,
+        64.5,
+        64.40000009536743,
+        64.7000002861023,
+        64.59999990463257,
+        64.19999980926514,
+        64.40000009536743,
+        64.40000009536743,
+        64.30000019073486,
+        64.40000009536743,
+        64.40000009536743,
+        64.5,
+        64.2999997138977,
+        64.59999990463257,
+        64.5,
+        64.10000038146973,
+        64.2000002861023,
+        63.69999980926514,
+        62.700000286102295,
+        64.40000009536743,
+        64.59999990463257,
+        63.80000019073486,
+        64.30000019073486,
+        64.09999990463257,
+        64.09999990463257,
+        64.90000009536743,
+        63.09999990463257,
+        64.30000019073486,
+        63.40000009536743,
+        64.69999980926514,
+        63.299999713897705,
+        64.69999980926514,
+        64.40000009536743,
+        64.09999990463257,
+        63.799999713897705,
+        64.19999980926514,
+        64.7999997138977,
+        64.59999990463257,
+        63.89999961853027,
+        64.7000002861023,
+        64.80000019073486,
+        64,
+        64,
+        63.5,
+        63.09999990463257,
+        64.10000038146973,
+        63.5,
+        64.30000019073486,
+        64.5,
+        64.09999990463257,
+        64.2000002861023,
+        64.5,
+        62.80000019073486,
+        63.90000009536743,
+        63.700000286102295,
+        64.2000002861023,
+        64.40000009536743,
+        64.2999997138977,
+        64.19999980926514,
+        63.59999990463257,
+        64.09999990463257,
+        64.40000009536743,
+        64.40000009536743,
+        64.39999961853027,
+        64.19999980926514,
+        63.80000019073486,
+        64.30000019073486,
+        63,
+        63.799999713897705,
+        64.10000038146973,
+        63.299999713897705,
+        64.30000019073486,
+        64.2000002861023,
+        64,
+        64.30000019073486,
+        63.09999990463257,
+        64.5,
+        63.5,
+        63.30000019073486,
+        64.69999980926514,
+        64.5,
+        64.39999961853027,
+        64.19999980926514,
+        64.09999990463257,
+        64.09999990463257,
+        64.40000009536743,
+        64.10000038146973,
+        64.30000019073486,
+        64.30000019073486,
+        62.40000009536743,
+        63.80000019073486,
+        63.5,
+        64,
+        64,
+        63.40000009536743,
+        64,
+        64,
+        62.89999961853027,
+        64.5,
+        64.19999980926514,
+        63.90000009536743,
+        64,
+        64.09999990463257,
+        64,
+        64,
+        63.90000009536743,
+        64,
+        64.2999997138977,
+        63.60000038146973,
+        63.90000009536743,
+        63.799999713897705,
+        63.80000019073486,
+        64.90000009536743,
+        64.30000019073486,
+        64.69999980926514,
+        63.69999980926514,
+        64.19999980926514,
+        64.19999980926514,
+        64.19999980926514,
+        64.39999961853027,
+        63.80000019073486,
+        63.80000019073486,
+        62.80000019073486,
+        63.5
+      ]
+    },
+    {
+      "device": "mobile-emulation",
+      "kind": "surrender",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "4b04c4ef-c4c2-47a2-a1d7-f0c688900b83",
+      "reason": "surrender",
+      "moves": 0,
+      "roomCreationToReadyMs": 2240.5030419999966,
+      "joinCodeRequestToReadyMs": 54.93604200000118,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 3388.9188330000034,
+      "firstBoardMs": 5632.921999999991,
+      "playableDurationMs": 167.30041699999128,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 11.561083000007784,
+      "resultPacketToAnimationCompleteMs": 1071.9190830000007,
+      "surrenderToResultMs": 39.947000000000116,
+      "inputs": [],
+      "inputPaintMs": []
+    }
+  ],
+  "failures": [],
+  "deployedCommit": "0b90df576e82f8642839f1f6c301efe6a8dbcbf7",
+  "socketBuildCommit": "0b90df576e82f8642839f1f6c301efe6a8dbcbf7"
+}
