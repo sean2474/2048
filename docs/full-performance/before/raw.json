@@ -30814,9 +30814,10 @@
       "playableDurationMs": 309.99633400002494,
       "roomWallDurationMs": 3538,
       "resultPacketToOverlayMs": 10.283832999994047,
-      "surrenderToResultMs": 13.91766700000153,
+      "surrenderToResultMs": null,
       "inputs": [],
-      "inputPaintMs": []
+      "inputPaintMs": [],
+      "confirmAutomationToResultMs": 13.91766700000153
     },
     {
       "device": "mobile-emulation",
@@ -32723,9 +32724,10 @@
       "playableDurationMs": 314.6447919999482,
       "roomWallDurationMs": 3540,
       "resultPacketToOverlayMs": 12.326667000015732,
-      "surrenderToResultMs": 12.283166999986861,
+      "surrenderToResultMs": null,
       "inputs": [],
-      "inputPaintMs": []
+      "inputPaintMs": [],
+      "confirmAutomationToResultMs": 12.283166999986861
     }
   ],
   "solo": [
@@ -37944,6 +37946,7 @@
     "cleanWebLastCapturedAt": "2026-10-17T11:22:29.946Z",
     "reason": "All original web page and navigation samples were replaced with a quiet-host rerun because another worktree built production apps at 11:14–11:15:11 UTC. Original games, solo checks and admin samples ran afterward and were retained.",
     "timingNameNormalization": "Legacy dataReadyMs keys renamed to observedDataReadyMs without changing any values. This metric is a post-load upper bound including automation checks.",
-    "soloClockScope": "Before run records visible clock drift only; authoritative server clock drift added by the later harness is after-only correctness evidence."
+    "soloClockScope": "Before run records visible clock drift only; authoritative server clock drift added by the later harness is after-only correctness evidence.",
+    "surrenderMetricScope": "Original surrender timer included confirmation-button automation. Its numeric values are preserved as confirmAutomationToResultMs; outgoing-packet surrenderToResultMs was unavailable before and is null, so it must not be compared to after packet latency."
   }
 }
