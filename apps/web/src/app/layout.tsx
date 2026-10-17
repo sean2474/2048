@@ -10,6 +10,7 @@ import { AchievementsProvider } from "@/hooks/use-achievements";
 import { FriendPresenceProvider } from "@/hooks/friend-presence-provider";
 import { GameAnalytics } from "@/components/widget/analytics";
 import { PlayerProvider } from "@/hooks/use-player";
+import { getPreferences } from "@/lib/supabase/preferences";
 import { getAccount } from "@/lib/supabase/account";
 
 export const metadata: Metadata = {
@@ -23,14 +24,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [{ locale, guestLocale, messages }, account] = await Promise.all([getI18n(), getAccount()]);
+  const [{ locale, guestLocale, messages }, account, preferences] = await Promise.all([getI18n(), getAccount(), getPreferences()]);
   return (
     <html lang={locale}>
       <body className={`antialiased`}>
         <I18nProvider initialLocale={locale} messages={messages}>
           <PlayerProvider initialAccount={account}>
           <CatalogProvider>
-          <SettingsProvider initialGuestLocale={guestLocale}>
+          <SettingsProvider initialGuestLocale={guestLocale} initialAccount={preferences}>
           <AudioProvider>
           <AchievementsProvider>
           <FriendPresenceProvider>
