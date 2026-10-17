@@ -31,7 +31,7 @@ Desktop is 1440×900, mobile is 375×812 with touch/mobile emulation on the same
 
 Each device runs one natural match and one surrender match with two independent authenticated browser contexts. Both use the real local queue, socket transport, rules, random tiles, keyboard/touch input and result overlays. Natural matches alternate valid moves preferring the lowest immediate merge score at a fixed minimum 100ms cadence until a server end condition; the harness refuses to substitute surrender for natural completion. Queue, intentional intro/join (currently 3.2 seconds), first board, input-to-self/opponent packet, local input-to-rendered paint and end-packet-to-overlay are separate measurements. Natural match duration varies with the random boards and is not a performance improvement metric. Room duration includes the intro; playable duration starts at the first unpaused state. The solo check compares displayed clock progression against a monotonic wall interval over five seconds, while existing unit tests verify authoritative server clock semantics.
 
-The full-run LCP observer stops at a variable readiness horizon, so its raw values are provisional and excluded from before/after improvement conclusions. FCP, TTFB and load timings do not have that horizon problem. Focused home diagnostics use the same minimum one-second horizon and capture LCP candidate element tag, id, short text and image URL. Even those fixed-horizon samples are lab observations, not final field LCP. Whole fixture request counts include normal link prefetches and their server renders. Socket packet intervals use driver-observed event timestamps and include transport plus observation overhead; they are not isolated server processing times.
+The full-run LCP observer stops at a variable readiness horizon, so its raw values are provisional and excluded from before/after improvement conclusions. FCP, TTFB and load timings do not have that horizon problem. Focused home diagnostics use the same minimum one-second horizon and capture LCP candidate element tag, id, short text and image URL. Even those diagnostic samples are lab observations, not final field LCP. Whole fixture request counts include normal link prefetches and their server renders. Socket packet intervals use driver-observed event timestamps and include transport plus observation overhead; they are not isolated server processing times.
 
 The current solo harness also checks actual socket-reported authoritative elapsed time. The original before capture has only visible clock drift, so server drift is after-only correctness evidence. Before surrender confirmation timing includes button automation and is retained under a separate name; packet-based surrender latency is not compared to that value.
 
@@ -41,6 +41,8 @@ After a deployment has been explicitly verified, deployed guest-only private fri
 
 ```sh
 NODE_PATH=/path/to/playwright/node_modules BENCH_REMOTE_TARGET=staging \
+  BENCH_DEPLOYED_COMMIT='replace-with-verified-web-sha' \
+  BENCH_SOCKET_BUILD_COMMIT='replace-with-verified-socket-sha' \
   node apps/web/tests/performance-remote.browser.mjs
 ```
 
