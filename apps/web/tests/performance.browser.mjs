@@ -51,7 +51,7 @@ async function launchApp(app) {
 async function ready(page, entry) {
   await page.locator('h1').first().waitFor();
   if (entry.ready.selector) await page.locator(entry.ready.selector).first().waitFor();
-  if (entry.ready.text) await page.getByText(entry.ready.text, { exact: false }).first().waitFor();
+  if (entry.ready.text) await page.getByText(entry.ready.text, { exact: false }).and(page.locator('main :visible')).first().waitFor();
   // A heading is not data readiness: require the route's data sentinel and no active loading status.
   await page.waitForFunction(() => ![...document.querySelectorAll('main [role="status"], main [aria-busy="true"]')].some(el => el.getClientRects().length && (el.getAttribute('aria-busy') === 'true' || /loading|getting .*ready|불러오는|로딩/i.test(el.textContent))));
   await page.evaluate(() => new Promise(resolvePaint => requestAnimationFrame(() => requestAnimationFrame(resolvePaint))));

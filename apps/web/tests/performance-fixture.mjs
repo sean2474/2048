@@ -59,7 +59,7 @@ export async function startPerformanceFixture({ root, webPort, adminPort, apiPor
       else if (url.pathname === '/health') data = { ok: true };
       else if (url.pathname === '/admin/operations') data = operations;
       else if (name === 'players') data = [{ id: id ?? PLAYER, name: player.name, username: 'benchmark', image_path: null, updated_at: created }];
-      else if (name === 'player_preferences') data = [{ player_id: id, locale: 'en', skin_id: 'classic', icon_id: 'orb', ability_id: null, custom_shortcuts: false, keybindings: {} }];
+      else if (name === 'player_preferences') data = [{ player_id: id, locale: 'en', skin_id: 'classic', icon_id: 'orb', ability_id: null, custom_shortcuts: false, keybindings: { up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD', ability: 'Digit1' } }];
       else if (name === 'player_wallets') data = [{ player_id: id, balance: 1200 }];
       else if (['content_catalog', 'admin_content_catalog'].includes(name)) data = catalog;
       else if (name === 'cosmetic_state') data = { balance: 1200, purchases: [] };

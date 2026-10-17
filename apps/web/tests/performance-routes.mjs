@@ -19,7 +19,7 @@ const webReady = {
   '/history': { text: 'Benchmark Rival' },
   '/leaderboard': { text: 'Benchmark Player' },
   '/loadout': { selector: '[role="tablist"]' },
-  '/shop': { selector: 'main [data-skin-preview]' },
+  '/shop': { selector: '#shop-items > li' },
   '/achievements': { selector: '#achievement-rewards progress' },
   '/friends': { text: 'Benchmark Rival' },
   '/solo': { selector: '[aria-label="Solo controls"] button:not([disabled])' },
@@ -46,7 +46,7 @@ const adminReady = {
   '/seasons': { text: 'Benchmark season' },
   '/catalog': { selector: 'aside li button' },
   '/feedback': { text: 'Benchmark feedback' },
-  '/operations': { text: 'Remote storage' },
+  '/operations': { text: 'Result storage' },
   '/login': { selector: 'input[type="password"]' },
   '/auth/error': { selector: 'a' },
 };
