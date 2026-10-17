@@ -1,53 +1,39 @@
-"use client";
 
-import { useI18n } from "ui/i18n";
+import { getI18n } from "@/lib/i18n/server";
+import { RefreshButton } from "@/components/refresh-button";
+import { QuerySelect } from "@/components/query-select";
 
 import { OperationsNotice } from "@/components/operations-notice";
 import { adminTime } from "@/lib/investigation";
-import { useEffect, useState } from "react";
 import type { AdminMode, AdminOverview } from "schema/admin";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "ui/button";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AdminPage() {
-  const { t, locale } = useI18n();
+export default async function AdminPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const [{ t, locale }, params, client] = await Promise.all([getI18n(), searchParams, createClient()]);
   const number = (value: number | null) => value === null ? t("Not measured") : value.toLocaleString(locale, { maximumFractionDigits: 1 });
-  const [days, setDays] = useState(30);
-  const [mode, setMode] = useState<AdminMode>("all");
-  const [reload, setReload] = useState(0);
-  const [data, setData] = useState<AdminOverview | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    setLoading(true); setError(""); setData(null);
-    async function load() {
-      try {
-        const { data: result, error: failure } = await createClient().rpc("admin_overview", { p_days: days, p_mode: mode });
-        if (failure) throw failure;
-        if (active) setData(result as AdminOverview);
-      } catch { if (active) setError("Statistics could not be loaded. Check your connection and administrator access, then try again."); }
-      finally { if (active) setLoading(false); }
-    }
-    void load();
-    return () => { active = false; };
-  }, [days, mode, reload]);
+  const days = [7, 30, 90].includes(Number(params.days)) ? Number(params.days) : 30;
+  const mode: AdminMode = ["casual", "ranked", "friend"].includes(String(params.mode)) ? params.mode as AdminMode : "all";
+  let data: AdminOverview | null = null, error = "";
+  try {
+    const result = await client.rpc("admin_overview", { p_days: days, p_mode: mode });
+    if (result.error) throw result.error;
+    data = result.data as AdminOverview;
+  } catch { error = "Statistics could not be loaded. Check your connection and administrator access, then try again."; }
 
   return <section className="space-y-6" aria-labelledby="overview-heading">
     <div className="space-y-6">
       <div><p className="admin-eyebrow mb-2">{t("Game health")}</p><h1 id="overview-heading" className="admin-title">{t("Balance overview")}</h1><p className="mt-2 text-sm leading-6 text-muted-foreground">{t("Match activity, attack usage, and the shape of competition.")}</p></div>
       <div className="admin-panel flex flex-wrap gap-4 items-end p-4 sm:px-6">
-        <label className="grid gap-2 text-xs font-semibold">{t("Period")}<select className="admin-field min-w-36" value={days} onChange={event => setDays(Number(event.target.value))}><option value={7}>{t("Last 7 days")}</option><option value={30}>{t("Last 30 days")}</option><option value={90}>{t("Last 90 days")}</option></select></label>
-        <label className="grid gap-2 text-xs font-semibold">{t("Mode")}<select className="admin-field min-w-32" value={mode} onChange={event => setMode(event.target.value as AdminMode)}><option value="all">{t("All modes")}</option><option value="casual">{t("Casual")}</option><option value="ranked">{t("Ranked")}</option><option value="friend">{t("Friend")}</option></select></label>
+        <label className="grid gap-2 text-xs font-semibold">{t("Period")}<QuerySelect name="days" className="admin-field min-w-36" value={String(days)} options={[7, 30, 90].map(value => ({ value: String(value), label: t(`Last ${value} days`) }))} /></label>
+        <label className="grid gap-2 text-xs font-semibold">{t("Mode")}<QuerySelect name="mode" className="admin-field min-w-32" value={mode} options={[["all", "All modes"], ["casual", "Casual"], ["ranked", "Ranked"], ["friend", "Friend"]].map(([value, label]) => ({ value, label: t(label) }))} /></label>
         <span className="mb-3 hidden text-xs text-muted-foreground xl:block">{t("Completed matches only")}</span>
         <div className="sm:ml-auto">
-        <Button variant="outline" disabled={loading} onClick={() => setReload(value => value + 1)}>{t("Refresh")}</Button>
+        <RefreshButton />
         </div>
       </div>
     </div>
     <OperationsNotice />
-    {error ? <p role="alert" className="admin-error">{t(error)}</p> : loading ? <p role="status" className="admin-state">{t("Loading statistics…")}</p> : data && <>
+    {error ? <p role="alert" className="admin-error">{t(error)}</p> : data && <>
       <p className="text-xs leading-6 text-muted-foreground">{data.periodStart && data.periodEnd && `${adminTime(data.periodStart, locale)} – ${adminTime(data.periodEnd, locale)}`}<br />{t("The first and last dates are partial days. Participating accounts counts unique linked accounts in completed matches, not all registrations. Elapsed time includes ready and reconnect waits.")}</p>
       <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
@@ -78,8 +64,8 @@ export default function AdminPage() {
   </section>;
 }
 
-function Counts({ title, description, rows }: { title: string; description?: string; rows: { label: string; count: number }[] }) {
-  const { t, locale } = useI18n();
+async function Counts({ title, description, rows }: { title: string; description?: string; rows: { label: string; count: number }[] }) {
+  const { t, locale } = await getI18n();
   const maximum = Math.max(1, ...rows.map(row => row.count));
   return <section className="admin-panel p-6 space-y-5">
     <h2 className="admin-section-title">{t(title)}</h2>
