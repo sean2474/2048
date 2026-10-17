@@ -153,8 +153,10 @@ create trigger award_endless_catalog_achievements after insert or update on publ
 update private.cosmetic_catalog set status='published',published_once=true,updated_at=now()
 where kind='skin' and item_id in ('copper-sprint','silver-current','golden-flash','storm-fox','chrono-dragon','jade-path','twilight-orbit','star-phoenix')
 and status='draft' and not published_once and revision=1;
-update private.achievement_catalog set status='published',published_once=true,updated_at=now()
-where item_id in ('solo-first','solo-10min','solo-6min','solo-4min','solo-2min','endless-2048','endless-4096','endless-8192')
-and status='draft' and not published_once and revision=1;
+update private.achievement_catalog a set status='published',published_once=true,updated_at=now()
+where a.item_id in ('solo-first','solo-10min','solo-6min','solo-4min','solo-2min','endless-2048','endless-4096','endless-8192')
+and a.status='draft' and not a.published_once and a.revision=1
+and exists(select 1 from private.cosmetic_catalog c where c.kind='skin'
+  and c.item_id=a.definition->'reward'->>'skinId' and c.status='published' and c.published_once);
 
 commit;
