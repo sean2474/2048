@@ -1,6 +1,7 @@
 import { createAbilityState } from "game-core";
 import test from "node:test";
 import assert from "node:assert/strict";
+import { ABILITIES } from "schema/loadout";
 import { DEFAULT_AUDIO, GameAudio, matchSound, parseAudioSettings, playerSound } from "../../web/src/lib/game-audio";
 import { createLesson, tutorialReducer } from "../../web/src/lib/tutorial";
 import type { End, ServerState } from "schema/in-game";
@@ -66,11 +67,19 @@ test("audio waits for activation, bounds bursts and stops immediately on mute an
   class FakeAudioContext {
     state = "suspended";
     destination = {};
+    sampleRate = 48000;
+    createBuffer(_channels: number, length: number) { return { getChannelData: () => new Float32Array(length) }; }
+    createBiquadFilter() { return { type: "lowpass", Q: { value: 0 }, frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}, disconnect() {} }; }
     get currentTime() { return clock; }
     constructor() { contexts++; }
     async resume() { this.state = "running"; }
     async close() { closed = true; }
     createGain() { return { gain: { setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}, disconnect() {} }; }
+    createBufferSource() {
+      const source = { buffer: null, stopped: false, disconnected: false, connect() {}, disconnect() { this.disconnected = true; }, start() {}, stop(at?: number) { if (at === undefined) this.stopped = true; } };
+      voices.push(source);
+      return source;
+    }
     createOscillator() {
       const voice = { type: "sine", stopped: false, disconnected: false, frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}, disconnect() { this.disconnected = true; }, start() {}, stop(at?: number) { if (at === undefined) this.stopped = true; } };
       voices.push(voice);
@@ -104,7 +113,12 @@ test("audio waits for activation, bounds bursts and stops immediately on mute an
     assert.equal(voices.length, 2);
     document.hidden = false;
     audio.play("win");
-    assert.equal(voices.length, 5);
+    assert.equal(voices.length, 8);
+    clock++; audio.play("hardblock");
+    assert.equal(voices.filter(voice => !voice.stopped).length, 9);
+    clock++; audio.play("merge");
+    clock++; audio.play("merge");
+    assert.ok(voices.filter(voice => !voice.stopped).length <= 12);
     audio.dispose();
     assert.ok(closed);
     assert.ok(voices.every(voice => voice.stopped));
@@ -113,5 +127,20 @@ test("audio waits for activation, bounds bursts and stops immediately on mute an
   } finally {
     if (originalContext) Object.defineProperty(globalThis, "AudioContext", originalContext); else Reflect.deleteProperty(globalThis, "AudioContext");
     if (originalDocument) Object.defineProperty(globalThis, "document", originalDocument); else Reflect.deleteProperty(globalThis, "document");
+  }
+});
+
+
+test("abilities only sound on confirmed charge consumption, including effects without board movement", () => {
+  for (const { id } of ABILITIES) {
+    const previous = state();
+    previous.you.ability = { ...previous.you.ability, id, charge: 1024 };
+    const next = structuredClone(previous);
+    next.you.ability.charge = 0;
+    assert.equal(matchSound(previous, next), id);
+    assert.equal(matchSound(next, structuredClone(next)), null);
+    const opponentOnly = structuredClone(previous);
+    opponentOnly.opp = { ...next.you };
+    assert.equal(matchSound(previous, opponentOnly), null);
   }
 });

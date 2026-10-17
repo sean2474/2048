@@ -32,7 +32,7 @@ export async function mockCatalog(page) {
   await page.route("**/rest/v1/rpc/content_catalog*", route => route.fulfill({ json: catalogFixture }));
 }
 
-const origin = process.env.WEB_TEST_ORIGIN ?? process.env.SOCIAL_TEST_ORIGIN ?? "http://[::1]:3001";
+const origin = process.env.WEB_TEST_ORIGIN ?? process.env.TEST_WEB_ORIGIN ?? process.env.SOCIAL_TEST_ORIGIN ?? "http://[::1]:3001";
 
 // Fictional account responses stay inside the browser; no remote profile is read or written.
 export async function mockAccount(page, id = "10000000-0000-4000-8000-000000000099") {
