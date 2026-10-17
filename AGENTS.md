@@ -5,7 +5,7 @@
 ## 작업 시작
 
 - `git status --short`, `git branch --show-current`, `git worktree list`와 원격 브랜치를 확인한다. 기존 변경의 소유자를 모르면 이번 작업에 포함하지 않는다.
-- 새 작업은 `git fetch origin` 후 최신 `origin/staging`을 기준으로 `codex/<작업명>` 브랜치와 전용 worktree를 만든다. 같은 작업의 전용 worktree가 있으면 재사용한다. 앱에서 작업하면 관리형 worktree 도구를 우선 사용한다.
+- 브랜치는 gitflow를 따른다. `main`은 운영, `staging`은 통합(develop) 브랜치다. 새 작업은 `git fetch origin` 후 최신 `origin/staging`을 기준으로 `feature/<작업명>` 브랜치와 전용 worktree를 만든다. 운영 긴급 수정만 `origin/main` 기준 `hotfix/<작업명>`으로 만들고 `main`과 `staging` 양쪽에 병합한다. 같은 작업의 전용 worktree가 있으면 재사용한다. 앱에서 작업하면 관리형 worktree 도구를 우선 사용한다.
 - **동시에 진행하는 작업은 반드시 서로 다른 브랜치와 worktree를 사용한다.** 주 작업 폴더나 다른 작업의 worktree에서 브랜치를 바꾸지 않는다. 하나의 브랜치·Git 인덱스를 여러 작업이 공유하지 않는다.
 - 작업 범위와 수정할 파일을 먼저 확인한다. 공통 파일·스키마·마이그레이션이 겹치면 먼저 완료된 변경을 통합한 뒤 다음 변경을 적용한다. worktree 분리만으로 같은 줄의 병합 충돌이 없어지지는 않는다.
 
@@ -19,7 +19,8 @@
 
 ## 업로드와 병합
 
-- 의미 있는 단위로 커밋하고 `git push -u origin codex/<작업명>`으로 업로드한다. 업로드 뒤 원격 커밋 SHA를 확인하고 브랜치와 검증 결과를 보고한다.
+- 의미 있는 단위로 커밋하고 `git push -u origin feature/<작업명>`으로 업로드한다. 업로드 뒤 원격 커밋 SHA를 확인하고 브랜치와 검증 결과를 보고한다.
+- `staging`에 병합이 끝난 `feature/*`·`hotfix/*` 브랜치는 원격과 로컬에서 바로 삭제하고 worktree도 정리한다. 장기 브랜치는 `main`과 `staging` 둘만 남긴다.
 - 기능 브랜치는 `staging`으로 먼저 통합한다. PR을 만들 수 있으면 PR로 검토하며, 여러 작업을 동시에 병합하지 않는다.
 - 병합 직전에 최신 `origin/staging`을 기능 브랜치에 merge하고 충돌을 해결한 결과를 다시 검증한다. 공유하거나 업로드한 브랜치를 rebase/force push하지 않는다.
 - 충돌 시 양쪽 기능과 호출부·테스트를 확인해 해결한다. 파일 전체를 무조건 `ours`/`theirs`로 선택하지 않는다. 병합 대상이 다시 바뀌면 새 기준으로 재확인한다.
