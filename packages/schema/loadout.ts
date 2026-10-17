@@ -4,7 +4,9 @@ export type SkinTokens = {
   tileRadius: string;
   tilePattern?: "dots" | "gingham" | "pinstripe" | "weave" | "runes" | "sunrise" | "magic-circle" | "shield" | "crossguard" | "laurel" | "compass";
   tilePalette?: readonly string[];
-  character?: "cat" | "bunny" | "sentinel" | "runeknight" | "arcanist" | "diamond" | "crown";
+  boardImagePath?: string;
+  tileImagePath?: string;
+  character?: "cat" | "bunny" | "sentinel" | "runeknight" | "arcanist" | "fox" | "dragon" | "phoenix" | "diamond" | "crown";
 };
 
 export const SKIN_RARITIES = {
@@ -14,7 +16,7 @@ export const SKIN_RARITIES = {
   legendary: { name: "Legendary", description: "Signature tiles and merge effects." },
 } as const;
 export type SkinRarity = keyof typeof SKIN_RARITIES;
-export type Skin = { id: string; name: string; description: string; rarity: SkinRarity; price: 0; tokens: SkinTokens };
+export type Skin = { id: string; name: string; description: string; rarity: SkinRarity; price: number; tokens: SkinTokens };
 
 export const SKINS = [
   { id: "classic", name: "Classic", description: "Default board and tiles.", rarity: "common", price: 0,
@@ -61,6 +63,22 @@ export const SKINS = [
     tokens: { boardBackground: "#cbc5b6", emptyBackground: "#e1dccf", tileRadius: "0.5rem", tilePattern: "sunrise" } },
   { id: "rune-sanctum", name: "Rune Sanctum", description: "Jade stone and engraved magic circles for a 1024 milestone.", rarity: "epic", price: 0,
     tokens: { boardBackground: "repeating-linear-gradient(90deg, transparent 0 23%, #b9d7ca12 23% 24%, transparent 24% 25%), radial-gradient(ellipse at top, #658a7f, #243e3d)", emptyBackground: "#52736a", tileRadius: "0.4rem", tilePattern: "magic-circle", tilePalette: ["#e7eee1", "#cddfcf", "#b4d8ca", "#b8d4da", "#cbcce1", "#e4d6aa"] } },
+  { id: "copper-sprint", name: "Copper Sprint", description: "Copper stripes celebrating your first solo 2048.", rarity: "rare", price: 0,
+    tokens: { boardBackground: "linear-gradient(135deg, #ae7253, #654637)", emptyBackground: "#c8a58b", tileRadius: "0.4rem", tilePattern: "pinstripe" } },
+  { id: "silver-current", name: "Silver Current", description: "Cool silver and blue for a ten-minute finish.", rarity: "rare", price: 0,
+    tokens: { boardBackground: "linear-gradient(135deg, #a5bdcb, #344e67)", emptyBackground: "#829daa", tileRadius: "0.4rem", tilePattern: "weave" } },
+  { id: "golden-flash", name: "Golden Flash", description: "Golden rays earned by reaching 2048 in six minutes.", rarity: "epic", price: 0,
+    tokens: { boardBackground: "radial-gradient(ellipse at top left, #bd9344, #49331e)", emptyBackground: "#9e7d46", tileRadius: "0.4rem", tilePattern: "sunrise", tilePalette: ["#fff1c9", "#f8df9e", "#f2ce7a", "#eebc68", "#e8aa70", "#f2d991"] } },
+  { id: "storm-fox", name: "Storm Fox", description: "A silver fox with lightning ears for a four-minute finish.", rarity: "legendary", price: 0,
+    tokens: { boardBackground: "linear-gradient(145deg, #526d92, #222d50)", emptyBackground: "#60728d", tileRadius: "0.5rem", character: "fox", tilePalette: ["#d8e8f8", "#bddbed", "#adc5ef", "#c4b9ee", "#d8c8f4", "#f1deaf"] } },
+  { id: "chrono-dragon", name: "Chrono Dragon", description: "An emerald dragon guarding the two-minute record.", rarity: "legendary", price: 0,
+    tokens: { boardBackground: "radial-gradient(ellipse at top, #6b947b, #203e3c)", emptyBackground: "#648778", tileRadius: "0.5rem", character: "dragon", tilePalette: ["#dfedbd", "#beddbb", "#aad3ca", "#bbd9db", "#e2c6a5", "#f4d48f"] } },
+  { id: "jade-path", name: "Jade Path", description: "Jade rune borders for your first endless 2048.", rarity: "rare", price: 0,
+    tokens: { boardBackground: "#718d7d", emptyBackground: "#b6cbbb", tileRadius: "0.4rem", tilePattern: "runes" } },
+  { id: "twilight-orbit", name: "Twilight Orbit", description: "Violet constellations earned at endless 4096.", rarity: "epic", price: 0,
+    tokens: { boardBackground: "radial-gradient(ellipse at top right, #8a7dab, #303047)", emptyBackground: "#716d8d", tileRadius: "0.5rem", tilePattern: "magic-circle", tilePalette: ["#efe7f5", "#dcd2ed", "#cec6eb", "#c3d1eb", "#d9c3e8", "#edc8cc"] } },
+  { id: "star-phoenix", name: "Star Phoenix", description: "A celestial phoenix awakened by an endless 8192 tile.", rarity: "legendary", price: 0,
+    tokens: { boardBackground: "radial-gradient(ellipse at top, #a36c83, #352e53)", emptyBackground: "#886b87", tileRadius: "0.5rem", character: "phoenix", tilePalette: ["#f9debf", "#f2c7bb", "#eac1db", "#d8c1eb", "#c7d4ee", "#f5d995"] } },
   { id: "rank-bronze", name: "Bronze Bastion", description: "Copper shields and etched metal for Bronze rank.", rarity: "rare", price: 0,
     tokens: { boardBackground: "linear-gradient(135deg, #a86e49, #5d3f32)", emptyBackground: "#bd9577", tileRadius: "0.3rem", tilePattern: "shield", tilePalette: ["#f3e4d1", "#ecd6bc", "#dfbf98", "#e7bd91", "#edc9ac", "#f0d3a4"] } },
   { id: "rank-silver", name: "Silver Crossguard", description: "Crossed silver blades and engraved steel for Silver rank.", rarity: "rare", price: 0,
@@ -75,7 +93,7 @@ export const SKINS = [
     tokens: { boardBackground: "radial-gradient(ellipse at top, #87719d, #392d54 75%)", emptyBackground: "#9b88ad", tileRadius: "0.5rem", character: "crown", tilePalette: ["#e8dcec", "#dccbec", "#d1c9eb", "#d9c4df", "#e6cdcd", "#eed9b0"] } },
 ] as const satisfies readonly Skin[];
 
-export type SkinId = (typeof SKINS)[number]["id"];
+export type SkinId = string;
 
 export const ABILITIES = [
   { id: "clear-x", summary: "Remove one X block from your board.", name: "Clear X", role: "Recovery", description: "Remove exactly one X block automatically, starting with the oldest. This is the default ability for everyone.", tradeoff: "Hard blocks and incoming attacks stay unchanged. If there is no X block, no charge is spent.", status: "active", price: null },

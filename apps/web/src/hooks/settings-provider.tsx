@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { useRouter } from "next/navigation";
 import { useI18n } from "ui/i18n";
 import { LOCALE_COOKIE, type Locale } from "ui/locale";
+import type { PreferencesSnapshot } from "@/lib/supabase/preferences";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { GUEST_SETTINGS_COOKIE, parseGuestSettings, settingsFromRow, settingsToRow, SettingsStore, type Settings, type SettingsPatch, type SettingsState } from "@/lib/preferences";
@@ -16,7 +17,8 @@ function writeCookie(name: string, value: string) {
   if (cookieValue(name) !== value) throw new Error("Cookies unavailable");
 }
 
-export function SettingsProvider({ children, initialGuestLocale }: { children: ReactNode; initialGuestLocale: Locale }) {
+export function SettingsProvider({ children, initialGuestLocale, initialAccount }: { children: ReactNode; initialGuestLocale: Locale; initialAccount: PreferencesSnapshot | null }) {
+  const seed = useRef(initialAccount);
   const { locale, setLocale } = useI18n();
   const router = useRouter();
   const i18nRef = useRef({ locale, setLocale });
@@ -46,6 +48,9 @@ export function SettingsProvider({ children, initialGuestLocale }: { children: R
       }
     },
     readAccount: async id => {
+      const initial = seed.current;
+      seed.current = null;
+      if (initial?.userId === id) return initial.settings;
       const { data, error } = await createClient().from("player_preferences").select("locale,keybindings,skin_id,icon_id,ability_id,custom_shortcuts").eq("player_id", id).maybeSingle();
       if (error) throw error;
       return data ? settingsFromRow(data) : null;

@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
@@ -6,7 +7,32 @@ const { loadEnvConfig } = createRequire(require.resolve("next/package.json"))("@
 const { combinedEnv } = loadEnvConfig(fileURLToPath(new URL("../", import.meta.url)), true);
 export const authCookieName = `sb-${new URL(combinedEnv.NEXT_PUBLIC_SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
 
-const origin = "http://[::1]:3001";
+const { require: requireTs } = createRequire(new URL("../../socket/package.json", import.meta.url))("tsx/cjs/api");
+const { SKINS } = requireTs("../../../packages/schema/loadout.ts", import.meta.url);
+const { PROFILE_ICONS } = requireTs("../../../packages/schema/profile-icons.ts", import.meta.url);
+const { ACHIEVEMENT_REWARDS, achievementForItem } = requireTs("../../../packages/schema/achievements.ts", import.meta.url);
+const { SHOP_ITEMS } = requireTs("../../../packages/schema/economy.ts", import.meta.url);
+const metadata = { status: "published", publishedOnce: true, revision: 1, updatedAt: "2026-10-17T00:00:00Z", sortOrder: 0, description: "" };
+function acquisition(kind, id) {
+  const price = SHOP_ITEMS.find(item => item.kind === kind && item.id === id)?.price ?? 0;
+  return { price, acquisition: achievementForItem(kind, id) ? "achievement" : price ? "coins" : "free" };
+}
+export const catalogFixture = {
+  skins: SKINS.map(item => ({ ...metadata, ...item, ...acquisition("skin", item.id) })),
+  profileIcons: PROFILE_ICONS.map(item => ({ ...metadata, ...item, ...acquisition("icon", item.id), imagePath: `profiles/${item.id}.svg` })),
+  achievements: ACHIEVEMENT_REWARDS.map(item => ({ ...metadata, ...item })),
+};
+
+export async function mockCatalog(page) {
+  await page.route("**/storage/v1/object/public/catalog-assets/profiles/*.svg", route => {
+    const id = new URL(route.request().url()).pathname.split("/").pop();
+    if (!/^[a-z0-9-]+\.svg$/.test(id)) return route.abort();
+    return route.fulfill({ contentType: "image/svg+xml", body: readFileSync(new URL(`../public/profile-icons/${id}`, import.meta.url)) });
+  });
+  await page.route("**/rest/v1/rpc/content_catalog*", route => route.fulfill({ json: catalogFixture }));
+}
+
+const origin = process.env.WEB_TEST_ORIGIN ?? process.env.TEST_WEB_ORIGIN ?? process.env.SOCIAL_TEST_ORIGIN ?? "http://[::1]:3001";
 
 // Fictional account responses stay inside the browser; no remote profile is read or written.
 export async function mockAccount(page, id = "10000000-0000-4000-8000-000000000099") {
@@ -25,7 +51,7 @@ export async function mockAccount(page, id = "10000000-0000-4000-8000-0000000000
     headers.cookie = (headers.cookie ?? "").split("; ").filter(part => !part.startsWith("sb-")).join("; ");
     return route.continue({ headers });
   });
-  const fixture = { row, failSave: false, cosmetics: { balance: 0, purchases: [] }, achievements: {
+  const fixture = { catalog: structuredClone(catalogFixture), row, failSave: false, cosmetics: { balance: 0, purchases: [] }, achievements: {
     attendance: { streak: 0, bestStreak: 0, lastDay: null, today: "2026-10-17", checkedInToday: false, nextCheckInAt: "2026-10-17T15:00:00+00:00" },
     wins: 0, highestTile: 0, unlocks: [],
   } };
@@ -33,14 +59,31 @@ export async function mockAccount(page, id = "10000000-0000-4000-8000-0000000000
     const request = route.request(), url = new URL(request.url());
     let value;
     if (url.pathname.startsWith("/auth/")) value = user;
+    else if (url.pathname.includes("/storage/v1/object/public/catalog-assets/profiles/")) {
+      const id = url.pathname.split("/").pop();
+      if (!/^[a-z0-9-]+\.svg$/.test(id)) return route.abort();
+      return route.fulfill({ contentType: "image/svg+xml", body: readFileSync(new URL(`../public/profile-icons/${id}`, import.meta.url)) });
+    }
+    else if (url.pathname.endsWith("/rpc/content_catalog")) value = fixture.catalog;
     else if (url.pathname.endsWith("/player_preferences")) {
       if (request.method() === "PATCH") {
         if (fixture.failSave) return route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ message: "Fixture save failure" }) });
         Object.assign(row, request.postDataJSON());
       }
       value = row;
-    } else if (url.pathname.endsWith("/rpc/achievement_state")) value = fixture.achievements;
+    } else if ((url.pathname.endsWith("/rpc/achievement_state") || url.pathname.endsWith("/rpc/sync_achievements"))) value = fixture.achievements;
+    else if (url.pathname.endsWith("/rpc/check_in")) {
+      const attendance = fixture.achievements.attendance;
+      if (!attendance.checkedInToday) {
+        attendance.streak += 1;
+        attendance.bestStreak = Math.max(attendance.bestStreak, attendance.streak);
+        attendance.checkedInToday = true;
+        attendance.lastDay = attendance.today;
+      }
+      value = fixture.achievements;
+    }
     else if (url.pathname.endsWith("/rpc/cosmetic_state")) value = fixture.cosmetics;
+    else if (url.pathname.endsWith("/rpc/social_players")) value = [];
     else if (url.pathname.endsWith("/players")) value = { id, name: "타일탐험가", image_path: null };
     else if (url.pathname.endsWith("/player_wallets")) value = { player_id: id, balance: 0, created_at: user.created_at };
     else value = null;

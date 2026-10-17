@@ -13,7 +13,7 @@
 | 완료 경기, 모드·종료 사유, 티어·공격 통계 | `admin.2048duo.io` → Overview/Matches | 게임 서버가 DB에 저장한 결과 |
 | 현재 연결·방·매칭·저장 대기 | 관리자 Operations | 현재 Fly 프로세스 상태 |
 
-2026-10-17 설정은 **Web Analytics Pro, Plus 미사용**이다. 이벤트 속성은 모두 2개 이하로 제한했다. Speed Insights는 현재 무료 RES(Real Experience Score) 화면을 사용하며 전체 Core Web Vitals 상세 기능을 위한 유료 Plus는 활성화하지 않았다. 플랜 변경 없이 모든 지표를 볼 수 있다고 가정하지 않는다. 사용량·비용·추가 기능은 Vercel 프로젝트 대시보드에서 확인한다.
+2026-10-17 초기 배포에서 확인한 설정은 **Web Analytics Pro, Plus 미사용**이다. 이벤트 속성은 모두 2개 이하로 제한했다. 당시 Speed Insights는 무료 RES(Real Experience Score) 화면을 사용하며 전체 Core Web Vitals 상세 기능을 위한 유료 Plus는 활성화하지 않았다. 플랜 변경 없이 모든 지표를 볼 수 있다고 가정하지 않는다. 사용량·비용·추가 기능은 Vercel 프로젝트 대시보드에서 확인한다.
 
 ## 수집 환경과 데이터 범위
 
@@ -64,6 +64,8 @@ NEXT_PUBLIC_VERCEL_ENV=production
 같은 탭에서 해당 경기의 시작·종료를 재수신할 때 중복을 억제한다. 다른 탭·기기까지 고유 경기를 보장하지 않는다. 실제 완료 경기 수, 승률, Elo와 공격 밸런스는 DB 기반 관리자 집계를 기준으로 한다. 클라이언트 이벤트는 임의 생성될 수도 있으므로 보상·결제·랭크 판정에 사용하지 않는다.
 
 ## 검증과 확장
+
+아래는 초기 배포 검증 기록으로, 이후 통합 커밋의 성능·배포 검증을 뜻하지 않는다.
 
 2026-10-17 배포와 자동 테스트 159개·타입 검사·린트는 통과했다. 실제 운영 Vercel 대시보드에서도 Analytics 방문자 2명·페이지 조회 11회, `navigation_clicked`·`queue_started`·`match_started`·`match_finished` 이벤트와 익명화된 `/play/[id]` 경로를 확인했다. Speed Insights에는 성능 표본 8개가 수신됐다. 최초 검증 시점의 적은 표본이므로 대표 성능이나 장기 이용량을 판단하는 근거로 사용하지 않는다.
 

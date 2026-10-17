@@ -49,9 +49,17 @@ test("Supabase services read authoritative ratings, fail closed, and send explic
   body = { id: A, user_metadata: { name: "  " } };
   profileName = "새 닉네임";
   assert.deepEqual(await services.resolveAccount("test-access-token"), { id: A, name: "새 닉네임", iconId: "dragon", skinId: "dawn-oath", rating: 1420, rank: earnedRank });
-  for (const row of [[], [{ icon_id: "dragon" }], [{ icon_id: "dragon", skin_id: "unknown" }]]) {
+  preferences = [{ icon_id: "catalog-panda-2026", skin_id: "catalog-crystal-2026" }];
+  const catalogAccount = await services.resolveAccount("test-access-token");
+  assert.equal(catalogAccount.iconId, "catalog-panda-2026", "Database-authorized icons do not require a socket deployment");
+  assert.equal(catalogAccount.skinId, "catalog-crystal-2026", "Database-authorized skins do not require a socket deployment");
+  for (const row of [[], [{ icon_id: "dragon" }], [{ icon_id: "dragon", skin_id: "../unknown" }], [{ icon_id: "dragon", skin_id: "x".repeat(65) }]]) {
     preferences = row;
     assert.equal((await services.resolveAccount("test-access-token")).skinId, "classic");
+  }
+  for (const icon_id of [null, "../fox", "Fox", "fox\u200b", "x".repeat(65)]) {
+    preferences = [{ icon_id, skin_id: "classic" }];
+    assert.equal((await services.resolveAccount("test-access-token")).iconId, "fox");
   }
   preferences = { code: "42501", message: "access denied" }; preferencesStatus = 403;
   assert.equal((await services.resolveAccount("test-access-token")).skinId, "classic");
@@ -202,7 +210,7 @@ test("migrations enforce RLS, atomic/idempotent results, rankings and Realtime p
   });
   assert.deepEqual((await db.query("select sum(rating)::integer as total, sum(games_played)::integer as games from public.player_ratings")).rows, [{ total: 2400, games: 10 }]);
   const published = (await db.query<{ tablename: string }>("select tablename from pg_publication_tables where pubname='supabase_realtime'")).rows.map(row => row.tablename).sort();
-  assert.deepEqual(published, ["match_participants", "player_ratings", "player_stats"]);
+  assert.deepEqual(published, ["direct_messages", "friendships", "match_participants", "player_ratings", "player_stats"]);
 });
 
 test("Elo migration preserves historical games and statistics without awarding retroactive ratings", async t => {

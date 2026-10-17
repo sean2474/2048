@@ -7,7 +7,7 @@ export function GameEmblem({ kind, className = "size-12" }: { kind: EmblemKind; 
       <path d="m4 3 4 1 11 12-3 3L4 8 3 4Z M14 20l6-6m-3 4 4 3" />
       <path d="m15 6 5-3 1 1-1 4-4 4M8 14l-3 3 2 2 3-3m-6-2 6 6m-3-2-4 3" />
     </>}
-    {kind === "coin" && <><circle cx="12" cy="12" r="8.5" /><path d="m12 7 3.5 5-3.5 5-3.5-5Z" /></>}
+    {kind === "coin" && <><circle cx="12" cy="12" r="8.5" fill="#f7cf56" stroke="#b68122" /><circle cx="12" cy="12" r="6.2" stroke="#fff0a5" /><path d="m12 7 3.5 5-3.5 5-3.5-5Z" fill="#ffeaa0" stroke="#a97319" /></>}
     {kind === "loadout" && <>
       <rect x="3.5" y="3.5" width="6" height="6" rx="1.5" /><rect x="3.5" y="14.5" width="6" height="6" rx="1.5" /><rect x="14.5" y="14.5" width="6" height="6" rx="1.5" />
       <path d="m17.5 2.5 1.3 3.7 3.7 1.3-3.7 1.3-1.3 3.7-1.3-3.7-3.7-1.3 3.7-1.3Z" />

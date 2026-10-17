@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createRequire } from "node:module";
 const { chromium } = createRequire(import.meta.url)("playwright");
-const origin = "http://[::1]:3001";
+const origin = process.env.TEST_WEB_ORIGIN || "http://[::1]:3001";
 
 import { trackAudio } from "./browser-fixtures.mjs";
 
@@ -10,6 +10,7 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const context = await browser.newContext({ locale: "en-US", viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+    context.setDefaultTimeout(12000);
     await trackAudio(context);
     const page = await context.newPage();
     const errors = [];
@@ -77,6 +78,7 @@ test("blocked storage and unsupported audio keep tutorial usable and report limi
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const context = await browser.newContext({ locale: "ko-KR" });
+    context.setDefaultTimeout(12000);
     await context.addInitScript(() => {
       window.AudioContext = undefined;
       const original = Storage.prototype.setItem;
@@ -103,10 +105,12 @@ test("blocked storage and unsupported audio keep tutorial usable and report limi
 test("friend match plays confirmed moves and one result cue per player", async () => {
   // Another local app binds IPv4 :3001; this workspace's dev server listens on IPv6.
   const browser = await chromium.launch({ channel: "chrome", headless: true, args: ["--host-resolver-rules=MAP localhost [::1]"] });
-  const matchOrigin = "http://localhost:3001";
+  const matchOrigin = process.env.TEST_WEB_ORIGIN || "http://localhost:3001";
   try {
     const hostContext = await browser.newContext({ locale: "en-US" });
+    hostContext.setDefaultTimeout(12000);
     const guestContext = await browser.newContext({ locale: "en-US" });
+    guestContext.setDefaultTimeout(12000);
     await trackAudio(hostContext);
     await trackAudio(guestContext);
     const host = await hostContext.newPage();
@@ -134,8 +138,8 @@ test("friend match plays confirmed moves and one result cue per player", async (
     await guest.getByRole("alertdialog").getByRole("button", { name: "Surrender", exact: true }).click();
     await host.getByRole("heading", { name: "You win!", exact: true }).waitFor();
     await guest.getByRole("heading", { name: "You lose.", exact: true }).waitFor();
-    assert.deepEqual(await host.evaluate(() => window.audioProbe.notes.slice(-3)), [523, 659, 784]);
-    assert.deepEqual(await guest.evaluate(() => window.audioProbe.notes.slice(-3)), [330, 262, 196]);
+    assert.deepEqual(await host.evaluate(() => window.audioProbe.notes.slice(-5)), [523, 659, 784, 1046, 523]);
+    assert.deepEqual(await guest.evaluate(() => window.audioProbe.notes.slice(-2)), [220, 164.81]);
     assert.deepEqual(errors, []);
     await hostContext.close();
     await guestContext.close();

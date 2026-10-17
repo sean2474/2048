@@ -2,7 +2,7 @@
 import { getI18n } from "@/lib/i18n/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminAccess } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { AdminNav } from "@/components/admin-nav";
 import { SignOut } from "@/components/sign-out";
@@ -14,10 +14,8 @@ export const dynamic = "force-dynamic";
 export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
   const { t } = await getI18n();
   if (!isSupabaseConfigured()) return <main className="mx-auto max-w-lg px-6 py-20"><div className="mb-4 flex justify-end"><LanguageSwitcher /></div><div className="admin-panel space-y-4 p-8"><p className="admin-eyebrow">{t("Duo administration")}</p><h1 className="admin-title">{t("Administration unavailable")}</h1><p className="text-sm leading-6 text-muted-foreground">{t("The administrator application has not been configured.")}</p></div></main>;
-  const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
+  const { user, allowed, error } = await getAdminAccess();
   if (!user || user.is_anonymous) redirect("/login");
-  const { data: allowed, error } = await client.rpc("is_game_admin");
   if (error || allowed !== true) return <main className="mx-auto max-w-lg px-6 py-20"><div className="mb-4 flex justify-end"><LanguageSwitcher /></div><div className="admin-panel space-y-6 p-8">
     <p className="admin-eyebrow">{t("Duo administration · Restricted access")}</p>
     <h1 className="admin-title">{t(error ? "Access could not be verified" : "Administrator access required")}</h1>

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { GameAudio } from "../../web/src/lib/game-audio";
-import { SKINS } from "schema/loadout";
+import { SKINS, type SkinTokens } from "schema/loadout";
 import { PROFILE_ICONS } from "schema/profile-icons";
 import { readFileSync } from "node:fs";
 
@@ -13,8 +13,12 @@ test("legendary merges have distinct voices; other cues and mute stay unchanged"
     state = "running";
     currentTime = 1;
     destination = {};
+    sampleRate = 48000;
+    createBuffer(_channels: number, length: number) { return { getChannelData: () => new Float32Array(length) }; }
+    createBiquadFilter() { return { type: "lowpass", Q: { value: 0 }, frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}, disconnect() {} }; }
     async close() {}
     createGain() { return { gain: { setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}, disconnect() {} }; }
+    createBufferSource() { return { buffer: null, connect() {}, disconnect() {}, start() {}, stop() {} }; }
     createOscillator() {
       let frequency = 0;
       return { type: "sine", frequency: { setValueAtTime(value: number) { frequency = value; }, exponentialRampToValueAtTime() {} }, connect() {}, disconnect() {}, stop() {}, start() { notes.push({ frequency, wave: this.type }); } };
@@ -27,17 +31,23 @@ test("legendary merges have distinct voices; other cues and mute stay unchanged"
     await audio.unlock();
     const signatures = new Set<string>();
     for (const skin of SKINS) {
-      notes.length = 0; audio.stop(); audio.play("merge", skin.id);
+      notes.length = 0; audio.stop(); audio.play("merge", skin.tokens);
       if (skin.rarity === "legendary") {
         assert.ok(notes.length >= 2 && notes.length <= 3);
         assert.notDeepEqual(notes.map(note => note.frequency), [440, 880]);
         signatures.add(JSON.stringify(notes));
-      } else assert.deepEqual(notes.map(note => note.frequency), [440, 880]);
+      } else { assert.ok(notes[0].frequency >= 440 && notes[0].frequency <= 660); assert.equal(notes[1].frequency / notes[0].frequency, 2); }
     }
     assert.equal(signatures.size, SKINS.filter(skin => skin.rarity === "legendary").length);
-    notes.length = 0; audio.stop(); audio.play("xblock", "arcanist");
+    for (const character of ["fox", "dragon", "phoenix"] as SkinTokens["character"][]) {
+      notes.length = 0; audio.stop(); audio.play("merge", { ...SKINS[0].tokens, character });
+      assert.notDeepEqual(notes.map(note => note.frequency), [440, 880]);
+      assert.equal(signatures.has(JSON.stringify(notes)), false);
+      signatures.add(JSON.stringify(notes));
+    }
+    notes.length = 0; audio.stop(); audio.play("xblock", SKINS.find(skin => skin.id === "arcanist")!.tokens);
     assert.deepEqual(notes.map(note => note.frequency), [720]);
-    notes.length = 0; audio.stop(); audio.setSettings({ muted: true, volume: .45 }); audio.play("merge", "sentinel");
+    notes.length = 0; audio.stop(); audio.setSettings({ muted: true, volume: .45 }); audio.play("merge", SKINS.find(skin => skin.id === "sentinel")!.tokens);
     assert.equal(notes.length, 0);
   } finally {
     audio.dispose();

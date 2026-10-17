@@ -1,7 +1,8 @@
 import type { ResultStatus } from "./results";
 import type { PlayerIconId } from "./profile-icons";
 import { z } from "zod";
-import { ABILITIES, DEFAULT_ABILITY_ID, SKINS, type AbilityId, type SkinId } from "./loadout";
+import { ABILITIES, DEFAULT_ABILITY_ID, type AbilityId, type SkinId } from "./loadout";
+import { CatalogIdSchema } from "./catalog";
 
 export const SIZE = 5 as const;
 export const MAX_PENDING_ATTACKS = 6;
@@ -17,7 +18,6 @@ export type AttackCounts = Record<AttackType, number>;
 
 export const DirSchema = z.enum(["up", "down", "left", "right"]);
 export type Dir = z.infer<typeof DirSchema>;
-const SkinIdSchema = z.string().refine((value): value is SkinId => SKINS.some(skin => skin.id === value));
 const AbilityIdSchema = z.string().refine((value): value is AbilityId => ABILITIES.some(ability => ability.id === value));
 
 export const C2S = {
@@ -25,7 +25,7 @@ export const C2S = {
   cancelMatch: z.object({ t: z.literal("cancelMatch") }),
   createRoomWithCode: z.object({ t: z.literal("createRoomWithCode") }),
   joinRoomWithCode: z.object({ t: z.literal("joinRoomWithCode"), joinCode: z.string().regex(/^[A-Z0-9]{6}$/) }),
-  joinRoom: z.object({ t: z.literal("joinRoom"), roomId: z.string().uuid(), skinId: SkinIdSchema.default("classic"), abilityId: AbilityIdSchema.default(DEFAULT_ABILITY_ID) }),
+  joinRoom: z.object({ t: z.literal("joinRoom"), roomId: z.string().uuid(), skinId: CatalogIdSchema.default("classic"), abilityId: AbilityIdSchema.default(DEFAULT_ABILITY_ID) }),
   input: z.object({ t: z.literal("input"), dir: DirSchema }),
   ability: z.object({ t: z.literal("ability") }).strict(),
   surrender: z.object({ t: z.literal("surrender") }),

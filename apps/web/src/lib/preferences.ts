@@ -1,4 +1,5 @@
-import { ABILITIES, RETIRED_ABILITY_IDS, SKINS, type AbilityId, type SkinId } from "schema/loadout";
+import { CatalogIdSchema } from "schema/catalog";
+import { ABILITIES, RETIRED_ABILITY_IDS, type AbilityId, type SkinId } from "schema/loadout";
 import { DEFAULT_PROFILE_ICON, isProfileIconId, type ProfileIconId } from "schema/profile-icons";
 import type { Locale } from "ui/locale";
 import { DEFAULT_KEYBINDINGS, isKeybindings, upgradeKeybindings, type Keybindings } from "./keybindings";
@@ -15,7 +16,7 @@ export function isSettingsPatch(value: unknown): value is SettingsPatch {
     switch (key) {
       case "locale": return item === "ko" || item === "en";
       case "keybindings": return isKeybindings(item);
-      case "skinId": return SKINS.some(skin => skin.id === item);
+      case "skinId": return CatalogIdSchema.safeParse(item).success;
       case "iconId": return isProfileIconId(item);
       case "abilityId": return item === null || ABILITIES.some(ability => ability.id === item);
       case "customShortcuts": return typeof item === "boolean";

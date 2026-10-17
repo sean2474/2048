@@ -63,12 +63,22 @@ test("preferences validate complete cookies, reject unknown values and map only 
     assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(selected))), { ...settings, abilityId: null });
     assert.deepEqual(settingsFromRow(settingsToRow(selected)), selected);
   }
-  for (const bad of [{ locale: "fr" }, { skinId: "unknown" }, { iconId: "../../../bad.svg" }, { abilityId: "unknown" }, { customShortcuts: "true" }, { keybindings: {} }, { coins: 999 }, { locale: undefined }]) assert.equal(isSettingsPatch(bad), false);
-  for (const value of [null, [], {}, { ...settings, skinId: "unknown" }, { ...settings, keybindings: { ...settings.keybindings, up: "ArrowUp" } }]) {
+  for (const bad of [{ locale: "fr" }, { skinId: "../unknown" }, { iconId: "../../../bad.svg" }, { abilityId: "unknown" }, { customShortcuts: "true" }, { keybindings: {} }, { coins: 999 }, { locale: undefined }]) assert.equal(isSettingsPatch(bad), false);
+  for (const value of [null, [], {}, { ...settings, skinId: "../unknown" }, { ...settings, keybindings: { ...settings.keybindings, up: "ArrowUp" } }]) {
     assert.equal(isSettings(value), false);
     assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(value))), DEFAULT_SETTINGS);
   }
   for (const raw of [undefined, "%broken", "bad-json"]) assert.deepEqual(parseGuestSettings(raw), DEFAULT_SETTINGS);
+});
+
+test("new catalog IDs survive account settings without a client release", () => {
+  const settings = { ...defaults(), skinId: "event-moon-2027", iconId: "event-fox-2027" };
+  assert.deepEqual(settingsFromRow(settingsToRow(settings)), settings);
+  assert.equal(isSettingsPatch({ skinId: settings.skinId, iconId: settings.iconId }), true);
+  for (const id of ["", "../fox", "https://evil.test/image.svg", "x".repeat(65), "스킨", "<script>", null, 5]) {
+    assert.equal(isSettingsPatch({ skinId: id }), false);
+    assert.equal(isSettingsPatch({ iconId: id }), false);
+  }
 });
 
 test("old guest cookies keep language and controls while restoring the fixed guest loadout", () => {
@@ -272,7 +282,7 @@ test("preference RLS isolates accounts and SQL validates every client-controlled
       assert.deepEqual((await db.query("select icon_id from public.player_preferences")).rows, [{ icon_id: icon.id }]);
     }
     for (const [column, value] of [["icon_id", "unknown"], ["locale", "fr"], ["skin_id", "unknown"], ["ability_id", "unknown"]]) {
-      await assert.rejects(db.query(`update public.player_preferences set ${column}=$1 where player_id=$2`, [value, A]), /check constraint/);
+      await assert.rejects(db.query(`update public.player_preferences set ${column}=$1 where player_id=$2`, [value, A]), column === "icon_id" || column === "skin_id" ? /Unknown item/ : /check constraint/);
     }
     for (const bad of [null, [], {}, { ...DEFAULT_SETTINGS.keybindings, up: "KeyS" }, { ...DEFAULT_SETTINGS.keybindings, up: "ArrowUp" }, { ...DEFAULT_SETTINGS.keybindings, up: null }, { ...DEFAULT_SETTINGS.keybindings, extra: "KeyZ" }]) {
       await assert.rejects(db.query("update public.player_preferences set keybindings=$1::jsonb where player_id=$2", [JSON.stringify(bad), A]), /check constraint/);
