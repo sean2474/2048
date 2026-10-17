@@ -7,7 +7,7 @@ import { PROFILE_ICONS } from "schema/profile-icons";
 import { achievementMessages } from "../../web/src/lib/i18n/achievement-messages";
 
 test("achievement rewards have unique, localized cosmetics and preserve the shop catalog", () => {
-  assert.equal(new Set(ACHIEVEMENT_REWARDS.map(item => item.id)).size, 18);
+  assert.equal(new Set(ACHIEVEMENT_REWARDS.map(item => item.id)).size, 19);
   assert.equal(SKINS.filter(skin => !achievementForItem("skin", skin.id)).length, 20);
   assert.equal(PROFILE_ICONS.filter(icon => !achievementForItem("icon", icon.id)).length, 6);
   const seen = new Set<string>();

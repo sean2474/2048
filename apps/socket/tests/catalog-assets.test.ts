@@ -8,7 +8,7 @@ import { catalogAssetPlan, catalogTarget, uploadCatalogAssets, validateSeedSvg }
 
 test("asset plan validates every initial portrait and dry-run needs no credentials", async () => {
   const plan = await catalogAssetPlan();
-  assert.equal(plan.length, 14);
+  assert.equal(plan.length, 15);
   assert.equal(new Set(plan.map(asset => asset.path)).size, plan.length);
   for (const asset of plan) {
     assert.match(asset.path, /^profile-icons\/[a-z][a-z-]+\.svg$/);
