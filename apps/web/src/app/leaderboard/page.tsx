@@ -75,14 +75,17 @@ async function Standings({ selectedSeason }: { selectedSeason: string }) {
     seasons = seasonResult.data as RankSeason[];
     season = selectedSeason === "current" ? seasons.find(row => row.ends_at === null) : seasons.find(row => row.id === selectedSeason);
     if (!season) throw new Error("Season unavailable");
-    const result = await client.from(season.ends_at === null ? "player_ratings" : "season_ratings")
-      .select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating")
-      .eq("season_id", season.id).gte("games_played", SEASON_QUALIFYING_GAMES)
-      .order("rating", { ascending: false }).order("games_played", { ascending: false }).order("player_id").limit(50);
+    // Standings and the viewer's own rank only depend on the season, so they load together.
+    const [result, rank] = await Promise.all([
+      client.from(season.ends_at === null ? "player_ratings" : "season_ratings")
+        .select("player_id,display_name,rating,wins,losses,draws,games_played,highest_score,highest_tile,season_id,tier,placement_games,peak_rating")
+        .eq("season_id", season.id).gte("games_played", SEASON_QUALIFYING_GAMES)
+        .order("rating", { ascending: false }).order("games_played", { ascending: false }).order("player_id").limit(50),
+      userId ? client.rpc("my_season_rank", { p_season: season.id }, { get: true }) : null,
+    ]);
     if (result.error) throw result.error;
     data = result.data as LeaderboardRow[];
-    if (userId) {
-      const rank = await client.rpc("my_season_rank", { p_season: season.id }, { get: true });
+    if (rank) {
       if (rank.error) throw rank.error;
       own = rank.data?.[0];
     }
