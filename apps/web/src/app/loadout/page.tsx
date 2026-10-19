@@ -128,7 +128,7 @@ export default function LoadoutPage() {
       {/* The skeleton occupies the grid's own slot so the catalog load does not shift the sections above it. */}
       {catalog.loading && catalog.skins.length === 0 && <CatalogSkeleton label={t("Loading collection…")} />}
       <div id="skin-results" className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">{filteredSkins.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(item => <CatalogCard key={item.id} name={t(item.name)} selected={skin.id === item.id} locked={!owns("skin", item.id)} disabled={!ready || saving} onClick={event => openDetail(event, { category: "skins", id: item.id })}><SkinPreview skin={item} /></CatalogCard>)}</div>
-      {filteredSkins.length === 0 && <p role="status" className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t("No owned items in this filter.")}</p>}
+      {!catalog.loading && filteredSkins.length === 0 && <p role="status" className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">{t("No owned items in this filter.")}</p>}
       {pageCount > 1 && <nav aria-label={t("Catalog pages")} className="flex items-center justify-center gap-4">
         <Button variant="outline" size="icon" aria-label={t("Previous page")} disabled={currentPage === 0} onClick={() => { setSkinPage(currentPage - 1); document.getElementById("skins-panel")?.focus({ preventScroll: true }); }}><ChevronLeft aria-hidden="true" /></Button>
         <p role="status" className="text-xs tabular-nums text-muted-foreground">{t("Page {page} of {count}", { page: currentPage + 1, count: pageCount })}</p>

@@ -1,14 +1,10 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { ProfileSkeleton, RecordsSkeleton } from "@/components/widget/records-skeleton";
 import { getI18n } from "@/lib/i18n/server";
 
+// This boundary covers every route; page-shaped placeholders belong inside each page.
 export default async function Loading() {
   const { t } = await getI18n();
-  return <main className="mx-auto max-w-[1040px] space-y-6 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
-    <Skeleton className="h-12 w-56" />
-    <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_320px]">
-      <ProfileSkeleton label={t("Loading ranked record…")} /><Skeleton className="aspect-square w-full rounded-xl" />
-    </div>
-    <RecordsSkeleton label={t("Loading recent matches…")} />
-  </main>;
+  return <div role="status" aria-label={t("Loading selection…")} className="mx-auto max-w-[1040px] px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+    <span className="sr-only">{t("Loading selection…")}</span>
+    <div aria-hidden="true" className="h-1 w-24 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
+  </div>;
 }
