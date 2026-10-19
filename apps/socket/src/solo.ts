@@ -48,6 +48,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; soloProgres
   // shortcut: one server owns live runs; add distributed ownership before running multiple game servers.
   const runs = new Map<string, Run>();
   const sessions = new Map<string, string>();
+  const connections = new Map<string, symbol>();
   const jobs = new Map<string, Promise<void>>();
   const checkpoints = new Map<string, Promise<void>>();
   const requests = new Map<string, Promise<SoloReply>>();
@@ -117,7 +118,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; soloProgres
   }, 10_000);
   timer.unref();
 
-  const handle = async (key: string, pid: string, playerId: string | null, raw: unknown, canStart: () => boolean): Promise<SoloReply> => {
+  const handle = async (key: string, pid: string, playerId: string | null, raw: unknown, canStart: () => boolean, connected: () => boolean): Promise<SoloReply> => {
     const reply = (error?: string): SoloReply => ({ state: snapshot(key), ...(error ? { error } : {}) });
     const parsed = SoloCommandSchema.safeParse(raw);
     if (!parsed.success) return reply("invalid");
@@ -135,6 +136,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; soloProgres
             lastSeen: now(), savedTile: checkpoint.savedTile, playerId, dirty: false, moveTimes: [] });
         }
       }
+      if (!connected()) return reply("connection_closed");
       sessions.set(pid, key);
       const current = runs.get(key);
       if (current) { current.lastSeen = now(); touch(current); }
@@ -152,6 +154,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; soloProgres
         }
         if (!runs.has(key) && runs.size >= 5000) return reply("solo_unavailable");
         await checkpoints.get(key);
+        if (!canStart()) return reply("already_in_game");
         const run = createSoloRun(playerId, now(), command.mode);
         if (options.soloProgress) run.state.progress = "pending";
         runs.set(key, run);
@@ -173,10 +176,20 @@ export function createSoloService(options: { writeSolo?: SoloWriter; soloProgres
     } catch { return reply("solo_unavailable"); }
   };
   return {
+    hasSession: (pid: string) => sessions.has(pid),
+    deploymentStatus: () => {
+      for (const run of runs.values()) touch(run);
+      const active = new Set([...sessions.values()].filter(key => runs.get(key)?.state.status === "playing")).size;
+      const dirty = options.soloProgress ? [...runs.values()].filter(run => run.dirty).length : 0;
+      const unsaved = [...runs.values()].filter(run => run.playerId && hasRecord(run) && run.state.saving !== "saved").length;
+      return { active, pending: dirty + unsaved + requests.size + jobs.size + checkpoints.size };
+    },
     handle(pid: string, playerId: string | null, raw: unknown, canStart: () => boolean, guestId = pid): Promise<SoloReply> {
       const key = keyFor(pid, playerId, guestId);
       if (requests.has(key)) return Promise.resolve({ state: snapshot(key), error: "busy" });
-      const job = handle(key, pid, playerId, raw, canStart);
+      const connection = connections.get(pid) ?? Symbol();
+      connections.set(pid, connection);
+      const job = handle(key, pid, playerId, raw, canStart, () => connections.get(pid) === connection);
       requests.set(key, job);
       void job.finally(() => requests.delete(key));
       return job;
@@ -184,6 +197,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; soloProgres
     async disconnect(pid: string, playerId: string | null = null, guestId = pid) {
       const key = keyFor(pid, playerId, guestId);
       sessions.delete(pid);
+      connections.delete(pid);
       await requests.get(key);
       await jobs.get(key);
       await flushLatest(key);
@@ -203,7 +217,7 @@ export function createSoloService(options: { writeSolo?: SoloWriter; soloProgres
       await Promise.allSettled(requests.values());
       await Promise.allSettled(jobs.values());
       await Promise.all([...runs.keys()].map(flushLatest));
-      runs.clear(); sessions.clear();
+      runs.clear(); sessions.clear(); connections.clear();
     },
   };
 }

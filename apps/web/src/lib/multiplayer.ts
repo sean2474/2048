@@ -25,6 +25,7 @@ export function createGameSocket(spectator = false, soloToken?: string) {
 }
 export function reasonMessage(reason: string) {
   switch (reason) {
+    case "server_updating": return "An update is waiting for current games to finish. Please try again shortly.";
     case "code_not_found": return "That room is no longer available. Check the code with your friend.";
     case "cannot_join_own_room": return "Open another browser tab to join your room.";
     case "already_in_game": return "Finish your current game before starting another.";

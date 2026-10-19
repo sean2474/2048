@@ -8,7 +8,7 @@ import type { HistoryMatch } from "schema/results";
 import { TierBadge } from "@/components/widget/server-tier-badge";
 import { getUser } from "@/lib/supabase/account";
 import { createClient } from "@/lib/supabase/server";
-import { RecordsSkeleton } from "@/components/widget/records-skeleton";
+import { HistorySkeleton } from "@/components/widget/records-skeleton";
 import { LiveRecords, RefreshButton } from "@/components/widget/refresh-records";
 import { Button } from "@/components/ui/button";
 import { matchModeLabel } from "@/lib/match-labels";
@@ -18,7 +18,7 @@ export default async function HistoryPage() {
   const { t } = await getI18n();
   return <main className="mx-auto max-w-[960px] space-y-6 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
     <PageHeading icon="history" title={t("Your match history")} />
-    <Suspense fallback={<RecordsSkeleton label={t("Loading matches…")} rows={5} />}><MatchHistory /></Suspense>
+    <Suspense fallback={<HistorySkeleton label={t("Loading matches…")} />}><MatchHistory /></Suspense>
     <Button asChild variant="ghost"><Link href="/"><ArrowLeft aria-hidden="true" />{t("Back to dashboard")}</Link></Button>
   </main>;
 }

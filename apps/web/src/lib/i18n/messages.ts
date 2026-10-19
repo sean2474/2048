@@ -1,4 +1,8 @@
 export const messages: Record<string, string> = {
+  "Privacy policy": "개인정보처리방침",
+  "Terms of use": "이용약관",
+  "Before creating an account, please read our policies.": "계정을 만들기 전에 아래 안내를 확인해 주세요.",
+  "An update is waiting for current games to finish. Please try again shortly.": "진행 중인 경기를 마친 뒤 업데이트할 예정이에요. 잠시 후 다시 시도해 주세요.",
   "Play tutorial": "튜토리얼 하기",
   "03. Abilities": "03. 특수 능력",
   "04. Win conditions": "04. 승리 조건",

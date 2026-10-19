@@ -21,6 +21,11 @@ test("server pages: streamed records, isolated accounts, seasons, recovery and s
     return response.text();
   };
   const visibleHTML = html => html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
+  for (const path of ["/privacy", "/terms", "/signup"]) {
+    const html = visibleHTML(await read(path));
+    assert.match(html, /href="\/(privacy|terms)"/);
+    if (path !== "/signup") assert.match(html, /mailto:sean24740@gmail.com/);
+  }
   const guest = visibleHTML(await read("/"));
   assert.match(guest, /id="profile-title"[^>]*>Guest</);
   assert.doesNotMatch(guest, /Checking your account/);
