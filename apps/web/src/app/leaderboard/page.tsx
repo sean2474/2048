@@ -8,7 +8,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { LeaderboardRow } from "schema/results";
 import { ratingTier, SEASON_QUALIFYING_GAMES, type RankSeason } from "schema/ranking";
 import { LiveRecords, RefreshButton } from "@/components/widget/refresh-records";
-import { RecordsSkeleton } from "@/components/widget/records-skeleton";
+import { StandingsSkeleton } from "@/components/widget/records-skeleton";
 import { SeasonSelect } from "@/components/widget/season-select";
 import { Button } from "@/components/ui/button";
 import { TierBadge, TierIcon } from "@/components/widget/server-tier-badge";
@@ -37,7 +37,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
     </section>
 
     <div className="flex flex-wrap gap-2" role="group" aria-label={t("Rankings")}><Button asChild variant={solo ? "outline" : "default"}><Link href="/leaderboard" aria-current={!solo ? "page" : undefined}><Swords aria-hidden="true" />{t("Ranked match")}</Link></Button><Button asChild variant={solo ? "default" : "outline"}><Link href="/leaderboard?mode=solo" aria-current={solo ? "page" : undefined}><Timer aria-hidden="true" />{t("2048 time attack")}</Link></Button></div>
-    {solo ? <Suspense fallback={<RecordsSkeleton label={t("Loading rankings…")} />}><SoloStandings /></Suspense> : <>
+    {solo ? <Suspense fallback={<StandingsSkeleton solo label={t("Loading rankings…")} />}><SoloStandings /></Suspense> : <>
     <section aria-labelledby="tier-guide-title" className="rounded-xl border bg-card px-3 py-4 sm:px-6">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 px-2">
         <h2 id="tier-guide-title" className="text-xs font-bold tracking-wide">{t("Competitive tiers")}</h2>
@@ -51,7 +51,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
       </dl>
     </section>
 
-    <Suspense key={selectedSeason} fallback={<RecordsSkeleton label={t("Loading leaderboard…")} rows={6} />}>
+    <Suspense key={selectedSeason} fallback={<StandingsSkeleton label={t("Loading leaderboard…")} />}>
       <Standings selectedSeason={selectedSeason} />
     </Suspense>
     </>}

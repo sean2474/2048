@@ -11,7 +11,7 @@ import { usePlayer } from "@/hooks/use-player";
 import { useLiveQuery } from "@/hooks/use-live-query";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { RecordsSkeleton } from "@/components/widget/records-skeleton";
+import { FriendsSkeleton } from "@/components/widget/records-skeleton";
 import { PlayerSearch } from "@/components/widget/player-search";
 import { ProfileIcon } from "@/components/widget/profile-icon";
 import { FriendMessages } from "@/components/widget/friend-messages";
@@ -81,7 +81,7 @@ export function FriendDirectory() {
       <div className="grid items-start gap-6 lg:grid-cols-2">
         <section className="min-w-0 space-y-4"><h2 className="font-bold">{t("My friends")} <span className="text-sm text-muted-foreground">{contacts.data.filter(person=>person.relationship==="friend").length}</span></h2>
           {contacts.error && <div role="alert" className="space-y-2 text-sm text-destructive"><p>{contacts.error}</p><Button variant="outline" onClick={contacts.reload}>{t("Try again")}</Button></div>}
-          {contacts.loading ? <RecordsSkeleton label={t("Loading friends…")} rows={2} /> : !contacts.error && !contacts.data.length ? <p className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">{t("Search for a player above to send your first friend request.")}</p> : <ul className="space-y-3">{[...contacts.data].sort((a,b)=>(a.relationship==="incoming"?0:a.relationship==="friend"?1:2)-(b.relationship==="incoming"?0:b.relationship==="friend"?1:2)).map(card)}</ul>}
+          {contacts.loading ? <FriendsSkeleton label={t("Loading friends…")} /> : !contacts.error && !contacts.data.length ? <p className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">{t("Search for a player above to send your first friend request.")}</p> : <ul className="space-y-3">{[...contacts.data].sort((a,b)=>(a.relationship==="incoming"?0:a.relationship==="friend"?1:2)-(b.relationship==="incoming"?0:b.relationship==="friend"?1:2)).map(card)}</ul>}
           <p className="text-xs leading-5 text-muted-foreground">{t("Watch is available while your friend is in a multiplayer match. Ranked TOP 50 players can also be watched from the leaderboard.")}</p>
         </section>
         {friend ? <FriendMessages key={`${user!.id}:${friend.id}`} friend={friend} userId={user!.id} /> : <div className="grid min-h-72 place-items-center rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground"><div><MessageCircle aria-hidden="true" className="mx-auto mb-3 size-8" />{t("Select a friend to open your conversation.")}</div></div>}
