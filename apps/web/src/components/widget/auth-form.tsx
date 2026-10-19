@@ -120,6 +120,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" | "forgot" | "rese
     {!checking && <Button asChild className="h-12 w-full"><Link href={finished ? "/login" : "/forgot-password"}>{t(finished ? "Return to login" : "Request a new reset link")}</Link></Button>}
   </div>;
   return <form onSubmit={submit} aria-busy={busy} className="w-full space-y-5">
+    {signup && <p className="text-sm leading-6 text-muted-foreground">{t("Before creating an account, please read our policies.")} <Link href="/terms" className="inline-flex min-h-11 items-center underline underline-offset-4">{t("Terms of use")}</Link>{" · "}<Link href="/privacy" className="inline-flex min-h-11 items-center underline underline-offset-4">{t("Privacy policy")}</Link></p>}
     {error && <p role="alert" className="rounded-lg bg-destructive/10 px-4 py-3 text-sm leading-6 text-destructive">{t(error)}</p>}
     {notice && <p role="status" className="rounded-lg bg-muted px-4 py-3 text-sm leading-6">{t(notice)}</p>}
     {signup && <label className="grid gap-2"><span className="text-sm font-semibold">{t("Display name")}</span><input name="name" autoComplete="nickname" minLength={2} maxLength={32} required className={inputClass} disabled={busy} /></label>}

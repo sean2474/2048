@@ -1,5 +1,5 @@
 # Separate app, Supabase project, secrets, and volume; keep exactly one Machine.
-# Deploy with fly deploy --config fly.staging.toml --ha=false.
+# Use node scripts/deploy-socket.mjs staging.
 app = '2048-socket-staging'
 primary_region = 'nrt'
 kill_signal = 'SIGTERM'

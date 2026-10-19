@@ -70,6 +70,40 @@ async function setup(t: TestContext, options: Parameters<typeof createGameServer
   }
   return { ...server, connect, pair };
 }
+test("deployment drain preserves live matches and reconnects, blocks new games, and waits for result storage", async t => {
+  let saved!: () => void;
+  const writing = new Promise<void>(resolve => { saved = resolve; });
+  const server = await setup(t, { writeMatch: () => writing });
+  const { a, b, roomId } = await server.pair();
+  server.setDraining(true);
+  assert.equal(server.deploymentStatus().ready, false);
+  assert.equal(server.deploymentStatus().matches, 1);
+  const newcomer = await server.connect();
+  const rejected = packet(newcomer.socket, m => m.t === "error");
+  newcomer.socket.emit("message", { t: "findMatch", mode: "casual" });
+  assert.equal((await rejected as { reason: string }).reason, "server_updating");
+  assert.equal(matchmakingQueue.length, 0);
+  const before = structuredClone(rooms.get(roomId)!.state[playerId(a.token)].board);
+  a.socket.disconnect();
+  await eventually(() => !!rooms.get(roomId)?.pausedAt);
+  const reconnected = await server.connect(a.token);
+  const restored = packet(reconnected.socket, m => m.t === "state" && !m.paused);
+  reconnected.socket.emit("message", { t: "joinRoom", roomId, skinId: "classic" });
+  assert.deepEqual((await restored as ServerState).you.board, before);
+  assert.equal(b.socket.connected, true);
+  const ended = packet(b.socket, m => m.t === "end");
+  reconnected.socket.emit("message", { t: "surrender" });
+  await ended;
+  assert.equal(server.deploymentStatus().matches, 0);
+  assert.equal(server.deploymentStatus().ready, false);
+  saved();
+  await eventually(() => server.deploymentStatus().ready);
+  server.setDraining(false);
+  assert.equal(server.deploymentStatus().ready, false);
+  const waiting = packet(newcomer.socket, m => m.t === "waitingForPlayer");
+  newcomer.socket.emit("message", { t: "createRoomWithCode" });
+  await waiting;
+});
 test("join messages allow dynamic catalog IDs but reject malformed or oversized IDs", () => {
   const message = { t: "joinRoom", roomId: "10000000-0000-4000-8000-000000000001", skinId: "catalog-crystal-2026" };
   assert.equal(C2S.joinRoom.parse(message).skinId, message.skinId);
