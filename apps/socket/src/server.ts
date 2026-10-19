@@ -25,6 +25,7 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
   const ratingLookups = new Map<string, Promise<number | RankSnapshot>>();
   const suspensionLookups = new Map<string, Promise<string[]>>();
   let closing = false;
+  let draining = false;
   const deletingAccounts = new Set<string>();
   const accessStops = new Set<() => void>();
   const persistResult: MatchWriter | undefined = options.writeMatch ? record => {
@@ -60,7 +61,7 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
   });
   const checkAccess: MatchAccess = async (players, requestCurrent, phase) => {
     const snapshots = players.map(pid => ({ pid, socket: playerSockets.get(pid), account: playerAccounts.get(pid)?.id }));
-    const current = () => !closing && requestCurrent() && snapshots.every(({ pid, socket, account }) =>
+    const current = () => !closing && !draining && requestCurrent() && snapshots.every(({ pid, socket, account }) =>
       !!socket && playerSockets.get(pid) === socket && playerAccounts.get(pid)?.id === account && (!account || !deletingAccounts.has(account)));
     if (!current()) return "stale";
     const ids = [...new Set(snapshots.flatMap(player => player.account ? [player.account] : []))].sort();
@@ -111,7 +112,7 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
   };
   const queueTimer = setInterval(() => { void matchWaitingPlayers(io, persistResult, Date.now(), checkAccess); }, 1000);
   queueTimer.unref();
-  const challenges = createFriendChallenges(io, { readFriends: options.readFriends, persistResult, isSoloPlaying: solo.isPlaying, unavailable: id => closing || deletingAccounts.has(id) });
+  const challenges = createFriendChallenges(io, { readFriends: options.readFriends, persistResult, isSoloPlaying: solo.isPlaying, unavailable: id => closing || draining || deletingAccounts.has(id) });
   io.use((socket, next) => {
     void (async () => {
       const token: unknown = socket.handshake.auth?.sessionToken;
@@ -153,7 +154,8 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
       if (++soloMessages > 30) { ack({ state: null, error: "rate_limited" }); return; }
       const accountId: string | null = socket.data.account?.id ?? null;
       if (accountId && deletingAccounts.has(accountId)) { ack({ state: null, error: "account_deleting" }); return; }
-      void solo.handle(pid, accountId, raw, () => !closing && socket.connected && !playerRoom.has(pid) && (!accountId || !deletingAccounts.has(accountId)), socket.data.soloId).then(reply => ack(reply));
+      if (draining && (!solo.hasSession(pid) || raw && typeof raw === "object" && "t" in raw && raw.t === "start")) { ack({ state: null, error: "server_updating" }); return; }
+      void solo.handle(pid, accountId, raw, () => !closing && !draining && socket.connected && !playerRoom.has(pid) && (!accountId || !deletingAccounts.has(accountId)), socket.data.soloId).then(reply => ack(reply));
     });
     let windowStart = Date.now(), messages = 0, queueRequest = 0;
     socket.on("message", (raw: unknown) => {
@@ -163,12 +165,15 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
       const parsed = ClientMessageSchema.safeParse(raw);
       if (!parsed.success) { socket.emit("message", { t: "reject", reason: "invalid" }); return; }
       const msg = parsed.data;
+      if (draining && ["findMatch", "createRoomWithCode", "joinRoomWithCode"].includes(msg.t)) {
+        socket.emit("message", { t: "error", reason: "server_updating" }); return;
+      }
       switch (msg.t) {
         case "findMatch": {
           const request = ++queueRequest;
           if (!canQueue(pid, io)) break;
           cancelMatch(pid);
-          const currentRequest = () => !closing && request === queueRequest && playerSockets.get(pid) === socket.id;
+          const currentRequest = () => !closing && !draining && request === queueRequest && playerSockets.get(pid) === socket.id;
           const account = playerAccounts.get(pid);
           if (msg.mode === "ranked") {
             if (!account) { socket.emit("message", { t: "error", reason: "login_required" }); break; }
@@ -201,14 +206,14 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
           const request = ++queueRequest;
           if (!canQueue(pid, io)) break;
           cancelMatch(pid);
-          const current = () => !closing && request === queueRequest && playerSockets.get(pid) === socket.id;
+          const current = () => !closing && !draining && request === queueRequest && playerSockets.get(pid) === socket.id;
           void checkAccess([pid], current).then(access => { if (access === "allowed" && current()) createRoomWithCode(pid, io); });
           break;
         }
         case "joinRoomWithCode": {
           const request = ++queueRequest;
           if (!canQueue(pid, io)) break;
-          const current = () => !closing && request === queueRequest && playerSockets.get(pid) === socket.id;
+          const current = () => !closing && !draining && request === queueRequest && playerSockets.get(pid) === socket.id;
           void joinRoomWithCode(pid, msg.joinCode, io, persistResult, checkAccess, current);
           break;
         }
@@ -228,7 +233,23 @@ export function createGameServer(options: { readFriends?: FriendsReader; canSpec
       waitForPlayer(pid, io);
     });
   });
-  return { io, httpServer, close: async () => {
+  const deploymentStatus = () => {
+    const matches = [...rooms.values()].filter(room => room.open).length;
+    const soloStatus = solo.deploymentStatus();
+    const storage = options.readStore?.();
+    const writes = pendingWrites.size + (storage?.pendingCount ?? 0) + soloStatus.pending;
+    const storageError = !!(storage?.readErrorAt || storage?.writeErrorAt);
+    return { draining, matches, solo: soloStatus.active, writes, storageError,
+      ready: draining && !closing && matches === 0 && soloStatus.active === 0 && writes === 0 && !storageError };
+  };
+  const setDraining = (value: boolean) => {
+    draining = value;
+    if (value) {
+      const waiting = new Set([...matchmakingQueue.map(entry => entry.pid), ...waitingByCode.values()]);
+      for (const pid of waiting) { cancelMatch(pid); io.to(playerChannel(pid)).emit("message", { t: "error", reason: "server_updating" }); }
+    }
+  };
+  return { io, httpServer, setDraining, deploymentStatus, close: async () => {
     closing = true;
     challenges.close();
     for (const stop of accessStops) stop();

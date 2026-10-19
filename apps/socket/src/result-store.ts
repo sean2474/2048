@@ -102,16 +102,17 @@ export class ResultStore {
       catch { this.report(`Match result still pending: ${record.id}.json`); }
     }
     try {
-      this.readErrorAt = null;
+      let readable = true;
       for (const file of await readdir(this.directory)) {
         if (!file.endsWith(".json")) continue;
         try {
-          const record = await this.readRecord(file);
+          const record = await this.readRecord(file).catch(error => { readable = false; throw error; });
           await this.deliver(record);
         } catch {
           this.report(`Match result still pending: ${file}`);
         }
       }
+      if (readable) this.readErrorAt = null;
     } catch { this.readErrorAt = new Date().toISOString(); this.report("Cannot read the match result outbox"); }
   }
   async close() {

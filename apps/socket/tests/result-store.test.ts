@@ -12,6 +12,22 @@ const result = (): MatchRecord => ({
   reason: "surrender", winnerSlot: 2, mode: "casual",
   participants: [{ userId: randomUUID(), score: 16, maxTile: 8 }, { userId: randomUUID(), score: 32, maxTile: 16 }],
 });
+test("an outbox read failure stays latched throughout a retry until a full scan succeeds", async t => {
+  const directory = await mkdtemp(join(tmpdir(), "duo-corrupt-results-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const store = new ResultStore(directory, async () => {}, () => {});
+  t.after(() => store.close());
+  await writeFile(join(directory, "broken.json"), "not json");
+  await store.retryPending();
+  assert.ok(store.diagnostics().readErrorAt);
+  const retry = store.retryPending();
+  assert.ok(store.diagnostics().readErrorAt, "retry must not briefly authorize replacement");
+  await retry;
+  assert.ok(store.diagnostics().readErrorAt);
+  await rm(join(directory, "broken.json"));
+  await store.retryPending();
+  assert.equal(store.diagnostics().readErrorAt, null);
+});
 test("failed results survive a restart and are removed only after remote acknowledgement", async t => {
   const directory = await mkdtemp(join(tmpdir(), "duo-results-"));
   t.after(() => rm(directory, { recursive: true, force: true }));

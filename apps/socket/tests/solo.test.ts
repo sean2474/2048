@@ -9,6 +9,26 @@ import { createSoloRun, advanceSolo, createSoloService, saveSoloRun } from "../s
 import { createAuthDatabase } from "./helpers/pglite";
 import { createGameServer } from "../src/server";
 
+test("a disconnected checkpoint read cannot resurrect an active solo session", async t => {
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  const run = createSoloRun(null, 0, "endless");
+  const { progress: _, ...state } = run.state;
+  const service = createSoloService({ soloProgress: {
+    read: async () => { await gate; return { version: 1, startedAt: Date.now(), savedTile: 0, state }; },
+    write: async () => {},
+  } });
+  t.after(() => service.close());
+  const read = service.handle("pid", null, { t: "state" }, () => true);
+  const disconnected = service.disconnect("pid");
+  assert.ok(service.deploymentStatus().pending > 0);
+  release();
+  await Promise.all([read, disconnected]);
+  assert.deepEqual(service.deploymentStatus(), { active: 0, pending: 0 });
+  await service.handle("pid", null, { t: "state" }, () => true);
+  assert.equal(service.deploymentStatus().active, 1, "reconnecting still restores the same run");
+});
+
 test("solo only accepts moves, never client-supplied times, boards or rewards", () => {
   assert.equal(SoloCommandSchema.safeParse({ t: "start", mode: "time-attack", elapsedMs: 1 }).success, false);
   assert.equal(SoloCommandSchema.safeParse({ t: "move", id: randomUUID(), seq: 1, dir: "diagonal" }).success, false);

@@ -1,6 +1,6 @@
 # 운영·테스트 환경 배포
 
-최종 갱신: 2026-10-17
+최종 갱신: 2026-10-19
 
 게임 웹, 관리자 웹, 실시간 게임 서버를 따로 배포한다. 테스트는 전용 staging 웹·소켓·Supabase를 사용한다. 테스트 계정, 경기, Elo, 업적, 코인은 운영과 공유하지 않는다.
 
@@ -10,7 +10,7 @@
 |---|---|---|
 | 게임 웹 | Vercel `2048-web`, `https://www.2048duo.io` | Vercel `2048-web-staging`, `https://2048-web-staging.vercel.app` |
 | 관리자 웹 | Vercel `2048-admin`, `https://admin.2048duo.io` | `2048-admin`의 Preview 배포 |
-| 소켓 | Fly `2048-socket`, `https://2048-socket.fly.dev`, `dfw` | Fly `2048-socket-staging`, `https://2048-socket-staging.fly.dev`, `nrt` |
+| 소켓 | Fly `2048-socket`, `https://2048-socket.fly.dev`, `nrt` | Fly `2048-socket-staging`, `https://2048-socket-staging.fly.dev`, `nrt` |
 | Supabase 프로젝트 | `rbfujqjvkfdgaofztrdq` | `nwdjucplpyorwiwshxtf` (Seoul) |
 | 소켓 설정 | [`fly.toml`](../fly.toml) | [`fly.staging.toml`](../fly.staging.toml) |
 
@@ -56,17 +56,29 @@ Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루
 
 ```sh
 # 테스트 서버
-fly deploy --config fly.staging.toml --depot=false --remote-only --ha=false
+node scripts/deploy-socket.mjs staging
 
 # 운영 서버
-fly deploy --config fly.toml --depot=false --remote-only --ha=false
+node scripts/deploy-socket.mjs production
 ```
 
-`--ha=false`는 신규 배포 시 여분 머신 생성을 막는다. 배포 뒤에도 각 앱의 머신 수를 확인한다. 2026-10-17에는 Depot 빌더 인증이 401/403으로 실패해 `--depot=false --remote-only`로 Fly 원격 빌더를 사용했다.
+배포 스크립트는 커밋된 소스와 실행 중 머신 1개를 확인하고, 이미지 빌드를 끝낸 뒤 머신 내부 `127.0.0.1:4001` 제어 포트로 drain을 시작한다. 새 매칭·친구방·솔로 시작을 잠시 거절하며 진행 중 대전과 그 재접속, 이미 접속한 솔로 게임은 계속 처리한다. 경기 종료, 솔로 종료/접속 종료와 체크포인트·결과 저장이 모두 끝나야 같은 머신의 이미지를 교체한다. 저장 오류가 있거나 15분이 지나면 배포를 취소하고 입장을 재개한다. 무제한 솔로가 계속 진행 중이면 종료를 강제하지 않는다.
+
+동시 배포는 drain 소유자 ID로 차단한다. 대기 중 Ctrl+C/SIGTERM은 입장을 재개하며, 교체가 시작된 뒤에는 Fly 완료를 기다린다. Fly 교체 실패·연결 단절로 결과가 불명확하면 입장을 자동으로 열지 않는다. `fly machine status`와 아래 상태 조회로 확인한 뒤 작업 로그의 `Drain owner` ID로 재개한다. 제어 포트는 외부 서비스로 노출하지 않는다.
+
+```sh
+fly machine exec <machine-id> 'node -e "fetch(\"http://127.0.0.1:4001/status\").then(r=>r.text()).then(console.log)"' -a <app>
+# 비정상 종료한 배포의 소유자 ID를 확인한 뒤에만 실행
+fly machine exec <machine-id> 'node -e "fetch(\"http://127.0.0.1:4001/resume\",{method:\"POST\",headers:{\"x-deployment-id\":\"<Drain owner>\"}}).then(r=>console.log(r.status))"' -a <app>
+```
+
+`--ha=false`와 `--only-machines`로 머신 추가를 막는다. 직접 `fly deploy`, restart, stop 명령은 drain을 우회하므로 정상 업데이트에는 사용하지 않는다. 2026-10-17 Depot 빌더 인증 실패 때문에 빌드는 `--depot=false --remote-only`를 유지한다.
+
+구형 서버에는 제어 포트가 없으므로 스크립트가 교체를 거절한다. 최초 도입은 기존 연결이 모두 자연스럽게 종료된 때를 확인하고 새 연결을 차단한 뒤, 다시 연결 0건과 재접속 유예 시간 경과, 결과 outbox와 저장 오류를 확인해 수행한다. 접속자가 있으면 강제 연결 종료 없이 기다리며 게임 중 재접속 경로도 유지한다. 리전 이전은 drain 지원 버전에서 경기·저장 완료를 확인한 뒤 수행한다. 기존 볼륨은 새 서버 검증 전까지 보존하고, 두 리전 서버가 동시에 경기를 받지 않게 한다. 설정의 `primary_region`만 바꿔서는 기존 머신이 이동하지 않으며 실제 머신 리전을 따로 확인한다.
 
 2026-10-17 전체 기능 통합은 **DB·카탈로그 이미지 → 소켓 → 웹/관리자** 순서로 적용한다. 새 웹의 친구 presence가 spectator 연결을 사용하므로 구형 소켓과 혼용하면 게임 연결이 교체될 수 있다. [통합 검증 기록](full-performance/integration.md)에 환경별 DB 이력, 배포 커밋, 검사 결과를 남긴다.
 
-멀티플레이 방·보드·매칭·재접속 상태는 프로세스 메모리에 있다. **머신 재시작·배포는 진행 중 멀티플레이 경기를 끊을 수 있다.** 솔로는 DB에 저장된 진행상황을 복원하지만 저장되지 않은 마지막 변경까지 보존하지는 못한다. [솔로 저장 정책](solo-time-attack.md)을 따른다. 자동 정지는 꺼져 있으며 다중 머신·자동 확장은 지원하지 않는다. Redis 어댑터만 추가해서 현재 보드 상태를 공유할 수는 없다.
+멀티플레이 방·보드·매칭·재접속 상태는 프로세스 메모리에 있다. **위 스크립트의 계획 배포는 경기를 끝낸 뒤 교체한다. 강제 재시작, 서버 장애, 직접 배포는 진행 중 멀티플레이 경기를 끊을 수 있다.** 솔로는 DB에 저장된 진행상황을 복원하지만 저장되지 않은 마지막 변경까지 보존하지는 못한다. [솔로 저장 정책](solo-time-attack.md)을 따른다. 자동 정지는 꺼져 있으며 다중 머신·자동 확장은 지원하지 않는다. Redis 어댑터만 추가해서 현재 보드 상태를 공유할 수는 없다.
 
 ## 배포 검증
 

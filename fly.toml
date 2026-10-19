@@ -1,7 +1,7 @@
-# In-memory rooms require exactly one Machine. Deploy with --ha=false.
+# In-memory rooms require one Machine. Use node scripts/deploy-socket.mjs production.
 
 app = '2048-socket'
-primary_region = 'dfw'
+primary_region = 'nrt'
 kill_signal = 'SIGTERM'
 kill_timeout = 30
 
