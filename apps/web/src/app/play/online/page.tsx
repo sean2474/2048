@@ -1,2 +1,2 @@
-import { MatchLobby } from "@/components/widget/match-lobby";
-export default function OnlinePage() { return <MatchLobby mode="casual" />; }
+import { MatchmakingPage } from "@/components/widget/matchmaking-page";
+export default function OnlinePage() { return <MatchmakingPage mode="casual" />; }
