@@ -9,12 +9,17 @@ import { trackAudio } from "./browser-fixtures.mjs";
 test("real audio graph, tutorial cues, mute, volume, persistence and mobile controls", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
-    const context = await browser.newContext({ locale: "en-US", viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+    const context = await browser.newContext({
+      locale: "en-US",
+      viewport: { width: 375, height: 812 },
+      isMobile: true,
+      hasTouch: true,
+    });
     context.setDefaultTimeout(12000);
     await trackAudio(context);
     const page = await context.newPage();
     const errors = [];
-    page.on("pageerror", error => errors.push(error.message));
+    page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(`${origin}/tutorial`);
     const sound = page.getByRole("button", { name: "Game sound", exact: true });
     await sound.waitFor();
@@ -42,18 +47,33 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
     await volume.fill("20");
     await page.getByRole("button", { name: "Test sound", exact: true }).tap();
     await page.waitForFunction(() => window.audioProbe.notes.length === 2);
-    await page.waitForFunction(() => {
-      const context = window.audioProbe.contexts[0];
-      const samples = new Float32Array(context.analyser.fftSize);
-      context.analyser.getFloatTimeDomainData(samples);
-      return samples.some(value => Math.abs(value) > 0.00001);
-    }, null, { timeout: 3000, polling: "raf" });
-    assert.ok(Math.abs(await page.evaluate(() => window.audioProbe.contexts[0].master.gain.value) - 0.2) < 0.001);
+    await page.waitForFunction(
+      () => {
+        const context = window.audioProbe.contexts[0];
+        const samples = new Float32Array(context.analyser.fftSize);
+        context.analyser.getFloatTimeDomainData(samples);
+        return samples.some((value) => Math.abs(value) > 0.00001);
+      },
+      null,
+      { timeout: 3000, polling: "raf" },
+    );
+    assert.ok(
+      Math.abs((await page.evaluate(() => window.audioProbe.contexts[0].master.gain.value)) - 0.2) <
+        0.001,
+    );
     await page.getByRole("button", { name: "Game sound", exact: true }).tap();
     await page.reload();
     await page.waitForFunction(() => document.getElementById("audio-volume")?.value === "20");
-    assert.equal(await page.getByRole("button", { name: "Game sound", exact: true }).getAttribute("aria-pressed"), "false");
-    assert.equal(await page.getByRole("button", { name: "Test sound", exact: true }).isDisabled(), true);
+    assert.equal(
+      await page
+        .getByRole("button", { name: "Game sound", exact: true })
+        .getAttribute("aria-pressed"),
+      "false",
+    );
+    assert.equal(
+      await page.getByRole("button", { name: "Test sound", exact: true }).isDisabled(),
+      true,
+    );
     for (const width of [320, 375, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
@@ -62,7 +82,9 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
     await page.setViewportSize({ width: 375, height: 812 });
     await page.screenshot({ path: "/tmp/2048-audio-settings.png", fullPage: true });
     await page.goto(`${origin}/tutorial`);
-    await page.waitForFunction(() => document.querySelector('button[aria-label="Game sound"]')?.matches(":enabled"));
+    await page.waitForFunction(() =>
+      document.querySelector('button[aria-label="Game sound"]')?.matches(":enabled"),
+    );
     assert.equal(await sound.getAttribute("aria-pressed"), "false");
     await page.getByRole("button", { name: "Move left", exact: true }).tap();
     await page.getByRole("heading", { name: "You’ve got the basics", exact: true }).waitFor();
@@ -71,7 +93,9 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
     await page.screenshot({ path: "/tmp/2048-audio-tutorial.png", fullPage: true });
     assert.deepEqual(errors, []);
     await context.close();
-  } finally { await browser.close(); }
+  } finally {
+    await browser.close();
+  }
 });
 
 test("blocked storage and unsupported audio keep tutorial usable and report limitations", async () => {
@@ -89,22 +113,34 @@ test("blocked storage and unsupported audio keep tutorial usable and report limi
     });
     const page = await context.newPage();
     const errors = [];
-    page.on("pageerror", error => errors.push(error.message));
+    page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(`${origin}/settings`);
     await page.getByRole("button", { name: "게임 사운드", exact: true }).click();
-    await page.getByText("오디오 설정을 저장하지 못했습니다. 현재 접속 중에만 유지됩니다.", { exact: true }).waitFor();
-    await page.getByText("오디오를 사용할 수 없습니다. 소리 없이 계속 플레이할 수 있어요.", { exact: true }).waitFor();
+    await page
+      .getByText("오디오 설정을 저장하지 못했습니다. 현재 접속 중에만 유지됩니다.", { exact: true })
+      .waitFor();
+    await page
+      .getByText("오디오를 사용할 수 없습니다. 소리 없이 계속 플레이할 수 있어요.", { exact: true })
+      .waitFor();
     await page.getByRole("link", { name: "직접 해보는 튜토리얼", exact: true }).click();
     await page.getByRole("button", { name: "왼쪽으로 이동", exact: true }).click();
-    await page.waitForFunction(() => document.querySelector('[data-testid="your-score"]')?.textContent === "4");
+    await page.waitForFunction(
+      () => document.querySelector('[data-testid="your-score"]')?.textContent === "4",
+    );
     assert.deepEqual(errors, []);
     await context.close();
-  } finally { await browser.close(); }
+  } finally {
+    await browser.close();
+  }
 });
 
 test("friend match plays confirmed moves and one result cue per player", async () => {
   // Another local app binds IPv4 :3001; this workspace's dev server listens on IPv6.
-  const browser = await chromium.launch({ channel: "chrome", headless: true, args: ["--host-resolver-rules=MAP localhost [::1]"] });
+  const browser = await chromium.launch({
+    channel: "chrome",
+    headless: true,
+    args: ["--host-resolver-rules=MAP localhost [::1]"],
+  });
   const matchOrigin = process.env.TEST_WEB_ORIGIN || "http://localhost:3001";
   try {
     const hostContext = await browser.newContext({ locale: "en-US" });
@@ -116,7 +152,7 @@ test("friend match plays confirmed moves and one result cue per player", async (
     const host = await hostContext.newPage();
     const guest = await guestContext.newPage();
     const errors = [];
-    for (const page of [host, guest]) page.on("pageerror", error => errors.push(error.message));
+    for (const page of [host, guest]) page.on("pageerror", (error) => errors.push(error.message));
     await host.goto(`${matchOrigin}/play/create`);
     await host.getByTestId("join-code").waitFor();
     const code = await host.getByTestId("join-code").innerText();
@@ -133,15 +169,23 @@ test("friend match plays confirmed moves and one result cue per player", async (
     for (const direction of ["left", "down", "right", "up"]) {
       await host.keyboard.press(`Arrow${direction[0].toUpperCase()}${direction.slice(1)}`);
     }
-    await host.waitForFunction(count => window.audioProbe.notes.length > count, initialNotes);
+    await host.waitForFunction((count) => window.audioProbe.notes.length > count, initialNotes);
     await guest.getByRole("button", { name: "Surrender", exact: true }).click();
-    await guest.getByRole("alertdialog").getByRole("button", { name: "Surrender", exact: true }).click();
+    await guest
+      .getByRole("alertdialog")
+      .getByRole("button", { name: "Surrender", exact: true })
+      .click();
     await host.getByRole("heading", { name: "You win!", exact: true }).waitFor();
     await guest.getByRole("heading", { name: "You lose.", exact: true }).waitFor();
-    assert.deepEqual(await host.evaluate(() => window.audioProbe.notes.slice(-5)), [523, 659, 784, 1046, 523]);
+    assert.deepEqual(
+      await host.evaluate(() => window.audioProbe.notes.slice(-5)),
+      [523, 659, 784, 1046, 523],
+    );
     assert.deepEqual(await guest.evaluate(() => window.audioProbe.notes.slice(-2)), [220, 164.81]);
     assert.deepEqual(errors, []);
     await hostContext.close();
     await guestContext.close();
-  } finally { await browser.close(); }
+  } finally {
+    await browser.close();
+  }
 });

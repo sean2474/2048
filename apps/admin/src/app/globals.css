@@ -46,41 +46,152 @@
 }
 
 @layer base {
-  * { @apply border-border; }
-  body { @apply bg-background text-foreground; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-  a, button, input, select, textarea { outline-color: var(--ring); }
-  :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
-  select, input, textarea { @apply bg-card border-input; }
-  table { font-variant-numeric: tabular-nums; border-collapse: collapse; }
-  th { font-weight: 600; }
-  thead { color: var(--muted-foreground); background: #faf9f5; }
-  thead th { font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; }
-  tbody tr { transition: background-color 120ms ease; }
-  tbody tr:hover { background: #fcfbf8; }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+  }
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    outline-color: var(--ring);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  select,
+  input,
+  textarea {
+    @apply bg-card border-input;
+  }
+  table {
+    font-variant-numeric: tabular-nums;
+    border-collapse: collapse;
+  }
+  th {
+    font-weight: 600;
+  }
+  thead {
+    color: var(--muted-foreground);
+    background: #faf9f5;
+  }
+  thead th {
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+  tbody tr {
+    transition: background-color 120ms ease;
+  }
+  tbody tr:hover {
+    background: #fcfbf8;
+  }
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer components {
-  .admin-panel { @apply rounded-2xl border bg-card; box-shadow: 0 2px 8px #282b2803; }
-  .admin-eyebrow { @apply text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground; }
-  .admin-title { @apply text-2xl font-bold tracking-tight sm:text-[28px]; }
-  .admin-section-title { @apply text-base font-bold tracking-tight; }
-  .admin-badge { @apply inline-flex items-center whitespace-nowrap rounded-full border border-transparent bg-muted px-2.5 py-1 text-[11px] font-semibold leading-4; }
-  .admin-badge-positive { @apply bg-secondary text-secondary-foreground; }
-  .admin-badge-warm { @apply bg-accent text-accent-foreground; }
-  .admin-badge-danger { @apply bg-destructive/8 text-destructive; }
-  .admin-field { @apply min-h-11 rounded-xl border bg-card px-3 text-sm transition-colors placeholder:text-muted-foreground hover:border-primary/40 disabled:opacity-60; }
-  .admin-state { @apply rounded-2xl border bg-card px-6 py-8 text-sm leading-6 text-muted-foreground; }
-  .admin-error { @apply rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm leading-6 text-destructive; }
-  .admin-success { @apply rounded-xl border border-secondary-foreground/20 bg-secondary p-4 text-sm leading-6 text-secondary-foreground; }
+  .admin-panel {
+    @apply rounded-2xl border bg-card;
+    box-shadow: 0 2px 8px #282b2803;
+  }
+  .admin-eyebrow {
+    @apply text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground;
+  }
+  .admin-title {
+    @apply text-2xl font-bold tracking-tight sm:text-[28px];
+  }
+  .admin-section-title {
+    @apply text-base font-bold tracking-tight;
+  }
+  .admin-badge {
+    @apply inline-flex items-center whitespace-nowrap rounded-full border border-transparent bg-muted px-2.5 py-1 text-[11px] font-semibold leading-4;
+  }
+  .admin-badge-positive {
+    @apply bg-secondary text-secondary-foreground;
+  }
+  .admin-badge-warm {
+    @apply bg-accent text-accent-foreground;
+  }
+  .admin-badge-danger {
+    @apply bg-destructive/8 text-destructive;
+  }
+  .admin-field {
+    @apply min-h-11 rounded-xl border bg-card px-3 text-sm transition-colors placeholder:text-muted-foreground hover:border-primary/40 disabled:opacity-60;
+  }
+  .admin-state {
+    @apply rounded-2xl border bg-card px-6 py-8 text-sm leading-6 text-muted-foreground;
+  }
+  .admin-error {
+    @apply rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm leading-6 text-destructive;
+  }
+  .admin-success {
+    @apply rounded-xl border border-secondary-foreground/20 bg-secondary p-4 text-sm leading-6 text-secondary-foreground;
+  }
   /* Chart marks grow from their baseline on first paint; transform keeps it off the layout thread. */
-  .admin-bar { transform-origin: left; animation: grow-x 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
-  .admin-column { transform-box: fill-box; transform-origin: bottom; animation: grow-y 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .admin-bar {
+    transform-origin: left;
+    animation: grow-x 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .admin-column {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    animation: grow-y 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
   /* Phone navigation drawer: a native dialog that slides in from the left. */
-  .admin-drawer { position: fixed; inset: 0 auto 0 0; margin: 0; height: 100dvh; max-height: none; width: min(18rem, 85vw); border: 0; border-right: 1px solid var(--border); background: var(--card); color: var(--foreground); padding: 1.25rem; box-shadow: 0 12px 40px #282b2826; opacity: 0; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease-out, overlay 0.3s allow-discrete, display 0.3s allow-discrete; }
-  .admin-drawer[open] { opacity: 1; transform: none; }
-  @starting-style { .admin-drawer[open] { opacity: 0; transform: translateX(-100%); } }
-  .admin-drawer::backdrop { background: #282b2866; transition: background-color 0.3s ease-out, overlay 0.3s allow-discrete, display 0.3s allow-discrete; }
+  .admin-drawer {
+    position: fixed;
+    inset: 0 auto 0 0;
+    margin: 0;
+    height: 100dvh;
+    max-height: none;
+    width: min(18rem, 85vw);
+    border: 0;
+    border-right: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    padding: 1.25rem;
+    box-shadow: 0 12px 40px #282b2826;
+    opacity: 0;
+    transform: translateX(-100%);
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s ease-out,
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
+  }
+  .admin-drawer[open] {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    .admin-drawer[open] {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+  }
+  .admin-drawer::backdrop {
+    background: #282b2866;
+    transition:
+      background-color 0.3s ease-out,
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
+  }
 }

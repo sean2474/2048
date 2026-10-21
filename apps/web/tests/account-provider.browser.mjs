@@ -4,39 +4,50 @@ import { createRequire } from "node:module";
 import { startServerFixture } from "./server-fixture.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 
-test("auth hydration, login navigation, shared profile and cross-tab logout", { timeout: 90000 }, async t => {
-  const started = Date.now();
-  const fixture = await startServerFixture();
-  t.after(fixture.close);
-  const browser = await chromium.launch({ channel: "chrome", headless: true });
-  t.after(() => browser.close());
-  const context = await browser.newContext({ locale: "en-US" });
-  const page = await context.newPage(), errors = [];
-  page.on("pageerror", error => errors.push(error.message));
-  await page.goto(fixture.origin + "/login");
-  await page.getByRole("textbox", { name: "Email", exact: true }).fill("fixture@example.invalid");
-  await page.getByRole("region", { name: "Log in", exact: true }).getByLabel("Password", { exact: true }).fill("fixture-password");
-  await page.getByRole("button", { name: "Log in", exact: true }).click();
-  await page.waitForURL(fixture.origin + "/");
-  await page.getByRole("heading", { name: "Fixture Challenger", exact: true }).waitFor();
-  t.diagnostic(`Login and dashboard: ${Date.now() - started}ms`);
+test(
+  "auth hydration, login navigation, shared profile and cross-tab logout",
+  { timeout: 90000 },
+  async (t) => {
+    const started = Date.now();
+    const fixture = await startServerFixture();
+    t.after(fixture.close);
+    const browser = await chromium.launch({ channel: "chrome", headless: true });
+    t.after(() => browser.close());
+    const context = await browser.newContext({ locale: "en-US" });
+    const page = await context.newPage(),
+      errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.goto(fixture.origin + "/login");
+    await page.getByRole("textbox", { name: "Email", exact: true }).fill("fixture@example.invalid");
+    await page
+      .getByRole("region", { name: "Log in", exact: true })
+      .getByLabel("Password", { exact: true })
+      .fill("fixture-password");
+    await page.getByRole("button", { name: "Log in", exact: true }).click();
+    await page.waitForURL(fixture.origin + "/");
+    await page.getByRole("heading", { name: "Fixture Challenger", exact: true }).waitFor();
+    t.diagnostic(`Login and dashboard: ${Date.now() - started}ms`);
 
-  fixture.requests.length = 0;
-  await page.reload();
-  await page.getByRole("button", { name: "Pause duel animation", exact: true }).click();
-  assert.equal(fixture.requests.filter(row => row.path.endsWith("/players")).length, 1);
-  t.diagnostic(`Reload and shared profile: ${Date.now() - started}ms`);
-  const second = await context.newPage();
-  await second.goto(fixture.origin);
-  await second.getByRole("heading", { name: "Fixture Challenger", exact: true }).waitFor();
-  await second.getByRole("button", { name: "Pause duel animation", exact: true }).click();
-  t.diagnostic(`Second tab hydrated: ${Date.now() - started}ms`);
-  await page.getByRole("button", { name: "Account menu", exact: true }).click();
-  await page.getByRole("menuitem", { name: "Log out", exact: true }).click();
-  t.diagnostic(`Logout clicked: ${Date.now() - started}ms`);
-  await page.getByRole("heading", { name: "Guest", exact: true }).waitFor();
-  await second.getByRole("heading", { name: "Guest", exact: true }).waitFor();
-  t.diagnostic(`Both tabs signed out: ${Date.now() - started}ms`);
-  assert.equal(await second.getByRole("heading", { name: "Fixture Challenger", exact: true }).count(), 0);
-  assert.deepEqual(errors, []);
-});
+    fixture.requests.length = 0;
+    await page.reload();
+    await page.getByRole("button", { name: "Pause duel animation", exact: true }).click();
+    assert.equal(fixture.requests.filter((row) => row.path.endsWith("/players")).length, 1);
+    t.diagnostic(`Reload and shared profile: ${Date.now() - started}ms`);
+    const second = await context.newPage();
+    await second.goto(fixture.origin);
+    await second.getByRole("heading", { name: "Fixture Challenger", exact: true }).waitFor();
+    await second.getByRole("button", { name: "Pause duel animation", exact: true }).click();
+    t.diagnostic(`Second tab hydrated: ${Date.now() - started}ms`);
+    await page.getByRole("button", { name: "Account menu", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Log out", exact: true }).click();
+    t.diagnostic(`Logout clicked: ${Date.now() - started}ms`);
+    await page.getByRole("heading", { name: "Guest", exact: true }).waitFor();
+    await second.getByRole("heading", { name: "Guest", exact: true }).waitFor();
+    t.diagnostic(`Both tabs signed out: ${Date.now() - started}ms`);
+    assert.equal(
+      await second.getByRole("heading", { name: "Fixture Challenger", exact: true }).count(),
+      0,
+    );
+    assert.deepEqual(errors, []);
+  },
+);

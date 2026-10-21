@@ -56,3 +56,6 @@ next-env.d.ts
 supabase/.temp/
 .env*
 !.env.example
+
+# Private Next.js configs created and removed by isolated test servers.
+apps/*/.tsconfig.fixture-*.json

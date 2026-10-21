@@ -1,0 +1,127 @@
+{
+  "measuredAt": "2026-10-21T16:38:07Z",
+  "origin": "https://www.2048duo.io",
+  "commit": "c9ff17c7b16800f7db32638d62a2980b0134b75f",
+  "requests": [
+    {
+      "path": "/",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 854.74,
+      "totalMs": 1039.01,
+      "bytes": 146941
+    },
+    {
+      "path": "/",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 692.19,
+      "totalMs": 875.98,
+      "bytes": 146941
+    },
+    {
+      "path": "/",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 763.82,
+      "totalMs": 990.14,
+      "bytes": 146941
+    },
+    {
+      "path": "/settings",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 736.78,
+      "totalMs": 921.17,
+      "bytes": 152396
+    },
+    {
+      "path": "/settings",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 696.97,
+      "totalMs": 883.39,
+      "bytes": 152396
+    },
+    {
+      "path": "/settings",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 693.54,
+      "totalMs": 874.53,
+      "bytes": 152396
+    },
+    {
+      "path": "/find-match",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 692.93,
+      "totalMs": 882.77,
+      "bytes": 152487
+    },
+    {
+      "path": "/find-match",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 800.84,
+      "totalMs": 993.77,
+      "bytes": 152487
+    },
+    {
+      "path": "/find-match",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 611.99,
+      "totalMs": 794.78,
+      "bytes": 152487
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 658.48,
+      "totalMs": 2464.28,
+      "bytes": 194351
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 656.39,
+      "totalMs": 1562.84,
+      "bytes": 194351
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 745.15,
+      "totalMs": 2103.43,
+      "bytes": 194351
+    },
+    {
+      "path": "/solo",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 655.88,
+      "totalMs": 885.17,
+      "bytes": 139900
+    },
+    {
+      "path": "/solo",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 775.8,
+      "totalMs": 952.28,
+      "bytes": 139900
+    },
+    {
+      "path": "/solo",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 648.7,
+      "totalMs": 826.41,
+      "bytes": 139900
+    }
+  ]
+}

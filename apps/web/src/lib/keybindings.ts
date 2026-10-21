@@ -10,7 +10,17 @@ export const DEFAULT_KEYBINDINGS: Readonly<Keybindings> = Object.freeze({
   ability: "Digit1",
 });
 
-type KeyEvent = Pick<KeyboardEvent, "code" | "altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "isComposing" | "repeat" | "defaultPrevented">;
+type KeyEvent = Pick<
+  KeyboardEvent,
+  | "code"
+  | "altKey"
+  | "ctrlKey"
+  | "metaKey"
+  | "shiftKey"
+  | "isComposing"
+  | "repeat"
+  | "defaultPrevented"
+>;
 
 export function isBindingCode(value: unknown): value is string {
   return typeof value === "string" && /^(Key[A-Z]|Digit[0-9])$/.test(value);
@@ -19,24 +29,36 @@ export function isBindingCode(value: unknown): value is string {
 export function isKeybindings(value: unknown): value is Keybindings {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const entries = Object.entries(value);
-  return entries.length === KEY_ACTIONS.length
-    && KEY_ACTIONS.every(action => Object.hasOwn(value, action))
-    && entries.every(([, code]) => isBindingCode(code))
-    && new Set(entries.map(([, code]) => code)).size === KEY_ACTIONS.length;
+  return (
+    entries.length === KEY_ACTIONS.length &&
+    KEY_ACTIONS.every((action) => Object.hasOwn(value, action)) &&
+    entries.every(([, code]) => isBindingCode(code)) &&
+    new Set(entries.map(([, code]) => code)).size === KEY_ACTIONS.length
+  );
 }
 
 export function upgradeKeybindings(value: unknown): unknown {
-  if (!value || typeof value !== "object" || Array.isArray(value) || isKeybindings(value)) return value;
+  if (!value || typeof value !== "object" || Array.isArray(value) || isKeybindings(value))
+    return value;
   const entries = Object.entries(value);
   const hasAbility = Object.hasOwn(value, "ability");
-  if (entries.length !== (hasAbility ? 7 : 6)
-    || !["up", "down", "left", "right", "xblock", "hardblock"].every(action => Object.hasOwn(value, action))
-    || !entries.every(([, code]) => isBindingCode(code))
-    || new Set(entries.map(([, code]) => code)).size !== entries.length) return value;
+  if (
+    entries.length !== (hasAbility ? 7 : 6) ||
+    !["up", "down", "left", "right", "xblock", "hardblock"].every((action) =>
+      Object.hasOwn(value, action),
+    ) ||
+    !entries.every(([, code]) => isBindingCode(code)) ||
+    new Set(entries.map(([, code]) => code)).size !== entries.length
+  )
+    return value;
   const old = value as Record<string, string>;
   const movement = { up: old.up, down: old.down, left: old.left, right: old.right };
-  const ability = hasAbility && old.ability !== "Digit3" ? old.ability
-    : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(digit => `Digit${digit}`).find(code => !Object.values(movement).includes(code));
+  const ability =
+    hasAbility && old.ability !== "Digit3"
+      ? old.ability
+      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+          .map((digit) => `Digit${digit}`)
+          .find((code) => !Object.values(movement).includes(code));
   return { ...movement, ability };
 }
 
@@ -45,20 +67,47 @@ export function keyLabel(code: string): string {
 }
 
 export function bindingCodeFromEvent(event: KeyEvent): string | null {
-  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing || event.defaultPrevented) return null;
+  if (
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey ||
+    event.isComposing ||
+    event.defaultPrevented
+  )
+    return null;
   return isBindingCode(event.code) ? event.code : null;
 }
 
-export function resolveKeyAction(event: KeyEvent, bindings: Keybindings, characterShortcuts: boolean): KeyAction | null {
-  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing || event.defaultPrevented) return null;
-  const arrows: Record<string, KeyAction> = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
+export function resolveKeyAction(
+  event: KeyEvent,
+  bindings: Keybindings,
+  characterShortcuts: boolean,
+): KeyAction | null {
+  if (
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey ||
+    event.isComposing ||
+    event.defaultPrevented
+  )
+    return null;
+  const arrows: Record<string, KeyAction> = {
+    ArrowUp: "up",
+    ArrowDown: "down",
+    ArrowLeft: "left",
+    ArrowRight: "right",
+  };
   if (Object.hasOwn(arrows, event.code)) return arrows[event.code];
   if (!characterShortcuts) return null;
-  const action = KEY_ACTIONS.find(candidate => bindings[candidate] === event.code) ?? null;
+  const action = KEY_ACTIONS.find((candidate) => bindings[candidate] === event.code) ?? null;
   return event.repeat && action === "ability" ? null : action;
 }
 
-export function createMovementRepeater(move: (direction: "up" | "down" | "left" | "right") => void) {
+export function createMovementRepeater(
+  move: (direction: "up" | "down" | "left" | "right") => void,
+) {
   let held: string | null = null;
   let delay: ReturnType<typeof setTimeout> | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
@@ -79,7 +128,9 @@ export function createMovementRepeater(move: (direction: "up" | "down" | "left" 
         interval = setInterval(() => move(direction), 70);
       }, 200);
     },
-    release(code: string) { if (held === code) stop(); },
+    release(code: string) {
+      if (held === code) stop();
+    },
     stop,
   };
 }

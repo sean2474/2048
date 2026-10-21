@@ -7,5 +7,15 @@ export function RefreshButton() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const { t } = useI18n();
-  return <Button type="button" variant="outline" disabled={pending} aria-busy={pending} onClick={() => startTransition(() => router.refresh())}>{t("Refresh")}</Button>;
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      disabled={pending}
+      aria-busy={pending}
+      onClick={() => startTransition(() => router.refresh())}
+    >
+      {t("Refresh")}
+    </Button>
+  );
 }

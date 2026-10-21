@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-10-21T16:38:07Z",
+  "source": "https://vercel.com/2048-de6a2710/2048-web/speed-insights",
+  "environment": "Production",
+  "window": "Last 7 Days",
+  "desktop": {
+    "RES": 89,
+    "events": 107
+  },
+  "mobile": {
+    "RES": 80,
+    "events": 14
+  },
+  "note": "Read from authenticated Vercel dashboard. Historical data from before this deployment; per-metric values require Plus and were unavailable."
+}

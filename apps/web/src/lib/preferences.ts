@@ -2,39 +2,78 @@ import { CatalogIdSchema } from "schema/catalog";
 import { ABILITIES, RETIRED_ABILITY_IDS, type AbilityId, type SkinId } from "schema/loadout";
 import { DEFAULT_PROFILE_ICON, isProfileIconId, type ProfileIconId } from "schema/profile-icons";
 import type { Locale } from "ui/locale";
-import { DEFAULT_KEYBINDINGS, isKeybindings, upgradeKeybindings, type Keybindings } from "./keybindings";
+import {
+  DEFAULT_KEYBINDINGS,
+  isKeybindings,
+  upgradeKeybindings,
+  type Keybindings,
+} from "./keybindings";
 
-export type Settings = { locale: Locale; keybindings: Keybindings; skinId: SkinId; iconId: ProfileIconId; abilityId: AbilityId | null; customShortcuts: boolean };
+export type Settings = {
+  locale: Locale;
+  keybindings: Keybindings;
+  skinId: SkinId;
+  iconId: ProfileIconId;
+  abilityId: AbilityId | null;
+  customShortcuts: boolean;
+};
 export type SettingsPatch = Partial<Settings>;
 export const GUEST_SETTINGS_COOKIE = "duo.guest-settings";
-export const DEFAULT_SETTINGS: Settings = { locale: "ko", keybindings: { ...DEFAULT_KEYBINDINGS }, skinId: "classic", iconId: DEFAULT_PROFILE_ICON, abilityId: null, customShortcuts: true };
-const FIELDS = ["locale", "keybindings", "skinId", "iconId", "abilityId", "customShortcuts"] as const;
+export const DEFAULT_SETTINGS: Settings = {
+  locale: "ko",
+  keybindings: { ...DEFAULT_KEYBINDINGS },
+  skinId: "classic",
+  iconId: DEFAULT_PROFILE_ICON,
+  abilityId: null,
+  customShortcuts: true,
+};
+const FIELDS = [
+  "locale",
+  "keybindings",
+  "skinId",
+  "iconId",
+  "abilityId",
+  "customShortcuts",
+] as const;
 
 export function isSettingsPatch(value: unknown): value is SettingsPatch {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   return Object.entries(value).every(([key, item]) => {
     switch (key) {
-      case "locale": return item === "ko" || item === "en";
-      case "keybindings": return isKeybindings(item);
-      case "skinId": return CatalogIdSchema.safeParse(item).success;
-      case "iconId": return isProfileIconId(item);
-      case "abilityId": return item === null || ABILITIES.some(ability => ability.id === item);
-      case "customShortcuts": return typeof item === "boolean";
-      default: return false;
+      case "locale":
+        return item === "ko" || item === "en";
+      case "keybindings":
+        return isKeybindings(item);
+      case "skinId":
+        return CatalogIdSchema.safeParse(item).success;
+      case "iconId":
+        return isProfileIconId(item);
+      case "abilityId":
+        return item === null || ABILITIES.some((ability) => ability.id === item);
+      case "customShortcuts":
+        return typeof item === "boolean";
+      default:
+        return false;
     }
   });
 }
 
 export function isSettings(value: unknown): value is Settings {
-  return isSettingsPatch(value) && FIELDS.every(field => Object.hasOwn(value, field));
+  return isSettingsPatch(value) && FIELDS.every((field) => Object.hasOwn(value, field));
 }
 
 function upgradeSettings(value: unknown): unknown {
   if (!value || typeof value !== "object" || Array.isArray(value)) return value;
   const settings = value as Record<string, unknown>;
   // Retiring a preview must not reset language, controls or the equipped skin.
-  return { iconId: DEFAULT_PROFILE_ICON, ...settings, keybindings: upgradeKeybindings(settings.keybindings),
-    ...(typeof settings.abilityId === "string" && RETIRED_ABILITY_IDS.includes(settings.abilityId) ? { abilityId: null } : {}) };
+  return {
+    iconId: DEFAULT_PROFILE_ICON,
+    ...settings,
+    keybindings: upgradeKeybindings(settings.keybindings),
+    ...(typeof settings.abilityId === "string" && RETIRED_ABILITY_IDS.includes(settings.abilityId)
+      ? { abilityId: null }
+      : {}),
+  };
 }
 
 function guestDefaults(settings: Settings): Settings {
@@ -45,13 +84,24 @@ export function parseGuestSettings(value?: string, fallbackLocale: Locale = "ko"
   try {
     const parsed = upgradeSettings(value ? JSON.parse(decodeURIComponent(value)) : null);
     if (isSettings(parsed)) return guestDefaults(parsed);
-  } catch { /* Damaged cookies must not disable game controls. */ }
+  } catch {
+    /* Damaged cookies must not disable game controls. */
+  }
   return { ...DEFAULT_SETTINGS, locale: fallbackLocale, keybindings: { ...DEFAULT_KEYBINDINGS } };
 }
 
 export function settingsFromRow(value: unknown): Settings {
   const row = value as Record<string, unknown> | null;
-  const settings = upgradeSettings(row && { locale: row.locale, keybindings: row.keybindings, skinId: row.skin_id, iconId: row.icon_id ?? DEFAULT_PROFILE_ICON, abilityId: row.ability_id, customShortcuts: row.custom_shortcuts });
+  const settings = upgradeSettings(
+    row && {
+      locale: row.locale,
+      keybindings: row.keybindings,
+      skinId: row.skin_id,
+      iconId: row.icon_id ?? DEFAULT_PROFILE_ICON,
+      abilityId: row.ability_id,
+      customShortcuts: row.custom_shortcuts,
+    },
+  );
   if (!isSettings(settings)) throw new Error("Invalid saved settings");
   return settings;
 }
@@ -67,7 +117,13 @@ export function settingsToRow(patch: SettingsPatch): Record<string, unknown> {
   return row;
 }
 
-export type SettingsState = { settings: Settings; ready: boolean; saving: boolean; error: string | null; scope: "account" | "guest" };
+export type SettingsState = {
+  settings: Settings;
+  ready: boolean;
+  saving: boolean;
+  error: string | null;
+  scope: "account" | "guest";
+};
 type SettingsStorage = {
   readGuest: () => Settings;
   writeGuest: (settings: Settings) => void;
@@ -82,8 +138,18 @@ export class SettingsStore {
   state: SettingsState;
   private account: string | null = null;
   private generation = 0;
-  constructor(private storage: SettingsStorage, private changed: (state: SettingsState) => void, initialLocale: Locale) {
-    this.state = { settings: { ...DEFAULT_SETTINGS, locale: initialLocale }, ready: false, saving: false, error: null, scope: "guest" };
+  constructor(
+    private storage: SettingsStorage,
+    private changed: (state: SettingsState) => void,
+    initialLocale: Locale,
+  ) {
+    this.state = {
+      settings: { ...DEFAULT_SETTINGS, locale: initialLocale },
+      ready: false,
+      saving: false,
+      error: null,
+      scope: "guest",
+    };
   }
   private emit(patch: Partial<SettingsState>) {
     this.state = { ...this.state, ...patch };
@@ -91,16 +157,32 @@ export class SettingsStore {
   }
   private apply(settings: Settings): boolean {
     this.emit({ settings, ready: true, saving: false, error: null });
-    try { this.storage.mirrorLocale(settings.locale); return true; }
-    catch { this.emit({ error: "Settings loaded, but language cookies are blocked. Allow cookies and retry." }); return false; }
+    try {
+      this.storage.mirrorLocale(settings.locale);
+      return true;
+    } catch {
+      this.emit({
+        error: "Settings loaded, but language cookies are blocked. Allow cookies and retry.",
+      });
+      return false;
+    }
   }
   async load(account: string | null): Promise<void> {
     this.account = account;
     const generation = ++this.generation;
-    this.emit({ ready: false, saving: false, error: null, scope: account ? "account" : "guest", settings: { ...DEFAULT_SETTINGS } });
+    this.emit({
+      ready: false,
+      saving: false,
+      error: null,
+      scope: account ? "account" : "guest",
+      settings: { ...DEFAULT_SETTINGS },
+    });
     try {
       const guest = guestDefaults(this.storage.readGuest());
-      if (!account) { this.apply(guest); return; }
+      if (!account) {
+        this.apply(guest);
+        return;
+      }
       let settings = await this.storage.readAccount(account);
       if (generation !== this.generation) return;
       if (!settings) {
@@ -113,14 +195,25 @@ export class SettingsStore {
       if (!settings) throw new Error("Missing settings");
       this.apply(settings);
     } catch {
-      if (generation === this.generation) this.emit({ ready: false, error: "Could not load your settings. Retry before making changes." });
+      if (generation === this.generation)
+        this.emit({
+          ready: false,
+          error: "Could not load your settings. Retry before making changes.",
+        });
     }
   }
   async save(patch: SettingsPatch): Promise<boolean> {
     if (!this.state.ready || this.state.saving) return false;
-    if (!isSettingsPatch(patch)) { this.emit({ error: "These settings are not valid. Check your selections." }); return false; }
-    if (!this.account && ["skinId", "iconId", "abilityId"].some(field => Object.hasOwn(patch, field))) {
-      this.emit({ error: "Log in to customize your loadout." }); return false;
+    if (!isSettingsPatch(patch)) {
+      this.emit({ error: "These settings are not valid. Check your selections." });
+      return false;
+    }
+    if (
+      !this.account &&
+      ["skinId", "iconId", "abilityId"].some((field) => Object.hasOwn(patch, field))
+    ) {
+      this.emit({ error: "Log in to customize your loadout." });
+      return false;
     }
     const generation = this.generation;
     const account = this.account;
@@ -136,10 +229,15 @@ export class SettingsStore {
       if (generation !== this.generation) return false;
       return this.apply(settings);
     } catch {
-      if (generation === this.generation) this.emit({ saving: false, error: "Could not save your settings. Please try again." });
+      if (generation === this.generation)
+        this.emit({ saving: false, error: "Could not save your settings. Please try again." });
       return false;
     }
   }
-  retry() { return this.load(this.account); }
-  dispose() { ++this.generation; }
+  retry() {
+    return this.load(this.account);
+  }
+  dispose() {
+    ++this.generation;
+  }
 }

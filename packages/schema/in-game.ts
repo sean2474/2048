@@ -10,7 +10,15 @@ export const ABILITY_CHARGE = 1024;
 export const SLOW_WARNING_MS = 1000;
 export const SLOW_DURATION_MS = 3000;
 export const SLOW_MOVE_MS = 400;
-export type AbilityState = { id: AbilityId; charge: number; spawnPauseMoves: number; anchorMoves: number; slowStartsAt: number; slowEndsAt: number; nextMoveAt: number };
+export type AbilityState = {
+  id: AbilityId;
+  charge: number;
+  spawnPauseMoves: number;
+  anchorMoves: number;
+  slowStartsAt: number;
+  slowEndsAt: number;
+  nextMoveAt: number;
+};
 export const MatchModeSchema = z.enum(["casual", "ranked", "friend"]);
 export type MatchMode = z.infer<typeof MatchModeSchema>;
 export type AttackType = "xblock" | "hardblock";
@@ -18,21 +26,40 @@ export type AttackCounts = Record<AttackType, number>;
 
 export const DirSchema = z.enum(["up", "down", "left", "right"]);
 export type Dir = z.infer<typeof DirSchema>;
-const AbilityIdSchema = z.string().refine((value): value is AbilityId => ABILITIES.some(ability => ability.id === value));
+const AbilityIdSchema = z
+  .string()
+  .refine((value): value is AbilityId => ABILITIES.some((ability) => ability.id === value));
 
 export const C2S = {
-  findMatch: z.object({ t: z.literal("findMatch"), mode: z.enum(["casual", "ranked"]).default("casual") }),
+  findMatch: z.object({
+    t: z.literal("findMatch"),
+    mode: z.enum(["casual", "ranked"]).default("casual"),
+  }),
   cancelMatch: z.object({ t: z.literal("cancelMatch") }),
   createRoomWithCode: z.object({ t: z.literal("createRoomWithCode") }),
-  joinRoomWithCode: z.object({ t: z.literal("joinRoomWithCode"), joinCode: z.string().regex(/^[A-Z0-9]{6}$/) }),
-  joinRoom: z.object({ t: z.literal("joinRoom"), roomId: z.string().uuid(), skinId: CatalogIdSchema.default("classic"), abilityId: AbilityIdSchema.default(DEFAULT_ABILITY_ID) }),
+  joinRoomWithCode: z.object({
+    t: z.literal("joinRoomWithCode"),
+    joinCode: z.string().regex(/^[A-Z0-9]{6}$/),
+  }),
+  joinRoom: z.object({
+    t: z.literal("joinRoom"),
+    roomId: z.string().uuid(),
+    skinId: CatalogIdSchema.default("classic"),
+    abilityId: AbilityIdSchema.default(DEFAULT_ABILITY_ID),
+  }),
   input: z.object({ t: z.literal("input"), dir: DirSchema }),
   ability: z.object({ t: z.literal("ability") }).strict(),
   surrender: z.object({ t: z.literal("surrender") }),
 };
 export const ClientMessageSchema = z.discriminatedUnion("t", [
-  C2S.findMatch, C2S.cancelMatch, C2S.createRoomWithCode, C2S.joinRoomWithCode,
-  C2S.joinRoom, C2S.input, C2S.ability, C2S.surrender,
+  C2S.findMatch,
+  C2S.cancelMatch,
+  C2S.createRoomWithCode,
+  C2S.joinRoomWithCode,
+  C2S.joinRoom,
+  C2S.input,
+  C2S.ability,
+  C2S.surrender,
 ]);
 export type Effect = { type: "addBlock"; blockType: AttackType };
 
@@ -43,7 +70,7 @@ export type Cell = {
   value: number;
   row: number;
   col: number;
-  blockType?: BlockType;  // undefined는 "normal"로 간주
+  blockType?: BlockType; // undefined는 "normal"로 간주
   spawned?: boolean;
   merged?: boolean;
   ghost?: boolean;
@@ -75,34 +102,61 @@ export type ServerState = {
   names: { you: string; opp: string };
 };
 
-export type Reject = { t: "reject"; reason: "stale_turn" | "room_closed" | "invalid" | "not_in_room" | "room_not_found" };
+export type Reject = {
+  t: "reject";
+  reason: "stale_turn" | "room_closed" | "invalid" | "not_in_room" | "room_not_found";
+};
 
-export type EndReason = 
-  | "reached_1024"           // 1024 타일 달성
-  | "opponent_locked"        // 상대방 못 움직임
-  | "surrender"              // 항복
-  | "opponent_disconnected"  // 상대방 연결 끊김 (30초 타임아웃)
-  | "draw";                  // 무승부 (예외 상황)
+export type EndReason =
+  | "reached_1024" // 1024 타일 달성
+  | "opponent_locked" // 상대방 못 움직임
+  | "surrender" // 항복
+  | "opponent_disconnected" // 상대방 연결 끊김 (30초 타임아웃)
+  | "draw"; // 무승부 (예외 상황)
 
-export type End = { 
+export type End = {
   t: "end";
   matchId: string;
   mode: MatchMode;
   recording: ResultStatus;
-  winner: "you" | "opp" | "draw"; 
+  winner: "you" | "opp" | "draw";
   reason: EndReason;
   you: PublicPlayerState;
   opp?: PublicPlayerState;
 };
 
 export type RecordingUpdate = { t: "recordStatus"; matchId: string; status: "saved" | "delayed" };
-export type ActionRejected = { t: "actionRejected"; reason: "paused" | "ability_not_ready" | "ability_no_target" | "ability_active" | "slowed" };
+export type ActionRejected = {
+  t: "actionRejected";
+  reason: "paused" | "ability_not_ready" | "ability_no_target" | "ability_active" | "slowed";
+};
 export type S2C = ServerState | Reject | End | RecordingUpdate | ActionRejected;
 
-export type MatchProfile = { name: string; iconId: PlayerIconId; rating: number | null; rank?: import("./ranking").RankProgress };
-export type MatchFound = { t: "matchFound" | "roomReady"; roomId: string; mode: MatchMode; players: { you: MatchProfile; opp: MatchProfile } };
+export type MatchProfile = {
+  name: string;
+  iconId: PlayerIconId;
+  rating: number | null;
+  rank?: import("./ranking").RankProgress;
+};
+export type MatchFound = {
+  t: "matchFound" | "roomReady";
+  roomId: string;
+  mode: MatchMode;
+  players: { you: MatchProfile; opp: MatchProfile };
+};
 export type LobbyMessage =
   | MatchFound
   | { t: "waitingForPlayer"; joinCode: string }
-  | { t: "error"; reason: "code_not_found" | "cannot_join_own_room" | "already_in_game" | "login_required" | "ranked_unavailable" | "ranked_result_pending" | "account_suspended" | "account_check_failed" };
+  | {
+      t: "error";
+      reason:
+        | "code_not_found"
+        | "cannot_join_own_room"
+        | "already_in_game"
+        | "login_required"
+        | "ranked_unavailable"
+        | "ranked_result_pending"
+        | "account_suspended"
+        | "account_check_failed";
+    };
 export type ServerMessage = S2C | LobbyMessage;

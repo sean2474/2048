@@ -1,2 +1,2 @@
-export * from "./cell"
-export * from "./database"
+export * from "./cell";
+export * from "./database";

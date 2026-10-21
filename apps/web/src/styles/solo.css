@@ -1,8 +1,14 @@
 @media (max-width: 767px) {
-  .solo-page .game-page-heading { flex-wrap: nowrap; }
-  .solo-page .game-page-heading > div:first-child { flex-basis: auto; }
+  .solo-page .game-page-heading {
+    flex-wrap: nowrap;
+  }
+  .solo-page .game-page-heading > div:first-child {
+    flex-basis: auto;
+  }
   .solo-board {
     width: min(100%, max(224px, calc(100dvh - 360px - env(safe-area-inset-bottom))));
   }
-  .solo-page { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  .solo-page {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
 }

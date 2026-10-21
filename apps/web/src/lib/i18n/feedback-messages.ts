@@ -1,22 +1,31 @@
 export const feedbackMessages: Record<string, string> = {
   "Bugs & feedback": "버그 제보·피드백",
-  "Feedback": "피드백",
-  "Tell us what went wrong or what could be better.": "발견한 문제나 더 나은 게임을 위한 의견을 알려 주세요.",
+  Feedback: "피드백",
+  "Tell us what went wrong or what could be better.":
+    "발견한 문제나 더 나은 게임을 위한 의견을 알려 주세요.",
   "Report type": "제보 유형",
   "Bug report": "버그 제보",
-  "Suggestion": "개선 의견",
+  Suggestion: "개선 의견",
   "Report title": "제목",
-  "Details": "상세 내용",
-  "What happened? Include the steps, expected result, and the device or browser you used.": "어떤 문제가 있었나요? 재현 방법, 예상한 결과, 사용한 기기·브라우저를 함께 적어 주세요.",
-  "Describe your idea and how it would improve the game.": "어떤 점이 개선되면 좋을지 자유롭게 적어 주세요.",
-  "Guests can send reports too. Only administrators can read them. Please leave out passwords and sensitive information.": "게스트도 제보할 수 있으며, 내용은 관리자만 확인합니다. 비밀번호나 민감한 정보는 적지 마세요.",
+  Details: "상세 내용",
+  "What happened? Include the steps, expected result, and the device or browser you used.":
+    "어떤 문제가 있었나요? 재현 방법, 예상한 결과, 사용한 기기·브라우저를 함께 적어 주세요.",
+  "Describe your idea and how it would improve the game.":
+    "어떤 점이 개선되면 좋을지 자유롭게 적어 주세요.",
+  "Guests can send reports too. Only administrators can read them. Please leave out passwords and sensitive information.":
+    "게스트도 제보할 수 있으며, 내용은 관리자만 확인합니다. 비밀번호나 민감한 정보는 적지 마세요.",
   "Send report": "제보 보내기",
   "Sending report…": "전송 중…",
   "Report received": "제보가 접수되었습니다",
-  "Thank you. Your report is now in our administrator inbox.": "감사합니다. 보내주신 내용은 관리자 페이지에 전달되었습니다.",
+  "Thank you. Your report is now in our administrator inbox.":
+    "감사합니다. 보내주신 내용은 관리자 페이지에 전달되었습니다.",
   "Send another report": "다른 제보 작성",
-  "Add a title (1–120 characters) and details (10–3,000 characters).": "제목은 1~120자, 상세 내용은 10~3,000자로 입력해 주세요.",
-  "Too many reports. Wait a minute and try again.": "제보 요청이 많습니다. 1분 후 다시 시도해 주세요.",
-  "Your session has expired. Sign in again to send your report.": "로그인이 만료되었습니다. 다시 로그인한 후 제보를 보내 주세요.",
-  "Your report could not be sent. Your text is still here. Please try again.": "전송하지 못했습니다. 작성한 내용은 유지되니 잠시 후 다시 시도해 주세요.",
+  "Add a title (1–120 characters) and details (10–3,000 characters).":
+    "제목은 1~120자, 상세 내용은 10~3,000자로 입력해 주세요.",
+  "Too many reports. Wait a minute and try again.":
+    "제보 요청이 많습니다. 1분 후 다시 시도해 주세요.",
+  "Your session has expired. Sign in again to send your report.":
+    "로그인이 만료되었습니다. 다시 로그인한 후 제보를 보내 주세요.",
+  "Your report could not be sent. Your text is still here. Please try again.":
+    "전송하지 못했습니다. 작성한 내용은 유지되니 잠시 후 다시 시도해 주세요.",
 };

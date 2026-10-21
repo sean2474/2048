@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { syncAchievementsAction } from "@/actions/achievements";
 import type { AchievementSnapshot, AchievementSyncResult } from "@/lib/achievement-operations";
@@ -14,8 +22,15 @@ function useAchievementState(initialAchievements?: AchievementSnapshot) {
   const pathname = usePathname();
   const router = useRouter();
   const userId = user && !user.is_anonymous ? user.id : undefined;
-  const [result, setResult] = useState<AchievementSnapshot>(initialAchievements ?? { error: false });
-  const [activity, setActivity] = useState<{ userId?: string; loading: boolean; checkInError: boolean; newRewards: string[] }>({ loading: false, checkInError: false, newRewards: [] });
+  const [result, setResult] = useState<AchievementSnapshot>(
+    initialAchievements ?? { error: false },
+  );
+  const [activity, setActivity] = useState<{
+    userId?: string;
+    loading: boolean;
+    checkInError: boolean;
+    newRewards: string[];
+  }>({ loading: false, checkInError: false, newRewards: [] });
   const version = useRef(0);
   const pending = useRef<{ userId: string; promise: Promise<AchievementSyncResult> } | null>(null);
   const latest = useRef(initialAchievements);
@@ -32,9 +47,15 @@ function useAchievementState(initialAchievements?: AchievementSnapshot) {
   const reload = useCallback(async () => {
     if (!userId) return;
     const request = ++version.current;
-    setActivity(previous => ({ userId, loading: true, checkInError: false, newRewards: previous.userId === userId ? previous.newRewards : [] }));
+    setActivity((previous) => ({
+      userId,
+      loading: true,
+      checkInError: false,
+      newRewards: previous.userId === userId ? previous.newRewards : [],
+    }));
     // Strict-mode effect replay and simultaneous focus/online events share one action.
-    const promise = pending.current?.userId === userId ? pending.current.promise : syncAchievementsAction();
+    const promise =
+      pending.current?.userId === userId ? pending.current.promise : syncAchievementsAction();
     pending.current = { userId, promise };
     try {
       const next = await promise;
@@ -47,26 +68,46 @@ function useAchievementState(initialAchievements?: AchievementSnapshot) {
       const previous = latest.current;
       latest.current = next;
       setResult(next);
-      setActivity({ userId, loading: false, checkInError: next.checkInError, newRewards: next.newRewards });
-      if (next.checkedIn) trackGameEvent("attendance_checked_in", { unlocked: next.newRewards.length });
-      if (next.changed || next.data && previous?.userId === userId && (previous.error || JSON.stringify(previous.data) !== JSON.stringify(next.data))) router.refresh();
+      setActivity({
+        userId,
+        loading: false,
+        checkInError: next.checkInError,
+        newRewards: next.newRewards,
+      });
+      if (next.checkedIn)
+        trackGameEvent("attendance_checked_in", { unlocked: next.newRewards.length });
+      if (
+        next.changed ||
+        (next.data &&
+          previous?.userId === userId &&
+          (previous.error || JSON.stringify(previous.data) !== JSON.stringify(next.data)))
+      )
+        router.refresh();
     } catch {
       if (request === version.current) setResult({ userId, error: true });
     } finally {
       if (pending.current?.promise === promise) pending.current = null;
-      if (request === version.current) setActivity(previous => ({ ...previous, loading: false }));
+      if (request === version.current) setActivity((previous) => ({ ...previous, loading: false }));
     }
   }, [userId, router]);
 
   useEffect(() => {
     const generation = version;
     void reload();
-    const refresh = () => { if (document.visibilityState === "visible") void reload(); };
+    const refresh = () => {
+      if (document.visibilityState === "visible") void reload();
+    };
     window.addEventListener("focus", refresh);
     window.addEventListener("online", refresh);
     document.addEventListener("visibilitychange", refresh);
     const interval = window.setInterval(refresh, 60_000);
-    return () => { generation.current++; window.clearInterval(interval); window.removeEventListener("focus", refresh); window.removeEventListener("online", refresh); document.removeEventListener("visibilitychange", refresh); };
+    return () => {
+      generation.current++;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("online", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
   }, [reload]);
 
   const previousPath = useRef(pathname);
@@ -76,13 +117,23 @@ function useAchievementState(initialAchievements?: AchievementSnapshot) {
   }, [pathname, reload]);
 
   return {
-    data, loading: Boolean(userId && !data && !error) || Boolean(ownActivity?.loading), error,
+    data,
+    loading: Boolean(userId && !data && !error) || Boolean(ownActivity?.loading),
+    error,
     checkingIn: Boolean(ownActivity?.loading && !data?.attendance.checkedInToday),
-    checkInError: ownActivity?.checkInError ?? false, reload, newRewards: data ? ownActivity?.newRewards ?? [] : [],
+    checkInError: ownActivity?.checkInError ?? false,
+    reload,
+    newRewards: data ? (ownActivity?.newRewards ?? []) : [],
   };
 }
 
-export function AchievementsProvider({ children, initialAchievements }: { children: ReactNode; initialAchievements?: AchievementSnapshot }) {
+export function AchievementsProvider({
+  children,
+  initialAchievements,
+}: {
+  children: ReactNode;
+  initialAchievements?: AchievementSnapshot;
+}) {
   const value = useAchievementState(initialAchievements);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

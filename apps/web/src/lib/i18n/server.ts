@@ -19,7 +19,21 @@ import { authMessages } from "./auth-messages";
 import { economyMessages } from "./economy-messages";
 import { achievementMessages } from "./achievement-messages";
 
-const dictionary = { ...messages, ...rankMessages, ...gameMessages, ...controlsMessages, ...tutorialMessages, ...settingsMessages, ...preferencesMessages, ...feedbackMessages, ...economyMessages, ...authMessages, ...achievementMessages, ...soloMessages, ...socialMessages };
+const dictionary = {
+  ...messages,
+  ...rankMessages,
+  ...gameMessages,
+  ...controlsMessages,
+  ...tutorialMessages,
+  ...settingsMessages,
+  ...preferencesMessages,
+  ...feedbackMessages,
+  ...economyMessages,
+  ...authMessages,
+  ...achievementMessages,
+  ...soloMessages,
+  ...socialMessages,
+};
 
 // Loading UI must not wait on the same account query that it is covering.
 export const getRequestI18n = cache(async () => {
@@ -27,15 +41,30 @@ export const getRequestI18n = cache(async () => {
   const requestHeaders = await headers();
   const guest = jar.get(GUEST_SETTINGS_COOKIE)?.value;
   const legacyLocale = jar.get(LOCALE_COOKIE)?.value;
-  const detectedLocale = detectRequestLocale(requestHeaders.get("x-vercel-ip-country"), requestHeaders.get("accept-language"));
-  const guestLocale = parseGuestSettings(guest, !guest && (legacyLocale === "ko" || legacyLocale === "en") ? legacyLocale : detectedLocale).locale;
+  const detectedLocale = detectRequestLocale(
+    requestHeaders.get("x-vercel-ip-country"),
+    requestHeaders.get("accept-language"),
+  );
+  const guestLocale = parseGuestSettings(
+    guest,
+    !guest && (legacyLocale === "ko" || legacyLocale === "en") ? legacyLocale : detectedLocale,
+  ).locale;
   const locale = legacyLocale === "ko" || legacyLocale === "en" ? legacyLocale : guestLocale;
-  return { locale, guestLocale, messages: dictionary, t: (key: string, values?: Values) => translate(locale, dictionary, key, values) };
+  return {
+    locale,
+    guestLocale,
+    messages: dictionary,
+    t: (key: string, values?: Values) => translate(locale, dictionary, key, values),
+  };
 });
 
 export const getI18n = cache(async () => {
   const request = await getRequestI18n();
   const preferences = await getPreferences();
   const locale = preferences?.settings?.locale ?? request.locale;
-  return { ...request, locale, t: (key: string, values?: Values) => translate(locale, dictionary, key, values) };
+  return {
+    ...request,
+    locale,
+    t: (key: string, values?: Values) => translate(locale, dictionary, key, values),
+  };
 });
