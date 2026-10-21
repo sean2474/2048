@@ -15,8 +15,8 @@ import { CatalogItemDialog } from "./catalog-item-dialog";
 import { RefreshCollectionOnFocus } from "./refresh-collection-on-focus";
 import { CollectionControls, CollectionPagination } from "./collection-controls";
 
-export async function CollectionView({ mode, query }: { mode: "shop" | "loadout"; query: CollectionQuery }) {
-  const [snapshot, { t, locale }] = await Promise.all([getCollection(mode), getI18n()]);
+export async function CollectionView({ mode, query, snapshot: snapshotRequest }: { mode: "shop" | "loadout"; query: CollectionQuery; snapshot: ReturnType<typeof getCollection> }) {
+  const [snapshot, { t, locale }] = await Promise.all([snapshotRequest, getI18n()]);
   const { userId, cosmetics, cosmeticsError, unlockedIds, unlocksError, settings } = snapshot;
   const numberLocale = locale === "ko" ? "ko-KR" : "en-US";
   const ownership = { userId, purchases: cosmetics?.purchases ?? [], unlockedIds };

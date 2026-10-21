@@ -23,7 +23,10 @@ export const getCatalogSnapshot = cache(async (): Promise<{ data: ContentCatalog
 });
 
 export const getCollection = cache(async (mode: "shop" | "loadout" = "loadout") => {
-  const [catalog, user, preferences] = await Promise.all([getCatalogSnapshot(), getUser(), getPreferences()]);
+  // Start public data and preferences together, but only identity gates private reads.
+  const catalogRequest = getCatalogSnapshot();
+  const preferencesRequest = getPreferences();
+  const user = await getUser();
   const userId = user && !user.is_anonymous ? user.id : undefined;
   let cosmetics: CosmeticState | null = null, cosmeticsError = false, unlocksError = false, historyError = false;
   let unlockedIds: string[] = [], history: CoinEntry[] = [];
@@ -43,5 +46,6 @@ export const getCollection = cache(async (mode: "shop" | "loadout" = "loadout") 
       if (!historyError) history = transactions.data!.filter((row): row is CoinEntry => Number.isSafeInteger(row.id) && Number.isSafeInteger(row.delta) && Number.isSafeInteger(row.balance_after) && typeof row.reason === "string" && typeof row.created_at === "string" && Number.isFinite(Date.parse(row.created_at)));
     } catch { cosmeticsError = true; unlocksError = true; historyError = true; }
   }
+  const [catalog, preferences] = await Promise.all([catalogRequest, preferencesRequest]);
   return { catalog: catalog.data, catalogError: catalog.error, userId, cosmetics, cosmeticsError, unlockedIds, unlocksError, history, historyError, settings: preferences?.settings ?? DEFAULT_SETTINGS, settingsError: Boolean(userId && !preferences) };
 });

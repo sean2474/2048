@@ -28,7 +28,13 @@ test("server game composition preserves mobile solo controls and live two-player
     await solo.goto(fixture.origin + "/solo");
     await solo.getByRole("button", { name: "Start time attack", exact: true }).click();
     await solo.getByRole("button", { name: "Restart run", exact: true }).waitFor();
-    for (const key of ["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"]) await solo.keyboard.press(key);
+    await solo.waitForFunction(() => document.activeElement?.getAttribute("aria-label") === "Solo controls");
+    // Model distinct key presses, allowing authoritative acknowledgements between
+    // them. A zero-delay burst can be discarded while the first move is pending.
+    for (const key of ["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp"]) {
+      await solo.keyboard.press(key, { delay: 80 });
+      await solo.waitForFunction(() => [...document.querySelectorAll("button")].some(button => button.textContent.includes("Restart run") && !button.disabled));
+    }
     await solo.waitForFunction(() => Number(document.querySelector(".solo-page dl > div:nth-child(3) dd")?.textContent) > 0);
     await solo.getByRole("button", { name: /Endless mode/ }).click();
     await solo.getByRole("alertdialog").getByRole("button", { name: "Start endless mode", exact: true }).click();

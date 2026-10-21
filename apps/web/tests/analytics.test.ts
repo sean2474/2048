@@ -32,6 +32,9 @@ test("page and performance events remove query/hash/credentials and anonymize ro
   assert.deepEqual(sanitizeAnalyticsEvent({ type: "pageview", url: "https://private:secret@2048duo.io/loadout?email=player@example.invalid#access_token=secret" }), { type: "pageview", url: "https://2048duo.io/loadout" });
   assert.deepEqual(sanitizeAnalyticsEvent({ type: "vital", url: "https://2048duo.io/play/private-room?code=private#token", route: "/play/private-room" }), { type: "vital", url: "https://2048duo.io/play/[id]", route: "/play/[id]" });
   assert.equal(sanitizeAnalyticsEvent({ url: "https://2048duo.io/play/ranked" })?.url, "https://2048duo.io/play/ranked");
+  for (const path of ["/solo", "/friends"]) {
+    assert.equal(sanitizeAnalyticsEvent({ type: "vital", url: `https://2048duo.io${path}?private=secret#token` })?.url, `https://2048duo.io${path}`);
+  }
   for (const path of ["/auth/callback?code=secret", "/auth/error?message=secret", "/reset-password#access_token=secret", "/forgot-password", "/test", "/players/private-name", "/play/a/private"]) {
     assert.equal(sanitizeAnalyticsEvent({ url: `https://2048duo.io${path}` }), null, path);
   }

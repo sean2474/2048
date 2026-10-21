@@ -1,4 +1,6 @@
 import "server-only";
+import { getLoadingAccountHint } from "@/lib/server/loading-context";
+import { GuestProfile } from "./guest-profile";
 import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeading } from "@/components/widget/page-heading";
@@ -52,6 +54,8 @@ export async function SettingsLoading() {
       <div className="space-y-4 py-5"><Skeleton className="h-14 w-full" /><Skeleton className="h-[68px] w-full" /></div>
     </section>
     <section className={`${panel} space-y-4`}><Skeleton className="h-9 w-40" /><Skeleton className="h-6 w-full" /><LoadingAction /></section>
+    <section className={panel}><Skeleton className="h-7 w-44" /><div className="mt-3 divide-y">{[0, 1, 2, 3].map(index => <div key={index} className="flex h-[61px] items-center gap-3"><Skeleton className="size-9" /><Skeleton className="h-5 w-52 max-w-[75%]" /></div>)}</div></section>
+    <div className="flex gap-5"><Skeleton className="h-11 w-28" /><Skeleton className="h-11 w-24" /></div>
   </LoadingFrame>;
 }
 
@@ -85,10 +89,10 @@ export async function FeedbackLoading() {
 }
 
 export async function HomeLoading() {
-  const { t } = await getRequestI18n();
+  const [{ t }, member] = await Promise.all([getRequestI18n(), getLoadingAccountHint()]);
   return <LoadingFrame route="home" label={t("Loading ranked record…")} className={widePage}>
     <PageHeading icon="profile" title={t("Dashboard")}><LoadingAction /><LoadingAction /></PageHeading>
-    <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-8"><ProfileSkeleton label={t("Loading ranked record…")} /><section className="mx-auto w-full max-w-[380px] min-w-0"><PreviewSkeleton /></section></div>
+    <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_320px] lg:gap-8">{member ? <ProfileSkeleton label={t("Loading ranked record…")} /> : <GuestProfile t={t} />}<section className="mx-auto w-full max-w-[380px] min-w-0"><PreviewSkeleton /></section></div>
   </LoadingFrame>;
 }
 
@@ -109,10 +113,10 @@ export async function AchievementsLoading() {
 }
 
 async function CollectionLoading({ shop = false }: { shop?: boolean }) {
-  const { t } = await getRequestI18n();
+  const [{ t }, member] = await Promise.all([getRequestI18n(), getLoadingAccountHint()]);
   return <LoadingFrame route={shop ? "shop" : "loadout"} label={t("Loading collection…")} className={shop ? "mx-auto max-w-[1040px] space-y-5 px-4 py-6 sm:px-6 sm:py-10 lg:px-8" : "mx-auto max-w-[1040px] space-y-4 px-4 py-6 sm:px-6 sm:py-8 lg:px-8"}>
     <PageHeading icon={shop ? "coin" : "loadout"} title={t(shop ? "Coin shop" : "My loadout")}><LoadingAction /></PageHeading>
-    <CollectionPageSkeleton shop={shop} label={t("Loading collection…")} />
+    <CollectionPageSkeleton shop={shop} history={member} label={t("Loading collection…")} />
   </LoadingFrame>;
 }
 

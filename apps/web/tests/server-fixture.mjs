@@ -1,3 +1,5 @@
+import { readFile, writeFile, unlink } from "node:fs/promises";
+import { join } from "node:path";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { spawn } from "node:child_process";
@@ -61,14 +63,20 @@ export async function startServerFixture({ handle, port = 0, app = "web" } = {})
     port = reservation.address().port; await new Promise(resolve => reservation.close(resolve));
   }
   const origin = `http://127.0.0.1:${port}`;
+  // Next adjusts tsconfig includes for its output directory. Concurrent fixture
+  // servers must never rewrite the application's shared tsconfig.json.
+  const tsconfigPath = `.tsconfig.fixture-${port}.json`;
+  const privateConfig = join(appRoot, tsconfigPath);
+  await writeFile(privateConfig, await readFile(join(appRoot, "tsconfig.json")));
   const child = spawn(process.execPath, [require.resolve("next/dist/bin/next"), "dev", "--turbopack", "--hostname", "127.0.0.1", "--port", String(port)], {
-    cwd: appRoot, env: { ...process.env, NEXT_DIST_DIR: `.next/ssr-tests-${port}`, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${api.address().port}`, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "fixture-public-key", NEXT_PUBLIC_SOCKET_URL: "http://127.0.0.1:1", NEXT_PUBLIC_APP_ENV: "development", NEXT_PUBLIC_VERCEL_ENV: "development", NEXT_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"],
+    cwd: appRoot, env: { ...process.env, NEXT_TSCONFIG_PATH: tsconfigPath, NEXT_DIST_DIR: `.next/ssr-tests-${port}`, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${api.address().port}`, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "fixture-public-key", NEXT_PUBLIC_SOCKET_URL: "http://127.0.0.1:1", NEXT_PUBLIC_APP_ENV: "development", NEXT_PUBLIC_VERCEL_ENV: "development", NEXT_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"],
   });
   let logs = ""; child.stdout.on("data", chunk => { logs += chunk; }); child.stderr.on("data", chunk => { logs += chunk; });
   const close = async () => {
     const exited = once(child, "exit");
     if (child.exitCode === null) { child.kill("SIGTERM"); const kill = setTimeout(() => child.kill("SIGKILL"), 5000); await exited; clearTimeout(kill); }
     api.closeAllConnections(); await new Promise(resolve => api.close(resolve));
+    await unlink(privateConfig);
   };
   try {
     const deadline = Date.now() + 60_000;

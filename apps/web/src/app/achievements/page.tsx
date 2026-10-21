@@ -19,18 +19,19 @@ import { localizeCatalog } from "@/lib/collection";
 type Filter = "all" | "progress" | "completed";
 
 export default async function AchievementsPage({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
+  const data = Promise.all([getCatalogSnapshot(), getAchievementSnapshot()]);
   const [{ t }, query] = await Promise.all([getI18n(), searchParams]);
   const filter: Filter = query.filter === "progress" || query.filter === "completed" ? query.filter : "all";
   return <main className="mx-auto max-w-[1040px] space-y-6 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
     <PageHeading icon="crown" eyebrow={t("Collection journal")} title={t("Achievements")}><Button asChild variant="outline"><Link href="/loadout" data-analytics-link="/loadout">{t("My loadout")}</Link></Button></PageHeading>
     <Suspense key={filter} fallback={<AchievementSkeleton label={t("Loading achievements…")} />}>
-      <AchievementContent filter={filter} />
+      <AchievementContent filter={filter} data={data} />
     </Suspense>
   </main>;
 }
 
-async function AchievementContent({ filter }: { filter: Filter }) {
-  const [{ t, locale }, catalog, snapshot] = await Promise.all([getI18n(), getCatalogSnapshot(), getAchievementSnapshot()]);
+async function AchievementContent({ filter, data: dataRequest }: { filter: Filter; data: Promise<[Awaited<ReturnType<typeof getCatalogSnapshot>>, Awaited<ReturnType<typeof getAchievementSnapshot>>]> }) {
+  const [{ t, locale }, [catalog, snapshot]] = await Promise.all([getI18n(), dataRequest]);
   if (!catalog.data) return <div role="alert" className="flex flex-wrap items-center gap-3 rounded-xl border p-4 text-sm"><p>{t("Could not load the collection. Your purchases are safe.")}</p><AchievementRetry label={t("Reload collection")} /></div>;
   const { skins, profileIcons, achievements } = localizeCatalog(catalog.data, locale);
   const { data, error } = snapshot;
@@ -56,7 +57,7 @@ async function AchievementContent({ filter }: { filter: Filter }) {
   return <>
     <section aria-label={t("Your achievement progress")} className="grid gap-5 rounded-2xl border bg-card p-5 sm:grid-cols-2 sm:p-6">
       <div><p className="text-xs font-semibold text-muted-foreground">{t("Unlocked achievements")}</p><p className="mt-2 text-3xl font-extrabold tabular-nums">{progressData ? unlockedCount : "—"}<span className="ml-2 text-base font-medium text-muted-foreground">/ {entries.length}</span></p>{progressData && <progress aria-label={t("Unlocked achievements")} value={unlockedCount} max={entries.length} className="mt-3 block h-2 w-full overflow-hidden rounded-full appearance-none [&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary" />}</div>
-      <div className="flex items-center gap-4 rounded-xl bg-secondary/30 p-4"><div className="size-14 shrink-0">{nextSkin ? <SkinPreview skin={nextSkin} /> : <RewardIcon iconId={nextReward?.kind === "icon" ? nextReward.iconId : "achievement-king"} className="size-14" />}</div><div className="min-w-0"><p className="text-xs font-semibold text-muted-foreground">{t("Next milestone")}</p><p className="mt-1 font-bold">{t(progressData && !next ? "All achievements unlocked!" : next?.item.name ?? "Achievement king")}</p>{next && <><p className="mt-1 text-xs leading-5 text-muted-foreground">{t(next.item.description)}</p><a href={`/achievements#${next.item.id}`} className="mt-1 inline-flex min-h-11 items-center gap-1 rounded-md text-xs font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2">{t("View next milestone")}<ArrowRight aria-hidden="true" className="size-3.5" /></a></>}</div></div>
+      <div className="flex items-center gap-4 rounded-xl bg-secondary/30 p-4"><div className="size-14 shrink-0">{nextSkin ? <SkinPreview skin={nextSkin} /> : <RewardIcon iconId={nextReward?.kind === "icon" ? nextReward.iconId : "achievement-king"} className="size-14" />}</div><div className="min-w-0"><p className="text-xs font-semibold text-muted-foreground">{t("Next milestone")}</p><p className="mt-1 font-bold">{t(progressData && !next ? "All achievements unlocked!" : next?.item.name ?? "Achievement king")}</p>{next && <><p className="mt-1 text-xs leading-5 text-muted-foreground">{t(next.item.description)}</p><Link href={`/achievements#${next.item.id}`} className="mt-1 inline-flex min-h-11 items-center gap-1 rounded-md text-xs font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2">{t("View next milestone")}<ArrowRight aria-hidden="true" className="size-3.5" /></Link></>}</div></div>
     </section>
 
     <section aria-labelledby="attendance-title" className="overflow-hidden rounded-2xl border bg-card">

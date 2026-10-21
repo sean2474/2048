@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Check, ArrowRight } from "lucide-react";
 import { DAILY_QUESTS, DailyQuestStateSchema } from "schema/daily-quests";
 import { useI18n } from "ui/i18n";
+import { usePlayer } from "@/hooks/use-player";
 import { useLiveQuery } from "@/hooks/use-live-query";
 import { Button } from "@/components/ui/button";
 import { GameEmblem } from "./game-emblem";
@@ -14,6 +15,7 @@ import { GameEmblem } from "./game-emblem";
 export function DailyQuests({ userId }: { userId: string | null | undefined }) {
   const { t, locale } = useI18n();
   const router = useRouter();
+  const { walletBalance } = usePlayer();
   const load = useCallback(async (client: SupabaseClient) => {
     const response = await client.rpc("sync_daily_quests");
     const parsed = DailyQuestStateSchema.safeParse(response.data);
@@ -25,7 +27,19 @@ export function DailyQuests({ userId }: { userId: string | null | undefined }) {
   const completed = state?.quests.filter(item => item.rewardedAt).length ?? 0;
   const earned = state?.quests.reduce((sum, item) => sum + (item.rewardedAt ? DAILY_QUESTS.find(quest => quest.id === item.id)!.coins : 0), 0) ?? 0;
 
-  useEffect(() => { if (state?.balance !== undefined) router.refresh(); }, [state?.balance, router]);
+  const previousBalance = useRef<{ userId: string; balance: number } | null>(null);
+  useEffect(() => {
+    if (!userId) { previousBalance.current = null; return; }
+    if (!state) return;
+    const previous = previousBalance.current;
+    // An unchanged initial quest read must not fetch the entire page again.
+    // A reward can change the wallet after SSR, so still reconcile that first read.
+    const changed = previous?.userId === userId
+      ? previous.balance !== state.balance
+      : state.awarded > 0 || state.balance !== walletBalance;
+    previousBalance.current = { userId, balance: state.balance };
+    if (changed) router.refresh();
+  }, [state, userId, walletBalance, router]);
 
   return <section aria-labelledby="daily-quests-title" className="rounded-2xl border bg-card p-5 sm:p-6">
     <div className="flex flex-wrap items-start justify-between gap-3">

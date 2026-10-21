@@ -7,9 +7,9 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 type Account = { user: User | null; player: Player | null };
-const PlayerContext = createContext<Account | null>(null);
+const PlayerContext = createContext<(Account & { walletBalance: number | null }) | null>(null);
 
-export function PlayerProvider({ children, initialAccount }: { children: ReactNode; initialAccount: Account }) {
+export function PlayerProvider({ children, initialAccount, initialWalletBalance }: { children: ReactNode; initialAccount: Account; initialWalletBalance: number | null }) {
   const [account, setAccount] = useState(initialAccount);
   const current = useRef(initialAccount);
   const router = useRouter();
@@ -50,7 +50,10 @@ export function PlayerProvider({ children, initialAccount }: { children: ReactNo
     });
     return () => { active = false; clearTimeout(refresh); subscription.unsubscribe(); };
   }, [router]);
-  return <PlayerContext.Provider value={account}>{children}</PlayerContext.Provider>;
+  // This snapshot follows the persistent root layout, just like the server header.
+  // A freshly fetched page can have a newer wallet than the header on soft navigation.
+  const walletBalance = account.user?.id === initialAccount.user?.id ? initialWalletBalance : null;
+  return <PlayerContext.Provider value={{ ...account, walletBalance }}>{children}</PlayerContext.Provider>;
 }
 
 export function usePlayer() {

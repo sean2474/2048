@@ -3,7 +3,7 @@ import type { MatchMode } from "schema/in-game";
 import type { SkinId, SkinRarity } from "schema/loadout";
 import type { PlayerIconId } from "schema/profile-icons";
 
-const pages = new Set(["/", "/find-match", "/leaderboard", "/how-to-play", "/tutorial", "/settings", "/feedback", "/login", "/signup", "/loadout", "/achievements", "/shop", "/history", "/play/online", "/play/ranked", "/play/create", "/play/join"]);
+const pages = new Set(["/", "/solo", "/friends", "/find-match", "/leaderboard", "/how-to-play", "/tutorial", "/settings", "/feedback", "/login", "/signup", "/loadout", "/achievements", "/shop", "/history", "/play/online", "/play/ranked", "/play/create", "/play/join"]);
 
 export function analyticsEnabled() {
   return process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_APP_ENV === "production" && process.env.NEXT_PUBLIC_VERCEL_ENV === "production";

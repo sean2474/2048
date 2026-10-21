@@ -1,4 +1,6 @@
 import "server-only";
+import { headers } from "next/headers";
+import { C2S } from "schema/in-game";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingAction, LoadingBoard, LoadingFrame } from "./route-skeletons";
 import { getRequestI18n } from "@/lib/i18n/server";
@@ -33,6 +35,9 @@ export function OnlineLoading() { return <MatchmakingLoading />; }
 export function RankedLoading() { return <MatchmakingLoading ranked />; }
 
 export async function GameLoading() {
+  const path = new URL((await headers()).get("x-2048-route") ?? "/", "http://loading.local").pathname;
+  const roomId = /^\/play\/([^/]+)\/?$/.exec(path)?.[1];
+  if (!C2S.joinRoom.safeParse({ t: "joinRoom", roomId }).success) return null;
   const { t } = await getRequestI18n();
   return <LoadingFrame route="play/game" label={t("Joining your game…")} className="mx-auto max-w-lg px-4 py-12 sm:py-20">
     <section className="game-panel bg-card p-8 text-center shadow-sm sm:p-10"><Skeleton className="mx-auto mb-6 size-20" /><Skeleton className="mx-auto mb-2 h-4 w-28" /><Skeleton className="mx-auto h-9 w-full" /><Skeleton className="mt-4 h-12 w-full sm:h-6" />
