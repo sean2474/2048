@@ -7,7 +7,7 @@ const Context = createContext<I18n | null>(null);
 
 export function I18nProvider({ initialLocale, messages, children }: { initialLocale: Locale; messages: Messages; children: ReactNode }) {
   const [locale, updateLocale] = useState(initialLocale);
-  useEffect(() => { updateLocale(initialLocale); }, [initialLocale]);
+  useEffect(() => { updateLocale(initialLocale); document.documentElement.lang = initialLocale; }, [initialLocale]);
   const value = useMemo<I18n>(() => ({
     locale,
     setLocale(nextLocale) {

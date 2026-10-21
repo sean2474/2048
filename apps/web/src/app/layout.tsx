@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { Header } from "@/components/widget/header";
 import { I18nProvider } from "ui/i18n";
-import { getI18n } from "@/lib/i18n/server";
+import { getI18n, getRequestI18n } from "@/lib/i18n/server";
+import Loading from "./loading";
 import { SettingsProvider } from "@/hooks/settings-provider";
 import { AudioProvider } from "@/hooks/audio-provider";
 import { CatalogProvider, CatalogNotice } from "@/hooks/catalog-provider";
@@ -24,11 +26,23 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [{ locale, guestLocale, messages }, account, preferences] = await Promise.all([getI18n(), getAccount(), getPreferences()]);
+  const { locale } = await getRequestI18n();
   return (
     <html lang={locale}>
-      <body className={`antialiased`}>
-        <I18nProvider initialLocale={locale} messages={messages}>
+      <body className="antialiased">
+        <Suspense fallback={<Loading />}>
+          <SessionLayout>{children}</SessionLayout>
+        </Suspense>
+      </body>
+    </html>
+  );
+}
+
+// Account and preference I/O is below a loading boundary, including the first
+// request. Provider children remain server-rendered RSC slots.
+async function SessionLayout({ children }: { children: React.ReactNode }) {
+  const [{ locale, guestLocale, messages }, account, preferences] = await Promise.all([getI18n(), getAccount(), getPreferences()]);
+  return <I18nProvider initialLocale={locale} messages={messages}>
           <PlayerProvider initialAccount={account}>
           <CatalogProvider>
           <SettingsProvider initialGuestLocale={guestLocale} initialAccount={preferences}>
@@ -45,8 +59,5 @@ export default async function RootLayout({
           </SettingsProvider>
           </CatalogProvider>
           </PlayerProvider>
-        </I18nProvider>
-      </body>
-    </html>
-  );
+        </I18nProvider>;
 }

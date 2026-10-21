@@ -1,6 +1,6 @@
 "use client";
 import { GameEmblem } from "@/components/widget/game-emblem";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ReactNode, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { LogOut, ShieldAlert } from "lucide-react";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { createClient } from "@/lib/supabase/client";
 import { usePlayer } from "@/hooks/use-player";
-import { Skeleton } from "@/components/ui/skeleton";
+import { saveNicknameAction } from "@/actions/settings";
 
 const inputClass = "min-h-11 w-full rounded-xl border bg-background/40 px-4 py-3 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:opacity-60";
 const panelClass = "game-panel bg-card p-5 sm:p-6";
@@ -25,11 +25,10 @@ const deletionErrors: Record<string, string> = {
   too_many_requests: "Too many deletion attempts. Wait a minute and try again.",
 };
 
-export function AccountSettings({ user, initialName }: { user: User; initialName: string | null }) {
+export function AccountSettings({ user, initialName, loading }: { user: User; initialName: string | null; loading: ReactNode }) {
   const { user: liveUser } = usePlayer();
-  const { t } = useI18n();
   if (!liveUser || liveUser.is_anonymous || liveUser.id !== user.id) {
-    return <section role="status" aria-label={t("Loading profile…")} className={panelClass}><Skeleton className="h-7 w-32" /><Skeleton className="mt-5 h-11 w-full" /></section>;
+    return loading;
   }
   return <AccountSettingsForm key={liveUser.id} user={liveUser} initialName={initialName} />;
 }
@@ -83,9 +82,9 @@ function AccountSettingsForm({ user, initialName }: { user: User; initialName: s
     if (!validName) { setProfileError("Use 1–32 characters for your nickname."); return; }
     pending.current = true; setBusy("profile"); setProfileError(""); setProfileNotice("");
     try {
-      const { data, error } = await createClient().from("players").update({ name: trimmedName }).eq("id", user.id).select("name").single();
-      if (error || !data) throw new Error("Profile update failed");
-      if (mounted.current) { setName(data.name); setSavedName(data.name); setProfileNotice("Nickname saved."); router.refresh(); }
+      const result = await saveNicknameAction(user.id, trimmedName);
+      if (!result.ok) throw new Error(result.error);
+      if (mounted.current) { setName(result.data); setSavedName(result.data); setProfileNotice("Nickname saved."); }
     } catch { if (mounted.current) setProfileError("Could not save your nickname. Please try again."); }
     finally { pending.current = false; if (mounted.current) setBusy(null); }
   }
