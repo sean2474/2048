@@ -1,0 +1,97 @@
+{
+  "webCommit": "6b8d0aa8380504ac32f6df922d5325d0cb38517f",
+  "locale": "English for both paths via duo.locale=en preference cookie",
+  "method": "One alternating public/direct pair per route, same deployed source and default simulated mobile throttling. Direct rows override only DNS to Vercel64.29.17.195, preserving Host/SNI/TLS; server response header verified. No public configuration changes. Direct rows are diagnostic, not actual public performance or field results.",
+  "runs": [
+    {
+      "path": "/",
+      "directDiagnostic": false,
+      "fetchTime": "2026-10-21T17:23:36.947Z",
+      "score": 71,
+      "edge": "sfo1::hnd1::rsxwt-1792603417486-7aac152c0a9d",
+      "server": "cloudflare",
+      "metrics": {
+        "first-contentful-paint": 3064.3790000000004,
+        "largest-contentful-paint": 6246.4540000000015,
+        "total-blocking-time": 4,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3442.431258689983
+      }
+    },
+    {
+      "path": "/",
+      "directDiagnostic": true,
+      "fetchTime": "2026-10-21T17:23:48.698Z",
+      "score": 96,
+      "edge": "icn1::hnd1::pxtgz-1792603428900-e3ae70e482d2",
+      "server": "Vercel",
+      "metrics": {
+        "first-contentful-paint": 1085.8355000000001,
+        "largest-contentful-paint": 2712.8355,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1085.8355000000001
+      }
+    },
+    {
+      "path": "/settings",
+      "directDiagnostic": false,
+      "fetchTime": "2026-10-21T17:23:59.082Z",
+      "score": 73,
+      "edge": "sfo1::hnd1::jzlcv-1792603439536-170202f66c37",
+      "server": "cloudflare",
+      "metrics": {
+        "first-contentful-paint": 2758.2219999999998,
+        "largest-contentful-paint": 6116.3629999999985,
+        "total-blocking-time": 5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3140.289902745116
+      }
+    },
+    {
+      "path": "/settings",
+      "directDiagnostic": true,
+      "fetchTime": "2026-10-21T17:24:10.530Z",
+      "score": 97,
+      "edge": "icn1::hnd1::jl2qh-1792603450721-78714a5ebe1c",
+      "server": "Vercel",
+      "metrics": {
+        "first-contentful-paint": 1092.4940000000001,
+        "largest-contentful-paint": 2644.494,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1092.4940000000001
+      }
+    },
+    {
+      "path": "/solo",
+      "directDiagnostic": false,
+      "fetchTime": "2026-10-21T17:24:21.078Z",
+      "score": 71,
+      "edge": "sfo1::hnd1::k5gk6-1792603461538-4e6c43e55d58",
+      "server": "cloudflare",
+      "metrics": {
+        "first-contentful-paint": 2956.6610000000005,
+        "largest-contentful-paint": 7075.8515,
+        "total-blocking-time": 3,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2956.6610000000005
+      }
+    },
+    {
+      "path": "/solo",
+      "directDiagnostic": true,
+      "fetchTime": "2026-10-21T17:24:32.794Z",
+      "score": 97,
+      "edge": "icn1::hnd1::h8ghv-1792603472995-970abacadea1",
+      "server": "Vercel",
+      "metrics": {
+        "first-contentful-paint": 1103.222,
+        "largest-contentful-paint": 2581.2219999999998,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1103.222
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "webCommit": "909acb1a9f8905999f899d35b7e9cb761151cccd",
+    "fetchTime": "2026-10-21T17:03:10.500Z",
+    "score": 85,
+    "metrics": {
+      "first-contentful-paint": 1522.938,
+      "largest-contentful-paint": 4015.6600000000003,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0,
+      "speed-index": 3734.402559527714
+    }
+  },
+  {
+    "webCommit": "18e43a56bc88c9a587c7ef0c4659a2e27cd716c2",
+    "fetchTime": "2026-10-21T17:13:21.609Z",
+    "score": 95,
+    "metrics": {
+      "first-contentful-paint": 1443.3220000000001,
+      "largest-contentful-paint": 2915.322,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0,
+      "speed-index": 2059.59369599514
+    }
+  }
+]
