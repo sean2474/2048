@@ -1,5 +1,7 @@
 import "server-only";
 import { getLoadingAccountHint } from "@/lib/server/loading-context";
+import { SettingsAccountSkeleton } from "./settings-account-skeleton";
+import { Globe, Keyboard } from "lucide-react";
 import { GuestProfile } from "./guest-profile";
 import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -71,7 +73,7 @@ function PreviewSkeleton() {
 }
 
 export async function SettingsLoading() {
-  const { t } = await getRequestI18n();
+  const [{ t }, member] = await Promise.all([getRequestI18n(), getLoadingAccountHint()]);
   return (
     <LoadingFrame route="settings" label={t("Loading settings…")} className={narrowPage}>
       <PageHeading icon="settings" title={t("Settings")}>
@@ -95,26 +97,64 @@ export async function SettingsLoading() {
         </div>
         <LoadingAction className="w-28" />
       </section>
-      <section className={panel}>
+      <section data-loading-panel="preferences" className={panel}>
         <Skeleton className="h-7 w-44" />
-        <Skeleton className="mt-2 h-6 w-4/5" />
-        <div className="mt-5 space-y-4 border-b pb-5">
-          <Skeleton className="h-11 w-full" />
-          <div className="grid grid-cols-2 gap-2">
-            <Skeleton className="h-14 w-full" />
-            <Skeleton className="h-14 w-full" />
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          {t(
+            member
+              ? "These preferences are saved to your account."
+              : "Guest preferences are saved in this browser.",
+          )}
+        </p>
+        <div className="mt-5 divide-y">
+          <div className="space-y-4 pb-5">
+            <div className="flex items-center gap-3">
+              <Globe aria-hidden="true" className="size-5 shrink-0 text-primary" />
+              <div>
+                <p className="text-sm font-semibold">{t("Language")}</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  {t("Your first language is based on your location. You can change it anytime.")}
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Skeleton className="h-14 w-full" />
+              <Skeleton className="h-14 w-full" />
+            </div>
+          </div>
+          <div className="space-y-4 py-5">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold">{t("Custom keyboard shortcuts")}</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  {t(
+                    "Use your chosen letter and number keys. Arrow keys and touch controls always work.",
+                  )}
+                </p>
+              </div>
+              <Skeleton className="h-11 w-16 shrink-0" />
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-muted/50 p-3">
+              <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <Keyboard aria-hidden="true" className="size-4" />
+                {t("Movement and attack keys")}
+              </span>
+              <LoadingAction className="w-36" />
+            </div>
           </div>
         </div>
-        <div className="space-y-4 py-5">
-          <Skeleton className="h-14 w-full" />
-          <Skeleton className="h-[68px] w-full" />
-        </div>
       </section>
-      <section className={`${panel} space-y-4`}>
-        <Skeleton className="h-9 w-40" />
-        <Skeleton className="h-6 w-full" />
-        <LoadingAction />
-      </section>
+      {member ? (
+        <SettingsAccountSkeleton t={t} />
+      ) : (
+        <section data-loading-panel="guest-account" className={panel}>
+          <Skeleton className="h-9 w-40" />
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            {t("Sign in to edit your nickname and save preferences across devices.")}
+          </p>
+          <LoadingAction className="mt-4" />
+        </section>
+      )}
       <section className={panel}>
         <Skeleton className="h-7 w-44" />
         <div className="mt-3 divide-y">

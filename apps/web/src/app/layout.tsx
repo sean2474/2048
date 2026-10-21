@@ -15,7 +15,7 @@ import { GameAnalytics } from "@/components/widget/analytics";
 import { PlayerProvider } from "@/hooks/use-player";
 import { getPreferences } from "@/lib/supabase/preferences";
 import { getAccount } from "@/lib/supabase/account";
-import { getCatalogSnapshot } from "@/lib/server/collection";
+import { getPublicCatalogSeed } from "@/lib/server/public-catalog";
 
 export const metadata: Metadata = {
   title: "2048 Duo",
@@ -50,7 +50,7 @@ async function SessionLayout({ children }: { children: React.ReactNode }) {
       getI18n(),
       getAccount(),
       getPreferences(),
-      getCatalogSnapshot(),
+      getPublicCatalogSeed(),
       getWalletBalance(),
     ]);
   return (
