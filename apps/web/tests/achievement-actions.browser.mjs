@@ -84,3 +84,43 @@ test("attendance failure retries through the action and a guest never mutates", 
   await guest.getByRole("main").getByText("Sign in to record attendance and achievements.").waitFor();
   assert.equal(fixture.requests.filter(request => /\/(sync_achievements|check_in)$/.test(request.path)).length, before);
 });
+
+test("a successful unchanged action repairs a failed server read without a refresh loop", { timeout: 120000 }, async t => {
+  let reads = 0, persistentFailure = false;
+  const data = { ...initial(), attendance: { ...initial().attendance, checkedInToday: true }, unlocks: [{ achievementId: "checkin-30", unlockedAt: "2026-10-22T00:00:00Z" }] };
+  const fixture = await startServerFixture({ handle: async (url, request) => {
+    if (url.pathname.endsWith("/rpc/content_catalog")) return { data: catalog };
+    if (url.pathname.endsWith("/rpc/achievement_state") && request.method === "GET") {
+      reads++;
+      if (persistentFailure || reads === 1) return { status: 503, data: {} };
+    }
+    if (/\/(achievement_state|sync_achievements)$/.test(url.pathname)) return { data };
+  } });
+  t.after(fixture.close);
+  const browser = await chromium.launch({ channel: "chrome", headless: true });
+  t.after(() => browser.close());
+  const context = await browser.newContext({ locale: "en" });
+  await context.addCookies([fixture.cookie()]);
+  const page = await context.newPage();
+  page.setDefaultTimeout(10000);
+  await page.goto(fixture.origin + "/achievements");
+  await page.getByRole("main").locator("#checkin-30").getByText("Permanently unlocked").waitFor();
+  assert.equal(reads, 2, "one successful action retries the failed read even when no progress changed");
+  assert.equal(await page.getByRole("alert").filter({ hasText: "Could not load achievement progress." }).count(), 0);
+  assert.equal(fixture.requests.filter(request => request.path.endsWith("/rpc/check_in")).length, 0);
+  await context.close();
+
+  persistentFailure = true; reads = 0;
+  const retryContext = await browser.newContext({ locale: "en" });
+  await retryContext.addCookies([fixture.cookie()]);
+  const retryPage = await retryContext.newPage();
+  await retryPage.goto(fixture.origin + "/achievements");
+  await retryPage.getByRole("alert").filter({ hasText: "Could not load achievement progress." }).waitFor();
+  const deadline = Date.now() + 10000;
+  while (reads < 2 && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 25));
+  assert.equal(reads, 2, "the automatic recovery attempts one additional server read");
+  // Allow the RSC refresh response to render before checking that it did not recurse.
+  await retryPage.waitForLoadState("networkidle");
+  assert.equal(reads, 2, "a persistent read failure must not trigger a refresh loop");
+  assert.equal(await retryPage.getByRole("button", { name: "Reload unlock information", exact: true }).count(), 1);
+});
