@@ -16,7 +16,14 @@ export function cancelMatch(pid: PlayerId) {
   for (const [code, player] of waitingByCode) if (player === pid) waitingByCode.delete(code);
 }
 export function canQueue(pid: PlayerId, io: Server) {
-  if (!playerRoom.has(pid)) return true;
+  const accountId = playerAccounts.get(pid)?.id;
+  const sameAccount = (other: PlayerId) => other !== pid && playerAccounts.get(other)?.id === accountId;
+  const accountBusy = accountId && (
+    matchmakingQueue.some(entry => sameAccount(entry.pid))
+    || [...waitingByCode.values()].some(sameAccount)
+    || [...rooms.values()].some(room => room.players.some(player => room.accounts[player]?.id === accountId))
+  );
+  if (!playerRoom.has(pid) && !accountBusy) return true;
   io.to(playerChannel(pid)).emit("message", { t: "error", reason: "already_in_game" });
   return false;
 }
@@ -31,12 +38,6 @@ export function findMatch(pid: PlayerId, io: Server, persistResult?: MatchWriter
     const account = playerAccounts.get(pid);
     if (!account || !persistResult) {
       io.to(playerChannel(pid)).emit("message", { t: "error", reason: !account ? "login_required" : "ranked_unavailable" });
-      return;
-    }
-    const queued = matchmakingQueue.some(entry => entry.pid !== pid && entry.mode === "ranked" && playerAccounts.get(entry.pid)?.id === account.id);
-    const playing = [...rooms.values()].some(room => room.mode === "ranked" && room.players.some(player => room.accounts[player]?.id === account.id));
-    if (queued || playing) {
-      io.to(playerChannel(pid)).emit("message", { t: "error", reason: "already_in_game" });
       return;
     }
   }
