@@ -11,8 +11,9 @@ if (!["staging", "production"].includes(environment) || process.argv.length !== 
   throw Error("Usage: node scripts/deploy-socket.mjs staging|production");
 const app = environment === "production" ? "2048-socket" : "2048-socket-staging";
 const config = environment === "production" ? "fly.toml" : "fly.staging.toml";
-const fly = async (...args) =>
-  (await exec("fly", args, { cwd, detached: true, maxBuffer: 16 * 1024 * 1024 })).stdout;
+const runFly = async (timeout, ...args) =>
+  (await exec("fly", args, { cwd, detached: true, timeout, maxBuffer: 16 * 1024 * 1024 })).stdout;
+const fly = (...args) => runFly(undefined, ...args);
 const revision = (await exec("git", ["rev-parse", "HEAD"], { cwd })).stdout.trim();
 if ((await exec("git", ["status", "--porcelain"], { cwd })).stdout.trim())
   throw Error("Commit the intended changes before deploying.");
@@ -21,10 +22,21 @@ if (machines.length !== 1 || machines[0].state !== "started")
   throw Error("Expected exactly one running game machine; resolve topology before deploying.");
 const id = machines[0].id;
 const deploymentId = randomUUID();
-const control = async (path, method = "GET") => {
+const control = async (path, method = "GET", timeout) => {
   const source = `fetch("http://127.0.0.1:4001/${path}",{method:"${method}",headers:{"x-deployment-id":"${deploymentId}"}}).then(async r=>{if(!r.ok)throw Error("Control HTTP "+r.status);console.log(JSON.stringify(await r.json()))}).catch(e=>{console.error(e.message);process.exit(1)})`;
   const output = JSON.parse(
-    await fly("machine", "exec", id, `node -e '${source}'`, "-a", app, "--json", "--timeout", "15"),
+    await runFly(
+      timeout,
+      "machine",
+      "exec",
+      id,
+      `node -e '${source}'`,
+      "-a",
+      app,
+      "--json",
+      "--timeout",
+      "15",
+    ),
   );
   if (
     (output.exit_code !== undefined && output.exit_code !== 0) ||
@@ -102,9 +114,42 @@ try {
       "--yes",
     ),
   );
+  // Fly can return before the replacement VM accepts exec requests. Keep the
+  // outcome uncertain until the expected image and its control endpoint respond.
+  const startupDeadline = Date.now() + 120_000;
+  const remainingStartupTime = () => {
+    const remaining = startupDeadline - Date.now();
+    if (remaining <= 0) throw Error("Replacement startup verification timed out.");
+    return remaining;
+  };
+  let status;
+  while (true) {
+    try {
+      const current = JSON.parse(
+        await runFly(remainingStartupTime(), "machine", "list", "-a", app, "--json"),
+      );
+      if (
+        current.length !== 1 ||
+        current[0].id !== id ||
+        current[0].state !== "started" ||
+        current[0].config?.image !== image
+      ) {
+        throw Error("The expected replacement image is not running yet.");
+      }
+      status = await control("status", "GET", remainingStartupTime());
+      break;
+    } catch (error) {
+      if (Date.now() >= startupDeadline)
+        throw Error("Replacement startup could not be verified within two minutes.", {
+          cause: error,
+        });
+      console.log("Waiting for the replacement machine and control endpoint to start.");
+      await setTimeout(Math.min(2000, remainingStartupTime()));
+    }
+  }
+  if (status.draining || status.storageError)
+    throw Error("Replacement did not start a healthy fresh server.");
   replacing = false;
-  const status = await control("status");
-  if (status.draining) throw Error("Replacement did not start a fresh server.");
   console.log(`Deployed ${revision} to ${app}; new games are enabled.`);
 } finally {
   if (drained && !replacing)

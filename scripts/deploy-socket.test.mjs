@@ -6,7 +6,7 @@ import { mkdtemp, mkdir, copyFile, writeFile, readFile, rm } from "node:fs/promi
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-for (const mode of ["success", "interrupt", "replace-error"])
+for (const mode of ["success", "interrupt", "replace-error", "startup-delay", "still-draining"])
   test(`safe socket deployment: ${mode}`, { timeout: 15000 }, async (t) => {
     const root = await mkdtemp(join(tmpdir(), "socket-deploy-"));
     t.after(() => rm(root, { recursive: true, force: true }));
@@ -27,13 +27,14 @@ const fs = require("node:fs");
 const args = process.argv.slice(2), log = process.env.DEPLOY_TEST_LOG;
 const lines = fs.existsSync(log) ? fs.readFileSync(log,"utf8") : "";
 let action;
-if(args[0]==="machine" && args[1]==="list") { console.log(JSON.stringify([{id:"machine",state:"started"}])); process.exit(); }
+if(args[0]==="machine" && args[1]==="list") { console.log(JSON.stringify([{id:"machine",state:"started",config:{image:"registry.fly.io/2048-socket-staging:safe-abcdef"}}])); process.exit(); }
 if(args[0]==="deploy") action=args.includes("--build-only")?"build":"replace";
 else action=args[3].match(/4001\\/(status|drain|resume)/)[1];
 fs.appendFileSync(log,action+"\\n");
 if(action==="replace" && process.env.DEPLOY_TEST_MODE==="replace-error") process.exit(1);
+if(action==="status" && process.env.DEPLOY_TEST_MODE==="startup-delay" && lines.endsWith("replace\\n")) process.exit(1);
 if(["status","drain","resume"].includes(action)) {
- const draining=action==="drain" || (action==="status" && lines.includes("drain\\n") && !lines.includes("replace\\n"));
+ const draining=action==="drain" || (action==="status" && lines.includes("drain\\n") && (!lines.includes("replace\\n") || process.env.DEPLOY_TEST_MODE==="still-draining"));
  console.log(JSON.stringify({stdout:JSON.stringify({draining,ready:draining && process.env.DEPLOY_TEST_MODE!=="interrupt"})}));
 }
 `,
@@ -78,6 +79,15 @@ if(["status","drain","resume"].includes(action)) {
         "status",
         "resume",
       ]);
+    }
+    if (mode === "startup-delay") {
+      assert.equal(code, 0, output);
+      assert.deepEqual(actions.slice(-4), ["replace", "status", "status", "resume"]);
+    }
+    if (mode === "still-draining") {
+      assert.equal(code, 1, output);
+      assert.equal(actions.at(-1), "status", "unverified replacement must not reopen admission");
+      assert.equal(actions.includes("resume"), false);
     }
     if (mode === "interrupt") {
       assert.equal(code, 1, output);
