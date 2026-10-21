@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { collectionQuery, collectionHref, ownsCosmetic, visibleCollection, purchaseInput, localizeCatalog } from "../src/lib/collection";
+import { collectionQuery, collectionHref, ownsCosmetic, visibleCollection, purchaseInput, localizeCatalog, isCosmeticState } from "../src/lib/collection";
 import type { ContentCatalog } from "schema/catalog";
 
 const metadata = { name: "Item", description: "Description", status: "published", publishedOnce: true, revision: 1, updatedAt: "2026-10-01T00:00:00Z", sortOrder: 0, price: 20, acquisition: "coins" } as const;
@@ -38,4 +38,12 @@ test("localized metadata keeps stable identifiers and does not mutate catalog sn
   assert.equal(localizeCatalog(source, "ko").skins[0].name, "기본");
   assert.equal(source.skins[0].name, "Item");
   assert.equal(localizeCatalog(source, "en").skins[0].id, "classic");
+});
+
+test("wallet state rejects malformed and unsafe amounts, while empty and large collections remain valid", () => {
+  for (const state of [null, {}, { balance: -1, purchases: [] }, { balance: Infinity, purchases: [] }, { balance: 1.5, purchases: [] }, { balance: 0, purchases: null }, { balance: 0, purchases: [null] }, { balance: 0, purchases: [{ kind: "other", item_id: "test" }] }]) assert.equal(isCosmeticState(state), false);
+  assert.equal(isCosmeticState({ balance: 0, purchases: [] }), true);
+  const purchases = Array.from({ length: 10000 }, (_, index) => ({ kind: "skin", item_id: `skin-${index}` }));
+  assert.equal(isCosmeticState({ balance: Number.MAX_SAFE_INTEGER, purchases }), true);
+  assert.equal(visibleCollection({ skins: [], profileIcons: [], achievements: [] }, { purchases: [], unlockedIds: [] }, "shop", collectionQuery({})).length, 0);
 });

@@ -14,13 +14,13 @@ const EMPTY: ContentCatalog = { skins: [], profileIcons: [], achievements: [] };
 const DEFAULT_SKIN = SKINS[0];
 const DEFAULT_ICON = PROFILE_ICONS[0];
 
-function useCatalogState() {
+function useCatalogState(initialCatalog: ContentCatalog | null | undefined, initialCatalogError: boolean) {
   const { locale } = useI18n();
   const pathname = usePathname();
-  const [data, setData] = useState<ContentCatalog>(EMPTY);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const lastLoaded = useRef(0);
+  const [data, setData] = useState<ContentCatalog>(initialCatalog ?? EMPTY);
+  const [loading, setLoading] = useState(initialCatalog === undefined);
+  const [error, setError] = useState(initialCatalogError);
+  const lastLoaded = useRef(initialCatalog === undefined ? 0 : Date.now());
   const pending = useRef(false);
   const active = useRef(true);
   const reload = useCallback(async (force = true) => {
@@ -42,6 +42,9 @@ function useCatalogState() {
     document.addEventListener("visibilitychange", refresh);
     return () => { active.current = false; window.removeEventListener("focus", refresh); document.removeEventListener("visibilitychange", refresh); };
   }, [reload]);
+  useEffect(() => {
+    if (initialCatalog !== undefined) { setData(initialCatalog ?? EMPTY); setError(initialCatalogError); setLoading(false); lastLoaded.current = Date.now(); }
+  }, [initialCatalog, initialCatalogError]);
   useEffect(() => { void reload(false); }, [pathname, reload]);
   const catalog = useMemo(() => {
     const localize = <T extends { name: string; nameKo?: string; description: string; descriptionKo?: string }>(item: T): T => ({ ...item,
@@ -60,8 +63,8 @@ function useCatalogState() {
   };
 }
 
-export function CatalogProvider({ children }: { children: ReactNode }) {
-  return <Context.Provider value={useCatalogState()}>{children}</Context.Provider>;
+export function CatalogProvider({ children, initialCatalog, initialCatalogError = false }: { children: ReactNode; initialCatalog?: ContentCatalog | null; initialCatalogError?: boolean }) {
+  return <Context.Provider value={useCatalogState(initialCatalog, initialCatalogError)}>{children}</Context.Provider>;
 }
 export function useCatalog() {
   const value = useContext(Context);

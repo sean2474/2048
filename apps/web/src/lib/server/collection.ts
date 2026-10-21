@@ -22,7 +22,7 @@ export const getCatalogSnapshot = cache(async (): Promise<{ data: ContentCatalog
   } catch { return { data: null, error: true }; }
 });
 
-export const getCollection = cache(async () => {
+export const getCollection = cache(async (mode: "shop" | "loadout" = "loadout") => {
   const [catalog, user, preferences] = await Promise.all([getCatalogSnapshot(), getUser(), getPreferences()]);
   const userId = user && !user.is_anonymous ? user.id : undefined;
   let cosmetics: CosmeticState | null = null, cosmeticsError = false, unlocksError = false, historyError = false;
@@ -33,7 +33,7 @@ export const getCollection = cache(async () => {
       const [wallet, unlocks, transactions] = await Promise.all([
         client.rpc("cosmetic_state", {}, { get: true }),
         client.from("achievement_unlocks").select("achievement_id").eq("player_id", userId),
-        client.from("coin_transactions").select("id,delta,balance_after,reason,created_at").eq("player_id", userId).order("created_at", { ascending: false }).order("id", { ascending: false }).limit(8),
+        mode === "shop" ? client.from("coin_transactions").select("id,delta,balance_after,reason,created_at").eq("player_id", userId).order("created_at", { ascending: false }).order("id", { ascending: false }).limit(8) : Promise.resolve({ data: [], error: null }),
       ]);
       cosmeticsError = Boolean(wallet.error) || !isCosmeticState(wallet.data);
       if (!cosmeticsError) cosmetics = wallet.data as CosmeticState;
@@ -43,5 +43,5 @@ export const getCollection = cache(async () => {
       if (!historyError) history = transactions.data!.filter((row): row is CoinEntry => Number.isSafeInteger(row.id) && Number.isSafeInteger(row.delta) && Number.isSafeInteger(row.balance_after) && typeof row.reason === "string" && typeof row.created_at === "string" && Number.isFinite(Date.parse(row.created_at)));
     } catch { cosmeticsError = true; unlocksError = true; historyError = true; }
   }
-  return { catalog: catalog.data, catalogError: catalog.error, userId, cosmetics, cosmeticsError, unlockedIds, unlocksError, history, historyError, settings: preferences?.settings ?? DEFAULT_SETTINGS };
+  return { catalog: catalog.data, catalogError: catalog.error, userId, cosmetics, cosmeticsError, unlockedIds, unlocksError, history, historyError, settings: preferences?.settings ?? DEFAULT_SETTINGS, settingsError: Boolean(userId && !preferences) };
 });
