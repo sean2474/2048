@@ -10,6 +10,7 @@ export const soloMessages: Record<string, string> = {
   "Single player": "싱글플레이",
   "2048 time attack": "2048 타임어택",
   "Time rankings": "타임어택 랭킹",
+  "Swipe your board or use the arrow keys to move.": "보드를 스와이프하거나 키보드 방향키로 움직이세요.",
   "Solo controls": "싱글플레이 조작",
   "Records, rules & rewards": "기록·규칙·보상",
   "Time": "경과 시간",

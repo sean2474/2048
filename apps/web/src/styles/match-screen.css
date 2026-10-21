@@ -13,13 +13,16 @@ body:has(.match-screen) > header { display: none; }
 .ability-trigger:disabled { opacity: .7; }
 .ability-charge { position: absolute; left: 10px; right: 10px; bottom: 5px; height: 3px; border-radius: 4px; background: var(--border); overflow: hidden; }
 .ability-charge > span { display: block; height: 100%; border-radius: inherit; background: var(--primary); }
-.direction-pad button { touch-action: manipulation; user-select: none; }
-.direction-pad { gap: 6px; }
-.direction-pad button { width: 52px; height: 52px; }
+.direction-pad { --direction-size: 60px; display: grid; flex-shrink: 0; grid-template-columns: repeat(3, var(--direction-size)); gap: 8px; }
+.direction-pad button { width: var(--direction-size); height: var(--direction-size); touch-action: none; user-select: none; -webkit-touch-callout: none; transition: none; border-radius: 16px; }
+.direction-pad [data-direction="up"] { grid-column: 2; }
+.direction-pad [data-direction="left"] { grid-column: 1; }
 .direction-pad button:not(:disabled):active { background: var(--primary); color: var(--primary-foreground); }
 .match-result { border-top: 1px solid var(--border); padding-top: 8px; }
 @media (max-width: 699px) {
-  .direction-pad button { width: clamp(44px, 14vw, 52px); height: clamp(44px, 14vw, 52px); }
+  .direction-pad { --direction-size: clamp(64px, 18vw, 76px); }
+  .match-controls { flex-direction: column; align-items: stretch; padding-bottom: env(safe-area-inset-bottom); }
+  .match-controls .direction-pad { align-self: center; }
   .match-screen { grid-template-rows: auto minmax(460px, 1fr) auto; min-height: 690px; gap: 8px; padding: 8px 12px; }
   .match-controls { gap: 8px 12px; padding-top: 8px; }
   .game-stage-grid { --board-size: clamp(210px, min(100cqw, calc(100cqh - 252px)), 420px); grid-template-columns: var(--board-size); gap: 12px; }
@@ -29,6 +32,13 @@ body:has(.match-screen) > header { display: none; }
   .opponent-ability { grid-column: 1; margin-top: 0; }
 }
 
-@media (min-width: 700px) {
+@media (max-width: 699px) and (max-height: 740px) {
+  .match-screen { grid-template-rows: auto minmax(432px, 1fr) auto; min-height: 620px; }
+  .live-match-controls .direction-pad { grid-template-columns: repeat(4, var(--direction-size)); }
+  .live-match-controls .direction-pad [data-direction] { grid-column: auto; }
+  .live-match-controls [data-direction="left"] { order: -1; }
+}
+
+@media (min-width: 700px) and (hover: hover) and (pointer: fine) {
   .live-match-controls .direction-pad, .live-match-controls:not(:has(.match-controls-info)) { display: none; }
 }

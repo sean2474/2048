@@ -4,8 +4,9 @@ import Link from "next/link";
 import { DEFAULT_ABILITY_ID } from "schema/loadout";
 import { ABILITY_CHARGE } from "schema/in-game";
 import { useEffect, useReducer, useRef } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, FastForward, RotateCcw } from "lucide-react";
+import { ArrowRight, Check, FastForward, RotateCcw } from "lucide-react";
 import { useI18n } from "ui/i18n";
+import { DirectionPad } from "@/components/2048/direction-pad";
 import { GameArena } from "@/components/2048/game-arena";
 import { Button } from "@/components/ui/button";
 import { useKeybindings } from "@/hooks/use-keybindings";
@@ -97,12 +98,7 @@ export function TutorialPractice() {
         <Button variant="ghost" size="sm" onClick={() => { previousLesson.current = null; dispatch({ type: "restart" }); controls.current?.focus({ preventScroll: true }); }}><RotateCcw aria-hidden="true" />{t("Restart this step")}</Button>
         {storageError && <p role="alert" className="text-xs text-muted-foreground">{t(storageError)}</p>}
       </div>
-      <div className="direction-pad grid shrink-0 grid-cols-3 gap-1" role="group" aria-label={t("Direction controls")}>
-        <span /><Button variant="outline" size="icon" aria-label={t("Move up")} disabled={!canMove} onClick={() => dispatch({ type: "move", dir: "up" })}><ArrowUp aria-hidden="true" /></Button><span />
-        <Button variant="outline" size="icon" aria-label={t("Move left")} disabled={!canMove} onClick={() => dispatch({ type: "move", dir: "left" })}><ArrowLeft aria-hidden="true" /></Button>
-        <Button variant="outline" size="icon" aria-label={t("Move down")} disabled={!canMove} onClick={() => dispatch({ type: "move", dir: "down" })}><ArrowDown aria-hidden="true" /></Button>
-        <Button variant="outline" size="icon" aria-label={t("Move right")} disabled={!canMove} onClick={() => dispatch({ type: "move", dir: "right" })}><ArrowRight aria-hidden="true" /></Button>
-      </div>
+      <DirectionPad disabled={!canMove} onMove={dir => dispatch({ type: "move", dir })} />
     </section>
   </section>;
 }

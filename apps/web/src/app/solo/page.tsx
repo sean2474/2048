@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Info, Infinity as InfinityIcon, RotateCcw, Timer, Trophy } from "lucide-react";
+import { ArrowRight, Check, Info, Infinity as InfinityIcon, RotateCcw, Timer, Trophy } from "lucide-react";
 import { useI18n } from "ui/i18n";
 import { useCatalog } from "@/hooks/catalog-provider";
 import { ProfileIcon } from "@/components/widget/profile-icon";
@@ -25,7 +25,6 @@ import { reasonMessage } from "@/lib/multiplayer";
 import "@/styles/solo.css";
 
 const preview = [{ id: 1, value: 2, row: 1, col: 1 }, { id: 2, value: 2, row: 3, col: 3 }];
-const directions = [{ dir: "left", icon: ArrowLeft, label: "Move left" }, { dir: "up", icon: ArrowUp, label: "Move up" }, { dir: "down", icon: ArrowDown, label: "Move down" }, { dir: "right", icon: ArrowRight, label: "Move right" }] as const;
 const modes = [{ id: "time-attack", label: "2048 time attack", description: "Race to 2048", icon: Timer }, { id: "endless", label: "Endless mode", description: "No time limit", icon: InfinityIcon }] as const;
 
 export default function SoloPage() {
@@ -70,7 +69,7 @@ export default function SoloPage() {
   const details = <>
     <section className="space-y-4 rounded-xl border bg-card p-5"><p className="text-xs font-semibold text-muted-foreground">{t(endless ? "Best milestone" : "Personal best")}</p><p className="text-3xl font-extrabold tabular-nums">{endless ? achievements.data?.soloHighestTile || "—" : best ? formatSoloTime(best) : "—"}</p>
       {achievements.error && <p role="alert" className="text-xs text-destructive">{t("Could not load achievement progress.")}</p>}
-      <p className="break-keep text-sm leading-6 text-muted-foreground">{t(endless ? "4×4 board · No time limit, abilities or undo. Continue beyond 2048. Milestone rewards save as soon as you reach them." : "4×4 board · Reach 2048 · No abilities or undo. The clock starts when you press Start and keeps running until you finish, for up to one hour.")}</p><p className="text-xs leading-5 text-muted-foreground">{t("Use arrow keys, swipe your board or use the direction buttons below.")}</p>{account === null && <Button asChild variant="outline" className="w-full"><Link href="/login">{t("Sign in for records & rewards")}</Link></Button>}
+      <p className="break-keep text-sm leading-6 text-muted-foreground">{t(endless ? "4×4 board · No time limit, abilities or undo. Continue beyond 2048. Milestone rewards save as soon as you reach them." : "4×4 board · Reach 2048 · No abilities or undo. The clock starts when you press Start and keeps running until you finish, for up to one hour.")}</p><p className="text-xs leading-5 text-muted-foreground">{t("Swipe your board or use the arrow keys to move.")}</p>{account === null && <Button asChild variant="outline" className="w-full"><Link href="/login">{t("Sign in for records & rewards")}</Link></Button>}
     </section>
     <section className="rounded-xl border bg-card p-5"><h2 className="mb-4 flex items-center gap-2 font-bold"><Trophy aria-hidden="true" className="size-4 text-primary" />{t("Achievements")}</h2><ul className="space-y-4">{catalog.achievements.filter(item => item.metric === (endless ? "solo_tile" : "solo_time") && (item.status === "published" || achievements.data?.unlocks.some(unlock => unlock.achievementId === item.id))).map(item => {
       const skin = catalog.skins.find(skin => item.reward.kind !== "icon" && skin.id === item.reward.skinId);
@@ -92,16 +91,16 @@ export default function SoloPage() {
     <div className="grid items-start gap-3 md:grid-cols-[minmax(0,1fr)_300px] md:gap-8">
       <section ref={controls} tabIndex={-1} aria-label={t("Solo controls")} aria-describedby="solo-instructions" className="min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         onPointerDown={event => { if (!(event.target instanceof HTMLElement && event.target.closest("button,a"))) controls.current?.focus({ preventScroll: true }); }}>
-        <p id="solo-instructions" className="sr-only">{t("Use arrow keys, swipe your board or use the direction buttons below.")}</p>
+        <p id="solo-instructions" className="sr-only">{t("Swipe your board or use the arrow keys to move.")}</p>
         <dl className="mb-3 grid grid-cols-[1.5fr_1fr_1fr] gap-3 rounded-xl border bg-card px-3 py-2 sm:mb-5 sm:p-4">
           <div><dt className="flex items-center gap-1.5 text-xs text-muted-foreground">{endless ? <InfinityIcon aria-hidden="true" className="size-3.5" /> : <Timer aria-hidden="true" className="size-3.5" />}{t(endless ? "Highest tile" : "Time")}</dt><dd className="mt-1 text-xl font-extrabold tabular-nums tracking-tight sm:text-3xl">{endless ? run?.maxTile ?? "—" : <SoloClock state={run} receivedAt={solo.receivedAt} />}</dd></div>
           <div><dt className="text-xs text-muted-foreground">{t("Score")}</dt><dd className="mt-1 font-bold tabular-nums">{run?.score ?? 0}</dd></div>
           <div><dt className="text-xs text-muted-foreground">{t("Moves")}</dt><dd className="mt-1 font-bold tabular-nums">{run?.moves ?? 0}</dd></div>
         </dl>
         <div className="solo-board mx-auto max-w-[500px]"><BoardView size={SOLO_SIZE} board={run?.board ?? preview} skinId={settings.skinId} onMove={canMove ? solo.move : undefined} /></div>
-        <div className="mt-3 flex items-center justify-between gap-1 sm:mt-6 sm:flex-wrap sm:gap-3">
-          <Button className={playing ? "size-11 shrink-0 p-0 sm:w-auto sm:px-4" : "flex-1 sm:flex-none"} disabled={!solo.connected || solo.working || unsaved} onClick={() => { if (playing) setRestart(mode); else solo.start(mode); }}><RotateCcw aria-hidden="true" /><span className={playing ? "sr-only sm:not-sr-only" : undefined}>{t(playing ? "Restart run" : run ? "Try again" : endless ? "Start endless mode" : "Start time attack")}</span></Button>
-          {playing && <div className="flex gap-1" role="group" aria-label={t("Direction controls")}>{directions.map(({ dir, icon: Icon, label }) => <Button key={dir} variant="outline" size="icon" className="size-11 touch-manipulation" aria-label={t(label)} disabled={!canMove} onClick={() => solo.move(dir)}><Icon aria-hidden="true" /></Button>)}</div>}
+        <p className="mt-3 text-center text-xs text-muted-foreground" aria-hidden="true">{t("Swipe your board or use the arrow keys to move.")}</p>
+        <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6 sm:flex-wrap">
+          <Button className="flex-1 sm:flex-none" disabled={!solo.connected || solo.working || unsaved} onClick={() => { if (playing) setRestart(mode); else solo.start(mode); }}><RotateCcw aria-hidden="true" /><span>{t(playing ? "Restart run" : run ? "Try again" : endless ? "Start endless mode" : "Start time attack")}</span></Button>
           <Dialog><DialogTrigger asChild><Button variant="outline" size="icon" className="size-11 shrink-0 md:hidden" aria-label={t("Records, rules & rewards")} title={t("Records, rules & rewards")}><Info aria-hidden="true" /></Button></DialogTrigger><DialogContent aria-describedby={undefined} className="sm:max-w-lg"><DialogTitle className="pr-8">{t("Records, rules & rewards")}</DialogTitle><div className="space-y-4">{details}</div></DialogContent></Dialog>
         </div>
         {run && <div className="mt-3 text-xs leading-5 text-muted-foreground">
