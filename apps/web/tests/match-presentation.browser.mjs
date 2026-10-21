@@ -41,7 +41,7 @@ test("waiting, retry, cancel, ranked guest gate and real victory/defeat overlays
     network.offline = true;
     await a.goto(`${origin}/play/online`);
     await a.getByRole("main").getByRole("alert").waitFor();
-    assert.equal(await a.locator(".lobby-arena").getAttribute("data-searching"), "false");
+    assert.equal(await a.locator(".lobby-queue").getAttribute("data-searching"), "false");
     await a.screenshot({ path: `${artifacts}/connection-error.png`, fullPage: true });
     network.offline = false;
     await a.getByRole("button", { name: "다시 시도", exact: true }).click();
@@ -65,7 +65,7 @@ test("waiting, retry, cancel, ranked guest gate and real victory/defeat overlays
     assert.equal(matchmakingQueue.length, 0);
     await a.goto(`${origin}/play/ranked`);
     await a.getByRole("link", { name: "로그인하고 랭크전 시작", exact: true }).waitFor();
-    assert.equal(await a.locator(".lobby-arena").getAttribute("data-searching"), "false");
+    assert.equal(await a.locator(".lobby-queue").count(), 0);
     assert.equal(matchmakingQueue.length, 0);
     await a.screenshot({ path: `${artifacts}/ranked-login.png`, fullPage: true });
     await a.setViewportSize({ width: 1440, height: 900 });

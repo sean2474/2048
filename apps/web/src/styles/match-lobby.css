@@ -37,8 +37,8 @@
 .lobby-actions .lobby-primary { background: var(--primary); color: var(--primary-foreground); }
 .lobby-actions .lobby-primary:hover { background: var(--primary); filter: brightness(.95); }
 .lobby-actions > :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
-.lobby-arena[data-searching="true"] .lobby-radar-ring { animation: lobby-orbit 3s linear infinite; }
-.lobby-arena[data-searching="true"] .lobby-search-track > span { animation: lobby-scan 2.4s ease-in-out infinite; }
+.lobby-queue[data-searching="true"] .lobby-radar-ring { animation: lobby-orbit 3s linear infinite; }
+.lobby-queue[data-searching="true"] .lobby-search-track > span { animation: lobby-scan 2.4s ease-in-out infinite; }
 @keyframes lobby-orbit { to { transform: rotate(325deg); } }
 @keyframes lobby-scan { from { transform: translateX(-100%); } to { transform: translateX(390%); } }
 @media (max-width: 560px) {

@@ -7,7 +7,8 @@ import { LOCALE_COOKIE, type Locale } from "ui/locale";
 import type { PreferencesSnapshot } from "@/lib/supabase/preferences";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { GUEST_SETTINGS_COOKIE, parseGuestSettings, settingsFromRow, settingsToRow, SettingsStore, type Settings, type SettingsPatch, type SettingsState } from "@/lib/preferences";
+import { GUEST_SETTINGS_COOKIE, parseGuestSettings, SettingsStore, type Settings, type SettingsPatch, type SettingsState } from "@/lib/preferences";
+import { readSettingsAction, seedSettingsAction, saveSettingsAction } from "@/actions/settings";
 
 type SettingsContext = SettingsState & { saveSettings: (patch: SettingsPatch) => Promise<boolean>; retry: () => void };
 const Context = createContext<SettingsContext | null>(null);
@@ -51,18 +52,18 @@ export function SettingsProvider({ children, initialGuestLocale, initialAccount 
       const initial = seed.current;
       seed.current = null;
       if (initial?.userId === id) return initial.settings;
-      const { data, error } = await createClient().from("player_preferences").select("locale,keybindings,skin_id,icon_id,ability_id,custom_shortcuts").eq("player_id", id).maybeSingle();
-      if (error) throw error;
-      return data ? settingsFromRow(data) : null;
+      const result = await readSettingsAction(id);
+      if (!result.ok) throw new Error(result.error);
+      return result.data;
     },
     seedAccount: async (id, settings) => {
-      const { error } = await createClient().from("player_preferences").upsert({ player_id: id, ...settingsToRow(settings) }, { onConflict: "player_id", ignoreDuplicates: true });
-      if (error) throw error;
+      const result = await seedSettingsAction(id, settings);
+      if (!result.ok) throw new Error(result.error);
     },
     updateAccount: async (id, patch) => {
-      const { data, error } = await createClient().from("player_preferences").update(settingsToRow(patch)).eq("player_id", id).select("locale,keybindings,skin_id,icon_id,ability_id,custom_shortcuts").single();
-      if (error) throw error;
-      return settingsFromRow(data);
+      const result = await saveSettingsAction(id, patch);
+      if (!result.ok) throw new Error(result.error);
+      return result.data;
     },
   }, setState, locale);
   const store = storeRef.current;

@@ -99,7 +99,7 @@ test("tier set cards show paired rewards and stay readable at mobile, tablet and
     account.achievements.highestRank = 4;
     account.achievements.unlocks = ranks.slice(0, 4).map(rank => ({ achievementId: `rank-${rank}`, unlockedAt: "2026-10-17T12:00:00Z" }));
     await page.goto(`${origin}/achievements`);
-    await page.locator('#rank-platinum progress[value="4"]').waitFor();
+    await page.locator('#rank-platinum progress[value="100"]').waitFor();
     for (const rank of ranks) {
       const card = page.locator(`#rank-${rank}`);
       assert.equal(await card.locator(`[data-profile-icon="rank-${rank}"]`).count(), 1);
