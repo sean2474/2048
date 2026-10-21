@@ -3,7 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { adminCookieName, isSupabaseConfigured, supabasePublicKey } from "./config";
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
-  if (!isSupabaseConfigured() || !request.cookies.getAll().some(cookie => cookie.name.startsWith(adminCookieName))) return response;
+  if (
+    !isSupabaseConfigured() ||
+    !request.cookies.getAll().some((cookie) => cookie.name.startsWith(adminCookieName))
+  )
+    return response;
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, supabasePublicKey()!, {
     cookieOptions: { name: adminCookieName },
     cookies: {

@@ -15,8 +15,31 @@ export function RankedMatchButton() {
   const { user } = usePlayer();
   const router = useRouter();
   const [loginRequired, setLoginRequired] = useState(false);
-  return <>
-    <Button variant="outline" className="game-menu-link w-full justify-start px-4" onClick={() => { if (user && !user.is_anonymous) router.push("/play/ranked"); else setLoginRequired(true); }}><GameEmblem kind="crown" className="size-10" />{t("Ranked match")}<ArrowRight aria-hidden="true" className="ml-auto" /></Button>
-    <Dialog open={loginRequired} onOpenChange={setLoginRequired}><DialogContent className="rounded-2xl sm:max-w-sm"><DialogTitle className="pr-6">{t("Ranked match")}</DialogTitle><DialogDescription className="leading-6">{t("Sign in to play ranked. Guests can play casual or friend matches.")}</DialogDescription><Button asChild><Link href="/login">{t("Log in")}</Link></Button></DialogContent></Dialog>
-  </>;
+  return (
+    <>
+      <Button
+        variant="outline"
+        className="game-menu-link w-full justify-start px-4"
+        onClick={() => {
+          if (user && !user.is_anonymous) router.push("/play/ranked");
+          else setLoginRequired(true);
+        }}
+      >
+        <GameEmblem kind="crown" className="size-10" />
+        {t("Ranked match")}
+        <ArrowRight aria-hidden="true" className="ml-auto" />
+      </Button>
+      <Dialog open={loginRequired} onOpenChange={setLoginRequired}>
+        <DialogContent className="rounded-2xl sm:max-w-sm">
+          <DialogTitle className="pr-6">{t("Ranked match")}</DialogTitle>
+          <DialogDescription className="leading-6">
+            {t("Sign in to play ranked. Guests can play casual or friend matches.")}
+          </DialogDescription>
+          <Button asChild>
+            <Link href="/login">{t("Log in")}</Link>
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }

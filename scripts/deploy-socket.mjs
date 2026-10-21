@@ -7,35 +7,65 @@ import { randomUUID } from "node:crypto";
 const exec = promisify(execFile);
 const cwd = fileURLToPath(new URL("../", import.meta.url));
 const environment = process.argv[2];
-if (!["staging", "production"].includes(environment) || process.argv.length !== 3) throw Error("Usage: node scripts/deploy-socket.mjs staging|production");
+if (!["staging", "production"].includes(environment) || process.argv.length !== 3)
+  throw Error("Usage: node scripts/deploy-socket.mjs staging|production");
 const app = environment === "production" ? "2048-socket" : "2048-socket-staging";
 const config = environment === "production" ? "fly.toml" : "fly.staging.toml";
-const fly = async (...args) => (await exec("fly", args, { cwd, detached: true, maxBuffer: 16 * 1024 * 1024 })).stdout;
+const fly = async (...args) =>
+  (await exec("fly", args, { cwd, detached: true, maxBuffer: 16 * 1024 * 1024 })).stdout;
 const revision = (await exec("git", ["rev-parse", "HEAD"], { cwd })).stdout.trim();
-if ((await exec("git", ["status", "--porcelain"], { cwd })).stdout.trim()) throw Error("Commit the intended changes before deploying.");
+if ((await exec("git", ["status", "--porcelain"], { cwd })).stdout.trim())
+  throw Error("Commit the intended changes before deploying.");
 const machines = JSON.parse(await fly("machine", "list", "-a", app, "--json"));
-if (machines.length !== 1 || machines[0].state !== "started") throw Error("Expected exactly one running game machine; resolve topology before deploying.");
+if (machines.length !== 1 || machines[0].state !== "started")
+  throw Error("Expected exactly one running game machine; resolve topology before deploying.");
 const id = machines[0].id;
 const deploymentId = randomUUID();
 const control = async (path, method = "GET") => {
   const source = `fetch("http://127.0.0.1:4001/${path}",{method:"${method}",headers:{"x-deployment-id":"${deploymentId}"}}).then(async r=>{if(!r.ok)throw Error("Control HTTP "+r.status);console.log(JSON.stringify(await r.json()))}).catch(e=>{console.error(e.message);process.exit(1)})`;
-  const output = JSON.parse(await fly("machine", "exec", id, `node -e '${source}'`, "-a", app, "--json", "--timeout", "15"));
-  if ((output.exit_code !== undefined && output.exit_code !== 0) || typeof output.stdout !== "string") throw Error("Deployment control failed; refusing to replace the server.");
+  const output = JSON.parse(
+    await fly("machine", "exec", id, `node -e '${source}'`, "-a", app, "--json", "--timeout", "15"),
+  );
+  if (
+    (output.exit_code !== undefined && output.exit_code !== 0) ||
+    typeof output.stdout !== "string"
+  )
+    throw Error("Deployment control failed; refusing to replace the server.");
   return JSON.parse(output.stdout.trim());
 };
 // Fail closed on old servers: bootstrap drain support once with the documented idle-server procedure.
 const initial = await control("status");
-if (initial.draining) throw Error("Another deployment is draining this machine. Resume or finish it before starting another.");
+if (initial.draining)
+  throw Error(
+    "Another deployment is draining this machine. Resume or finish it before starting another.",
+  );
 const image = `registry.fly.io/${app}:safe-${revision}`;
-let interrupted = false, replacing = false;
+let interrupted = false,
+  replacing = false;
 const interrupt = () => {
   interrupted = true;
-  console.error(replacing ? "Replacement is running; waiting for Fly to finish before restoring admission." : "Cancelling deployment and restoring admission.");
+  console.error(
+    replacing
+      ? "Replacement is running; waiting for Fly to finish before restoring admission."
+      : "Cancelling deployment and restoring admission.",
+  );
 };
 process.on("SIGINT", interrupt);
 process.on("SIGTERM", interrupt);
 console.log(`Building ${revision} for ${app}; games continue during the build.`);
-console.log(await fly("deploy", "--config", config, "--depot=false", "--remote-only", "--build-only", "--push", "--image-label", `safe-${revision}`));
+console.log(
+  await fly(
+    "deploy",
+    "--config",
+    config,
+    "--depot=false",
+    "--remote-only",
+    "--build-only",
+    "--push",
+    "--image-label",
+    `safe-${revision}`,
+  ),
+);
 let drained = false;
 try {
   if (interrupted) throw Error("Deployment interrupted before draining.");
@@ -49,17 +79,44 @@ try {
     console.log(JSON.stringify(status));
     if (!status.draining) throw Error("Drain was cancelled; refusing to replace the server.");
     if (status.ready) break;
-    if (Date.now() >= deadline) throw Error("Games or pending saves remain after 15 minutes. Deployment cancelled; no games were stopped.");
+    if (Date.now() >= deadline)
+      throw Error(
+        "Games or pending saves remain after 15 minutes. Deployment cancelled; no games were stopped.",
+      );
     await setTimeout(5000);
   }
   if (interrupted) throw Error("Deployment interrupted; no games were stopped.");
   replacing = true;
-  console.log(await fly("deploy", "--config", config, "--image", image, "--ha=false", "--strategy", "immediate", "--only-machines", id, "--yes"));
+  console.log(
+    await fly(
+      "deploy",
+      "--config",
+      config,
+      "--image",
+      image,
+      "--ha=false",
+      "--strategy",
+      "immediate",
+      "--only-machines",
+      id,
+      "--yes",
+    ),
+  );
   replacing = false;
   const status = await control("status");
   if (status.draining) throw Error("Replacement did not start a fresh server.");
   console.log(`Deployed ${revision} to ${app}; new games are enabled.`);
 } finally {
-  if (drained && !replacing) await control("resume", "POST").catch(error => { console.error("Could not resume admission; check the machine before retrying:", error.message); process.exitCode = 1; });
-  if (replacing) console.error("Fly replacement outcome is uncertain. Admission was not reopened; inspect the machine before resuming.");
+  if (drained && !replacing)
+    await control("resume", "POST").catch((error) => {
+      console.error(
+        "Could not resume admission; check the machine before retrying:",
+        error.message,
+      );
+      process.exitCode = 1;
+    });
+  if (replacing)
+    console.error(
+      "Fly replacement outcome is uncertain. Admission was not reopened; inspect the machine before resuming.",
+    );
 }

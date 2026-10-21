@@ -13,12 +13,30 @@ const directions = [
   { dir: "right", icon: ArrowRight, label: "Move right" },
 ] as const;
 
-export function DirectionPad({ disabled, onMove }: { disabled: boolean; onMove: (dir: Dir) => void }) {
+export function DirectionPad({
+  disabled,
+  onMove,
+}: {
+  disabled: boolean;
+  onMove: (dir: Dir) => void;
+}) {
   const { t } = useI18n();
-  return <div className="direction-pad" role="group" aria-label={t("Direction controls")}>
-    {directions.map(({ dir, icon: Icon, label }) => <Button key={dir} type="button" variant="outline" size="icon"
-      data-direction={dir} aria-label={t(label)} disabled={disabled} {...directionButtonHandlers(() => onMove(dir), disabled)}>
-      <Icon aria-hidden="true" className="size-7" />
-    </Button>)}
-  </div>;
+  return (
+    <div className="direction-pad" role="group" aria-label={t("Direction controls")}>
+      {directions.map(({ dir, icon: Icon, label }) => (
+        <Button
+          key={dir}
+          type="button"
+          variant="outline"
+          size="icon"
+          data-direction={dir}
+          aria-label={t(label)}
+          disabled={disabled}
+          {...directionButtonHandlers(() => onMove(dir), disabled)}
+        >
+          <Icon aria-hidden="true" className="size-7" />
+        </Button>
+      ))}
+    </div>
+  );
 }

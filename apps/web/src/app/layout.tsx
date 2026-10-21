@@ -20,7 +20,8 @@ import { getCatalogSnapshot } from "@/lib/server/collection";
 export const metadata: Metadata = {
   title: "2048 Duo",
   referrer: "origin",
-  description: "Race your friends to 1024 in real-time multiplayer. Merge tiles to send obstacles, create a private room, or find a quick match.",
+  description:
+    "Race your friends to 1024 in real-time multiplayer. Merge tiles to send obstacles, create a private room, or find a quick match.",
 };
 
 export default async function RootLayout({
@@ -44,23 +45,34 @@ export default async function RootLayout({
 // request. Provider children remain server-rendered RSC slots.
 async function SessionLayout({ children }: { children: React.ReactNode }) {
   // Start the header wallet alongside account/preferences/catalog, not after them.
-  const [{ locale, guestLocale, messages }, account, preferences, catalog, walletBalance] = await Promise.all([getI18n(), getAccount(), getPreferences(), getCatalogSnapshot(), getWalletBalance()]);
-  return <I18nProvider initialLocale={locale} messages={messages}>
-    <PlayerProvider initialAccount={account} initialWalletBalance={walletBalance}>
-      <CatalogProvider initialCatalog={catalog.data} initialCatalogError={catalog.error}>
-        <SettingsProvider initialGuestLocale={guestLocale} initialAccount={preferences}>
-          <AudioProvider>
-            <AchievementsProvider>
-              <FriendPresenceProvider>
-                <Header />
-                <div className="mx-auto max-w-[1040px] px-4"><CatalogNotice /></div>
-                {children}
-                <GameAnalytics />
-              </FriendPresenceProvider>
-            </AchievementsProvider>
-          </AudioProvider>
-        </SettingsProvider>
-      </CatalogProvider>
-    </PlayerProvider>
-  </I18nProvider>;
+  const [{ locale, guestLocale, messages }, account, preferences, catalog, walletBalance] =
+    await Promise.all([
+      getI18n(),
+      getAccount(),
+      getPreferences(),
+      getCatalogSnapshot(),
+      getWalletBalance(),
+    ]);
+  return (
+    <I18nProvider initialLocale={locale} messages={messages}>
+      <PlayerProvider initialAccount={account} initialWalletBalance={walletBalance}>
+        <CatalogProvider initialCatalog={catalog.data} initialCatalogError={catalog.error}>
+          <SettingsProvider initialGuestLocale={guestLocale} initialAccount={preferences}>
+            <AudioProvider>
+              <AchievementsProvider>
+                <FriendPresenceProvider>
+                  <Header />
+                  <div className="mx-auto max-w-[1040px] px-4">
+                    <CatalogNotice />
+                  </div>
+                  {children}
+                  <GameAnalytics />
+                </FriendPresenceProvider>
+              </AchievementsProvider>
+            </AudioProvider>
+          </SettingsProvider>
+        </CatalogProvider>
+      </PlayerProvider>
+    </I18nProvider>
+  );
 }

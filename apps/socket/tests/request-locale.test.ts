@@ -6,7 +6,8 @@ import { DEFAULT_SETTINGS, parseGuestSettings } from "../../web/src/lib/preferen
 test("country chooses the first language ahead of browser preferences", () => {
   assert.equal(detectRequestLocale("KR", "en-US"), "ko");
   assert.equal(detectRequestLocale(" kr ", "en-US"), "ko");
-  for (const country of ["US", "JP", "DE"]) assert.equal(detectRequestLocale(country, "ko-KR"), "en");
+  for (const country of ["US", "JP", "DE"])
+    assert.equal(detectRequestLocale(country, "ko-KR"), "en");
 });
 
 test("missing or unknown country uses the best supported browser language", () => {

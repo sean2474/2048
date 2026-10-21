@@ -28,9 +28,18 @@ test("disabled controls and secondary pointers cannot move", () => {
   assert.equal(moves, 0);
 });
 
-const touch = (clientX: number, clientY: number, identifier = 1) => ({ clientX, clientY, identifier });
+const touch = (clientX: number, clientY: number, identifier = 1) => ({
+  clientX,
+  clientY,
+  identifier,
+});
 test("swipes move at the threshold, once per finger gesture, in all four directions", () => {
-  for (const [x, y, direction] of [[24, 3, "right"], [-24, 3, "left"], [3, 24, "down"], [3, -24, "up"]] as const) {
+  for (const [x, y, direction] of [
+    [24, 3, "right"],
+    [-24, 3, "left"],
+    [3, 24, "down"],
+    [3, -24, "up"],
+  ] as const) {
     const gesture = createSwipeGesture();
     gesture.start([touch(0, 0)]);
     assert.equal(gesture.move([touch(12, 12)]), null);
@@ -38,7 +47,11 @@ test("swipes move at the threshold, once per finger gesture, in all four directi
     assert.equal(gesture.move([touch(x * 3, y * 3)]), null);
     assert.equal(gesture.end([touch(x * 3, y * 3)]), null, "lifting must not add a move");
     gesture.start([touch(0, 0)]);
-    assert.equal(gesture.end([touch(x, y)]), direction, "fast swipes still work if touchmove was coalesced");
+    assert.equal(
+      gesture.end([touch(x, y)]),
+      direction,
+      "fast swipes still work if touchmove was coalesced",
+    );
   }
 });
 

@@ -5,7 +5,11 @@ export async function updateSession(request: NextRequest) {
   // Layout-only hint for account-dependent loading geometry. It grants no access.
   request.headers.set("x-2048-loading-member", "0");
   let response = NextResponse.next({ request });
-  if (!isSupabaseConfigured() || !request.cookies.getAll().some(cookie => cookie.name.startsWith("sb-"))) return response;
+  if (
+    !isSupabaseConfigured() ||
+    !request.cookies.getAll().some((cookie) => cookie.name.startsWith("sb-"))
+  )
+    return response;
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, supabasePublicKey()!, {
     cookies: {
       getAll: () => request.cookies.getAll(),
@@ -16,9 +20,11 @@ export async function updateSession(request: NextRequest) {
       },
     },
   });
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   request.headers.set("x-2048-loading-member", user && !user.is_anonymous ? "1" : "0");
   const result = NextResponse.next({ request });
-  response.cookies.getAll().forEach(cookie => result.cookies.set(cookie));
+  response.cookies.getAll().forEach((cookie) => result.cookies.set(cookie));
   return result;
 }

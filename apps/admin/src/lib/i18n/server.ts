@@ -7,5 +7,9 @@ const messages = { ...baseMessages, ...rankMessages, ...catalogMessages };
 
 export async function getI18n() {
   const locale = normalizeLocale((await cookies()).get(LOCALE_COOKIE)?.value);
-  return { locale, messages, t: (key: string, values?: Values) => translate(locale, messages, key, values) };
+  return {
+    locale,
+    messages,
+    t: (key: string, values?: Values) => translate(locale, messages, key, values),
+  };
 }

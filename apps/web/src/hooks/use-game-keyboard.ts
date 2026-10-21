@@ -1,9 +1,20 @@
 "use client";
 
 import { useEffect, useRef, type RefObject } from "react";
-import { createMovementRepeater, resolveKeyAction, type KeyAction, type Keybindings } from "@/lib/keybindings";
+import {
+  createMovementRepeater,
+  resolveKeyAction,
+  type KeyAction,
+  type Keybindings,
+} from "@/lib/keybindings";
 
-export function useGameKeyboard({ enabled, bindings, characterShortcuts, onAction, target }: {
+export function useGameKeyboard({
+  enabled,
+  bindings,
+  characterShortcuts,
+  onAction,
+  target,
+}: {
   enabled: boolean;
   bindings: Keybindings;
   characterShortcuts: boolean;
@@ -11,14 +22,31 @@ export function useGameKeyboard({ enabled, bindings, characterShortcuts, onActio
   target?: RefObject<HTMLElement | null>;
 }) {
   const actionRef = useRef(onAction);
-  useEffect(() => { actionRef.current = onAction; }, [onAction]);
+  useEffect(() => {
+    actionRef.current = onAction;
+  }, [onAction]);
 
   useEffect(() => {
     if (!enabled) return;
-    const movement = createMovementRepeater(direction => actionRef.current(direction));
+    const movement = createMovementRepeater((direction) => actionRef.current(direction));
     const onKeyDown = (event: KeyboardEvent) => {
-      if (target?.current && !(event.target instanceof Node && target.current.contains(event.target))) return;
-      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing || event.defaultPrevented || event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog], [role=menu]")) {
+      if (
+        target?.current &&
+        !(event.target instanceof Node && target.current.contains(event.target))
+      )
+        return;
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        event.isComposing ||
+        event.defaultPrevented ||
+        (event.target instanceof HTMLElement &&
+          event.target.closest(
+            "input, textarea, select, [contenteditable=true], [role=dialog], [role=alertdialog], [role=menu]",
+          ))
+      ) {
         movement.stop();
         return;
       }

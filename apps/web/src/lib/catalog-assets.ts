@@ -7,5 +7,7 @@ export function catalogAssetUrl(path?: string) {
 
 export function boardBackground(tokens: { boardBackground: string; boardImagePath?: string }) {
   const image = catalogAssetUrl(tokens.boardImagePath);
-  return image ? `url("${image}") center / cover, ${tokens.boardBackground}` : tokens.boardBackground;
+  return image
+    ? `url("${image}") center / cover, ${tokens.boardBackground}`
+    : tokens.boardBackground;
 }

@@ -10,8 +10,14 @@ export const getWalletBalance = cache(async (): Promise<number | null> => {
     const user = await getUser();
     if (!user || user.is_anonymous) return null;
     const client = await createClient();
-    const { data, error } = await client.from("player_wallets").select("balance").eq("player_id", user.id).maybeSingle();
-    return !error && data && Number.isSafeInteger(data.balance) && data.balance >= 0 ? data.balance : null;
+    const { data, error } = await client
+      .from("player_wallets")
+      .select("balance")
+      .eq("player_id", user.id)
+      .maybeSingle();
+    return !error && data && Number.isSafeInteger(data.balance) && data.balance >= 0
+      ? data.balance
+      : null;
   } catch {
     return null;
   }

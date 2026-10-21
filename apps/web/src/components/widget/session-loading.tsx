@@ -3,29 +3,61 @@ import { C2S } from "schema/in-game";
 import { headers } from "next/headers";
 import { HeaderLoading } from "./header";
 import {
-  HomeLoading, SettingsLoading, FindMatchLoading, FeedbackLoading, FriendsLoading,
-  AchievementsLoading, LoadoutLoading, ShopLoading, SoloLoading, RulebookLoading,
+  HomeLoading,
+  SettingsLoading,
+  FindMatchLoading,
+  FeedbackLoading,
+  FriendsLoading,
+  AchievementsLoading,
+  LoadoutLoading,
+  ShopLoading,
+  SoloLoading,
+  RulebookLoading,
   LeaderboardLoading,
 } from "./route-skeletons";
 import {
-  CreateRoomLoading, JoinRoomLoading, OnlineLoading, RankedLoading,
-  GameLoading, TutorialLoading, WatchLoading,
+  CreateRoomLoading,
+  JoinRoomLoading,
+  OnlineLoading,
+  RankedLoading,
+  GameLoading,
+  TutorialLoading,
+  WatchLoading,
 } from "./game-route-skeletons";
 import {
-  LoginLoading, SignupLoading, ForgotPasswordLoading, ResetPasswordLoading,
-  TermsLoading, PrivacyLoading, AuthErrorLoading,
+  LoginLoading,
+  SignupLoading,
+  ForgotPasswordLoading,
+  ResetPasswordLoading,
+  TermsLoading,
+  PrivacyLoading,
+  AuthErrorLoading,
 } from "./document-route-skeletons";
 import HistoryLoading from "@/app/history/loading";
 
 const routes = {
-  "/": HomeLoading, "/settings": SettingsLoading, "/find-match": FindMatchLoading,
-  "/feedback": FeedbackLoading, "/friends": FriendsLoading, "/achievements": AchievementsLoading,
-  "/loadout": LoadoutLoading, "/shop": ShopLoading, "/solo": SoloLoading,
-  "/how-to-play": RulebookLoading, "/tutorial": TutorialLoading, "/history": HistoryLoading,
-  "/play/create": CreateRoomLoading, "/play/join": JoinRoomLoading,
-  "/play/online": OnlineLoading, "/play/ranked": RankedLoading,
-  "/login": LoginLoading, "/signup": SignupLoading, "/forgot-password": ForgotPasswordLoading,
-  "/reset-password": ResetPasswordLoading, "/terms": TermsLoading, "/privacy": PrivacyLoading,
+  "/": HomeLoading,
+  "/settings": SettingsLoading,
+  "/find-match": FindMatchLoading,
+  "/feedback": FeedbackLoading,
+  "/friends": FriendsLoading,
+  "/achievements": AchievementsLoading,
+  "/loadout": LoadoutLoading,
+  "/shop": ShopLoading,
+  "/solo": SoloLoading,
+  "/how-to-play": RulebookLoading,
+  "/tutorial": TutorialLoading,
+  "/history": HistoryLoading,
+  "/play/create": CreateRoomLoading,
+  "/play/join": JoinRoomLoading,
+  "/play/online": OnlineLoading,
+  "/play/ranked": RankedLoading,
+  "/login": LoginLoading,
+  "/signup": SignupLoading,
+  "/forgot-password": ForgotPasswordLoading,
+  "/reset-password": ResetPasswordLoading,
+  "/terms": TermsLoading,
+  "/privacy": PrivacyLoading,
   "/auth/error": AuthErrorLoading,
 };
 
@@ -38,10 +70,17 @@ export async function SessionLoading() {
   const path = route.pathname.replace(/\/$/, "") || "/";
   const gameId = /^\/play\/([^/]+)$/.exec(path)?.[1];
   const game = gameId && C2S.joinRoom.safeParse({ t: "joinRoom", roomId: gameId }).success;
-  const Loading = routes[path as keyof typeof routes]
-    ?? (game ? GameLoading : /^\/watch\/[^/]+$/.test(path) ? WatchLoading : null);
-  return <>
-    <HeaderLoading />
-    {path === "/leaderboard" ? <LeaderboardLoading solo={route.searchParams.get("mode") === "solo"} /> : Loading && <Loading />}
-  </>;
+  const Loading =
+    routes[path as keyof typeof routes] ??
+    (game ? GameLoading : /^\/watch\/[^/]+$/.test(path) ? WatchLoading : null);
+  return (
+    <>
+      <HeaderLoading />
+      {path === "/leaderboard" ? (
+        <LeaderboardLoading solo={route.searchParams.get("mode") === "solo"} />
+      ) : (
+        Loading && <Loading />
+      )}
+    </>
+  );
 }

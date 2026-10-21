@@ -24,7 +24,9 @@
   border-radius: 14px;
   border: 1px solid var(--border);
   border-top-color: #b9bba9;
-  box-shadow: 0 2px 0 #d8d5ca, inset 0 3px 0 #f5f3ed;
+  box-shadow:
+    0 2px 0 #d8d5ca,
+    inset 0 3px 0 #f5f3ed;
 }
 
 .game-menu-link {
@@ -33,7 +35,14 @@
 }
 
 @media (max-width: 639px) {
-  .game-page-heading { gap: .75rem; padding-bottom: .75rem; }
-  .game-page-heading > div:first-child { flex-basis: 100%; }
-  .match-selection .game-menu-link { min-height: 3.5rem; }
+  .game-page-heading {
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .game-page-heading > div:first-child {
+    flex-basis: 100%;
+  }
+  .match-selection .game-menu-link {
+    min-height: 3.5rem;
+  }
 }

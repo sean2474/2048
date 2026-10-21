@@ -25,7 +25,7 @@ test("tutorial merges send attacks automatically and wait for the opponent's nex
     assert.equal(landed.complete, true);
     assert.equal(landed.board, sent.board);
     assert.equal(landed.opponentPending.length, 0);
-    assert.equal(landed.opponent.filter(tile => tile.blockType === blockType).length, 1);
+    assert.equal(landed.opponent.filter((tile) => tile.blockType === blockType).length, 1);
     assert.equal(tutorialReducer(landed, { type: "opponentMove" }), landed);
     assert.deepEqual(tutorialReducer(landed, { type: "restart" }), createLesson(landed.step));
     lesson = tutorialReducer(landed, { type: "advance" });
@@ -37,16 +37,19 @@ test("tutorial merges send attacks automatically and wait for the opponent's nex
 test("incoming attacks arrive after a move, then X slides while hard blocks stay fixed", () => {
   const incoming = createLesson(3);
   assert.equal(incoming.pending.length, 2);
-  assert.equal(incoming.board.some(tile => tile.blockType), false);
+  assert.equal(
+    incoming.board.some((tile) => tile.blockType),
+    false,
+  );
   const arrived = tutorialReducer(incoming, { type: "move", dir: "left" });
   assert.equal(arrived.pending.length, 0);
   assert.equal(arrived.complete, false);
-  const x = arrived.board.find(tile => tile.blockType === "xblock")!;
-  const hard = arrived.board.find(tile => tile.blockType === "hardblock")!;
+  const x = arrived.board.find((tile) => tile.blockType === "xblock")!;
+  const hard = arrived.board.find((tile) => tile.blockType === "hardblock")!;
   const moved = tutorialReducer(arrived, { type: "move", dir: "down" });
   assert.equal(moved.complete, true);
-  assert.notEqual(moved.board.find(tile => tile.id === x.id)?.row, x.row);
-  const fixed = moved.board.find(tile => tile.id === hard.id)!;
+  assert.notEqual(moved.board.find((tile) => tile.id === x.id)?.row, x.row);
+  const fixed = moved.board.find((tile) => tile.id === hard.id)!;
   assert.deepEqual([fixed.row, fixed.col], [hard.row, hard.col]);
   assert.deepEqual(moved.attacksSent, { xblock: 0, hardblock: 0 });
   assert.equal(tutorialReducer(moved, { type: "advance" }).step, 4);
@@ -55,14 +58,20 @@ test("incoming attacks arrive after a move, then X slides while hard blocks stay
 
 test("the default ability clears exactly the oldest X without moving tiles or consuming queued attacks", () => {
   const initial = createLesson(4);
-  const lesson = { ...initial, pending: [{ type: "addBlock" as const, blockType: "xblock" as const }] };
-  const oldestX = lesson.board.find(tile => tile.blockType === "xblock")!;
+  const lesson = {
+    ...initial,
+    pending: [{ type: "addBlock" as const, blockType: "xblock" as const }],
+  };
+  const oldestX = lesson.board.find((tile) => tile.blockType === "xblock")!;
   assert.equal(tutorialReducer(lesson, { type: "advance" }), lesson);
   assert.equal(tutorialReducer(lesson, { type: "move", dir: "left" }), lesson);
   const cleared = tutorialReducer(lesson, { type: "ability" });
   assert.equal(cleared.complete, true);
-  assert.equal(cleared.board.filter(tile => tile.blockType === "xblock").length, 1);
-  assert.deepEqual(cleared.board, lesson.board.filter(tile => tile.id !== oldestX.id));
+  assert.equal(cleared.board.filter((tile) => tile.blockType === "xblock").length, 1);
+  assert.deepEqual(
+    cleared.board,
+    lesson.board.filter((tile) => tile.id !== oldestX.id),
+  );
   assert.equal(cleared.pending, lesson.pending);
   assert.equal(cleared.attacksSent, lesson.attacksSent);
   assert.equal(cleared.score, lesson.score);
@@ -74,7 +83,7 @@ test("the default ability clears exactly the oldest X without moving tiles or co
 
 test("the ability does not spend its practice use without an X or outside the ability lesson", () => {
   const initial = createLesson(4);
-  const noX = { ...initial, board: initial.board.filter(tile => tile.blockType !== "xblock") };
+  const noX = { ...initial, board: initial.board.filter((tile) => tile.blockType !== "xblock") };
   assert.equal(tutorialReducer(noX, { type: "ability" }), noX);
   for (const step of [0, 1, 2, 3] as const) {
     const lesson = createLesson(step);

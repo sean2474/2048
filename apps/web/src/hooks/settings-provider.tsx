@@ -7,83 +7,142 @@ import { LOCALE_COOKIE, type Locale } from "ui/locale";
 import type { PreferencesSnapshot } from "@/lib/supabase/preferences";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { GUEST_SETTINGS_COOKIE, parseGuestSettings, SettingsStore, type Settings, type SettingsPatch, type SettingsState } from "@/lib/preferences";
+import {
+  GUEST_SETTINGS_COOKIE,
+  parseGuestSettings,
+  SettingsStore,
+  type Settings,
+  type SettingsPatch,
+  type SettingsState,
+} from "@/lib/preferences";
 import { readSettingsAction, seedSettingsAction, saveSettingsAction } from "@/actions/settings";
 
-type SettingsContext = SettingsState & { saveSettings: (patch: SettingsPatch) => Promise<boolean>; retry: () => void };
+type SettingsContext = SettingsState & {
+  saveSettings: (patch: SettingsPatch) => Promise<boolean>;
+  retry: () => void;
+};
 const Context = createContext<SettingsContext | null>(null);
-const cookieValue = (name: string) => document.cookie.split("; ").find(part => part.startsWith(`${name}=`))?.slice(name.length + 1);
+const cookieValue = (name: string) =>
+  document.cookie
+    .split("; ")
+    .find((part) => part.startsWith(`${name}=`))
+    ?.slice(name.length + 1);
 function writeCookie(name: string, value: string) {
   document.cookie = `${name}=${value}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
   if (cookieValue(name) !== value) throw new Error("Cookies unavailable");
 }
 
-export function SettingsProvider({ children, initialGuestLocale, initialAccount }: { children: ReactNode; initialGuestLocale: Locale; initialAccount: PreferencesSnapshot | null }) {
+export function SettingsProvider({
+  children,
+  initialGuestLocale,
+  initialAccount,
+}: {
+  children: ReactNode;
+  initialGuestLocale: Locale;
+  initialAccount: PreferencesSnapshot | null;
+}) {
   const seed = useRef(initialAccount);
   const { locale, setLocale } = useI18n();
   const router = useRouter();
   const i18nRef = useRef({ locale, setLocale });
-  useEffect(() => { i18nRef.current = { locale, setLocale }; }, [locale, setLocale]);
+  useEffect(() => {
+    i18nRef.current = { locale, setLocale };
+  }, [locale, setLocale]);
   const [state, setState] = useState<SettingsState | null>(null);
   const guestFallback = useRef<Settings | null>(null);
   const guestLocale = useRef(initialGuestLocale);
   const storeRef = useRef<SettingsStore | null>(null);
-  if (!storeRef.current) storeRef.current = new SettingsStore({
-    readGuest: () => {
-      const raw = cookieValue(GUEST_SETTINGS_COOKIE);
-      if (raw) return parseGuestSettings(raw, guestLocale.current);
-      // Preserve the old guest locale before an account locale replaces its mirror.
-      if (!guestFallback.current) {
-        guestFallback.current = parseGuestSettings(undefined, guestLocale.current);
-        try { writeCookie(GUEST_SETTINGS_COOKIE, encodeURIComponent(JSON.stringify(guestFallback.current))); }
-        catch { /* Keep the guest snapshot for this visit; saves still report cookie failures. */ }
-      }
-      return guestFallback.current;
-    },
-    writeGuest: settings => writeCookie(GUEST_SETTINGS_COOKIE, encodeURIComponent(JSON.stringify(settings))),
-    mirrorLocale: next => {
-      writeCookie(LOCALE_COOKIE, next);
-      if (i18nRef.current.locale !== next) {
-        i18nRef.current.setLocale(next);
-        router.refresh();
-      }
-    },
-    readAccount: async id => {
-      const initial = seed.current;
-      seed.current = null;
-      if (initial?.userId === id) return initial.settings;
-      const result = await readSettingsAction(id);
-      if (!result.ok) throw new Error(result.error);
-      return result.data;
-    },
-    seedAccount: async (id, settings) => {
-      const result = await seedSettingsAction(id, settings);
-      if (!result.ok) throw new Error(result.error);
-    },
-    updateAccount: async (id, patch) => {
-      const result = await saveSettingsAction(id, patch);
-      if (!result.ok) throw new Error(result.error);
-      return result.data;
-    },
-  }, setState, locale);
+  if (!storeRef.current)
+    storeRef.current = new SettingsStore(
+      {
+        readGuest: () => {
+          const raw = cookieValue(GUEST_SETTINGS_COOKIE);
+          if (raw) return parseGuestSettings(raw, guestLocale.current);
+          // Preserve the old guest locale before an account locale replaces its mirror.
+          if (!guestFallback.current) {
+            guestFallback.current = parseGuestSettings(undefined, guestLocale.current);
+            try {
+              writeCookie(
+                GUEST_SETTINGS_COOKIE,
+                encodeURIComponent(JSON.stringify(guestFallback.current)),
+              );
+            } catch {
+              /* Keep the guest snapshot for this visit; saves still report cookie failures. */
+            }
+          }
+          return guestFallback.current;
+        },
+        writeGuest: (settings) =>
+          writeCookie(GUEST_SETTINGS_COOKIE, encodeURIComponent(JSON.stringify(settings))),
+        mirrorLocale: (next) => {
+          writeCookie(LOCALE_COOKIE, next);
+          if (i18nRef.current.locale !== next) {
+            i18nRef.current.setLocale(next);
+            router.refresh();
+          }
+        },
+        readAccount: async (id) => {
+          const initial = seed.current;
+          seed.current = null;
+          if (initial?.userId === id) return initial.settings;
+          const result = await readSettingsAction(id);
+          if (!result.ok) throw new Error(result.error);
+          return result.data;
+        },
+        seedAccount: async (id, settings) => {
+          const result = await seedSettingsAction(id, settings);
+          if (!result.ok) throw new Error(result.error);
+        },
+        updateAccount: async (id, patch) => {
+          const result = await saveSettingsAction(id, patch);
+          if (!result.ok) throw new Error(result.error);
+          return result.data;
+        },
+      },
+      setState,
+      locale,
+    );
   const store = storeRef.current;
   const current = state ?? store.state;
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) { void store.load(null); return () => store.dispose(); }
+    if (!isSupabaseConfigured()) {
+      void store.load(null);
+      return () => store.dispose();
+    }
     let active = true;
     let account: string | null | undefined;
-    const { data: { subscription } } = createClient().auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = createClient().auth.onAuthStateChange((_event, session) => {
       const next = session?.user && !session.user.is_anonymous ? session.user.id : null;
       if (next === account) return;
       account = next;
       // Leave Supabase's auth callback before issuing database requests.
-      queueMicrotask(() => { if (active && account === next) void store.load(next); });
+      queueMicrotask(() => {
+        if (active && account === next) void store.load(next);
+      });
     });
-    return () => { active = false; store.dispose(); subscription.unsubscribe(); };
+    return () => {
+      active = false;
+      store.dispose();
+      subscription.unsubscribe();
+    };
   }, [store]);
 
-  return <Context.Provider value={{ ...current, saveSettings: patch => store.save(patch), retry: () => { void store.retry(); } }}>{children}</Context.Provider>;
+  return (
+    <Context.Provider
+      value={{
+        ...current,
+        saveSettings: (patch) => store.save(patch),
+        retry: () => {
+          void store.retry();
+        },
+      }}
+    >
+      {children}
+    </Context.Provider>
+  );
 }
 
 export function useSettings() {

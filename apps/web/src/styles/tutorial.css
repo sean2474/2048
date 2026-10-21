@@ -1,19 +1,113 @@
-.tutorial-session { display: grid; grid-row: 2 / span 2; grid-template-rows: minmax(0, 1fr) auto; gap: inherit; min-height: 0; }
-.tutorial-screen .game-stage { position: relative; isolation: isolate; }
-.tutorial-session:focus { outline: none; }
-.tutorial-screen .game-stage::before { content: ""; position: absolute; inset: -4px; z-index: 45; border-radius: 20px; background: rgb(0 0 0 / 62%); pointer-events: none; }
-.tutorial-coach { position: absolute; z-index: 50; top: 24px; right: 24px; width: min(360px, calc(50% - 24px)); padding: 20px; border: 1px solid var(--primary); border-radius: 16px; background: var(--card); box-shadow: 0 16px 48px -16px #0008; }
-.tutorial-coach::after { content: ""; position: absolute; left: -6px; top: 32px; width: 10px; height: 10px; border-left: 1px solid var(--primary); border-bottom: 1px solid var(--primary); background: var(--card); transform: rotate(45deg); }
-.tutorial-session[data-focus="opponent"] .tutorial-coach { right: auto; left: 80px; }
-.tutorial-session[data-focus="opponent"] .tutorial-coach::after { left: auto; right: -6px; transform: rotate(225deg); }
+.tutorial-session {
+  display: grid;
+  grid-row: 2 / span 2;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: inherit;
+  min-height: 0;
+}
+.tutorial-screen .game-stage {
+  position: relative;
+  isolation: isolate;
+}
+.tutorial-session:focus {
+  outline: none;
+}
+.tutorial-screen .game-stage::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  z-index: 45;
+  border-radius: 20px;
+  background: rgb(0 0 0 / 62%);
+  pointer-events: none;
+}
+.tutorial-coach {
+  position: absolute;
+  z-index: 50;
+  top: 24px;
+  right: 24px;
+  width: min(360px, calc(50% - 24px));
+  padding: 20px;
+  border: 1px solid var(--primary);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: 0 16px 48px -16px #0008;
+}
+.tutorial-coach::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 32px;
+  width: 10px;
+  height: 10px;
+  border-left: 1px solid var(--primary);
+  border-bottom: 1px solid var(--primary);
+  background: var(--card);
+  transform: rotate(45deg);
+}
+.tutorial-session[data-focus="opponent"] .tutorial-coach {
+  right: auto;
+  left: 80px;
+}
+.tutorial-session[data-focus="opponent"] .tutorial-coach::after {
+  left: auto;
+  right: -6px;
+  transform: rotate(225deg);
+}
 .tutorial-session[data-focus="board"] .game-you,
-.tutorial-session[data-focus="opponent"] .game-opponent { position: relative; z-index: 46; background: var(--background); box-shadow: 0 0 0 6px var(--background); outline: 3px solid var(--primary); outline-offset: 6px; border-radius: 12px; }
+.tutorial-session[data-focus="opponent"] .game-opponent {
+  position: relative;
+  z-index: 46;
+  background: var(--background);
+  box-shadow: 0 0 0 6px var(--background);
+  outline: 3px solid var(--primary);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
 @media (max-width: 699px) {
-  .tutorial-session { display: flex; flex-direction: column; }
-  .tutorial-screen { display: flex; flex: 0 0 auto; flex-direction: column; min-height: 100dvh; }
-  .tutorial-screen .game-stage { display: grid; grid-template-rows: auto auto; align-content: start; gap: 24px; container-type: inline-size; padding: 12px 0; }
-  .tutorial-screen .game-stage-grid { --board-size: min(calc(100cqw - 64px), 280px); grid-row: 2; height: auto; padding: 0 8px 8px; }
-  .tutorial-session[data-focus] .tutorial-coach { position: relative; grid-row: 1; top: auto; right: auto; left: auto; width: calc(100% - 24px); margin-inline: auto; padding: 16px; }
-  .tutorial-session[data-focus] .tutorial-coach::after { top: auto; bottom: -6px; right: auto; left: 50%; transform: rotate(-45deg); }
-  .tutorial-session[data-focus="opponent"] .tutorial-coach::after { left: auto; right: 32px; }
+  .tutorial-session {
+    display: flex;
+    flex-direction: column;
+  }
+  .tutorial-screen {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+  .tutorial-screen .game-stage {
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: start;
+    gap: 24px;
+    container-type: inline-size;
+    padding: 12px 0;
+  }
+  .tutorial-screen .game-stage-grid {
+    --board-size: min(calc(100cqw - 64px), 280px);
+    grid-row: 2;
+    height: auto;
+    padding: 0 8px 8px;
+  }
+  .tutorial-session[data-focus] .tutorial-coach {
+    position: relative;
+    grid-row: 1;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: calc(100% - 24px);
+    margin-inline: auto;
+    padding: 16px;
+  }
+  .tutorial-session[data-focus] .tutorial-coach::after {
+    top: auto;
+    bottom: -6px;
+    right: auto;
+    left: 50%;
+    transform: rotate(-45deg);
+  }
+  .tutorial-session[data-focus="opponent"] .tutorial-coach::after {
+    left: auto;
+    right: 32px;
+  }
 }
