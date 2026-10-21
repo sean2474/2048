@@ -1,0 +1,87 @@
+{
+  "measuredAt": "2026-10-21T16:54:43.052695+00:00",
+  "origin": "https://2048-web-staging.vercel.app",
+  "webCommit": "e7999532ea1c04b4bffaf389f6b5d85accf009ea",
+  "method": "Lighthouse 13.5.0 CLI mobile, default simulated throttling, fresh browser per run, automation flag enabled; no application interception or score changes. HTTP measurements are separate.",
+  "runs": [
+    {
+      "path": "/",
+      "sample": 1,
+      "fetchTime": "2026-10-21T16:54:45.481Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1093.3220000000001,
+        "largest-contentful-paint": 2564.322,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1093.3220000000001,
+        "server-response-time": 10
+      }
+    },
+    {
+      "path": "/settings",
+      "sample": 1,
+      "fetchTime": "2026-10-21T16:54:56.266Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1106.9045,
+        "largest-contentful-paint": 2570.9045,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1151.2089239532231,
+        "server-response-time": 12
+      }
+    },
+    {
+      "path": "/find-match",
+      "sample": 1,
+      "fetchTime": "2026-10-21T16:55:06.911Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1100.6495,
+        "largest-contentful-paint": 2575.6495,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1100.6495,
+        "server-response-time": 12
+      }
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 1,
+      "fetchTime": "2026-10-21T16:55:17.584Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1101.876,
+        "largest-contentful-paint": 2567.876,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1101.876,
+        "server-response-time": 9
+      }
+    },
+    {
+      "path": "/solo",
+      "sample": 1,
+      "fetchTime": "2026-10-21T16:55:28.303Z",
+      "score": 90,
+      "metrics": {
+        "first-contentful-paint": 1099.269,
+        "largest-contentful-paint": 3600.2880000000005,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1126.3737899988648,
+        "server-response-time": 11
+      }
+    }
+  ],
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "lighthouseVersion": "13.5.0"
+}

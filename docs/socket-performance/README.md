@@ -56,3 +56,21 @@ pnpm --filter socket exec tsx scripts/benchmark-latency.ts production ../../docs
 ```
 
 Use a new output path. The remote benchmark reserves the artifact before connecting and refuses to overwrite earlier evidence. It accepts only the fixed staging/production endpoints from the deployment guide. Remote runs require authorization for the chosen target. Repeat after the parent task has deployed and verified the intended build; retain baseline and post-deployment records separately.
+
+## Production after deployment
+
+Staging and production now run socket source `f1d619476dc2e7974f7d52af2800984f4a67c1f1`, image digest `sha256:9bcc3546d5c7fec6f14b3b5a5b410291b6c96271d3958e86c4fbf9a3f8f55def`. The safe deployment helper drained admission, preserved each existing machine and volume, and verified the running image plus resumed admission. Its startup verification now waits for the replacement to start, with a bounded timeout; an uncertain result does not prematurely resume a drain. Both apps reported no pending saves or storage error afterward.
+
+Three production repeats preserve every sample in [production-after.json](production-after.json). The same bounded private-guest protocol produced:
+
+| Observation | Total samples | p50 / p95 ms |
+|---|---:|---:|
+| Socket connection | 21 | 166.31 / 178.88 |
+| Input → own state | 108 | 39.84 / 51.85 |
+| Input → opponent state | 108 | 40.19 / 50.71 |
+| Solo input → acknowledgement | 36 | 40.15 / 48.08 |
+| Surrender → result | 9 | 41.19 / 47.36 |
+
+The network observations are slightly slower and more variable than the earlier ~38 ms baseline. They do **not** establish a network latency improvement; time-of-run routing/scheduling and the small sample limit attribution. The separately paired CPU measurement above is the evidence for the broadcast optimization. No samples were discarded.
+
+The deployed staging ranked smoke test also passed: actual matching, movement, reconnect, surrender, persisted history, 1184/1216 ratings, allowed/rejected Origin handling and ordinary-user denial on administrator endpoints. It cleaned up only its verified temporary test records. Production benchmarks used private guest games, not the ranked queue.
