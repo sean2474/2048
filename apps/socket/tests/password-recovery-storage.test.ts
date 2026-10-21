@@ -4,15 +4,29 @@ import { createRecoveryStorage } from "../../web/src/lib/supabase/password-recov
 
 function disk() {
   const values = new Map<string, string>();
-  return { values, getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => { values.set(key, value); }, removeItem: (key: string) => { values.delete(key); } };
+  return {
+    values,
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      values.set(key, value);
+    },
+    removeItem: (key: string) => {
+      values.delete(key);
+    },
+  };
 }
 
 test("recovery storage persists only the PKCE verifier across tabs", () => {
-  const persistent = disk(), firstTab = createRecoveryStorage(persistent), secondTab = createRecoveryStorage(persistent);
+  const persistent = disk(),
+    firstTab = createRecoveryStorage(persistent),
+    secondTab = createRecoveryStorage(persistent);
   firstTab.setItem("duo-password-recovery-code-verifier", "verifier/PASSWORD_RECOVERY");
   firstTab.setItem("duo-password-recovery", '{"access_token":"recovery-token"}');
   firstTab.setItem("duo-password-recovery-user", '{"id":"recovered-user"}');
-  assert.equal(secondTab.getItem("duo-password-recovery-code-verifier"), "verifier/PASSWORD_RECOVERY");
+  assert.equal(
+    secondTab.getItem("duo-password-recovery-code-verifier"),
+    "verifier/PASSWORD_RECOVERY",
+  );
   assert.equal(firstTab.getItem("duo-password-recovery"), '{"access_token":"recovery-token"}');
   assert.equal(secondTab.getItem("duo-password-recovery"), null);
   assert.equal(secondTab.getItem("duo-password-recovery-user"), null);
@@ -34,17 +48,32 @@ test("recovery cleanup never touches a main account's persisted session", () => 
 });
 
 test("blocked browser storage fails explicitly before a recovery link can be requested", () => {
-  const blocked = { getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); }, removeItem() { throw new Error("blocked"); } };
+  const blocked = {
+    getItem() {
+      throw new Error("blocked");
+    },
+    setItem() {
+      throw new Error("blocked");
+    },
+    removeItem() {
+      throw new Error("blocked");
+    },
+  };
   const recovery = createRecoveryStorage(blocked);
   recovery.setItem("duo-password-recovery", "memory-only");
   assert.equal(recovery.getItem("duo-password-recovery"), "memory-only");
-  assert.throws(() => recovery.setItem("duo-password-recovery-code-verifier", "verifier"), /blocked/);
+  assert.throws(
+    () => recovery.setItem("duo-password-recovery-code-verifier", "verifier"),
+    /blocked/,
+  );
   assert.throws(() => recovery.getItem("duo-password-recovery-code-verifier"), /blocked/);
   assert.doesNotThrow(() => recovery.removeItem("duo-password-recovery-code-verifier"));
 });
 
 test("an older flow cannot consume or clean up a newer flow's verifier", () => {
-  const persistent = disk(), older = createRecoveryStorage(persistent), newer = createRecoveryStorage(persistent);
+  const persistent = disk(),
+    older = createRecoveryStorage(persistent),
+    newer = createRecoveryStorage(persistent);
   const key = "duo-password-recovery-code-verifier";
   older.setItem(key, "older/PASSWORD_RECOVERY");
   assert.equal(older.getItem(key), "older/PASSWORD_RECOVERY");

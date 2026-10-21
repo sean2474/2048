@@ -18,5 +18,10 @@ export function GameAnalytics() {
     return () => document.removeEventListener("click", onClick);
   }, [enabled]);
   if (!enabled) return null;
-  return <><Analytics beforeSend={sanitizeAnalyticsEvent} debug={false} /><SpeedInsights beforeSend={sanitizeAnalyticsEvent} debug={false} /></>;
+  return (
+    <>
+      <Analytics beforeSend={sanitizeAnalyticsEvent} debug={false} />
+      <SpeedInsights beforeSend={sanitizeAnalyticsEvent} debug={false} />
+    </>
+  );
 }

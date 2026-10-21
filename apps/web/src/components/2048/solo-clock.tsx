@@ -10,5 +10,7 @@ export function SoloClock({ state, receivedAt }: { state: SoloState | null; rece
     const timer = window.setInterval(() => setNow(performance.now()), 50);
     return () => window.clearInterval(timer);
   }, [state?.status, receivedAt]);
-  return formatSoloTime((state?.elapsedMs ?? 0) + (state?.status === "playing" ? Math.max(0, now - receivedAt) : 0));
+  return formatSoloTime(
+    (state?.elapsedMs ?? 0) + (state?.status === "playing" ? Math.max(0, now - receivedAt) : 0),
+  );
 }

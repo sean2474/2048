@@ -1,2 +1,4 @@
-import { MatchLobby } from "@/components/widget/match-lobby";
-export default function RankedPage() { return <MatchLobby mode="ranked" />; }
+import { MatchmakingPage } from "@/components/widget/matchmaking-page";
+export default function RankedPage() {
+  return <MatchmakingPage mode="ranked" />;
+}

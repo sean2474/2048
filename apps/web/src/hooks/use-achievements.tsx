@@ -1,74 +1,140 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { usePathname } from "next/navigation";
-import type { AchievementState } from "schema/achievements";
-import { createClient } from "@/lib/supabase/client";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { syncAchievementsAction } from "@/actions/achievements";
+import type { AchievementSnapshot, AchievementSyncResult } from "@/lib/achievement-operations";
 import { usePlayer } from "./use-player";
 import { trackGameEvent } from "@/lib/analytics";
 
 const Context = createContext<ReturnType<typeof useAchievementState> | null>(null);
 
-function useAchievementState() {
+function useAchievementState(initialAchievements?: AchievementSnapshot) {
   const { user } = usePlayer();
   const pathname = usePathname();
+  const router = useRouter();
   const userId = user && !user.is_anonymous ? user.id : undefined;
-  const [result, setResult] = useState<{ userId: string; data: AchievementState } | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [checkInError, setCheckInError] = useState(false);
-  const [checkingIn, setCheckingIn] = useState(false);
-  const [newRewards, setNewRewards] = useState<string[]>([]);
+  const [result, setResult] = useState<AchievementSnapshot>(
+    initialAchievements ?? { error: false },
+  );
+  const [activity, setActivity] = useState<{
+    userId?: string;
+    loading: boolean;
+    checkInError: boolean;
+    newRewards: string[];
+  }>({ loading: false, checkInError: false, newRewards: [] });
   const version = useRef(0);
-  const pending = useRef(false);
-  const data = result?.userId === userId ? result?.data : undefined;
+  const pending = useRef<{ userId: string; promise: Promise<AchievementSyncResult> } | null>(null);
+  const latest = useRef(initialAchievements);
+  const data = result.userId === userId ? result.data : undefined;
+  const error = result.userId === userId && result.error;
+  const ownActivity = activity.userId === userId ? activity : undefined;
+
+  useEffect(() => {
+    if (initialAchievements?.userId !== userId) return;
+    latest.current = initialAchievements;
+    setResult(initialAchievements ?? { error: false });
+  }, [initialAchievements, userId]);
 
   const reload = useCallback(async () => {
-    if (!userId || pending.current) return;
-    pending.current = true;
+    if (!userId) return;
     const request = ++version.current;
-    setLoading(true); setError(false); setCheckInError(false);
+    setActivity((previous) => ({
+      userId,
+      loading: true,
+      checkInError: false,
+      newRewards: previous.userId === userId ? previous.newRewards : [],
+    }));
+    // Strict-mode effect replay and simultaneous focus/online events share one action.
+    const promise =
+      pending.current?.userId === userId ? pending.current.promise : syncAchievementsAction();
+    pending.current = { userId, promise };
     try {
-      const client = createClient();
-      const response = await client.rpc("sync_achievements");
+      const next = await promise;
       if (request !== version.current) return;
-      if (response.error || !response.data?.attendance || !Array.isArray(response.data.unlocks)) throw Error("Achievements unavailable");
-      const previous = response.data as AchievementState;
-      setResult({ userId, data: previous });
-      if (!previous.attendance.checkedInToday) {
-        setCheckingIn(true);
-        const checked = await client.rpc("check_in");
-        if (request !== version.current) return;
-        if (checked.error || !checked.data?.attendance || !Array.isArray(checked.data.unlocks)) { setCheckInError(true); return; }
-        const next = checked.data as AchievementState;
-        setResult({ userId, data: next });
-        const unlocked = next.unlocks.filter(item => !previous.unlocks.some(old => old.achievementId === item.achievementId));
-        setNewRewards(unlocked.map(item => item.achievementId));
-        trackGameEvent("attendance_checked_in", { unlocked: unlocked.length });
+      if (next.userId !== userId) {
+        setResult({ userId, error: true });
+        router.refresh();
+        return;
       }
-    } catch { if (request === version.current) setError(true); }
-    finally { if (request === version.current) { pending.current = false; setCheckingIn(false); setLoading(false); } }
-  }, [userId]);
+      const previous = latest.current;
+      latest.current = next;
+      setResult(next);
+      setActivity({
+        userId,
+        loading: false,
+        checkInError: next.checkInError,
+        newRewards: next.newRewards,
+      });
+      if (next.checkedIn)
+        trackGameEvent("attendance_checked_in", { unlocked: next.newRewards.length });
+      if (
+        next.changed ||
+        (next.data &&
+          previous?.userId === userId &&
+          (previous.error || JSON.stringify(previous.data) !== JSON.stringify(next.data)))
+      )
+        router.refresh();
+    } catch {
+      if (request === version.current) setResult({ userId, error: true });
+    } finally {
+      if (pending.current?.promise === promise) pending.current = null;
+      if (request === version.current) setActivity((previous) => ({ ...previous, loading: false }));
+    }
+  }, [userId, router]);
 
   useEffect(() => {
     const generation = version;
-    setResult(null); setError(false); setCheckInError(false); setCheckingIn(false); setLoading(false); setNewRewards([]); pending.current = false;
     void reload();
-    const refresh = () => { if (document.visibilityState === "visible") void reload(); };
+    const refresh = () => {
+      if (document.visibilityState === "visible") void reload();
+    };
     window.addEventListener("focus", refresh);
     window.addEventListener("online", refresh);
     document.addEventListener("visibilitychange", refresh);
     const interval = window.setInterval(refresh, 60_000);
-    return () => { generation.current++; window.clearInterval(interval); window.removeEventListener("focus", refresh); window.removeEventListener("online", refresh); document.removeEventListener("visibilitychange", refresh); };
+    return () => {
+      generation.current++;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("online", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
   }, [reload]);
 
-  useEffect(() => { if (pathname === "/achievements") void reload(); }, [pathname, reload]);
+  const previousPath = useRef(pathname);
+  useEffect(() => {
+    if (previousPath.current !== pathname && pathname === "/achievements") void reload();
+    previousPath.current = pathname;
+  }, [pathname, reload]);
 
-  return { data, loading: user === undefined || Boolean(userId && !data && !error) || loading, error, checkingIn, checkInError, reload, newRewards: data ? newRewards : [] };
+  return {
+    data,
+    loading: Boolean(userId && !data && !error) || Boolean(ownActivity?.loading),
+    error,
+    checkingIn: Boolean(ownActivity?.loading && !data?.attendance.checkedInToday),
+    checkInError: ownActivity?.checkInError ?? false,
+    reload,
+    newRewards: data ? (ownActivity?.newRewards ?? []) : [],
+  };
 }
 
-export function AchievementsProvider({ children }: { children: ReactNode }) {
-  const value = useAchievementState();
+export function AchievementsProvider({
+  children,
+  initialAchievements,
+}: {
+  children: ReactNode;
+  initialAchievements?: AchievementSnapshot;
+}) {
+  const value = useAchievementState(initialAchievements);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 export function useAchievements() {

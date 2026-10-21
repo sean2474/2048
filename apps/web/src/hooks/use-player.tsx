@@ -7,9 +7,17 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 type Account = { user: User | null; player: Player | null };
-const PlayerContext = createContext<Account | null>(null);
+const PlayerContext = createContext<(Account & { walletBalance: number | null }) | null>(null);
 
-export function PlayerProvider({ children, initialAccount }: { children: ReactNode; initialAccount: Account }) {
+export function PlayerProvider({
+  children,
+  initialAccount,
+  initialWalletBalance,
+}: {
+  children: ReactNode;
+  initialAccount: Account;
+  initialWalletBalance: number | null;
+}) {
   const [account, setAccount] = useState(initialAccount);
   const current = useRef(initialAccount);
   const router = useRouter();
@@ -21,20 +29,33 @@ export function PlayerProvider({ children, initialAccount }: { children: ReactNo
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
     const client = createClient();
-    let active = true, version = 0;
+    let active = true,
+      version = 0;
     let refresh: ReturnType<typeof setTimeout>;
-    const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = client.auth.onAuthStateChange((event, session) => {
       const user = session?.user ?? null;
       const sameUser = user?.id === current.current.user?.id;
       const request = ++version;
       current.current = { user, player: sameUser ? current.current.player : null };
       setAccount(current.current);
       // Auth forms navigate after their promise resolves; don't interrupt that navigation.
-      if (!sameUser && !["/login", "/signup", "/reset-password"].includes(window.location.pathname)) {
+      if (
+        !sameUser &&
+        !["/login", "/signup", "/reset-password"].includes(window.location.pathname)
+      ) {
         clearTimeout(refresh);
-        refresh = setTimeout(() => { if (active) router.refresh(); }, 0);
+        refresh = setTimeout(() => {
+          if (active) router.refresh();
+        }, 0);
       }
-      if (!user || user.is_anonymous || (sameUser && current.current.player && event !== "USER_UPDATED")) return;
+      if (
+        !user ||
+        user.is_anonymous ||
+        (sameUser && current.current.player && event !== "USER_UPDATED")
+      )
+        return;
       // Leave the auth lock before querying; ignore results from a previous account.
       queueMicrotask(async () => {
         if (!active || request !== version) return;
@@ -48,9 +69,20 @@ export function PlayerProvider({ children, initialAccount }: { children: ReactNo
         }
       });
     });
-    return () => { active = false; clearTimeout(refresh); subscription.unsubscribe(); };
+    return () => {
+      active = false;
+      clearTimeout(refresh);
+      subscription.unsubscribe();
+    };
   }, [router]);
-  return <PlayerContext.Provider value={account}>{children}</PlayerContext.Provider>;
+  // This snapshot follows the persistent root layout, just like the server header.
+  // A freshly fetched page can have a newer wallet than the header on soft navigation.
+  const walletBalance = account.user?.id === initialAccount.user?.id ? initialWalletBalance : null;
+  return (
+    <PlayerContext.Provider value={{ ...account, walletBalance }}>
+      {children}
+    </PlayerContext.Provider>
+  );
 }
 
 export function usePlayer() {

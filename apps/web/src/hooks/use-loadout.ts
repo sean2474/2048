@@ -16,6 +16,8 @@ export function useLoadout() {
     selectSkin: (skinId: SkinId) => saveSettings({ skinId }),
     selectAbility: (abilityId: AbilityId | null) => saveSettings({ abilityId }),
     storageError: error,
-    ready, saving, scope,
+    ready,
+    saving,
+    scope,
   };
 }

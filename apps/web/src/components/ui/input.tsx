@@ -13,7 +13,9 @@ export const Input = ({ label, className, children, ...props }: InputProps) => {
   const { t } = useI18n();
   return (
     <div className={`relative grid gap-2 ${className || ""}`}>
-      <label htmlFor={props.id ?? props.name} className="text-sm font-semibold">{t(label)}</label>
+      <label htmlFor={props.id ?? props.name} className="text-sm font-semibold">
+        {t(label)}
+      </label>
       <input
         {...props}
         id={props.id ?? props.name}
@@ -22,4 +24,4 @@ export const Input = ({ label, className, children, ...props }: InputProps) => {
       {children}
     </div>
   );
-}
+};

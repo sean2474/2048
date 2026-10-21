@@ -10,15 +10,21 @@
     "dev:socket": "pnpm --filter socket dev",
     "dev": "concurrently -k -n WEB,SOCKET,ADMIN -c green,cyan,magenta \"pnpm dev:web\" \"pnpm --filter socket start\" \"pnpm dev:admin\"",
     "build": "pnpm -r build",
-    "test": "pnpm --filter socket test && pnpm --filter socket exec tsx --test ../../packages/ui/src/locale.test.ts ../web/tests/analytics.test.ts && node --test scripts/*.test.mjs apps/web/tests/server-pages.test.mjs",
+    "test": "pnpm --filter socket test && pnpm --filter socket exec tsx --test ../../packages/ui/src/locale.test.ts ../web/tests/analytics.test.ts && node --test scripts/*.test.mjs && pnpm test:server",
     "test:remote": "pnpm --filter socket test:remote",
     "typecheck": "tsc --noEmit --incremental false -p apps/web/tsconfig.json && tsc --noEmit -p apps/socket/tsconfig.json && pnpm --filter 2048-admin typecheck",
     "lint": "pnpm --filter 2048-duo lint && pnpm --filter 2048-admin lint",
-    "dev:admin": "pnpm --filter 2048-admin dev"
+    "dev:admin": "pnpm --filter 2048-admin dev",
+    "test:server": "pnpm --filter socket exec tsx --test ../web/tests/collection.test.ts ../web/tests/achievement-operations.test.ts && node --test apps/web/tests/server-pages.test.mjs apps/web/tests/server-boundaries.test.mjs apps/web/tests/public-catalog-cache.test.mjs apps/web/tests/collection-pages.test.mjs apps/web/tests/achievement-server.test.mjs apps/web/tests/game-server-pages.test.mjs apps/admin/tests/server-pages.test.mjs",
+    "test:boundaries:browser": "node --test --test-concurrency=2 apps/web/tests/server-actions.browser.mjs apps/web/tests/collection-actions.browser.mjs apps/web/tests/achievement-actions.browser.mjs apps/web/tests/game-boundaries.browser.mjs apps/web/tests/page-islands.browser.mjs",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,js,mjs,css,json}\" \"packages/**/*.{ts,tsx,js,mjs,css,json}\" \"scripts/**/*.mjs\" \"*.json\"",
+    "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,css,json}\" \"packages/**/*.{ts,tsx,js,mjs,css,json}\" \"scripts/**/*.mjs\" \"*.json\"",
+    "test:performance:browser": "node --test --test-concurrency=2 apps/web/tests/navigation-performance.browser.mjs apps/web/tests/daily-quest-refresh.browser.mjs apps/web/tests/initial-loading.browser.mjs apps/web/tests/route-loading.browser.mjs apps/web/tests/collection-loading.browser.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.6.2",
     "concurrently": "^9.0.0",
+    "prettier": "3.9.10",
     "typescript": "^5.5.0"
   },
   "packageManager": "pnpm@11.1.3",

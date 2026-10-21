@@ -8,7 +8,9 @@ import { isSupabaseConfigured } from "./config";
 export const getUser = cache(async () => {
   if (!isSupabaseConfigured()) return null;
   const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
+  const {
+    data: { user },
+  } = await client.auth.getUser();
   return user;
 });
 

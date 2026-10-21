@@ -1,62 +1,84 @@
 export const tutorialMessages: Record<string, string> = {
   "Attack sent automatically": "자동으로 공격을 보냈어요",
-  "Your merge sent an attack. It lands when the practice opponent makes its next valid move.": "병합으로 공격이 자동 발사됐어요. 연습 상대가 다음 유효한 이동을 할 때 도착합니다.",
-  "Merge the two 128 tiles into 256 to send an X block automatically.": "128 타일 두 개를 합쳐 256을 만들어 보세요. X 블록이 자동으로 발사됩니다.",
-  "Merge two 256 tiles into 512 to send a hard block automatically.": "256 타일 두 개를 합쳐 512를 만들어 보세요. 하드블록이 자동으로 발사됩니다.",
-  "Your default ability is ready. Use the ability button below your board to remove the oldest X without moving your tiles.": "기본 능력이 준비됐어요. 내 보드 아래 능력 버튼을 누르면 타일을 움직이지 않고 가장 오래된 X 하나를 없앱니다.",
-  "Normal attacks are automatic. Only your special ability needs a button or key.": "일반 공격은 자동으로 발사돼요. 특수 능력만 버튼이나 키를 눌러 사용하세요.",
+  "Your merge sent an attack. It lands when the practice opponent makes its next valid move.":
+    "병합으로 공격이 자동 발사됐어요. 연습 상대가 다음 유효한 이동을 할 때 도착합니다.",
+  "Merge the two 128 tiles into 256 to send an X block automatically.":
+    "128 타일 두 개를 합쳐 256을 만들어 보세요. X 블록이 자동으로 발사됩니다.",
+  "Merge two 256 tiles into 512 to send a hard block automatically.":
+    "256 타일 두 개를 합쳐 512를 만들어 보세요. 하드블록이 자동으로 발사됩니다.",
+  "Your default ability is ready. Use the ability button below your board to remove the oldest X without moving your tiles.":
+    "기본 능력이 준비됐어요. 내 보드 아래 능력 버튼을 누르면 타일을 움직이지 않고 가장 오래된 X 하나를 없앱니다.",
+  "Normal attacks are automatic. Only your special ability needs a button or key.":
+    "일반 공격은 자동으로 발사돼요. 특수 능력만 버튼이나 키를 눌러 사용하세요.",
   "Merge 256 or 512 to attack automatically.": "256이나 512를 만들면 자동으로 공격합니다.",
   "Press {key} to use your ability.": "{key} 키를 눌러 특수 능력을 사용하세요.",
-  "In a match, merge points charge your ability. At 1024 points, one use is ready.": "실전에서는 병합 점수 1024마다 능력을 1회 충전해요. 최대 1회분을 보관하고 원하는 때 사용하세요.",
+  "In a match, merge points charge your ability. At 1024 points, one use is ready.":
+    "실전에서는 병합 점수 1024마다 능력을 1회 충전해요. 최대 1회분을 보관하고 원하는 때 사용하세요.",
   "Try the default ability": "기본 능력 써보기",
   "Try your default ability: Clear X": "기본 능력, X 제거를 써보세요",
   "One X cleared. One space recovered.": "X 하나를 없애고 빈칸을 만들었어요!",
-  "Exactly one X disappeared. The other X, the hard block and your number tiles stayed in place.": "X 블록이 정확히 1개 사라졌어요. 나머지 X와 하드블록, 숫자 타일은 그대로 남아 있어요.",
-  "Use arrow keys, swipe your board or use the direction buttons below.": "방향키, 보드 스와이프 또는 아래 방향 버튼으로 움직이세요.",
+  "Exactly one X disappeared. The other X, the hard block and your number tiles stayed in place.":
+    "X 블록이 정확히 1개 사라졌어요. 나머지 X와 하드블록, 숫자 타일은 그대로 남아 있어요.",
+  "Use arrow keys, swipe your board or use the direction buttons below.":
+    "방향키, 보드 스와이프 또는 아래 방향 버튼으로 움직이세요.",
   "X block": "X 블록",
   "Hard block": "하드블록",
   "Incoming blocks": "공격 받기",
   "Try receiving an attack": "상대 공격도 받아보기",
   "Your opponent sent two obstacles": "상대가 방해블록을 보냈어요",
   "Your opponent’s blocks have arrived": "상대가 보낸 방해블록이 도착했어요",
-  "One X and one hard block are on their way. Move left to let them arrive in your empty cells.": "X 블록과 하드블록이 하나씩 오고 있어요. 왼쪽으로 움직이면 내 보드의 빈칸에 도착합니다.",
-  "Move down and watch: the red X slides with your tiles, while the black hard block stays put.": "아래로 움직여 보세요. 빨간 X는 숫자 타일처럼 밀리고, 검정 하드블록은 제자리에 남아요.",
+  "One X and one hard block are on their way. Move left to let them arrive in your empty cells.":
+    "X 블록과 하드블록이 하나씩 오고 있어요. 왼쪽으로 움직이면 내 보드의 빈칸에 도착합니다.",
+  "Move down and watch: the red X slides with your tiles, while the black hard block stays put.":
+    "아래로 움직여 보세요. 빨간 X는 숫자 타일처럼 밀리고, 검정 하드블록은 제자리에 남아요.",
   "X moves. Hard blocks stay put.": "X는 움직이고, 하드블록은 그대로!",
-  "The red X moved with your tiles. The black hard block stayed in place. Neither block can merge.": "빨간 X는 타일과 함께 이동했지만 검정 하드블록은 원래 자리에 남았어요. 두 블록 모두 다른 타일과 합칠 수 없습니다.",
+  "The red X moved with your tiles. The black hard block stayed in place. Neither block can merge.":
+    "빨간 X는 타일과 함께 이동했지만 검정 하드블록은 원래 자리에 남았어요. 두 블록 모두 다른 타일과 합칠 수 없습니다.",
   "Your X block landed": "X 블록이 도착했어요",
   "A fixed obstacle on their board": "상대의 길을 막았어요",
   "256 + 256 = a hard block": "256 + 256, 하드블록 준비",
-  "Hard blocks cannot move or merge. They split the opponent’s rows and columns.": "검정 하드블록은 움직이지도, 합쳐지지도 않아요. 상대의 이동 경로를 가로막습니다.",
+  "Hard blocks cannot move or merge. They split the opponent’s rows and columns.":
+    "검정 하드블록은 움직이지도, 합쳐지지도 않아요. 상대의 이동 경로를 가로막습니다.",
   "Try a hard block": "하드블록도 배워보기",
   "Queued for the opponent: {count} / 6": "상대에게 도착 예정: {count} / 6개",
   "What if the opponent’s board is full?": "상대 보드가 꽉 차 있으면?",
-  "Controls": "기본 조작",
-  "You": "나",
+  Controls: "기본 조작",
+  You: "나",
   "Learn on the battlefield": "게임 화면에서 배워보기",
   "Exit tutorial": "나가기",
   "Start with a move": "먼저, 타일을 움직여 보세요",
   "You’ve got the basics": "기본 조작은 익혔어요!",
-  "You made a 4. Let’s skip ahead to 128 + 128 and try an attack.": "4를 만들었어요. 이제 128 타일 두 개가 있는 상황으로 건너뛰고 공격을 배워볼게요.",
-  "Arrow keys or {keys} · Swipe your board or use the direction buttons below.": "방향키 또는 {keys} · 보드를 스와이프하거나 아래 방향 버튼을 눌러도 돼요.",
+  "You made a 4. Let’s skip ahead to 128 + 128 and try an attack.":
+    "4를 만들었어요. 이제 128 타일 두 개가 있는 상황으로 건너뛰고 공격을 배워볼게요.",
+  "Arrow keys or {keys} · Swipe your board or use the direction buttons below.":
+    "방향키 또는 {keys} · 보드를 스와이프하거나 아래 방향 버튼을 눌러도 돼요.",
   "Skip ahead to 128 + 128": "128 두 개로 건너뛰기",
   "128 + 128 = your first attack": "128 + 128, 첫 공격 준비",
-  "The practice opponent moves automatically so you can see your attack land.": "공격은 상대의 다음 이동에 도착해요. 연습 상대가 자동으로 움직이니 상대 보드를 확인해 보세요.",
+  "The practice opponent moves automatically so you can see your attack land.":
+    "공격은 상대의 다음 이동에 도착해요. 연습 상대가 자동으로 움직이니 상대 보드를 확인해 보세요.",
   "Ready for a real match": "이제 실전 준비 완료!",
-  "Merge": "합치기",
-  "Charge": "충전",
-  "Attack": "공격",
+  Merge: "합치기",
+  Charge: "충전",
+  Attack: "공격",
   "Merge two matching tiles": "같은 숫자의 타일을 합쳐 보세요",
-  "Move left or right to merge the two 2 tiles into a 4.": "왼쪽이나 오른쪽으로 움직여 2 타일 두 개를 4로 합쳐 보세요.",
-  "Every valid move adds a new 2 or 4. Matching tiles merge once per move.": "유효한 이동마다 새 2 또는 4 타일이 나타납니다. 같은 숫자의 타일은 한 번의 이동에 한 번만 합쳐집니다.",
-  "You made a 4. That is the core of every move.": "4를 만들었어요! 같은 숫자를 합치는 것이 기본입니다.",
-  "Attack delivered. The X block slides, but it cannot merge.": "공격이 도착했어요! X 블록은 움직일 수 있지만 합칠 수 없습니다.",
-  "Nothing moved. Try left or right, or restart this step.": "움직일 수 없는 방향이에요. 왼쪽·오른쪽으로 움직이거나 이 단계를 다시 시작해 보세요.",
-  "Good move. Now bring the matching tiles together.": "잘 움직였어요. 이제 같은 숫자의 타일을 합쳐 보세요.",
+  "Move left or right to merge the two 2 tiles into a 4.":
+    "왼쪽이나 오른쪽으로 움직여 2 타일 두 개를 4로 합쳐 보세요.",
+  "Every valid move adds a new 2 or 4. Matching tiles merge once per move.":
+    "유효한 이동마다 새 2 또는 4 타일이 나타납니다. 같은 숫자의 타일은 한 번의 이동에 한 번만 합쳐집니다.",
+  "You made a 4. That is the core of every move.":
+    "4를 만들었어요! 같은 숫자를 합치는 것이 기본입니다.",
+  "Attack delivered. The X block slides, but it cannot merge.":
+    "공격이 도착했어요! X 블록은 움직일 수 있지만 합칠 수 없습니다.",
+  "Nothing moved. Try left or right, or restart this step.":
+    "움직일 수 없는 방향이에요. 왼쪽·오른쪽으로 움직이거나 이 단계를 다시 시작해 보세요.",
+  "Good move. Now bring the matching tiles together.":
+    "잘 움직였어요. 이제 같은 숫자의 타일을 합쳐 보세요.",
   "Back to home": "홈으로",
   "Skip to matchmaking": "건너뛰고 대전 찾기",
   "Learn by playing": "직접 해보며 배우기",
   "Your first three moves": "세 단계로 시작하기",
-  "A short practice session. No account or opponent needed.": "로그인이나 실제 상대 없이 간단히 연습해 보세요.",
+  "A short practice session. No account or opponent needed.":
+    "로그인이나 실제 상대 없이 간단히 연습해 보세요.",
   "Step {current} of {total}": "{total}단계 중 {current}단계",
   "Tutorial progress": "튜토리얼 진행 상태",
   "Tutorial controls": "튜토리얼 조작 영역",
@@ -67,19 +89,23 @@ export const tutorialMessages: Record<string, string> = {
   "Local practice": "연습 모드",
   "Tutorial opponent board": "튜토리얼 상대 보드",
   "Tutorial practice board": "튜토리얼 연습 보드",
-  "Use the arrow keys or {keys}. You can also swipe or tap a direction.": "방향키 또는 {keys} 키를 사용하세요. 보드를 스와이프하거나 방향 버튼을 눌러도 됩니다.",
+  "Use the arrow keys or {keys}. You can also swipe or tap a direction.":
+    "방향키 또는 {keys} 키를 사용하세요. 보드를 스와이프하거나 방향 버튼을 눌러도 됩니다.",
   "Movement controls": "이동 조작",
   "Move up": "위로 이동",
   "Move left": "왼쪽으로 이동",
   "Move down": "아래로 이동",
   "Move right": "오른쪽으로 이동",
-  "The practice opponent moved. Your X block landed in an empty cell.": "연습 상대가 한 번 이동했고, 빈칸에 X 블록이 도착했습니다.",
+  "The practice opponent moved. Your X block landed in an empty cell.":
+    "연습 상대가 한 번 이동했고, 빈칸에 X 블록이 도착했습니다.",
   "Try it yourself": "직접 해보세요",
-  "Follow the instruction above. You can restart this step at any time.": "위 안내대로 조작해 보세요. 언제든 이 단계를 다시 시작할 수 있습니다.",
+  "Follow the instruction above. You can restart this step at any time.":
+    "위 안내대로 조작해 보세요. 언제든 이 단계를 다시 시작할 수 있습니다.",
   "Attack sent": "공격 발사 완료",
   "Send X attack": "X 공격 보내기",
   "Find a match": "대전 찾기",
   "Next step": "다음 단계",
   "Restart this step": "이 단계 다시 시작",
-  "Browser storage is unavailable. Default keys are active.": "브라우저 저장소를 사용할 수 없어 기본 키를 사용합니다.",
+  "Browser storage is unavailable. Default keys are active.":
+    "브라우저 저장소를 사용할 수 없어 기본 키를 사용합니다.",
 };

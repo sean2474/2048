@@ -1,11 +1,13 @@
 export const achievementMessages: Record<string, string> = {
   "Currently unavailable": "현재 획득 불가",
-  "Price changed. Review the updated price before buying.": "가격이 변경됐어요. 새 가격을 확인하고 다시 구매해 주세요.",
+  "Price changed. Review the updated price before buying.":
+    "가격이 변경됐어요. 새 가격을 확인하고 다시 구매해 주세요.",
   "Best time: {time}": "최고 기록: {time}",
   "No solo finish yet": "아직 완주 기록이 없어요",
   "Target time: {time}": "목표 기록: {time}",
   "{days}-day reward": "{days}일 보상",
-  "Could not load the collection. Your purchases are safe.": "컬렉션을 불러오지 못했어요. 구매 기록은 그대로 유지돼요.",
+  "Could not load the collection. Your purchases are safe.":
+    "컬렉션을 불러오지 못했어요. 구매 기록은 그대로 유지돼요.",
   "Reload collection": "컬렉션 다시 불러오기",
   "Loading collection…": "컬렉션 불러오는 중…",
   "Solo breakthrough": "혼자 이룬 2048",
@@ -18,10 +20,12 @@ export const achievementMessages: Record<string, string> = {
   "Silver Current": "은빛 물결",
   "Golden Flash": "황금 섬광",
   "Copper stripes celebrating your first solo 2048.": "첫 싱글 2048 달성을 기념하는 구리빛 줄무늬.",
-  "Cool silver and blue for a ten-minute finish.": "10분 이내 달성을 기념하는 시원한 은빛과 푸른 타일.",
+  "Cool silver and blue for a ten-minute finish.":
+    "10분 이내 달성을 기념하는 시원한 은빛과 푸른 타일.",
   "Golden rays earned by reaching 2048 in six minutes.": "6분 이내 2048 달성으로 얻는 황금빛 햇살.",
   "Start time attack": "타임어택 시작",
-  "Solo rewards use your time attack and endless records. Match rewards require casual or ranked against another account.": "싱글 업적은 타임어택과 무한모드 기록으로 해금돼요. 대전 업적은 다른 계정과의 일반전·랭크전이 필요해요.",
+  "Solo rewards use your time attack and endless records. Match rewards require casual or ranked against another account.":
+    "싱글 업적은 타임어택과 무한모드 기록으로 해금돼요. 대전 업적은 다른 계정과의 일반전·랭크전이 필요해요.",
   "Signature tiles and merge effects.": "전용 타일과 합성 이펙트.",
   "Bronze collector": "브론즈 컬렉터",
   "Reach Bronze in ranked play.": "경쟁전에서 브론즈 이상 달성 · 배치 완료 후",
@@ -42,12 +46,17 @@ export const achievementMessages: Record<string, string> = {
   "Platinum Compass": "플래티넘의 나침반",
   "Diamond Prism": "다이아몬드 프리즘",
   "Master Crown": "마스터의 왕관",
-  "Copper shields and etched metal for Bronze rank.": "구리 방패와 금속 각인으로 완성한 브론즈 보드.",
-  "Crossed silver blades and engraved steel for Silver rank.": "교차한 은빛 검과 강철 각인으로 완성한 실버 보드.",
+  "Copper shields and etched metal for Bronze rank.":
+    "구리 방패와 금속 각인으로 완성한 브론즈 보드.",
+  "Crossed silver blades and engraved steel for Silver rank.":
+    "교차한 은빛 검과 강철 각인으로 완성한 실버 보드.",
   "Sunlit gold and laurel borders for Gold rank.": "황금빛 태양과 월계수 테두리의 골드 보드.",
-  "Teal wings and compass markings for Platinum rank.": "청록색 날개와 나침반 문양의 플래티넘 보드.",
-  "Faceted crystal tiles with a prismatic merge burst for Diamond rank.": "다면체 보석 타일과 프리즘 합성 이펙트의 다이아몬드 보드.",
-  "Violet and gold crown tiles with a regal merge crest for Master rank.": "보랏빛 황금 왕관 타일과 왕실 문장 합성 이펙트의 마스터 보드.",
+  "Teal wings and compass markings for Platinum rank.":
+    "청록색 날개와 나침반 문양의 플래티넘 보드.",
+  "Faceted crystal tiles with a prismatic merge burst for Diamond rank.":
+    "다면체 보석 타일과 프리즘 합성 이펙트의 다이아몬드 보드.",
+  "Violet and gold crown tiles with a regal merge crest for Master rank.":
+    "보랏빛 황금 왕관 타일과 왕실 문장 합성 이펙트의 마스터 보드.",
   "Seven dawns": "일곱 번의 새벽",
   "Attendance king": "출근왕",
   "Victory vanguard": "승리의 선봉",
@@ -58,12 +67,15 @@ export const achievementMessages: Record<string, string> = {
   "Create a 1024 tile in an eligible match.": "조건을 충족한 실전에서 1024 타일 생성",
   "Create a 2048 tile in an eligible match.": "조건을 충족한 실전에서 2048 타일 생성",
   "Dawn Oath": "새벽의 서약",
-  "Rising-sun borders earned through seven days of attendance.": "7일의 출석으로 새긴 일출 무늬 타일.",
+  "Rising-sun borders earned through seven days of attendance.":
+    "7일의 출석으로 새긴 일출 무늬 타일.",
   "Rune Sanctum": "룬의 성소",
-  "Jade stone and engraved magic circles for a 1024 milestone.": "1024 달성을 기념하는 비취 석조 보드와 각인된 마법진.",
+  "Jade stone and engraved magic circles for a 1024 milestone.":
+    "1024 달성을 기념하는 비취 석조 보드와 각인된 마법진.",
   "Attendance King": "출근왕",
   "Victory Vanguard": "승리의 선봉",
-  "Build your record. Earn something only you can wear.": "차곡차곡 쌓은 기록을 나만의 프로필과 보드로 남기세요.",
+  "Build your record. Earn something only you can wear.":
+    "차곡차곡 쌓은 기록을 나만의 프로필과 보드로 남기세요.",
   "Daily attendance": "매일 출석",
   "One check-in a day · Resets at midnight KST": "하루 한 번 · 한국 시간 자정 기준",
   "Check in today": "오늘 출석하기",
@@ -73,12 +85,14 @@ export const achievementMessages: Record<string, string> = {
   "Loading achievements…": "업적을 불러오는 중…",
   "consecutive days": "일 연속 출석",
   "Best streak: {days} days": "최고 연속 출석 {days}일",
-  "Missing a day resets your streak. Unlocked rewards are yours to keep.": "하루를 쉬면 연속 출석은 다시 시작해요. 이미 해금한 보상은 계속 유지돼요.",
+  "Missing a day resets your streak. Unlocked rewards are yours to keep.":
+    "하루를 쉬면 연속 출석은 다시 시작해요. 이미 해금한 보상은 계속 유지돼요.",
   "30-day reward": "30일 연속 출석 보상",
   "Exclusive profile": "업적 전용 프로필",
   "Exclusive board": "업적 전용 보드",
   "Achievement exclusives": "기록으로 얻는 컬렉션",
-  "Play casual or ranked against another account. Friend matches and guest play do not count.": "다른 계정과의 일반전·랭크전 기록이 반영돼요. 친구 대전과 게스트 플레이는 제외돼요.",
+  "Play casual or ranked against another account. Friend matches and guest play do not count.":
+    "다른 계정과의 일반전·랭크전 기록이 반영돼요. 친구 대전과 게스트 플레이는 제외돼요.",
   "Permanently unlocked": "영구 해금 완료",
   "In progress": "도전 중",
   "Preview in loadout": "꾸미기에서 미리보기",
@@ -104,13 +118,16 @@ export const achievementMessages: Record<string, string> = {
   "Jade Path": "비취의 길",
   "Twilight Orbit": "황혼의 궤도",
   "Star Phoenix": "별빛 불사조",
-  "A silver fox with lightning ears for a four-minute finish.": "4분 이내 완주로 만나는 번개 귀의 은빛 여우.",
+  "A silver fox with lightning ears for a four-minute finish.":
+    "4분 이내 완주로 만나는 번개 귀의 은빛 여우.",
   "An emerald dragon guarding the two-minute record.": "2분 이내 기록을 지키는 에메랄드빛 용.",
   "Jade rune borders for your first endless 2048.": "무한모드 첫 2048을 기념하는 비취빛 룬 타일.",
   "Violet constellations earned at endless 4096.": "무한모드 4096에서 만나는 보랏빛 별자리.",
-  "A celestial phoenix awakened by an endless 8192 tile.": "무한모드 8192에서 깨어나는 별빛 불사조.",
+  "A celestial phoenix awakened by an endless 8192 tile.":
+    "무한모드 8192에서 깨어나는 별빛 불사조.",
   "Automatic attendance": "자동 출석",
-  "Attendance is automatic when you visit · Resets at midnight KST": "접속하면 자동 출석 · 한국 시간 자정 기준",
+  "Attendance is automatic when you visit · Resets at midnight KST":
+    "접속하면 자동 출석 · 한국 시간 자정 기준",
   "Retry attendance": "출석 다시 시도",
   "{days} consecutive days": "{days}일 연속 출석",
   "Achievement king": "업적왕",
@@ -139,14 +156,17 @@ export const achievementMessages: Record<string, string> = {
   "Complete 3 eligible matches today.": "오늘 일반전·랭크전 3판을 완료하세요.",
   "Today's victory": "오늘의 승리",
   "Win 1 eligible match today.": "오늘 일반전·랭크전에서 1승을 거두세요.",
-  "Resets at midnight KST · Completed rewards are paid automatically here.": "한국 시간 자정 초기화 · 완료 보상은 이곳에서 자동 지급돼요.",
+  "Resets at midnight KST · Completed rewards are paid automatically here.":
+    "한국 시간 자정 초기화 · 완료 보상은 이곳에서 자동 지급돼요.",
   "{done} / {total} completed": "{done} / {total}개 완료",
   "Earned today: {coins} coins": "오늘 받은 보상 {coins}코인",
   "Loading daily quests…": "일일 퀘스트를 불러오는 중…",
   "Could not load daily quests or confirm rewards.": "일일 퀘스트나 보상 지급을 확인하지 못했어요.",
   "Retry daily quests": "일일 퀘스트 다시 확인",
   "Coins received": "코인 지급 완료",
-  "coins": "코인",
-  "Sign in to complete daily quests and earn coins.": "로그인하고 일일 퀘스트를 완료해 코인을 모으세요.",
-  "Only saved casual or ranked matches against another account count. Friend matches, solo and guest play do not count.": "다른 계정과의 일반전·랭크전 중 저장된 결과만 반영돼요. 친구 대전·싱글·게스트 플레이는 제외돼요.",
+  coins: "코인",
+  "Sign in to complete daily quests and earn coins.":
+    "로그인하고 일일 퀘스트를 완료해 코인을 모으세요.",
+  "Only saved casual or ranked matches against another account count. Friend matches, solo and guest play do not count.":
+    "다른 계정과의 일반전·랭크전 중 저장된 결과만 반영돼요. 친구 대전·싱글·게스트 플레이는 제외돼요.",
 };

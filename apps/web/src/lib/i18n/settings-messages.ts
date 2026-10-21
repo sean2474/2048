@@ -6,64 +6,90 @@ export const settingsMessages: Record<string, string> = {
   "Mute sound": "음소거",
   "Effects volume": "효과음 볼륨",
   "Test sound": "효과음 들어보기",
-  "Move, merge and battle effects. Audio settings are saved in this browser.": "이동·합치기·대전 효과음을 조절하세요. 오디오 설정은 이 브라우저에 저장됩니다.",
-  "Audio settings could not be saved. They will last for this visit only.": "오디오 설정을 저장하지 못했습니다. 현재 접속 중에만 유지됩니다.",
-  "Audio is unavailable. You can keep playing without sound.": "오디오를 사용할 수 없습니다. 소리 없이 계속 플레이할 수 있어요.",
+  "Move, merge and battle effects. Audio settings are saved in this browser.":
+    "이동·합치기·대전 효과음을 조절하세요. 오디오 설정은 이 브라우저에 저장됩니다.",
+  "Audio settings could not be saved. They will last for this visit only.":
+    "오디오 설정을 저장하지 못했습니다. 현재 접속 중에만 유지됩니다.",
+  "Audio is unavailable. You can keep playing without sound.":
+    "오디오를 사용할 수 없습니다. 소리 없이 계속 플레이할 수 있어요.",
   "Sign in": "로그인",
-  "Too many deletion attempts. Wait a minute and try again.": "삭제 요청이 너무 많습니다. 1분 후 다시 시도해 주세요.",
-  "Starting deletion cancels any matchmaking or friend lobby you are waiting in.": "삭제를 시작하면 대기 중인 매칭이나 친구 대기방에서 나갑니다.",
-  "Settings": "설정",
+  "Too many deletion attempts. Wait a minute and try again.":
+    "삭제 요청이 너무 많습니다. 1분 후 다시 시도해 주세요.",
+  "Starting deletion cancels any matchmaking or friend lobby you are waiting in.":
+    "삭제를 시작하면 대기 중인 매칭이나 친구 대기방에서 나갑니다.",
+  Settings: "설정",
   "Game preferences": "게임 환경",
-  "These preferences are saved to your account.": "설정은 계정에 저장되어 다른 기기에서도 이어집니다.",
+  "These preferences are saved to your account.":
+    "설정은 계정에 저장되어 다른 기기에서도 이어집니다.",
   "Guest preferences are saved in this browser.": "게스트 설정은 이 브라우저에 저장됩니다.",
   "Loading settings…": "설정을 불러오는 중…",
   "Saving settings…": "설정을 저장하는 중…",
-  "Your first language is based on your location. You can change it anytime.": "첫 접속 시 위치에 맞춰 언어를 설정해요. 언제든 직접 바꿀 수 있어요.",
+  "Your first language is based on your location. You can change it anytime.":
+    "첫 접속 시 위치에 맞춰 언어를 설정해요. 언제든 직접 바꿀 수 있어요.",
   "Custom keyboard shortcuts": "사용자 지정 단축키",
-  "Use your chosen letter and number keys. Arrow keys and touch controls always work.": "설정한 문자·숫자 키를 사용합니다. 방향키와 터치 조작은 항상 사용할 수 있어요.",
+  "Use your chosen letter and number keys. Arrow keys and touch controls always work.":
+    "설정한 문자·숫자 키를 사용합니다. 방향키와 터치 조작은 항상 사용할 수 있어요.",
   "Movement and attack keys": "이동·공격 키 설정",
-  "On": "켜짐",
-  "Off": "꺼짐",
-  "Profile": "프로필",
+  On: "켜짐",
+  Off: "꺼짐",
+  Profile: "프로필",
   "Your nickname is shown to other players.": "닉네임은 다른 플레이어에게 표시됩니다.",
   "Loading profile…": "프로필을 불러오는 중…",
   "Could not load your profile.": "프로필을 불러오지 못했습니다.",
-  "Nickname": "닉네임",
-  "Use 1–32 characters. Spaces at the ends are removed.": "1~32자로 입력하세요. 앞뒤 공백은 제거됩니다.",
+  Nickname: "닉네임",
+  "Use 1–32 characters. Spaces at the ends are removed.":
+    "1~32자로 입력하세요. 앞뒤 공백은 제거됩니다.",
   "Use 1–32 characters for your nickname.": "닉네임을 1~32자로 입력해 주세요.",
   "Your sign-in email cannot be changed here.": "로그인 이메일은 여기서 변경할 수 없습니다.",
   "Saving nickname…": "닉네임 저장 중…",
   "Save nickname": "닉네임 저장",
   "Nickname saved.": "닉네임을 저장했습니다.",
-  "Could not save your nickname. Please try again.": "닉네임을 저장하지 못했습니다. 다시 시도해 주세요.",
+  "Could not save your nickname. Please try again.":
+    "닉네임을 저장하지 못했습니다. 다시 시도해 주세요.",
   "Checking account…": "계정을 확인하는 중…",
   "Your account": "내 계정",
-  "Sign in to edit your nickname and save preferences across devices.": "로그인하면 닉네임을 변경하고 여러 기기에서 같은 설정을 사용할 수 있어요.",
+  "Sign in to edit your nickname and save preferences across devices.":
+    "로그인하면 닉네임을 변경하고 여러 기기에서 같은 설정을 사용할 수 있어요.",
   "Logging out…": "로그아웃 중…",
   "Signing out…": "로그아웃 중…",
   "Delete account": "계정 삭제",
-  "Permanently remove your account and personal game data. This cannot be undone.": "계정과 개인 게임 데이터를 영구 삭제합니다. 삭제 후에는 복구할 수 없습니다.",
+  "Permanently remove your account and personal game data. This cannot be undone.":
+    "계정과 개인 게임 데이터를 영구 삭제합니다. 삭제 후에는 복구할 수 없습니다.",
   "Delete my account": "내 계정 삭제",
   "Delete your account permanently?": "계정을 영구 삭제할까요?",
-  "Your sign-in account, profile, coins, saved settings, rating and personal statistics will be permanently deleted.": "로그인 계정, 프로필, 코인, 저장한 설정, 레이팅, 개인 통계가 영구 삭제됩니다.",
-  "Past matches remain for other players, with your name changed to Deleted player. Administrator audit logs are retained.": "과거 대전은 다른 플레이어의 기록을 위해 남으며, 내 이름은 'Deleted player'로 익명화됩니다. 관리자 감사 기록은 유지됩니다.",
-  "Finish any active match and wait for its result to save before continuing.": "진행 중인 대전을 마치고 결과가 저장된 다음 진행해 주세요.",
+  "Your sign-in account, profile, coins, saved settings, rating and personal statistics will be permanently deleted.":
+    "로그인 계정, 프로필, 코인, 저장한 설정, 레이팅, 개인 통계가 영구 삭제됩니다.",
+  "Past matches remain for other players, with your name changed to Deleted player. Administrator audit logs are retained.":
+    "과거 대전은 다른 플레이어의 기록을 위해 남으며, 내 이름은 'Deleted player'로 익명화됩니다. 관리자 감사 기록은 유지됩니다.",
+  "Finish any active match and wait for its result to save before continuing.":
+    "진행 중인 대전을 마치고 결과가 저장된 다음 진행해 주세요.",
   "Type your current email to confirm": "확인을 위해 현재 이메일을 직접 입력하세요",
   "Deleting account…": "계정 삭제 중…",
   "Permanently delete account": "계정 영구 삭제",
   "Account deleted": "계정 삭제 완료",
-  "Your account data has been deleted. Finish signing out of this browser.": "계정 데이터를 삭제했습니다. 이 브라우저에서 로그아웃을 마무리해 주세요.",
+  "Your account data has been deleted. Finish signing out of this browser.":
+    "계정 데이터를 삭제했습니다. 이 브라우저에서 로그아웃을 마무리해 주세요.",
   "Finish signing out": "로그아웃 마무리",
-  "Your account was deleted, but sign-out could not finish. Try signing out again.": "계정은 삭제됐지만 로그아웃을 마치지 못했습니다. 로그아웃을 다시 시도해 주세요.",
-  "Your session has expired. Sign in again before deleting your account.": "로그인이 만료됐습니다. 다시 로그인한 뒤 계정을 삭제해 주세요.",
-  "Enter your current account email exactly to confirm deletion.": "삭제 확인을 위해 현재 계정 이메일을 정확히 입력해 주세요.",
-  "Finish your current match in every tab before deleting your account.": "모든 탭에서 진행 중인 대전을 마친 뒤 계정을 삭제해 주세요.",
-  "Your last match result is still being saved. Wait a moment and try again.": "마지막 대전 결과를 저장하고 있습니다. 잠시 후 다시 시도해 주세요.",
-  "Account deletion is already in progress. Wait a moment before trying again.": "계정 삭제를 이미 처리하고 있습니다. 잠시 후 다시 시도해 주세요.",
-  "Administrator accounts cannot be deleted here. Remove administrator access first.": "관리자 계정은 여기서 삭제할 수 없습니다. 먼저 관리자 권한을 해제해 주세요.",
-  "Account deletion is temporarily unavailable. Please try again later.": "현재 계정 삭제를 사용할 수 없습니다. 나중에 다시 시도해 주세요.",
-  "Your account could not be deleted. Please try again later.": "계정을 삭제하지 못했습니다. 나중에 다시 시도해 주세요.",
-  "Could not confirm account deletion. Check your connection and try again.": "계정 삭제 여부를 확인하지 못했습니다. 연결 상태를 확인한 후 다시 시도해 주세요.",
+  "Your account was deleted, but sign-out could not finish. Try signing out again.":
+    "계정은 삭제됐지만 로그아웃을 마치지 못했습니다. 로그아웃을 다시 시도해 주세요.",
+  "Your session has expired. Sign in again before deleting your account.":
+    "로그인이 만료됐습니다. 다시 로그인한 뒤 계정을 삭제해 주세요.",
+  "Enter your current account email exactly to confirm deletion.":
+    "삭제 확인을 위해 현재 계정 이메일을 정확히 입력해 주세요.",
+  "Finish your current match in every tab before deleting your account.":
+    "모든 탭에서 진행 중인 대전을 마친 뒤 계정을 삭제해 주세요.",
+  "Your last match result is still being saved. Wait a moment and try again.":
+    "마지막 대전 결과를 저장하고 있습니다. 잠시 후 다시 시도해 주세요.",
+  "Account deletion is already in progress. Wait a moment before trying again.":
+    "계정 삭제를 이미 처리하고 있습니다. 잠시 후 다시 시도해 주세요.",
+  "Administrator accounts cannot be deleted here. Remove administrator access first.":
+    "관리자 계정은 여기서 삭제할 수 없습니다. 먼저 관리자 권한을 해제해 주세요.",
+  "Account deletion is temporarily unavailable. Please try again later.":
+    "현재 계정 삭제를 사용할 수 없습니다. 나중에 다시 시도해 주세요.",
+  "Your account could not be deleted. Please try again later.":
+    "계정을 삭제하지 못했습니다. 나중에 다시 시도해 주세요.",
+  "Could not confirm account deletion. Check your connection and try again.":
+    "계정 삭제 여부를 확인하지 못했습니다. 연결 상태를 확인한 후 다시 시도해 주세요.",
   "Help and customization": "도움말 및 꾸미기",
   "Board skins and ability previews": "보드 스킨·능력 미리보기",
   "Interactive tutorial": "직접 해보는 튜토리얼",

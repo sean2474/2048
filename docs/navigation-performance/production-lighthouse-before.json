@@ -1,0 +1,87 @@
+{
+  "url": "https://www.2048duo.io/",
+  "fetchTime": "2026-10-21T16:17:21.974Z",
+  "lighthouseVersion": "13.5.0",
+  "config": {
+    "output": [
+      "json"
+    ],
+    "maxWaitForFcp": 30000,
+    "maxWaitForLoad": 45000,
+    "pauseAfterFcpMs": 1000,
+    "pauseAfterLoadMs": 1000,
+    "networkQuietThresholdMs": 1000,
+    "cpuQuietThresholdMs": 1000,
+    "formFactor": "mobile",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    },
+    "throttlingMethod": "simulate",
+    "screenEmulation": {
+      "mobile": true,
+      "width": 412,
+      "height": 823,
+      "deviceScaleFactor": 1.75,
+      "disabled": false
+    },
+    "emulatedUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+    "auditMode": false,
+    "gatherMode": false,
+    "clearStorageTypes": [
+      "file_systems",
+      "shader_cache",
+      "service_workers",
+      "cache_storage"
+    ],
+    "disableStorageReset": false,
+    "debugNavigation": false,
+    "channel": "cli",
+    "usePassiveGathering": false,
+    "disableFullPageScreenshot": false,
+    "skipAboutBlank": false,
+    "blankPage": "about:blank",
+    "ignoreStatusCode": false,
+    "locale": "en-US",
+    "blockedUrlPatterns": null,
+    "additionalTraceCategories": null,
+    "extraHeaders": null,
+    "precomputedLanternData": null,
+    "onlyAudits": null,
+    "onlyCategories": [
+      "performance"
+    ],
+    "skipAudits": null
+  },
+  "performanceScore": 66,
+  "metrics": {
+    "first-contentful-paint": {
+      "value": 3458.322000000001,
+      "display": "3.5\u00a0s"
+    },
+    "largest-contentful-paint": {
+      "value": 6524.4475,
+      "display": "6.5\u00a0s"
+    },
+    "total-blocking-time": {
+      "value": 1,
+      "display": "0\u00a0ms"
+    },
+    "cumulative-layout-shift": {
+      "value": 0.02226392196406768,
+      "display": "0.022"
+    },
+    "speed-index": {
+      "value": 5610.872428010988,
+      "display": "5.6\u00a0s"
+    },
+    "server-response-time": {
+      "value": 633,
+      "display": "Root document took 630\u00a0ms"
+    }
+  }
+}
