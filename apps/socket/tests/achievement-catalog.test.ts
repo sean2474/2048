@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { ACHIEVEMENT_REWARDS, achievementForItem } from "schema/achievements";
+import { ACHIEVEMENT_REWARDS, achievementForItem, achievementProgress, type AchievementState } from "schema/achievements";
 import { SKINS } from "schema/loadout";
 import { PROFILE_ICONS } from "schema/profile-icons";
 import { achievementMessages } from "../../web/src/lib/i18n/achievement-messages";
@@ -55,4 +55,17 @@ test("solo milestones have the requested rarity and distinct legendary character
     if (skin.rarity === "legendary") characters.add(skin.tokens.character);
   }
   assert.equal(characters.size, 3);
+});
+
+test("rank achievement progress uses established rank and preserves permanent unlocks", () => {
+  const data: AchievementState = {
+    attendance: { streak: 0, bestStreak: 0, lastDay: null, today: "2026-10-17", checkedInToday: false, nextCheckInAt: "2026-10-17T15:00:00Z" },
+    wins: 0, highestTile: 8192, unlocks: [],
+  };
+  const master = ACHIEVEMENT_REWARDS.find(item => item.id === "rank-master")!;
+  assert.deepEqual(achievementProgress(master, data), { unlocked: false, current: 0, percent: 0 });
+  assert.deepEqual(achievementProgress(master, { ...data, highestRank: 2 }), { unlocked: false, current: 2, percent: 33 });
+  assert.deepEqual(achievementProgress(master, { ...data, highestRank: 6 }), { unlocked: false, current: 6, percent: 100 });
+  assert.deepEqual(achievementProgress(master, { ...data, highestRank: 0, unlocks: [{ achievementId: "rank-master", unlockedAt: "2026-10-17T00:00:00Z" }] }),
+    { unlocked: true, current: 0, percent: 100 });
 });

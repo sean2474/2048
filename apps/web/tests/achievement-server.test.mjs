@@ -7,6 +7,7 @@ const icon = { ...metadata, id: "attendance-king", name: "Attendance king", desc
 const catalog = { skins: [], profileIcons: [icon], achievements: [
   { ...metadata, id: "checkin-30", name: "Attendance king", description: "Visit 30 days", metric: "attendance_streak", target: 30, reward: { kind: "icon", iconId: icon.id } },
   { ...metadata, id: "wins-10", name: "Ten wins", description: "Win ten matches", metric: "wins", target: 10, reward: { kind: "icon", iconId: icon.id } },
+  { ...metadata, id: "rank-platinum", name: "Platinum collector", description: "Reach Platinum", metric: "rank_tier", target: 4, reward: { kind: "icon", iconId: icon.id } },
 ] };
 const data = { attendance: { streak: 8, bestStreak: 12, lastDay: "2026-10-21", today: "2026-10-22", checkedInToday: false, nextCheckInAt: "2026-10-22T15:00:00Z" }, wins: 10, highestTile: 512, unlocks: [{ achievementId: "wins-10", unlockedAt: "2026-10-21T00:00:00Z" }] };
 const visible = html => html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
@@ -17,7 +18,7 @@ test("achievement RSC renders progress, URL filters, errors and streamed skeleto
     if (url.pathname.endsWith("/rpc/content_catalog")) return { data: catalog };
     if (url.pathname.endsWith("/rpc/achievement_state")) {
       queryStarted?.(); if (hold) await hold;
-      return fail ? { status: 503, data: {} } : { data: { ...data, wins: id === fixturePlayer ? 10 : 2, unlocks: id === fixturePlayer ? data.unlocks : [] } };
+      return fail ? { status: 503, data: {} } : { data: { ...data, highestRank: id === fixturePlayer ? 4 : 0, wins: id === fixturePlayer ? 10 : 2, unlocks: id === fixturePlayer ? [...data.unlocks, { achievementId: "rank-platinum", unlockedAt: "2026-10-21T00:00:00Z" }] : [] } };
     }
   } });
   t.after(fixture.close);
@@ -30,6 +31,7 @@ test("achievement RSC renders progress, URL filters, errors and streamed skeleto
   assert.match(html, /8.*?<\/span>/);
   assert.match(html, /Permanently unlocked/);
   assert.match(html, /id="checkin-30"/);
+  assert.match(html, /id="rank-platinum"[^]*?<progress[^>]*max="100"[^>]*value="100"/);
   assert.match(html, /href="\/achievements\?filter=completed"/);
   const completed = visible(await read("/achievements?filter=completed", fixturePlayer));
   assert.match(completed, /id="wins-10"/); assert.doesNotMatch(completed, /id="checkin-30"/);
