@@ -213,6 +213,9 @@ export function broadcast(room: Room, io: Server) {
   for (const pid of room.players) {
     const state = snapshot(room, pid);
     io.to(playerChannel(pid)).emit("message", state);
-    io.to(spectatorChannel(room.id, pid)).emit("spectate", { state });
+    const channel = spectatorChannel(room.id, pid);
+    // This single-server game uses the local adapter. Socket.IO encodes packets
+    // even for empty rooms, so avoid encoding a second full board with no viewers.
+    if (io.sockets.adapter.rooms.has(channel)) io.to(channel).emit("spectate", { state });
   }
 }

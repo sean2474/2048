@@ -1,0 +1,32 @@
+{
+  "node": "v26.0.0",
+  "cpu": "Apple M5 Max",
+  "iterations": 20000,
+  "runs": 7,
+  "scenario": "paired alternating full 5x5 boards; no spectator subscribers; real Socket.IO JSON encoding and WebSocket framing, no network writes",
+  "msPerBroadcast": {
+    "baseline": [
+      0.0194231729,
+      0.019169616699999996,
+      0.019297577049999997,
+      0.0185078354,
+      0.018262504149999994,
+      0.018393220799999995,
+      0.018349710400000004
+    ],
+    "optimized": [
+      0.00960388125,
+      0.009960137499999995,
+      0.0097168271,
+      0.009356164599999989,
+      0.009571354199999996,
+      0.009267241649999983,
+      0.00917273540000001
+    ]
+  },
+  "medianMs": {
+    "baseline": 0.0185078354,
+    "optimized": 0.009571354199999996
+  },
+  "reductionPercent": 48.28485345185209
+}
