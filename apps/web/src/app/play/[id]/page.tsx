@@ -4,9 +4,10 @@ import { GameEmblem } from "@/components/widget/game-emblem";
 import { useI18n } from "ui/i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { Flag, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { Flag } from "lucide-react";
 import { ABILITY_CHARGE, type Dir, type S2C } from "schema/in-game";
 import type { Socket } from "socket.io-client";
+import { DirectionPad } from "@/components/2048/direction-pad";
 import { GameArena } from "@/components/2048/game-arena";
 import { MatchResult } from "@/components/widget/match-result";
 import { DEFAULT_ABILITY_ID } from "schema/loadout";
@@ -182,12 +183,7 @@ export default function GamePage() {
         </div>
         {settingsError && !settingsOpen && <p role="alert" className="text-xs text-destructive">{t(settingsError)}</p>}
       </div>}
-      <div className="direction-pad grid shrink-0 grid-cols-3 gap-1" role="group" aria-label={t("Direction controls")}>
-        <div /><Button variant="outline" size="icon" aria-label={t("Move up")} disabled={!canMove || movementDelayed} onClick={() => handleMove("up")}><ArrowUp /></Button><div />
-        <Button variant="outline" size="icon" aria-label={t("Move left")} disabled={!canMove || movementDelayed} onClick={() => handleMove("left")}><ArrowLeft /></Button>
-        <Button variant="outline" size="icon" aria-label={t("Move down")} disabled={!canMove || movementDelayed} onClick={() => handleMove("down")}><ArrowDown /></Button>
-        <Button variant="outline" size="icon" aria-label={t("Move right")} disabled={!canMove || movementDelayed} onClick={() => handleMove("right")}><ArrowRight /></Button>
-      </div>
+      <DirectionPad disabled={!canMove || movementDelayed} onMove={handleMove} />
     </section>}
   </main>;
 }
