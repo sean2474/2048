@@ -1,3 +1,4 @@
+import "server-only";
 import { cn } from "@/lib/utils";
 
 export function Skeleton({ className }: { className?: string }) {

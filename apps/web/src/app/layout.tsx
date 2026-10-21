@@ -14,6 +14,7 @@ import { GameAnalytics } from "@/components/widget/analytics";
 import { PlayerProvider } from "@/hooks/use-player";
 import { getPreferences } from "@/lib/supabase/preferences";
 import { getAccount } from "@/lib/supabase/account";
+import { getCatalogSnapshot } from "@/lib/server/collection";
 
 export const metadata: Metadata = {
   title: "2048 Duo",
@@ -41,23 +42,23 @@ export default async function RootLayout({
 // Account and preference I/O is below a loading boundary, including the first
 // request. Provider children remain server-rendered RSC slots.
 async function SessionLayout({ children }: { children: React.ReactNode }) {
-  const [{ locale, guestLocale, messages }, account, preferences] = await Promise.all([getI18n(), getAccount(), getPreferences()]);
+  const [{ locale, guestLocale, messages }, account, preferences, catalog] = await Promise.all([getI18n(), getAccount(), getPreferences(), getCatalogSnapshot()]);
   return <I18nProvider initialLocale={locale} messages={messages}>
-          <PlayerProvider initialAccount={account}>
-          <CatalogProvider>
-          <SettingsProvider initialGuestLocale={guestLocale} initialAccount={preferences}>
+    <PlayerProvider initialAccount={account}>
+      <CatalogProvider initialCatalog={catalog.data} initialCatalogError={catalog.error}>
+        <SettingsProvider initialGuestLocale={guestLocale} initialAccount={preferences}>
           <AudioProvider>
-          <AchievementsProvider>
-          <FriendPresenceProvider>
-          <Header />
-          <div className="mx-auto max-w-[1040px] px-4"><CatalogNotice /></div>
-          {children}
-          <GameAnalytics />
-          </FriendPresenceProvider>
-          </AchievementsProvider>
+            <AchievementsProvider>
+              <FriendPresenceProvider>
+                <Header />
+                <div className="mx-auto max-w-[1040px] px-4"><CatalogNotice /></div>
+                {children}
+                <GameAnalytics />
+              </FriendPresenceProvider>
+            </AchievementsProvider>
           </AudioProvider>
-          </SettingsProvider>
-          </CatalogProvider>
-          </PlayerProvider>
-        </I18nProvider>;
+        </SettingsProvider>
+      </CatalogProvider>
+    </PlayerProvider>
+  </I18nProvider>;
 }

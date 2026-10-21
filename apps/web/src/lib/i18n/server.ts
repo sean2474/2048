@@ -1,3 +1,4 @@
+import "server-only";
 import { socialMessages } from "./social-messages";
 import { soloMessages } from "./solo-messages";
 import { rankMessages } from "./rank-messages";

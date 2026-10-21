@@ -1,3 +1,4 @@
+import "server-only";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function CatalogSkeleton({ label, shop = false }: { label: string; shop?: boolean }) {
