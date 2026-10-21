@@ -307,7 +307,9 @@ export async function SoloLoading() {
         <section>
           <Skeleton className="mb-3 h-[65px] w-full sm:mb-5 sm:h-[89px]" />
           <LoadingBoard size={4} className="mx-auto max-w-[500px]" />
-          <Skeleton className="mx-auto mt-3 h-4 w-3/4" />
+          <p className="mt-3 text-center text-xs text-muted-foreground" aria-hidden="true">
+            {t("Swipe your board or use the arrow keys to move.")}
+          </p>
           <LoadingAction className="mt-3 w-44 sm:mt-6" />
         </section>
         <aside className="hidden space-y-5 md:block">
