@@ -7,6 +7,7 @@ This work starts from staging `8804ca0` (server-component boundary refactor). Th
 - Keep every web/admin `page.tsx` a Server Component; interactive controls remain focused client islands.
 - Replace generic loading cards with route-specific server skeletons, including the root session boundary. Settings, matchmaking, feedback and collection skeleton geometry is checked against rendered mobile and desktop pages with delayed backend responses. CSS shimmer respects reduced motion.
 - Keep internal navigation on Next Link; close the mobile menu immediately when navigation starts.
+- Cache only the root provider’s public catalog seed with an anonymous client. A 30-second stale-while-revalidate window removes repeated display-data reads from navigation; failed refreshes retain the last validated seed. This is not a hard freshness deadline. Server-rendered catalog pages, solo details and purchase actions continue to read current data. Private data is never placed in this shared cache.
 - Overlap independent collection, preference, catalog and wallet reads. Cache private wallet reads only within the React server request and always use verified user IDs.
 - Avoid refreshing the entire dashboard for an unchanged initial quest response. Compare quest balance with the persistent root header snapshot, including soft navigation and rewards earned elsewhere.
 - Remove the global 350 ms page entrance animation. Preserve game/tile animations.

@@ -103,6 +103,14 @@ test(
               before.main && before.panel,
               "route-specific content streams before the backend responds",
             );
+            if (route.path === "settings") {
+              for (const name of ["preferences", "profile", "delete-account"]) {
+                before[name] = await loading
+                  .locator(`[data-loading-panel="${name}"]`)
+                  .boundingBox();
+                assert.ok(before[name], `signed-in loading reserves ${name}`);
+              }
+            }
             assert.equal(await loading.getAttribute("aria-busy"), "true");
             assert.equal(
               await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -140,7 +148,14 @@ test(
               path: new URL(`${route.path}-${width}-ready.png`, evidence).pathname,
               fullPage: true,
             });
-            for (const region of ["main", "panel"]) {
+            if (route.path === "settings") {
+              for (const name of ["preferences", "profile", "delete-account"]) {
+                after[name] = await page
+                  .locator(`section[aria-labelledby="${name}-title"]`)
+                  .boundingBox();
+              }
+            }
+            for (const region of Object.keys(before)) {
               for (const axis of ["x", "y", "width"])
                 assert.ok(
                   Math.abs(before[region][axis] - after[region][axis]) <= 1,

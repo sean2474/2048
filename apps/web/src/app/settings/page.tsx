@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SettingsAccountSkeleton } from "@/components/widget/settings-account-skeleton";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { PageHeading } from "@/components/widget/page-heading";
 import { GameEmblem } from "@/components/widget/game-emblem";
@@ -35,12 +35,7 @@ export default async function SettingsPage() {
           key={accountUser.id}
           user={accountUser}
           initialName={player?.name ?? null}
-          loading={
-            <section role="status" aria-label={t("Loading profile…")} className={panelClass}>
-              <Skeleton className="h-7 w-32" />
-              <Skeleton className="mt-5 h-11 w-full" />
-            </section>
-          }
+          loading={<SettingsAccountSkeleton t={t} />}
         />
       ) : (
         <section aria-labelledby="guest-account-title" className={panelClass}>

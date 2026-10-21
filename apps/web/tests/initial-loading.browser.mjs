@@ -7,17 +7,8 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 
 test(
   "initial route loading preserves geometry and static solo instructions before session data arrives",
-  { timeout: 120000 },
+  { timeout: 240000 },
   async (t) => {
-    let hold;
-    const fixture = await startServerFixture({
-      handle: async (url) => {
-        if (url.pathname.endsWith("/rpc/content_catalog")) await hold;
-      },
-    });
-    t.after(fixture.close);
-    // Compile before measuring held responses, independently of any browser cache.
-    await (await fetch(fixture.origin + "/settings")).text();
     const browser = await chromium.launch({ channel: "chrome", headless: true });
     t.after(() => browser.close());
     for (const route of [
@@ -25,15 +16,21 @@ test(
       { path: "solo", heading: "Single player" },
     ]) {
       for (const width of [375, 1440]) {
+        let release;
+        const hold = new Promise((resolve) => {
+          release = resolve;
+        });
+        // Each case starts with an empty public cache, as on a deployment's first request.
+        const fixture = await startServerFixture({
+          handle: async (url) => {
+            if (url.pathname.endsWith("/rpc/content_catalog")) await hold;
+          },
+        });
         const context = await browser.newContext({
           viewport: { width, height: 900 },
           locale: "en-US",
           reducedMotion: "reduce",
-          extraHTTPHeaders: { "x-2048-route": "/shop" },
-        });
-        let release;
-        hold = new Promise((resolve) => {
-          release = resolve;
+          extraHTTPHeaders: { "x-2048-route": "/shop", "x-2048-loading-member": "1" },
         });
         try {
           const page = await context.newPage();
@@ -42,6 +39,14 @@ test(
           });
           const loading = page.locator(`[data-route-loading="${route.path}"]:visible`);
           await loading.waitFor({ state: "visible" });
+          if (route.path === "settings") {
+            assert.equal(await loading.locator('[data-loading-panel="guest-account"]').count(), 1);
+            assert.equal(
+              await loading.locator('[data-loading-panel="profile"]').count(),
+              0,
+              "caller cannot forge a member loading hint",
+            );
+          }
           if (route.path === "solo") {
             await loading
               .getByText("Swipe your board or use the arrow keys to move.", { exact: true })
@@ -62,7 +67,6 @@ test(
             true,
           );
           release();
-          hold = undefined;
           await navigation;
           await loading.waitFor({ state: "detached" });
           await page.getByRole("heading", { name: route.heading, exact: true }).waitFor();
@@ -80,8 +84,8 @@ test(
           assert.equal(before.header.height, after.header.height);
         } finally {
           release();
-          hold = undefined;
           await context.close();
+          await fixture.close();
         }
       }
     }
