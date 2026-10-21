@@ -587,6 +587,12 @@ test("a failed ranked result blocks requeue across sessions until retry saves El
   assert.equal((await casual).t, "matchFound");
   online = true;
   await store.retryPending();
+  const busy = packet(anotherSession.socket, m => m.t === "error");
+  anotherSession.socket.emit("message", { t: "findMatch", mode: "ranked" });
+  assert.deepEqual(await busy, { t: "error", reason: "already_in_game" });
+  const ended = packet(a.socket, m => m.t === "end");
+  a.socket.emit("message", { t: "surrender" });
+  await ended;
   anotherSession.socket.emit("message", { t: "findMatch", mode: "ranked" });
   await eventually(() => matchmakingQueue.some(entry => entry.pid === playerId(anotherSession.token)));
   assert.equal(ratingsRead.length, 3);
@@ -877,4 +883,74 @@ test("32 swap exchanges only valid opponent tiles, preserves scores, and cannot 
   assert.equal(opp.score, score);
   assert.deepEqual(me.board, ownBoard);
   assert.deepEqual(opp.board.map(tile => [tile.value, tile.row, tile.col]), [[32, 1, 1], [8, 0, 0], [128, 3, 3]]);
+});
+
+for (const firstMode of ["casual", "ranked"] as const) {
+  for (const secondMode of ["casual", "ranked"] as const) {
+    test(`${firstMode} queue blocks the same account in ${secondMode} on another device until cancelled`, async t => {
+      const server = await setup(t, { resolveAccount, readRating: async () => 1200, writeMatch: async () => {} });
+      const first = await server.connect(undefined, "alice"), second = await server.connect(undefined, "alice");
+      first.socket.emit("message", { t: "findMatch", mode: firstMode });
+      await eventually(() => matchmakingQueue.length === 1);
+      const denied = packet(second.socket, m => m.t === "error");
+      second.socket.emit("message", { t: "findMatch", mode: secondMode });
+      assert.deepEqual(await denied, { t: "error", reason: "already_in_game" });
+      assert.equal(matchmakingQueue.length, 1);
+      assert.equal(first.socket.connected, true);
+      first.socket.emit("message", { t: "cancelMatch" });
+      await eventually(() => matchmakingQueue.length === 0);
+      second.socket.emit("message", { t: "findMatch", mode: secondMode });
+      await eventually(() => matchmakingQueue.some(entry => entry.pid === playerId(second.token)));
+    });
+  }
+}
+
+test("an active casual game blocks another device, including during reconnect grace, and releases after finishing", async t => {
+  const server = await setup(t, { resolveAccount, writeMatch: async () => {} });
+  const { a, b, roomId } = await server.pair("alice", "bob");
+  const second = await server.connect(undefined, "alice");
+  for (const disconnected of [false, true]) {
+    if (disconnected) a.socket.disconnect();
+    const denied = packet(second.socket, m => m.t === "error");
+    second.socket.emit("message", { t: "findMatch", mode: "casual" });
+    assert.deepEqual(await denied, { t: "error", reason: "already_in_game" });
+    assert.equal(rooms.get(roomId)?.open, true);
+  }
+  const ended = packet(b.socket, m => m.t === "end");
+  b.socket.emit("message", { t: "surrender" });
+  await ended;
+  await eventually(() => !rooms.has(roomId));
+  second.socket.emit("message", { t: "findMatch", mode: "casual" });
+  await eventually(() => matchmakingQueue.some(entry => entry.pid === playerId(second.token)));
+});
+
+test("room codes cannot bypass the account queue restriction", async t => {
+  const server = await setup(t, { resolveAccount });
+  const first = await server.connect(undefined, "alice"), second = await server.connect(undefined, "alice");
+  const waiting = packet(first.socket, m => m.t === "waitingForPlayer");
+  first.socket.emit("message", { t: "createRoomWithCode" });
+  const created = await waiting;
+  assert.equal(created.t, "waitingForPlayer");
+  if (created.t !== "waitingForPlayer") throw Error("Expected room code");
+  for (const command of [
+    { t: "findMatch", mode: "casual" },
+    { t: "createRoomWithCode" },
+    { t: "joinRoomWithCode", joinCode: created.joinCode },
+  ]) {
+    const denied = packet(second.socket, m => m.t === "error");
+    second.socket.emit("message", command);
+    assert.deepEqual(await denied, { t: "error", reason: "already_in_game" });
+  }
+  assert.equal(waitingByCode.size, 1);
+});
+
+test("simultaneous casual requests from two devices reserve only one account slot", async t => {
+  const server = await setup(t, { resolveAccount });
+  const first = await server.connect(undefined, "alice"), second = await server.connect(undefined, "alice");
+  const denied = Promise.race([packet(first.socket, m => m.t === "error"), packet(second.socket, m => m.t === "error")]);
+  first.socket.emit("message", { t: "findMatch", mode: "casual" });
+  second.socket.emit("message", { t: "findMatch", mode: "casual" });
+  assert.deepEqual(await denied, { t: "error", reason: "already_in_game" });
+  assert.equal(matchmakingQueue.length, 1);
+  assert.equal(rooms.size, 0);
 });
