@@ -1,0 +1,51 @@
+{
+  "webCommit": "6b8d0aa8380504ac32f6df922d5325d0cb38517f",
+  "method": "Diagnostic ONLY: same deployed production URL and source, Chrome DNS override to public Vercel IP64.29.17.195, Host/SNI/TLS unchanged, normal simulated mobile throttling. Response verified server=Vercel. Public DNS configuration is unchanged; these scores are NOT the real public-route result.",
+  "runs": [
+    {
+      "path": "/",
+      "fetchTime": "2026-10-21T17:21:32.306Z",
+      "score": 94,
+      "edge": "icn1::hnd1::2ddrb-1792603292499-4ac909634c35",
+      "remoteIPAddress": "64.29.17.195",
+      "server": "Vercel",
+      "metrics": {
+        "first-contentful-paint": 1351.82,
+        "largest-contentful-paint": 2952.8199999999997,
+        "total-blocking-time": 5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1955.6672579348456
+      }
+    },
+    {
+      "path": "/settings",
+      "fetchTime": "2026-10-21T17:21:43.610Z",
+      "score": 97,
+      "edge": "icn1::hnd1::j55sj-1792603303807-bec95792c011",
+      "remoteIPAddress": "64.29.17.195",
+      "server": "Vercel",
+      "metrics": {
+        "first-contentful-paint": 1099.6950000000002,
+        "largest-contentful-paint": 2560.695,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1099.6950000000002
+      }
+    },
+    {
+      "path": "/solo",
+      "fetchTime": "2026-10-21T17:21:54.145Z",
+      "score": 97,
+      "edge": "icn1::hnd1::pxtgz-1792603314337-b80d6aa4f0f5",
+      "remoteIPAddress": "64.29.17.195",
+      "server": "Vercel",
+      "metrics": {
+        "first-contentful-paint": 1093.863,
+        "largest-contentful-paint": 2566.8630000000003,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1093.863
+      }
+    }
+  ]
+}

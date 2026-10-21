@@ -1,0 +1,73 @@
+{
+  "measuredAt": "2026-10-21T17:17:26.684933+00:00",
+  "webCommit": "6b8d0aa8380504ac32f6df922d5325d0cb38517f",
+  "method": "Alternating same-origin HTTPS requests. Direct diagnostic overrides the TCP destination to the public Vercel alias while preserving Host, SNI and TLS validation. No DNS/account settings changed.",
+  "requests": [
+    {
+      "sample": 1,
+      "route": "Normal public Cloudflare route",
+      "status": 200,
+      "ttfbMs": 760.11,
+      "totalMs": 1139.74,
+      "bytes": 237893,
+      "edge": "sfo1::hnd1::bvmkd-1792603042865-97a89dffd7e4",
+      "server": "cloudflare",
+      "cfRay": "a4e1ea595f7a92c4-LAX"
+    },
+    {
+      "sample": 1,
+      "route": "Vercel direct, DNS diagnostic only",
+      "status": 200,
+      "ttfbMs": 474.88,
+      "totalMs": 550.12,
+      "bytes": 238810,
+      "edge": "icn1::hnd1::z8d5s-1792603043605-0a53ae96e9a2",
+      "server": "Vercel",
+      "cfRay": null
+    },
+    {
+      "sample": 2,
+      "route": "Normal public Cloudflare route",
+      "status": 200,
+      "ttfbMs": 623.79,
+      "totalMs": 914.73,
+      "bytes": 237893,
+      "edge": "sfo1::hnd1::gcds4-1792603044500-e8e8ce9c3e72",
+      "server": "cloudflare",
+      "cfRay": "a4e1ea640c33e6d4-LAX"
+    },
+    {
+      "sample": 2,
+      "route": "Vercel direct, DNS diagnostic only",
+      "status": 200,
+      "ttfbMs": 373.46,
+      "totalMs": 462.24,
+      "bytes": 238810,
+      "edge": "icn1::hnd1::jl2qh-1792603045091-450216cd005a",
+      "server": "Vercel",
+      "cfRay": null
+    },
+    {
+      "sample": 3,
+      "route": "Normal public Cloudflare route",
+      "status": 200,
+      "ttfbMs": 655.8,
+      "totalMs": 946.37,
+      "bytes": 237893,
+      "edge": "sfo1::hnd1::nrgm4-1792603045939-a7af04287018",
+      "server": "cloudflare",
+      "cfRay": "a4e1ea6cdd734cbb-LAX"
+    },
+    {
+      "sample": 3,
+      "route": "Vercel direct, DNS diagnostic only",
+      "status": 200,
+      "ttfbMs": 195.43,
+      "totalMs": 283.34,
+      "bytes": 238810,
+      "edge": "icn1::hnd1::zdzx7-1792603046530-72ded6fbf253",
+      "server": "Vercel",
+      "cfRay": null
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "measuredAt": "2026-10-21T17:15:41.874590+00:00",
+  "origin": "https://www.2048duo.io",
+  "commit": "6b8d0aa8380504ac32f6df922d5325d0cb38517f",
+  "method": "Sequential curl requests from the same workstation, new curl process per request; TTFB separates the first streamed bytes from complete HTML. No server-side delay or bypass injected.",
+  "requests": [
+    {
+      "path": "/",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 1300.27,
+      "totalMs": 2717.85,
+      "bytes": 208479
+    },
+    {
+      "path": "/",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 650.02,
+      "totalMs": 941.18,
+      "bytes": 208479
+    },
+    {
+      "path": "/",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 879.27,
+      "totalMs": 1161.34,
+      "bytes": 208479
+    },
+    {
+      "path": "/settings",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 660.75,
+      "totalMs": 1060.65,
+      "bytes": 237893
+    },
+    {
+      "path": "/settings",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 877.19,
+      "totalMs": 1166.16,
+      "bytes": 237893
+    },
+    {
+      "path": "/settings",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 667.29,
+      "totalMs": 1063.33,
+      "bytes": 237893
+    },
+    {
+      "path": "/find-match",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 764.17,
+      "totalMs": 1043.66,
+      "bytes": 213898
+    },
+    {
+      "path": "/find-match",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 640.28,
+      "totalMs": 972.88,
+      "bytes": 213898
+    },
+    {
+      "path": "/find-match",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 657.54,
+      "totalMs": 954.53,
+      "bytes": 213898
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 1491.44,
+      "totalMs": 1894.25,
+      "bytes": 292275
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 750.84,
+      "totalMs": 1075.58,
+      "bytes": 292275
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 803.68,
+      "totalMs": 1121.17,
+      "bytes": 292275
+    },
+    {
+      "path": "/solo",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 769.91,
+      "totalMs": 1175.09,
+      "bytes": 326910
+    },
+    {
+      "path": "/solo",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 662.0,
+      "totalMs": 1076.88,
+      "bytes": 326910
+    },
+    {
+      "path": "/solo",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 764.58,
+      "totalMs": 1113.65,
+      "bytes": 326910
+    }
+  ]
+}

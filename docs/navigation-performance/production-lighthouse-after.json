@@ -1,0 +1,227 @@
+{
+  "measuredAt": "2026-10-21T17:17:57.801161+00:00",
+  "origin": "https://www.2048duo.io",
+  "webCommit": "6b8d0aa8380504ac32f6df922d5325d0cb38517f",
+  "method": "Lighthouse 13.5.0 CLI mobile, default simulated throttling, fresh browser per run, automation flag enabled; no application interception or score changes. HTTP measurements are separate.",
+  "runs": [
+    {
+      "path": "/",
+      "sample": 1,
+      "fetchTime": "2026-10-21T17:18:00.181Z",
+      "score": 73,
+      "metrics": {
+        "first-contentful-paint": 2701.116,
+        "largest-contentful-paint": 5966.157000000001,
+        "total-blocking-time": 4,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3238.9694178823256,
+        "server-response-time": 447
+      }
+    },
+    {
+      "path": "/settings",
+      "sample": 1,
+      "fetchTime": "2026-10-21T17:18:11.877Z",
+      "score": 72,
+      "metrics": {
+        "first-contentful-paint": 2828.402,
+        "largest-contentful-paint": 6286.9220000000005,
+        "total-blocking-time": 5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3330.664880892608,
+        "server-response-time": 409
+      }
+    },
+    {
+      "path": "/find-match",
+      "sample": 1,
+      "fetchTime": "2026-10-21T17:18:23.395Z",
+      "score": 70,
+      "metrics": {
+        "first-contentful-paint": 3091.658,
+        "largest-contentful-paint": 6903.779999999998,
+        "total-blocking-time": 10,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3091.658,
+        "server-response-time": 385
+      }
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 1,
+      "fetchTime": "2026-10-21T17:18:35.090Z",
+      "score": 72,
+      "metrics": {
+        "first-contentful-paint": 2945.9539999999997,
+        "largest-contentful-paint": 6553.730000000001,
+        "total-blocking-time": 18,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2945.9539999999997,
+        "server-response-time": 405
+      }
+    },
+    {
+      "path": "/solo",
+      "sample": 1,
+      "fetchTime": "2026-10-21T17:18:46.697Z",
+      "score": 74,
+      "metrics": {
+        "first-contentful-paint": 2794.4400000000005,
+        "largest-contentful-paint": 5822.200000000001,
+        "total-blocking-time": 5.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2794.4400000000005,
+        "server-response-time": 422
+      }
+    },
+    {
+      "path": "/",
+      "sample": 2,
+      "fetchTime": "2026-10-21T17:18:58.413Z",
+      "score": 72,
+      "metrics": {
+        "first-contentful-paint": 2831.856,
+        "largest-contentful-paint": 6569.9800000000005,
+        "total-blocking-time": 5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3206.3024997781604,
+        "server-response-time": 363
+      }
+    },
+    {
+      "path": "/settings",
+      "sample": 2,
+      "fetchTime": "2026-10-21T17:19:10.034Z",
+      "score": 72,
+      "metrics": {
+        "first-contentful-paint": 2863.62,
+        "largest-contentful-paint": 6367.6489999999985,
+        "total-blocking-time": 6,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3296.821199339383,
+        "server-response-time": 382
+      }
+    },
+    {
+      "path": "/find-match",
+      "sample": 2,
+      "fetchTime": "2026-10-21T17:19:21.520Z",
+      "score": 70,
+      "metrics": {
+        "first-contentful-paint": 3242.62,
+        "largest-contentful-paint": 6956.608,
+        "total-blocking-time": 8,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3242.62,
+        "server-response-time": 367
+      }
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 2,
+      "fetchTime": "2026-10-21T17:19:33.268Z",
+      "score": 73,
+      "metrics": {
+        "first-contentful-paint": 2773.782,
+        "largest-contentful-paint": 6198.629999999999,
+        "total-blocking-time": 18,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2773.782,
+        "server-response-time": 527
+      }
+    },
+    {
+      "path": "/solo",
+      "sample": 2,
+      "fetchTime": "2026-10-21T17:19:44.868Z",
+      "score": 72,
+      "metrics": {
+        "first-contentful-paint": 2862.6079999999997,
+        "largest-contentful-paint": 6375.530000000001,
+        "total-blocking-time": 8,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2862.6079999999997,
+        "server-response-time": 395
+      }
+    },
+    {
+      "path": "/",
+      "sample": 3,
+      "fetchTime": "2026-10-21T17:19:56.581Z",
+      "score": 71,
+      "metrics": {
+        "first-contentful-paint": 2863.59,
+        "largest-contentful-paint": 6657.080000000003,
+        "total-blocking-time": 6,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3412.1747031743716,
+        "server-response-time": 458
+      }
+    },
+    {
+      "path": "/settings",
+      "sample": 3,
+      "fetchTime": "2026-10-21T17:20:08.328Z",
+      "score": 73,
+      "metrics": {
+        "first-contentful-paint": 2769.07,
+        "largest-contentful-paint": 6093.116,
+        "total-blocking-time": 5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2986.3804102248414,
+        "server-response-time": 354
+      }
+    },
+    {
+      "path": "/find-match",
+      "sample": 3,
+      "fetchTime": "2026-10-21T17:20:19.649Z",
+      "score": 73,
+      "metrics": {
+        "first-contentful-paint": 2881.977999999999,
+        "largest-contentful-paint": 6054.997999999999,
+        "total-blocking-time": 1.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2881.977999999999,
+        "server-response-time": 396
+      }
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 3,
+      "fetchTime": "2026-10-21T17:20:31.317Z",
+      "score": 73,
+      "metrics": {
+        "first-contentful-paint": 2903.529,
+        "largest-contentful-paint": 5903.749999999999,
+        "total-blocking-time": 2,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3521.7433375355904,
+        "server-response-time": 578
+      }
+    },
+    {
+      "path": "/solo",
+      "sample": 3,
+      "fetchTime": "2026-10-21T17:20:43.126Z",
+      "score": 73,
+      "metrics": {
+        "first-contentful-paint": 2725.4820000000004,
+        "largest-contentful-paint": 6691.311000000001,
+        "total-blocking-time": 7,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2725.4820000000004,
+        "server-response-time": 407
+      }
+    }
+  ],
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "lighthouseVersion": "13.5.0"
+}

@@ -1,0 +1,61 @@
+{
+  "measuredAt": "2026-10-21T16:54:42.325Z",
+  "target": "staging",
+  "origin": "https://2048-web-staging.vercel.app",
+  "harnessCommit": "f1d619476dc2e7974f7d52af2800984f4a67c1f1",
+  "browser": "155.0.8059.85",
+  "environment": "Actual network and deployed web/socket; no intercepted requests, seeded boards, auth fixture, or injected latency. Guest private friend rooms only.",
+  "games": [
+    {
+      "device": "desktop",
+      "kind": "surrender",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "3f64eccd-7581-45f9-b015-d2b85d2804e7",
+      "reason": "surrender",
+      "moves": 0,
+      "roomCreationToReadyMs": 3665.405166,
+      "joinCodeRequestToReadyMs": 99.26708299999973,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 3668.268209,
+      "firstBoardMs": 7336.1685,
+      "playableDurationMs": 335.25804100000096,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 8.430958999999348,
+      "resultPacketToAnimationCompleteMs": 1051.0938749999987,
+      "surrenderToResultMs": 44.89695800000118,
+      "inputs": [],
+      "inputPaintMs": []
+    },
+    {
+      "device": "mobile-emulation",
+      "kind": "surrender",
+      "policy": "alternate valid moves with minimum merge score at >=100ms cadence; naturally fills boards",
+      "watchReadyMs": null,
+      "roomId": "71e9e6d7-68b1-4495-b2a3-cca09a0ddbec",
+      "reason": "surrender",
+      "moves": 0,
+      "roomCreationToReadyMs": 3014.431875,
+      "joinCodeRequestToReadyMs": 89.26916700000038,
+      "queueNavigationToFoundMs": null,
+      "secondQueueRequestToFoundMs": null,
+      "introAndJoinMs": 3684.954582999999,
+      "firstBoardMs": 6703.337958,
+      "playableDurationMs": 326.6704170000012,
+      "roomWallDurationMs": null,
+      "resultPacketToOverlayMs": 14.340832999998383,
+      "resultPacketToAnimationCompleteMs": 1073.8139999999985,
+      "surrenderToResultMs": 37.24987500000134,
+      "inputs": [],
+      "inputPaintMs": []
+    }
+  ],
+  "failures": [],
+  "deployedCommit": "e7999532ea1c04b4bffaf389f6b5d85accf009ea",
+  "socketBuildCommit": "f1d619476dc2e7974f7d52af2800984f4a67c1f1",
+  "casesRequested": [
+    "desktop:surrender",
+    "mobile-emulation:surrender"
+  ]
+}
