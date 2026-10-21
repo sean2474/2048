@@ -31,3 +31,9 @@ Commands:
 - Scoped ESLint for the achievement page, provider, action, loader, operation helper and interaction/skeleton components.
 
 The operation helper measured 98.68% line, 97.40% branch and 95.65% function coverage. This is scoped service coverage, not an application-wide coverage claim. The browser capability/regression checks passed on the first final run and all three repeated final runs (pass@1 100%, pass@3 100%, three-run stability 100%). Server and browser fixtures use loopback services only; no production accounts or database mutations were used. The wider application build and integrated review belong to the parent boundary-refactor validation.
+
+## Follow-up: recovering an unchanged action after an RSC read failure
+
+The added browser regression first failed because an initial `achievement_state` GET error remained visible after the automatic action succeeded without changing progress. The test timed out waiting for `Permanently unlocked`; `9c4a970` preserves this RED checkpoint.
+
+`AchievementNotices` now receives the server read-error flag and refreshes once when the action provides valid settled data. The effect depends on the error/data/loading state, so an unchanged failed RSC retry cannot trigger another immediate refresh. The browser fixture verifies automatic recovery when only the first GET fails and exactly two GETs when the failure persists; attendance stays unchanged. The focused regression passed three consecutive runs, and the full achievement browser/SSR suite passed all four tests. Scoped ESLint and TypeScript checks also passed.

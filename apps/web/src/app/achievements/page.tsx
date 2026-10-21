@@ -73,7 +73,7 @@ async function AchievementContent({ filter }: { filter: Filter }) {
       </div>
     </section>
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 text-sm"><p>{t("Could not load achievement progress.")}</p><AchievementRetry label={t("Reload unlock information")} /></div>}
-    <AchievementNotices showSyncError={!error} names={Object.fromEntries(achievements.map(item => [item.id, t(item.name)]))} />
+    <AchievementNotices readError={error} names={Object.fromEntries(achievements.map(item => [item.id, t(item.name)]))} />
 
     <section aria-labelledby="rewards-title" className="space-y-4">
       <div><h2 id="rewards-title" className="font-bold">{t("Achievement exclusives")}</h2><p className="mt-1 text-xs leading-5 text-muted-foreground">{t("Solo rewards use your time attack and endless records. Match rewards require casual or ranked against another account.")}</p></div>
