@@ -2,8 +2,16 @@ import { getI18n } from "@/lib/i18n/server";
 import { LoginForm } from "@/components/login-form";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { redirect } from "next/navigation";
+import { getAdminAccess } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
+  if (isSupabaseConfigured()) {
+    const { user, mfa } = await getAdminAccess();
+    if (user && !user.is_anonymous) redirect(mfa ? "/mfa" : "/");
+  }
   const { t } = await getI18n();
   return (
     <main className="mx-auto flex min-h-screen max-w-[464px] flex-col justify-center px-5 py-12">
