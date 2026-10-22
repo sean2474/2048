@@ -1,0 +1,72 @@
+{
+  "at": "2026-10-22T04:36:17.246Z",
+  "method": "Production guest touch emulation, compact and landscape viewports; not physical devices",
+  "results": [
+    {
+      "engine": "chrome",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "dialogFits": true,
+      "cancelAccessibleByTouch": true,
+      "menuNavigation": true,
+      "overflow": false
+    },
+    {
+      "engine": "chrome",
+      "viewport": {
+        "width": 375,
+        "height": 667
+      },
+      "dialogFits": true,
+      "cancelAccessibleByTouch": true,
+      "menuNavigation": true,
+      "overflow": false
+    },
+    {
+      "engine": "chrome",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "dialogFits": true,
+      "cancelAccessibleByTouch": true,
+      "menuNavigation": true,
+      "overflow": false
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "dialogFits": true,
+      "cancelAccessibleByTouch": true,
+      "menuNavigation": true,
+      "overflow": false
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 375,
+        "height": 667
+      },
+      "dialogFits": true,
+      "cancelAccessibleByTouch": true,
+      "menuNavigation": true,
+      "overflow": false
+    },
+    {
+      "engine": "webkit",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "dialogFits": true,
+      "cancelAccessibleByTouch": true,
+      "menuNavigation": true,
+      "overflow": false
+    }
+  ]
+}

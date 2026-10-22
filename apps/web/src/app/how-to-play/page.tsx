@@ -161,7 +161,7 @@ export default async function HowToPlay() {
             <h2 className="text-xl font-bold tracking-tight">{t("03. Abilities")}</h2>
             <p className="text-sm leading-7 text-muted-foreground">
               {t(
-                "Choose one ability before a match. Merge points fill a 1024-point charge; hold one use and press 1 or the ability button below your board when ready. Change the ability key in Keybindings. Guests use Clear X.",
+                "Choose one ability before a match. Merge points fill a 1024-point charge; hold one use and press Space or the ability button below your board when ready. Change the ability key in Keybindings. Guests use Clear X.",
               )}
             </p>
             <dl className="space-y-4">

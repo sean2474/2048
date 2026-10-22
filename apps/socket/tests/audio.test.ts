@@ -1,7 +1,7 @@
 import { createAbilityState } from "game-core";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ABILITIES } from "schema/loadout";
+import { ABILITIES, SKINS } from "schema/loadout";
 import {
   DEFAULT_AUDIO,
   GameAudio,
@@ -266,4 +266,34 @@ test("abilities only sound on confirmed charge consumption, including effects wi
     opponentOnly.opp = { ...next.you };
     assert.equal(matchSound(previous, opponentOnly), null);
   }
+});
+
+test("every built-in skin has a material voice and catalog patterns retain a fallback", async () => {
+  const { skinAudioMaterial, skinGesture, varyGesture } =
+    await import("../../web/src/lib/skin-audio");
+  for (const skin of SKINS) {
+    assert.ok(skinAudioMaterial(skin.tokens, skin.id), skin.id);
+    for (const sound of ["move", "merge"] as const) {
+      const notes = skinGesture(sound, skin.tokens, skin.id)!;
+      const variants = [0, 1, 2, 3].map((i) => varyGesture(notes, i));
+      assert.equal(new Set(variants.map((v) => JSON.stringify(v))).size, 4, `${skin.id} ${sound}`);
+      for (const variant of variants)
+        for (const voice of variant) {
+          assert.ok(voice.frequency > 20 && voice.frequency < 16000);
+          assert.ok((voice.gain ?? 0.06) <= 0.08);
+          assert.ok((voice.attack ?? 0.004) < voice.duration);
+          assert.ok((voice.at ?? 0) + voice.duration < 0.6);
+        }
+    }
+  }
+  const paper = SKINS.find((s) => s.id === "paper")!;
+  const tide = SKINS.find((s) => s.id === "tide")!;
+  assert.equal(skinAudioMaterial(paper.tokens, paper.id), "paper");
+  assert.equal(skinAudioMaterial(tide.tokens, tide.id), "water");
+  assert.equal(
+    skinAudioMaterial({ ...paper.tokens, tilePattern: "shield" }, "custom-shield"),
+    "metal",
+  );
+  assert.equal(skinAudioMaterial({ ...paper.tokens, character: "cat" }, "custom-cat"), "cloth");
+  assert.equal(skinGesture("merge", paper.tokens, "unknown"), undefined);
 });

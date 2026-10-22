@@ -111,7 +111,7 @@ UI 색상은 [globals.css](../apps/web/src/app/globals.css)의 토큰을 사용�
 - 실전 `Tile`과 `SkinMergePreview`에서 같은 `MergeFlair`·CSS를 사용한다. 새 효과의 시간 변경 시 미리보기 완료 타이머도 함께 맞춘다.
 - `prefers-reduced-motion: reduce`에서는 타일 동작과 장식을 끈다. 합성된 숫자는 정상 표시한다.
 - 소리는 [GameAudio](../apps/web/src/lib/game-audio.ts)와 `useAudio`를 재사용한다. 음소거·볼륨을 따르고 미리보기는 명시적으로 재생할 때만 소리를 낸다. 상대 합성 소리를 중복 재생하지 않는다.
-- 캐릭터 10종의 효과음과 초기 7종 파형·청취 자료의 검증 범위는 [오디오 기록](audio/README.md)을 따른다.
+- 캐릭터 10종과 재질별 11종 효과음의 파형 검증 범위는 [오디오 기록](audio/README.md)을 따른다.
 
 ## 7. 제작 요청 템플릿
 

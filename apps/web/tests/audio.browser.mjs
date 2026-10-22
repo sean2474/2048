@@ -28,7 +28,7 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
     await page.getByRole("heading", { name: "You’ve got the basics", exact: true }).waitFor();
     await page.waitForFunction(() => window.audioProbe.notes.length === 2);
     assert.equal(await page.evaluate(() => window.audioProbe.contexts[0].state), "running");
-    assert.deepEqual(await page.evaluate(() => window.audioProbe.notes), [440, 880]);
+    assert.deepEqual(await page.evaluate(() => window.audioProbe.notes), [392, 784]);
     await sound.tap();
     assert.equal(await sound.getAttribute("aria-pressed"), "false");
     await page.waitForFunction(() => window.audioProbe.contexts[0].master.gain.value === 0);

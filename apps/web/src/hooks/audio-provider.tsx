@@ -90,7 +90,11 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     engine.current?.stop();
   }, [pathname]);
   const play = useCallback((sound: GameSound, skinId?: SkinId) => {
-    engine.current?.play(sound, skinId ? catalogRef.current.skin(skinId).tokens : undefined);
+    engine.current?.play(
+      sound,
+      skinId ? catalogRef.current.skin(skinId).tokens : undefined,
+      skinId,
+    );
   }, []);
   const saveAudio = useCallback((patch: Partial<AudioSettings>) => {
     const next = parseAudioSettings(JSON.stringify({ ...current.current, ...patch }));
