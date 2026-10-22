@@ -79,6 +79,10 @@ test(
             // so the desktop link performs an RSC navigation rather than a document load.
             await page.getByRole("button", { name: "Pause duel animation", exact: true }).click();
             await page.getByRole("button", { name: "Play duel animation", exact: true }).waitFor();
+            // Let initial account/settings Server Actions settle before holding reads.
+            // A client control can hydrate while another provider is still starting;
+            // blocking that initial action tests the action queue, not route loading.
+            await page.waitForLoadState("networkidle");
 
             let release, requested;
             const pending = new Promise((resolve) => {
