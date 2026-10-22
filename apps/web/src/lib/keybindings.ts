@@ -7,7 +7,7 @@ export const DEFAULT_KEYBINDINGS: Readonly<Keybindings> = Object.freeze({
   down: "KeyS",
   left: "KeyA",
   right: "KeyD",
-  ability: "Digit1",
+  ability: "Space",
 });
 
 type KeyEvent = Pick<
@@ -23,7 +23,7 @@ type KeyEvent = Pick<
 >;
 
 export function isBindingCode(value: unknown): value is string {
-  return typeof value === "string" && /^(Key[A-Z]|Digit[0-9])$/.test(value);
+  return typeof value === "string" && /^(Key[A-Z]|Digit[0-9]|Space)$/.test(value);
 }
 
 export function isKeybindings(value: unknown): value is Keybindings {
@@ -56,9 +56,9 @@ export function upgradeKeybindings(value: unknown): unknown {
   const ability =
     hasAbility && old.ability !== "Digit3"
       ? old.ability
-      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-          .map((digit) => `Digit${digit}`)
-          .find((code) => !Object.values(movement).includes(code));
+      : ["Space", ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => `Digit${digit}`)].find(
+          (code) => !Object.values(movement).includes(code),
+        );
   return { ...movement, ability };
 }
 
@@ -102,7 +102,9 @@ export function resolveKeyAction(
   if (Object.hasOwn(arrows, event.code)) return arrows[event.code];
   if (!characterShortcuts) return null;
   const action = KEY_ACTIONS.find((candidate) => bindings[candidate] === event.code) ?? null;
-  return event.repeat && action === "ability" ? null : action;
+  // Resolve held keys too so the input handler can suppress browser scrolling.
+  // The handler, not key resolution, prevents repeated ability activation.
+  return action;
 }
 
 export function createMovementRepeater(

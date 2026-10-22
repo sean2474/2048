@@ -214,7 +214,7 @@ export function TutorialPractice() {
             <>
               {characterShortcuts && !lesson.complete && (
                 <p className="mt-2 text-xs text-muted-foreground">
-                  {t("Press {key} to use your ability.", { key: keyLabel(bindings.ability) })}
+                  {t("Press {key} to use your ability.", { key: t(keyLabel(bindings.ability)) })}
                 </p>
               )}
               <p className="mt-3 text-xs leading-5 text-muted-foreground">

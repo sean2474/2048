@@ -22,14 +22,14 @@ const key = (code: string, options = {}) => ({
   ...options,
 });
 
-test("bindings require five unique letter or number codes and preserve current customizations", () => {
+test("bindings require five unique letter, number or Space codes and preserve current customizations", () => {
   const custom = { ...DEFAULT_KEYBINDINGS, up: "KeyI", ability: "KeyF" };
   assert.deepEqual(DEFAULT_KEYBINDINGS, {
     up: "KeyW",
     down: "KeyS",
     left: "KeyA",
     right: "KeyD",
-    ability: "Digit1",
+    ability: "Space",
   });
   assert.equal(isKeybindings(custom), true);
   assert.deepEqual(upgradeKeybindings(custom), custom);
@@ -62,7 +62,7 @@ test("all arrows remain available with character shortcuts off and only movement
     assert.equal(resolveKeyAction(key(code), custom, false), action);
   }
   assert.equal(resolveKeyAction(key("KeyI"), custom, true), "up");
-  assert.equal(resolveKeyAction(key("Digit1"), DEFAULT_KEYBINDINGS, true), "ability");
+  assert.equal(resolveKeyAction(key("Space"), DEFAULT_KEYBINDINGS, true), "ability");
   assert.equal(resolveKeyAction(key("KeyF"), custom, true), "ability");
   for (const code of ["KeyW", "Digit1", "Digit2", "Digit3", "toString", "Enter"])
     assert.equal(resolveKeyAction(key(code), custom, true), null);
@@ -85,22 +85,30 @@ test("modifiers, composing and prevented events never trigger controls or key ca
       null,
     );
     assert.equal(bindingCodeFromEvent(key("KeyW", { [flag]: true })), null);
+    assert.equal(resolveKeyAction(key("Space", { [flag]: true }), DEFAULT_KEYBINDINGS, true), null);
   }
   assert.equal(bindingCodeFromEvent(key("ArrowUp")), null);
   assert.equal(bindingCodeFromEvent(key("KeyW")), "KeyW");
   assert.equal(bindingCodeFromEvent(key("Digit9")), "Digit9");
   assert.equal(keyLabel("KeyW"), "W");
   assert.equal(keyLabel("Digit9"), "9");
+  assert.equal(keyLabel("Space"), "Space");
+  assert.equal(bindingCodeFromEvent(key("Space")), "Space");
+  assert.equal(resolveKeyAction(key("Space"), DEFAULT_KEYBINDINGS, false), null);
+  assert.equal(resolveKeyAction(key("Digit1"), DEFAULT_KEYBINDINGS, true), null);
 });
 
-test("held movement repeats but ability fires only once per press", () => {
+test("held keys still resolve so the keyboard handler can suppress native scrolling", () => {
   assert.equal(resolveKeyAction(key("KeyW", { repeat: true }), DEFAULT_KEYBINDINGS, true), "up");
   assert.equal(
     resolveKeyAction(key("ArrowUp", { repeat: true }), DEFAULT_KEYBINDINGS, false),
     "up",
   );
-  assert.equal(resolveKeyAction(key("Digit1", { repeat: true }), DEFAULT_KEYBINDINGS, true), null);
-  assert.equal(resolveKeyAction(key("Digit1"), DEFAULT_KEYBINDINGS, true), "ability");
+  assert.equal(
+    resolveKeyAction(key("Space", { repeat: true }), DEFAULT_KEYBINDINGS, true),
+    "ability",
+  );
+  assert.equal(resolveKeyAction(key("Space"), DEFAULT_KEYBINDINGS, true), "ability");
   for (const code of ["Digit2", "Digit3"])
     assert.equal(resolveKeyAction(key(code), DEFAULT_KEYBINDINGS, true), null);
 });
@@ -110,7 +118,7 @@ test("old attack keys are removed while movement and customized ability keys sur
   const old = { ...movement, xblock: "Digit1", hardblock: "Digit2" };
   for (const value of [old, { ...old, ability: "Digit3" }]) {
     assert.equal(isKeybindings(value), false);
-    assert.deepEqual(upgradeKeybindings(value), { ...movement, ability: "Digit1" });
+    assert.deepEqual(upgradeKeybindings(value), { ...movement, ability: "Space" });
   }
   assert.deepEqual(upgradeKeybindings({ ...old, ability: "KeyF" }), {
     ...movement,
@@ -118,7 +126,7 @@ test("old attack keys are removed while movement and customized ability keys sur
   });
   const occupied = { ...movement, up: "Digit1", xblock: "KeyX", hardblock: "KeyH" };
   for (const value of [occupied, { ...occupied, ability: "Digit3" }]) {
-    assert.deepEqual(upgradeKeybindings(value), { ...movement, up: "Digit1", ability: "Digit2" });
+    assert.deepEqual(upgradeKeybindings(value), { ...movement, up: "Digit1", ability: "Space" });
   }
   for (const bad of [
     { ...old, up: "KeyK" },

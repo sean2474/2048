@@ -9,6 +9,7 @@ import { ABILITIES, RETIRED_ABILITY_IDS, SKINS } from "schema/loadout";
 import { createAuthDatabase } from "./helpers/pglite";
 import {
   DEFAULT_SETTINGS,
+  encodeGuestSettings,
   isSettings,
   isSettingsPatch,
   parseGuestSettings,
@@ -563,10 +564,10 @@ test("legacy account and guest bindings upgrade without losing saved keys or loc
     hardblock: "Digit2",
   };
   for (const [bindings, expectedKeys] of [
-    [old, { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", ability: "Digit1" }],
+    [old, { up: "Digit3", down: "KeyK", left: "KeyJ", right: "KeyL", ability: "Space" }],
     [
       { ...old, up: "Digit1", xblock: "KeyX", ability: "Digit3" },
-      { up: "Digit1", down: "KeyK", left: "KeyJ", right: "KeyL", ability: "Digit2" },
+      { up: "Digit1", down: "KeyK", left: "KeyJ", right: "KeyL", ability: "Space" },
     ],
     [
       { ...old, ability: "KeyF" },
@@ -640,9 +641,13 @@ test("manual ability migration preserves old rows and validates five-key setting
   await db.exec("insert into public.player_preferences(id) values (2)");
   assert.deepEqual(
     (await db.query("select keybindings from public.player_preferences where id=2")).rows,
-    [{ keybindings: DEFAULT_SETTINGS.keybindings }],
+    [{ keybindings: { ...DEFAULT_SETTINGS.keybindings, ability: "Digit1" } }],
   );
-  for (const value of [old, DEFAULT_SETTINGS.keybindings, { ...old, ability: "KeyF" }]) {
+  for (const value of [
+    old,
+    { ...DEFAULT_SETTINGS.keybindings, ability: "Digit1" },
+    { ...old, ability: "KeyF" },
+  ]) {
     assert.deepEqual(
       (
         await db.query("select private.valid_player_keybindings($1::jsonb) as valid", [
@@ -661,7 +666,7 @@ test("manual ability migration preserves old rows and validates five-key setting
     { ...old, ability: "Digit3" },
     { ...old, ability: null },
     { ...old, ability: "Enter" },
-    { ...DEFAULT_SETTINGS.keybindings, extra: "KeyF" },
+    { ...{ ...DEFAULT_SETTINGS.keybindings, ability: "Digit1" }, extra: "KeyF" },
   ]) {
     assert.deepEqual(
       (
@@ -672,4 +677,103 @@ test("manual ability migration preserves old rows and validates five-key setting
       [{ valid: false }],
     );
   }
+});
+
+test("old guest default upgrades once while newly saved custom 1 and other preferences persist", () => {
+  const old = {
+    ...defaults(),
+    locale: "en" as const,
+    customShortcuts: false,
+    keybindings: { ...DEFAULT_SETTINGS.keybindings, up: "KeyI", ability: "Digit1" },
+  };
+  assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(old))), {
+    ...old,
+    keybindings: { ...old.keybindings, ability: "Space" },
+  });
+  assert.deepEqual(parseGuestSettings(encodeGuestSettings(old)), old);
+  const legacyCustom = {
+    ...old,
+    keybindings: { ...old.keybindings, xblock: "KeyX", hardblock: "KeyH" },
+  };
+  assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(legacyCustom))), old);
+  const custom = { ...old, keybindings: { ...old.keybindings, ability: "KeyF" } };
+  assert.deepEqual(parseGuestSettings(encodeURIComponent(JSON.stringify(custom))), custom);
+  const conflicting = { ...old, keybindings: { ...old.keybindings, up: "Space" } };
+  assert.deepEqual(
+    parseGuestSettings(encodeURIComponent(JSON.stringify(conflicting))),
+    conflicting,
+  );
+});
+
+test("Space migrations expand validation first then upgrade only existing default ability keys", async (t) => {
+  const db = new PGlite();
+  t.after(() => db.close());
+  await db.exec(
+    "create schema private; create role anon; create role authenticated; create role service_role; create table public.player_preferences(id int primary key, keybindings jsonb not null);",
+  );
+  const old = { ...DEFAULT_SETTINGS.keybindings, up: "KeyI", ability: "Digit1" };
+  const custom = { ...old, ability: "KeyF" };
+  const conflict = { ...old, up: "Space" };
+  for (const [id, keys] of [
+    [1, old],
+    [2, custom],
+    [3, conflict],
+  ] as const)
+    await db.query("insert into public.player_preferences values($1,$2::jsonb)", [
+      id,
+      JSON.stringify(keys),
+    ]);
+  await db.exec(
+    await readFile(
+      new URL("../../../supabase/migrations/20261022043632_space_keybindings.sql", import.meta.url),
+      "utf8",
+    ),
+  );
+  assert.deepEqual(
+    (await db.query("select keybindings from public.player_preferences where id=1")).rows,
+    [{ keybindings: old }],
+  );
+  for (const [keys, valid] of [
+    [DEFAULT_SETTINGS.keybindings, true],
+    [conflict, true],
+    [{ ...DEFAULT_SETTINGS.keybindings, up: "Space" }, false],
+    [{ ...old, ability: "Enter" }, false],
+  ] as const)
+    assert.deepEqual(
+      (
+        await db.query("select private.valid_player_keybindings($1::jsonb) as valid", [
+          JSON.stringify(keys),
+        ])
+      ).rows,
+      [{ valid }],
+    );
+  await db.exec(
+    await readFile(
+      new URL(
+        "../../../supabase/migrations/20261022043633_space_ability_default.sql",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  );
+  assert.deepEqual(
+    (await db.query("select keybindings from public.player_preferences order by id")).rows,
+    [
+      { keybindings: { ...old, ability: "Space" } },
+      { keybindings: custom },
+      { keybindings: conflict },
+    ],
+  );
+  await db.exec("insert into public.player_preferences(id) values(4)");
+  assert.deepEqual(
+    (await db.query("select keybindings from public.player_preferences where id=4")).rows,
+    [{ keybindings: DEFAULT_SETTINGS.keybindings }],
+  );
+  await db.query("update public.player_preferences set keybindings=$1::jsonb where id=4", [
+    JSON.stringify(old),
+  ]);
+  assert.deepEqual(
+    (await db.query("select keybindings from public.player_preferences where id=4")).rows,
+    [{ keybindings: old }],
+  );
 });
