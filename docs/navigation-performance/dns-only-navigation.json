@@ -1,0 +1,88 @@
+{
+  "measuredAt": "2026-10-22T04:14:58.994Z",
+  "origin": "https://www.2048duo.io",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "method": "Real public DNS and unmodified deployed app. Fresh English guest browser contexts; warm header links clicked after initial network idle. Click-to-destination-heading time includes Playwright actionability scheduling and is not INP or cold-load timing.",
+  "devices": [
+    {
+      "device": "desktop",
+      "navigations": [
+        {
+          "path": "/settings",
+          "clickToHeadingMs": 208.63,
+          "documentRequests": 1
+        },
+        {
+          "path": "/feedback",
+          "clickToHeadingMs": 44.54,
+          "documentRequests": 1
+        },
+        {
+          "path": "/find-match",
+          "clickToHeadingMs": 51.98,
+          "documentRequests": 1
+        },
+        {
+          "path": "/leaderboard",
+          "clickToHeadingMs": 48.42,
+          "documentRequests": 1
+        },
+        {
+          "path": "/how-to-play",
+          "clickToHeadingMs": 50.35,
+          "documentRequests": 1
+        },
+        {
+          "path": "/solo",
+          "clickToHeadingMs": 49.45,
+          "documentRequests": 1
+        }
+      ],
+      "pageErrors": [],
+      "failedHttp": [],
+      "initialStatus": 200,
+      "server": "Vercel",
+      "finalDocuments": 1
+    },
+    {
+      "device": "mobile-emulation",
+      "navigations": [
+        {
+          "path": "/settings",
+          "clickToHeadingMs": 291.08,
+          "documentRequests": 1
+        },
+        {
+          "path": "/feedback",
+          "clickToHeadingMs": 329.37,
+          "documentRequests": 1
+        },
+        {
+          "path": "/find-match",
+          "clickToHeadingMs": 327.03,
+          "documentRequests": 1
+        },
+        {
+          "path": "/leaderboard",
+          "clickToHeadingMs": 323.03,
+          "documentRequests": 1
+        },
+        {
+          "path": "/how-to-play",
+          "clickToHeadingMs": 326.04,
+          "documentRequests": 1
+        },
+        {
+          "path": "/solo",
+          "clickToHeadingMs": 325.48,
+          "documentRequests": 1
+        }
+      ],
+      "pageErrors": [],
+      "failedHttp": [],
+      "initialStatus": 200,
+      "server": "Vercel",
+      "finalDocuments": 1
+    }
+  ]
+}

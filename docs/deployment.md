@@ -1,6 +1,6 @@
 # 운영·테스트 환경 배포
 
-최종 갱신: 2026-10-19
+최종 갱신: 2026-10-22
 
 게임 웹, 관리자 웹, 실시간 게임 서버를 따로 배포한다. 테스트는 전용 staging 웹·소켓·Supabase를 사용한다. 테스트 계정, 경기, Elo, 업적, 코인은 운영과 공유하지 않는다.
 
@@ -15,6 +15,8 @@
 | 소켓 설정 | [`fly.toml`](../fly.toml) | [`fly.staging.toml`](../fly.staging.toml) |
 
 각 Fly 앱은 1 GB 메모리의 머신 **1개**와 해당 앱 전용 1 GB `results` 볼륨을 사용한다. 볼륨은 `/data`에 마운트하고 결과 재시도 파일은 `/data/results`에 저장한다. 운영 볼륨을 staging에 연결하거나 운영 DB를 테스트 DB로 복제하지 않는다.
+
+운영 웹의 `2048duo.io`·`www.2048duo.io`는 Cloudflare **DNS only** CNAME으로 Vercel에 직접 연결한다. 2026-10-22 사용자 승인 후 추가 프록시 경유를 제거했고, HTTPS와 기본 주소의 `www` 이동은 Vercel이 처리한다. `admin.2048duo.io`는 기존 Proxied, `socket.2048duo.io`는 기존 DNS only 설정을 유지한다. 이 두 웹 주소에는 Cloudflare의 HTTP 보안·트래픽 검사가 적용되지 않는다. 현재 대상값, 측정 결과와 두 레코드만 복구하는 절차는 [DNS 변경 기록](navigation-performance/dns-routing-results.md)에 있다.
 
 Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루트의 `pnpm-lock.yaml`, 워크스페이스 설정과 공통 `packages`를 함께 빌드하도록 Root Directory 밖 소스 포함을 허용한다. Next.js preset과 앱별 `build` 스크립트를 사용한다.
 

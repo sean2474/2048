@@ -1,0 +1,48 @@
+{
+  "verifiedAt": "2026-10-22T04:12:04.768485+00:00",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "webDeployment": "dpl_Fa9W8pLDXZ4K9Bs4tYZuzrqcfUN8",
+  "records": [
+    {
+      "name": "2048duo.io",
+      "type": "CNAME",
+      "target": "3866120569410319.vercel-dns-016.com",
+      "before": "Proxied",
+      "after": "DNS only",
+      "ttl": "Auto"
+    },
+    {
+      "name": "www.2048duo.io",
+      "type": "CNAME",
+      "target": "3866120569410319.vercel-dns-016.com",
+      "before": "Proxied",
+      "after": "DNS only",
+      "ttl": "Auto"
+    }
+  ],
+  "unchanged": {
+    "admin.2048duo.io": "Proxied CNAME to beff15b6f03ba269.vercel-dns-016.com",
+    "socket.2048duo.io": "DNS-only CNAME to 2048-socket.fly.dev",
+    "nameservers": [
+      "jasper.ns.cloudflare.com",
+      "frida.ns.cloudflare.com"
+    ],
+    "TXT": "Three Vercel verification records unchanged"
+  },
+  "inspection": {
+    "customSecurityRules": 0,
+    "rateLimitRules": 0,
+    "configuredManagedRules": 0,
+    "workerRoutes": 0,
+    "defaultCloudflareProtection": "Present before change; bypassed for the two web records after explicit user approval. Vercel HTTPS and platform DDoS mitigation remain."
+  },
+  "approval": "User explicitly approved DNS-only for the two public web addresses after the protection change was explained. No whole-zone pause or security rules were edited.",
+  "rollback": "Switch only these two records back to Proxied, preserving targets and TTL; allow resolver caches to expire.",
+  "socket": {
+    "machine": "8e25d4c7757e78",
+    "region": "nrt",
+    "source": "f1d619476dc2e7974f7d52af2800984f4a67c1f1",
+    "image": "sha256:9bcc3546d5c7fec6f14b3b5a5b410291b6c96271d3958e86c4fbf9a3f8f55def",
+    "redeployed": false
+  }
+}
