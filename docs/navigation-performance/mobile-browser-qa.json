@@ -1,0 +1,459 @@
+{
+  "measuredAt": "2026-10-22T04:33:30.888Z",
+  "origin": "https://www.2048duo.io",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "method": "Desktop-hosted Chrome Android and WebKit iPhone touch/viewport emulation against production. Fresh guest contexts, normal DNS, no account credentials, request mocking or server delay. Not physical iOS/Android hardware.",
+  "engines": [
+    {
+      "engine": "chrome-android",
+      "browser": "155.0.8059.85",
+      "layout": [
+        {
+          "path": "/",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/settings",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/settings",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/settings",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/settings",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/find-match",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/find-match",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/find-match",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/find-match",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/leaderboard",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/leaderboard",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/leaderboard",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/leaderboard",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/feedback",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/feedback",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/feedback",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/feedback",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/solo",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/solo",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/solo",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/solo",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/tutorial",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/tutorial",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/tutorial",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/tutorial",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        }
+      ],
+      "checks": [
+        "audio volume and mute persist across reload",
+        "guest shortcut setting persists across reload",
+        "keybindings dialog fits viewport and closes by touch",
+        "Korean/English touch language switch persists across reload",
+        "touch menu navigates without document reload",
+        "feedback to settings to tutorial through in-app touch links",
+        "tutorial touch direction pad merges starting tiles",
+        "landscape tutorial has no horizontal document overflow"
+      ],
+      "pageErrors": [],
+      "failedHttp": [],
+      "passed": true
+    },
+    {
+      "engine": "webkit-iphone",
+      "browser": "26.5",
+      "layout": [
+        {
+          "path": "/",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/settings",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/settings",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/settings",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/settings",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/find-match",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/find-match",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/find-match",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/find-match",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/leaderboard",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/leaderboard",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/leaderboard",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/leaderboard",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/feedback",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/feedback",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/feedback",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/feedback",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/solo",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/solo",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/solo",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/solo",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        },
+        {
+          "path": "/tutorial",
+          "label": "320",
+          "width": 320,
+          "scroll": 320,
+          "body": 320
+        },
+        {
+          "path": "/tutorial",
+          "label": "375",
+          "width": 375,
+          "scroll": 375,
+          "body": 375
+        },
+        {
+          "path": "/tutorial",
+          "label": "390",
+          "width": 390,
+          "scroll": 390,
+          "body": 390
+        },
+        {
+          "path": "/tutorial",
+          "label": "430",
+          "width": 430,
+          "scroll": 430,
+          "body": 430
+        }
+      ],
+      "checks": [
+        "audio volume and mute persist across reload",
+        "guest shortcut setting persists across reload",
+        "keybindings dialog fits viewport and closes by touch",
+        "Korean/English touch language switch persists across reload",
+        "touch menu navigates without document reload",
+        "feedback to settings to tutorial through in-app touch links",
+        "tutorial touch direction pad merges starting tiles",
+        "landscape tutorial has no horizontal document overflow"
+      ],
+      "pageErrors": [],
+      "failedHttp": [],
+      "passed": true
+    }
+  ],
+  "match": {
+    "players": [
+      "chrome-android",
+      "webkit-iphone"
+    ],
+    "touchMoves": 12,
+    "nativeSwipes": 1,
+    "statesAgree": true,
+    "reconnected": true,
+    "ended": true,
+    "reconnectionMethod": "Reload the Chrome player during the active private match, preserving its guest session."
+  },
+  "failures": [],
+  "cleanup": {
+    "draining": false,
+    "matches": 0,
+    "solo": 0,
+    "writes": 0,
+    "storageError": false,
+    "observedAfterFinalFullRun": true
+  }
+}
