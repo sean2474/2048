@@ -1,0 +1,55 @@
+name: Ordered release
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: release-${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
+        with:
+          version: 2.121.0
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+        with:
+          version: 0.4.118
+      - name: Expose the Fly command used by the drain script
+        run: |
+          mkdir -p "$RUNNER_TEMP/release-bin"
+          ln -s "$(command -v flyctl)" "$RUNNER_TEMP/release-bin/fly"
+          echo "$RUNNER_TEMP/release-bin" >> "$GITHUB_PATH"
+      - name: Install Vercel CLI
+        run: npm install --global vercel@64.7.0
+      - name: Prepare, verify and release this commit
+        env:
+          RELEASE_ENVIRONMENT: ${{ inputs.environment }}
+          GH_TOKEN: ${{ github.token }}
+          VERCEL_WEB_TOKEN: ${{ secrets.VERCEL_WEB_TOKEN }}
+          VERCEL_ADMIN_TOKEN: ${{ secrets.VERCEL_ADMIN_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: node scripts/release.mjs
+      - name: Preserve release evidence, including partial failures
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-${{ inputs.environment }}
+          path: ${{ runner.temp }}/2048-release.json
+          if-no-files-found: ignore
+          retention-days: 90

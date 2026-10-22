@@ -20,7 +20,35 @@
 
 Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루트의 `pnpm-lock.yaml`, 워크스페이스 설정과 공통 `packages`를 함께 빌드하도록 Root Directory 밖 소스 포함을 허용한다. Next.js preset과 앱별 `build` 스크립트를 사용한다.
 
-`2048-web`·`2048-admin`의 **Preview 환경 변수도 staging DB·소켓**을 사용한다. 전용 staging 프로젝트의 Vercel Production 배포는 운영 게임이 아니다. `NEXT_PUBLIC_APP_ENV=staging`으로 구분한다. Vercel의 운영 웹·관리자는 `main`, 전용 테스트 웹은 `staging` 브랜치를 추적한다. 기능 변경은 staging에서 검증한 뒤 main에 반영한다. Git 푸시는 Vercel 웹 배포를 트리거하며 Fly 소켓은 아래 명령으로 별도 배포한다. 배포 전 프로젝트·대상 환경·커밋을 확인한다.
+`2048-web`·`2048-admin`의 **Preview 환경 변수도 staging DB·소켓**을 사용한다. 전용 staging 프로젝트의 Vercel Production 배포는 운영 게임이 아니다. `NEXT_PUBLIC_APP_ENV=staging`으로 구분한다. Vercel의 운영 웹·관리자는 `main`, 전용 테스트 웹은 `staging` 브랜치를 추적한다. 기능 변경은 staging에서 검증한 뒤 main에 반영한다. `main`·`staging`의 Vercel Git 자동 배포는 앱별 `vercel.json`에서 끄고 아래 GitHub Actions가 순서를 제어한다. 기능 브랜치 Preview는 유지한다.
+
+## 자동 검증과 배포
+
+- `CI`: staging/main 대상 PR에서 테스트, 웹·관리자·소켓 빌드, 타입 검사, 린트, 형식 검사, 브라우저 기능·로딩 검사를 실행한다. 필수 상태 검사 이름은 `CI`다. Node 24.x와 pnpm 11.1.3을 사용한다.
+- `Deploy staging`: staging 푸시 뒤 같은 검사를 통과하면 테스트 환경을 자동 배포한다. Actions에서 staging 브랜치를 선택해 다시 실행할 수도 있다.
+- `Deploy production`: **수동 실행만** 허용한다. GitHub Actions → Deploy production → Run workflow에서 main을 선택한다. main 푸시·병합만으로 운영을 배포하지 않는다. 동일한 Git 소스 트리의 성공한 staging 배포와 보관 중인 검증 기록이 없으면 중단한다.
+
+배포는 환경 변수·프로젝트·DB 이력을 먼저 대조하고 웹과 관리자를 서비스 주소 변경 없이 빌드한다. 준비된 페이지를 확인한 다음 **DB 마이그레이션 → 기존 경기 종료 대기 후 소켓 교체 → staging 실서버 검사 → 웹·관리자 주소 승격** 순서로 진행한다. 이전 소스의 배포가 준비되는 동안 브랜치가 바뀌면 백엔드를 변경하기 전에 중단한다. 한 환경에서 동시에 두 배포를 실행하거나 진행 중 배포를 새 커밋 때문에 자동 취소하지 않는다.
+
+DB에는 저장소 이력의 끝에 추가된 버전만 적용한다. 원격 이력이 갈라졌거나 중간 버전이 빠졌으면 자동 복구하지 않는다. 웹·관리자 승격은 프로젝트 간 원자적 작업이 아니므로 DB·소켓 변경은 기존 웹과 호환되어야 한다. 호환 웹을 먼저 배포해야 하는 변경은 이 파이프라인에 바로 넣지 말고 단계별 릴리스로 나눈다. 실패하면 후속 단계를 멈추며 DB 역적용이나 소켓 강제 재시작은 하지 않는다.
+
+각 실행의 `release-staging` / `release-production` artifact에 커밋·소스 트리, 이전/신규 Vercel 배포 ID, DB 버전, 소켓 이미지와 단계별 결과를 90일 보관한다. 비밀 값은 기록하지 않는다. 90일이 지난 소스를 운영에 배포하려면 staging에서 다시 검증한다.
+
+### 자동화 자격 증명
+
+GitHub `release-staging` 환경은 staging 브랜치, `release-production` 환경은 main 브랜치만 허용한다. PR 검사에는 배포용 secret을 전달하지 않는다.
+
+| GitHub environment secret | 용도 |
+|---|---|
+| `VERCEL_WEB_TOKEN` | 해당 환경의 웹 프로젝트 하나에 제한한 Vercel 토큰 |
+| `VERCEL_ADMIN_TOKEN` | `2048-admin` 프로젝트에 제한한 Vercel 토큰. staging은 Preview, 운영은 Production 사용 |
+| `FLY_API_TOKEN` | 해당 환경의 Fly 앱 하나에 제한한 deploy 토큰 |
+| `SUPABASE_ACCESS_TOKEN` | 마이그레이션 이력 조회·적용을 위한 Supabase 관리 API 토큰 |
+| `SUPABASE_SECRET_KEY` | **release-staging에만** 등록하는 테스트 DB 서비스 키. 실서버 검사 임시 데이터 생성·정리용 |
+
+Vercel·Fly 토큰은 1년 만료로 발급하고 만료 전에 같은 범위의 새 토큰으로 교체한다. Supabase 관리 토큰은 로그인한 계정의 프로젝트 권한을 따르므로 접근 가능한 저장소 관리자와 워크플로 변경 권한을 제한한다. 토큰은 GitHub Secrets에만 저장하고 `.env`나 로그·커밋에 복사하지 않는다. 관리자 프로젝트 토큰은 두 Vercel 환경에 접근할 수 있으므로 파이프라인이 실제 환경 값도 대조한다.
+
+새 runner나 자격 증명을 점검할 때 `node scripts/release.mjs --check`로 프로젝트·환경 변수·DB 이력만 읽어 검증할 수 있다. 같은 workflow 환경 변수와 secret이 필요하며 이 명령은 배포하지 않는다.
 
 ## 환경 변수와 접근 경계
 
@@ -31,7 +59,7 @@ Vercel의 Root Directory는 게임 `apps/web`, 관리자 `apps/admin`이다. 루
 | 소켓 | `APP_ENV`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `CORS_ORIGINS`, `PORT=4000`, `RESULT_OUTBOX_DIR=/data/results` |
 
 - 운영 게임은 `NEXT_PUBLIC_APP_ENV=production`, staging·Preview는 `staging`을 사용한다. Vercel의 시스템 환경 변수 노출(`autoExposeSystemEnvs`)을 켜서 `NEXT_PUBLIC_VERCEL_ENV`도 빌드에 제공한다. 두 값이 모두 `production`일 때만 [웹 통계](analytics.md)를 전송한다.
-- `NEXT_PUBLIC_*` 변경은 **재빌드·재배포**해야 브라우저에 반영된다. 서비스 키는 Fly의 서버 전용 secret으로만 설정하며 웹·관리자·Git에 넣지 않는다. 운영/테스트 키를 섞지 않는다.
+- `NEXT_PUBLIC_*` 변경은 **재빌드·재배포**해야 브라우저에 반영된다. 서비스 키는 Fly의 서버 전용 secret과 staging 실서버 검사 전용 GitHub secret에만 설정하며 웹·관리자·Git에 넣지 않는다. 운영/테스트 키를 섞지 않는다.
 - `CORS_ORIGINS`는 쉼표로 구분한 정확한 HTTPS origin 목록이다. 운영에는 운영 웹 주소, staging에는 `https://2048-web-staging.vercel.app` 등 실제 사용하는 해당 환경의 고정 주소만 허용한다. 임의의 `*.vercel.app` 와일드카드나 localhost를 운영 설정에 추가하지 않는다.
 - 기능 브랜치의 Preview URL로 게임을 테스트하려면 그 **정확한 origin을 staging 소켓에 먼저 허용**한다. Preview가 staging DB를 사용해도 CORS 허용 목록에 자동 등록되지는 않는다. 사용이 끝난 URL은 목록에서 제거한다.
 - 소켓은 HTTP 요청과 WebSocket 연결의 브라우저 Origin을 검사한다. Origin은 사용자 인증을 대체하지 않는다. 관리자 권한은 DB `admin_roles`로 매번 확인하고 관리자는 게임과 별도 쿠키로 로그인한다. 자세한 접근 제어는 [관리자 가이드](admin.md)를 따른다.
@@ -137,7 +165,7 @@ pnpm --filter socket exec tsx --test tests/deployed-smoke.ts
 
 이 검사는 임시 계정 2개를 만들어 실제 매칭·이동·재접속·항복, 경기 저장과 1184/1216 Elo, 일반 계정의 관리자 접근 거절, HTTP/WebSocket Origin 거절을 확인한다. 검사에서 만든 참가자와 경기인지 확인하고 서버의 저장 완료 응답을 받은 뒤 그 데이터만 정리한다. 매칭 상대나 저장 완료를 확인하지 못하면 계정을 남기고 정리 실패를 보고한다. DB에 행이 있다는 이유만으로 삭제하지 말고 서버 outbox를 확인한 후 처리한다.
 
-기존 `pnpm test:remote`는 실제 Supabase에 **로컬 소켓 서버**를 연결하는 통합 검사다. Fly 네트워크·배포 이미지·실제 볼륨을 검증하는 위 검사와 구분한다. 현재 이 가이드의 배포와 검증 절차는 수동이며 자동 CI 게이트가 구축되어 있다고 가정하지 않는다.
+기존 `pnpm test:remote`는 실제 Supabase에 **로컬 소켓 서버**를 연결하는 통합 검사다. Fly 네트워크·배포 이미지·실제 볼륨을 검증하는 위 검사와 구분한다. 자동 배포에서는 `deployed-smoke.ts`를 staging 소켓 교체 후 실행하고 통과해야 웹을 승격한다. 이메일 실제 수신과 운영 사용자 경험은 별도 확인한다.
 
 ## 장애·롤백
 
