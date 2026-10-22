@@ -8,6 +8,10 @@ After the owner approved the protection change, only `2048duo.io` and `www.2048d
 
 The [post-change report](dns-routing-results.md) retains all 15 new mobile Lighthouse runs: route medians are **97, 97, 97, 98 and 97**. Home had one 94 and solo one 90; these are not omitted. Twelve desktop/mobile link navigations kept a single document, and production socket/game checks passed. **Vercel field RES95 is still not established**: the latest 24-hour desktop aggregate is 91 and mobile has no events. The measurements below describe the earlier Cloudflare path; use the follow-up for current routing.
 
+## Expanded mobile checks
+
+Android Chrome and iPhone WebKit touch emulation passed 56 route/width checks, settings persistence, menu navigation and an actual cross-browser private match with 12 touch moves, reload recovery and surrender. See the [mobile report](mobile-browser-results.md), including the transient locale observation and the limits of emulation.
+
 ## Changes
 
 - Keep every web/admin `page.tsx` a Server Component; interactive controls remain focused client islands.
