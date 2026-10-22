@@ -1,0 +1,73 @@
+{
+  "measuredAt": "2026-10-22T01:14:18.463749+00:00",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "method": "Three alternating public/direct HTTPS pairs from the same workstation. English preference cookie fixed. Direct diagnostic preserves Host/SNI and TLS verification while overriding connection destination to the actual DNS record target. Public configuration unchanged.",
+  "requests": [
+    {
+      "sample": 1,
+      "directDiagnostic": false,
+      "status": 200,
+      "ttfbMs": 832.9,
+      "totalMs": 1207.15,
+      "bytes": 237893,
+      "server": "cloudflare",
+      "edge": "sfo1::hnd1::cb2hz-1792631654141-0e9ab0d5d052",
+      "cfRay": "a4e4a4ddfad5885c-LAX"
+    },
+    {
+      "sample": 1,
+      "directDiagnostic": true,
+      "status": 200,
+      "ttfbMs": 527.56,
+      "totalMs": 620.19,
+      "bytes": 237893,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::z4nxc-1792631654987-908c7f855498",
+      "cfRay": null
+    },
+    {
+      "sample": 2,
+      "directDiagnostic": false,
+      "status": 200,
+      "ttfbMs": 649.62,
+      "totalMs": 1054.71,
+      "bytes": 237893,
+      "server": "cloudflare",
+      "edge": "sfo1::hnd1::mbfs6-1792631655969-aefeb1d78c09",
+      "cfRay": "a4e4a4e9a960d00b-LAX"
+    },
+    {
+      "sample": 2,
+      "directDiagnostic": true,
+      "status": 200,
+      "ttfbMs": 146.19,
+      "totalMs": 253.72,
+      "bytes": 237893,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::tsg8r-1792631656693-bfdb403332f5",
+      "cfRay": null
+    },
+    {
+      "sample": 3,
+      "directDiagnostic": false,
+      "status": 200,
+      "ttfbMs": 652.82,
+      "totalMs": 1034.15,
+      "bytes": 237893,
+      "server": "cloudflare",
+      "edge": "sfo1::hnd1::hd444-1792631657314-21687182174e",
+      "cfRay": "a4e4a4f21d2d693f-LAX"
+    },
+    {
+      "sample": 3,
+      "directDiagnostic": true,
+      "status": 200,
+      "ttfbMs": 360.31,
+      "totalMs": 440.77,
+      "bytes": 237893,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::cjl8n-1792631658017-d962a26b3684",
+      "cfRay": null
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "checkedAt": "2026-10-22T04:16:24.680390+00:00",
+  "method": "Normal public DNS with TLS verification; no connection overrides. No cookies or credentials.",
+  "dns": {
+    "system:2048duo.io": [
+      "216.150.1.193",
+      "216.150.16.193"
+    ],
+    "system:www.2048duo.io": [
+      "3866120569410319.vercel-dns-016.com.",
+      "216.150.1.193",
+      "216.150.16.193"
+    ],
+    "1.1.1.1:2048duo.io": [
+      "216.150.16.129",
+      "216.150.1.129"
+    ],
+    "1.1.1.1:www.2048duo.io": [
+      "3866120569410319.vercel-dns-016.com.",
+      "216.150.16.193",
+      "216.150.1.193"
+    ],
+    "8.8.8.8:2048duo.io": [
+      "216.150.1.193",
+      "216.150.16.193"
+    ],
+    "8.8.8.8:www.2048duo.io": [
+      "3866120569410319.vercel-dns-016.com.",
+      "216.150.16.193",
+      "216.150.1.193"
+    ]
+  },
+  "responses": [
+    {
+      "url": "http://www.2048duo.io/settings",
+      "status": 308,
+      "server": "Vercel",
+      "location": "https://www.2048duo.io/settings",
+      "hsts": null,
+      "edge": null,
+      "cfRay": null
+    },
+    {
+      "url": "https://2048duo.io/settings",
+      "status": 308,
+      "server": "Vercel",
+      "location": "https://www.2048duo.io/settings",
+      "hsts": "max-age=63072000",
+      "edge": "icn1::l45b2-1792642585094-b5f853e5a7a3",
+      "cfRay": null
+    },
+    {
+      "url": "https://www.2048duo.io/settings",
+      "status": 200,
+      "server": "Vercel",
+      "location": null,
+      "hsts": "max-age=63072000",
+      "edge": "icn1::hnd1::pr87r-1792642585148-1c287e38bcbb",
+      "cfRay": null
+    },
+    {
+      "url": "https://admin.2048duo.io/players",
+      "status": 307,
+      "server": "cloudflare",
+      "location": "/login",
+      "hsts": "max-age=63072000",
+      "edge": "sfo1::hnd1::lhh6x-1792642585863-ec69ccbc427f",
+      "cfRay": "a4e5afc11cc97085-LAX"
+    },
+    {
+      "url": "https://2048-socket.fly.dev/health",
+      "status": 200,
+      "server": "Fly/bde84f08e (2026-10-22)",
+      "location": null,
+      "hsts": null,
+      "edge": null,
+      "cfRay": null
+    }
+  ],
+  "socketControlAfterTests": {
+    "draining": false,
+    "matches": 0,
+    "solo": 0,
+    "writes": 0,
+    "storageError": false
+  }
+}

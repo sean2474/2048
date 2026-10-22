@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-10-22T04:15:32.545257+00:00",
+  "source": "https://vercel.com/2048-de6a2710/2048-web/speed-insights",
+  "environment": "Production",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "last7Days": {
+    "desktop": {
+      "RES": 89,
+      "events": 107
+    },
+    "mobile": {
+      "RES": 90,
+      "events": 14
+    }
+  },
+  "last24Hours": {
+    "desktop": {
+      "RES": 91,
+      "events": 44
+    },
+    "mobile": {
+      "RES": null,
+      "events": 0,
+      "message": "No data was reported for the current selection."
+    }
+  },
+  "note": "Rolling historical windows include pre-change visits and do not isolate this DNS change. Mobile no-data is not a score of zero. RES95 is not established. Per-metric details require Plus and were not purchased; scores/sampling unchanged."
+}
