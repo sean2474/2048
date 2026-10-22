@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import {
   GUEST_SETTINGS_COOKIE,
+  encodeGuestSettings,
   parseGuestSettings,
   SettingsStore,
   type Settings,
@@ -64,7 +65,7 @@ export function SettingsProvider({
             try {
               writeCookie(
                 GUEST_SETTINGS_COOKIE,
-                encodeURIComponent(JSON.stringify(guestFallback.current)),
+                encodeGuestSettings(guestFallback.current),
               );
             } catch {
               /* Keep the guest snapshot for this visit; saves still report cookie failures. */
@@ -72,8 +73,7 @@ export function SettingsProvider({
           }
           return guestFallback.current;
         },
-        writeGuest: (settings) =>
-          writeCookie(GUEST_SETTINGS_COOKIE, encodeURIComponent(JSON.stringify(settings))),
+        writeGuest: (settings) => writeCookie(GUEST_SETTINGS_COOKIE, encodeGuestSettings(settings)),
         mirrorLocale: (next) => {
           writeCookie(LOCALE_COOKIE, next);
           if (i18nRef.current.locale !== next) {

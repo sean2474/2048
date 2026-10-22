@@ -44,7 +44,7 @@ export function AbilityControls({
       </span>
       {binding && (
         <kbd aria-hidden="true" className="rounded border px-1 py-0.5 text-[10px] font-semibold">
-          {keyLabel(binding)}
+          {t(keyLabel(binding))}
         </kbd>
       )}
       <span aria-hidden="true" className="ability-charge">
