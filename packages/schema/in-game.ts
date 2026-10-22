@@ -50,6 +50,13 @@ export const C2S = {
   input: z.object({ t: z.literal("input"), dir: DirSchema }),
   ability: z.object({ t: z.literal("ability") }).strict(),
   surrender: z.object({ t: z.literal("surrender") }),
+  rematch: z
+    .object({
+      t: z.literal("rematch"),
+      matchId: z.string().uuid(),
+      action: z.enum(["accept", "decline", "cancel"]),
+    })
+    .strict(),
 };
 export const ClientMessageSchema = z.discriminatedUnion("t", [
   C2S.findMatch,
@@ -60,7 +67,9 @@ export const ClientMessageSchema = z.discriminatedUnion("t", [
   C2S.input,
   C2S.ability,
   C2S.surrender,
+  C2S.rematch,
 ]);
+export type RematchCommand = z.infer<typeof C2S.rematch>;
 export type Effect = { type: "addBlock"; blockType: AttackType };
 
 export type BlockType = "normal" | "xblock" | "hardblock";
@@ -130,7 +139,15 @@ export type ActionRejected = {
   t: "actionRejected";
   reason: "paused" | "ability_not_ready" | "ability_no_target" | "ability_active" | "slowed";
 };
-export type S2C = ServerState | Reject | End | RecordingUpdate | ActionRejected;
+export type RematchState = {
+  t: "rematchState";
+  matchId: string;
+  status: "available" | "waiting" | "requested" | "starting" | "closed";
+  reason?: "declined" | "cancelled" | "left" | "expired" | "unavailable" | "ranked_result_pending";
+};
+export type RematchReady = { t: "rematchReady"; matchId: string; roomId: string };
+export type S2C =
+  ServerState | Reject | End | RecordingUpdate | ActionRejected | RematchState | RematchReady;
 
 export type MatchProfile = {
   name: string;

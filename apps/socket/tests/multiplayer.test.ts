@@ -29,6 +29,83 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const playerId = (token: string) => createHash("sha256").update(token).digest("hex");
+
+test("rematch requires both players and creates exactly one fresh match with the same opponents", async (t) => {
+  const server = await setup(t);
+  const { a, b, roomId } = await server.pair();
+  const offers = [a, b].map(({ socket }) => packet(socket, (m) => m.t === "rematchState"));
+  a.socket.emit("message", { t: "surrender" });
+  await Promise.all(offers);
+  const requested = packet(b.socket, (m) => m.t === "rematchState" && m.status === "requested");
+  a.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  await requested;
+  assert.equal(rooms.size, 0);
+  const ready = [a, b].map(({ socket }) => packet(socket, (m) => m.t === "rematchReady"));
+  b.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  b.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  const [first, second] = await Promise.all(ready);
+  assert.deepEqual(first, second);
+  if (first.t !== "rematchReady") throw Error("Expected rematch");
+  assert.notEqual(first.roomId, roomId);
+  assert.equal(rooms.size, 1);
+  const room = rooms.get(first.roomId)!;
+  assert.deepEqual(new Set(room.players), new Set([playerId(a.token), playerId(b.token)]));
+  assert.equal(room.mode, "casual");
+  for (const state of Object.values(room.state)) {
+    assert.equal(state.score, 0);
+    assert.equal(state.ability.charge, 0);
+    assert.equal(state.board.length, 2);
+  }
+  const playing = packet(a.socket, (m) => m.t === "state" && !m.paused);
+  for (const p of [a, b]) p.socket.emit("message", { t: "joinRoom", roomId: room.id });
+  await playing;
+  assert.equal(room.ready.size, 2);
+});
+
+for (const action of ["decline", "cancel"] as const) {
+  test(`rematch ${action} closes the invitation for both players`, async (t) => {
+    const server = await setup(t);
+    const { a, b, roomId } = await server.pair();
+    const available = packet(a.socket, (m) => m.t === "rematchState");
+    a.socket.emit("message", { t: "surrender" });
+    await available;
+    const requested = packet(b.socket, (m) => m.t === "rematchState" && m.status === "requested");
+    a.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+    await requested;
+    const closed = [a, b].map(({ socket }) =>
+      packet(socket, (m) => m.t === "rematchState" && m.status === "closed"),
+    );
+    (action === "cancel" ? a : b).socket.emit("message", { t: "rematch", matchId: roomId, action });
+    const messages = await Promise.all(closed);
+    assert.ok(
+      messages.every(
+        (m) =>
+          m.t === "rematchState" && m.reason === (action === "cancel" ? "cancelled" : "declined"),
+      ),
+    );
+    assert.equal(rooms.size, 0);
+  });
+}
+
+test("an outsider cannot accept a rematch and leaving invalidates a pending invitation", async (t) => {
+  const server = await setup(t);
+  const { a, b, roomId } = await server.pair();
+  const outsider = await server.connect();
+  const available = packet(a.socket, (m) => m.t === "rematchState");
+  a.socket.emit("message", { t: "surrender" });
+  await available;
+  const refused = packet(outsider.socket, (m) => m.t === "rematchState" && m.status === "closed");
+  outsider.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  await refused;
+  const requested = packet(b.socket, (m) => m.t === "rematchState" && m.status === "requested");
+  a.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  await requested;
+  const closed = packet(a.socket, (m) => m.t === "rematchState" && m.status === "closed");
+  b.socket.disconnect();
+  const result = await closed;
+  assert.equal(result.t === "rematchState" && result.reason, "left");
+  assert.equal(rooms.size, 0);
+});
 const accounts = {
   alice: { id: "10000000-0000-4000-8000-000000000001", name: "Alice" },
   bob: { id: "10000000-0000-4000-8000-000000000002", name: "Bob" },
@@ -119,6 +196,141 @@ async function setup(t: TestContext, options: Parameters<typeof createGameServer
   }
   return { ...server, connect, pair };
 }
+test("ranked rematches wait for saved results and refresh both ratings", async (t) => {
+  let save!: () => void;
+  const saving = new Promise<void>((resolve) => {
+    save = resolve;
+  });
+  const ratings = new Map([
+    [accounts.alice.id, 1200],
+    [accounts.bob.id, 1200],
+  ]);
+  const server = await setup(t, {
+    resolveAccount,
+    writeMatch: () => saving,
+    readRating: async (id) => ratings.get(id)!,
+  });
+  const { a, b, roomId } = await server.pair("alice", "bob", "ranked");
+  const offer = packet(a.socket, (m) => m.t === "rematchState");
+  a.socket.emit("message", { t: "surrender" });
+  await offer;
+  const blocked = packet(
+    a.socket,
+    (m) => m.t === "rematchState" && m.reason === "ranked_result_pending",
+  );
+  a.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  await blocked;
+  assert.equal(rooms.size, 0);
+  ratings.set(accounts.alice.id, 1184);
+  ratings.set(accounts.bob.id, 1216);
+  const saved = packet(a.socket, (m) => m.t === "recordStatus" && m.status === "saved");
+  save();
+  await saved;
+  const ready = packet(a.socket, (m) => m.t === "rematchReady");
+  for (const p of [a, b])
+    p.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  const response = await ready;
+  if (response.t !== "rematchReady") throw Error("Expected rematch");
+  const room = rooms.get(response.roomId)!;
+  assert.equal(room.mode, "ranked");
+  assert.equal(room.accounts[playerId(a.token)]?.rating, 1184);
+  assert.equal(room.accounts[playerId(b.token)]?.rating, 1216);
+});
+
+test("friend rematches keep friend mode without creating another invitation code", async (t) => {
+  const server = await setup(t);
+  const a = await server.connect(),
+    b = await server.connect();
+  const waiting = packet(a.socket, (m) => m.t === "waitingForPlayer");
+  a.socket.emit("message", { t: "createRoomWithCode" });
+  const code = await waiting;
+  if (code.t !== "waitingForPlayer") throw Error("Expected code");
+  const found = packet(a.socket, (m) => m.t === "roomReady");
+  b.socket.emit("message", { t: "joinRoomWithCode", joinCode: code.joinCode });
+  const match = await found;
+  if (match.t !== "roomReady") throw Error("Expected room");
+  const active = packet(a.socket, (m) => m.t === "state" && !m.paused);
+  for (const p of [a, b]) p.socket.emit("message", { t: "joinRoom", roomId: match.roomId });
+  await active;
+  const offer = packet(a.socket, (m) => m.t === "rematchState");
+  a.socket.emit("message", { t: "surrender" });
+  await offer;
+  const ready = packet(a.socket, (m) => m.t === "rematchReady");
+  for (const p of [a, b])
+    p.socket.emit("message", { t: "rematch", matchId: match.roomId, action: "accept" });
+  const response = await ready;
+  if (response.t !== "rematchReady") throw Error("Expected rematch");
+  assert.equal(rooms.get(response.roomId)?.mode, "friend");
+  assert.equal(waitingByCode.size, 0);
+});
+
+test("leaving for matchmaking invalidates a rematch without stale accepts cancelling the new queue", async (t) => {
+  const server = await setup(t);
+  const { a, b, roomId } = await server.pair();
+  const offer = packet(a.socket, (m) => m.t === "rematchState");
+  a.socket.emit("message", { t: "surrender" });
+  await offer;
+  const closed = packet(b.socket, (m) => m.t === "rematchState" && m.status === "closed");
+  a.socket.emit("message", { t: "findMatch", mode: "casual" });
+  await closed;
+  await eventually(() => matchmakingQueue.length === 1);
+  const stale = packet(a.socket, (m) => m.t === "rematchState" && m.status === "closed");
+  a.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+  await stale;
+  assert.equal(matchmakingQueue.length, 1);
+  assert.equal(rooms.size, 0);
+});
+
+for (const interruption of [
+  "decline",
+  "disconnect",
+  "drain",
+  "suspension",
+  "other-device",
+] as const) {
+  test(`rematch access checks cannot start a game after ${interruption}`, async (t) => {
+    let release: ((ids: string[]) => void) | undefined;
+    let hold = false;
+    const server = await setup(t, {
+      resolveAccount,
+      readSuspensions: async () =>
+        hold
+          ? new Promise<string[]>((resolve) => {
+              release = resolve;
+            })
+          : [],
+    });
+    const { a, b, roomId } = await server.pair("alice", "bob");
+    const offer = packet(a.socket, (m) => m.t === "rematchState");
+    a.socket.emit("message", { t: "surrender" });
+    await offer;
+    hold = true;
+    for (const p of [a, b])
+      p.socket.emit("message", { t: "rematch", matchId: roomId, action: "accept" });
+    await eventually(() => !!release);
+    const closed = packet(a.socket, (m) => m.t === "rematchState" && m.status === "closed");
+    if (interruption === "decline") {
+      b.socket.emit("message", { t: "rematch", matchId: roomId, action: "decline" });
+      await closed;
+    } else if (interruption === "disconnect") {
+      b.socket.disconnect();
+      await closed;
+    } else if (interruption === "drain") {
+      server.setDraining(true);
+      await closed;
+    } else if (interruption === "other-device") {
+      // A second device can claim the account while the rematch access lookup is pending.
+      hold = false;
+      const other = await server.connect(undefined, "alice");
+      other.socket.emit("message", { t: "findMatch", mode: "casual" });
+      await eventually(() => matchmakingQueue.length === 1);
+    }
+    release!(interruption === "suspension" ? [accounts.bob.id] : []);
+    await closed;
+    assert.equal(rooms.size, 0);
+  });
+}
+
 test("deployment drain preserves live matches and reconnects, blocks new games, and waits for result storage", async (t) => {
   let saved!: () => void;
   const writing = new Promise<void>((resolve) => {

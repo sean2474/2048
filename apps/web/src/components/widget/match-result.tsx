@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import type { End } from "schema/in-game";
+import type { End, RematchState, RematchCommand } from "schema/in-game";
 import type { HistoryMatch } from "schema/results";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { usePlayer } from "@/hooks/use-player";
@@ -47,7 +47,19 @@ function resultText(game: End) {
   }
 }
 
-export function MatchResult({ game, names }: { game: End; names: { you: string; opp: string } }) {
+export function MatchResult({
+  game,
+  names,
+  rematch,
+  onRematch,
+  connected = true,
+}: {
+  game: End;
+  names: { you: string; opp: string };
+  rematch?: RematchState | null;
+  onRematch?: (action: RematchCommand["action"]) => void;
+  connected?: boolean;
+}) {
   const { t, locale } = useI18n();
   const [open, setOpen] = useState(true);
   const { user } = usePlayer();
@@ -78,6 +90,15 @@ export function MatchResult({ game, names }: { game: End; names: { you: string; 
     game.winner === "you" ? "You win!" : game.winner === "draw" ? "Draw" : "You lose.",
   );
   const description = t(resultText(game));
+  const rematchControls =
+    rematch && onRematch ? (
+      <RematchControls
+        state={rematch}
+        onAction={onRematch}
+        connected={connected}
+        saving={game.mode === "ranked" && game.recording !== "saved"}
+      />
+    ) : null;
   const actions = (
     <>
       <Button asChild>
@@ -90,7 +111,7 @@ export function MatchResult({ game, names }: { game: End; names: { you: string; 
                 : "/play/online"
           }
         >
-          {t("Play again")}
+          {t(game.mode === "friend" ? "New private room" : "Find another opponent")}
           <ArrowRight aria-hidden="true" />
         </Link>
       </Button>
@@ -115,6 +136,7 @@ export function MatchResult({ game, names }: { game: End; names: { you: string; 
         <h2 ref={summary} tabIndex={-1} className="text-sm font-semibold">
           {description}
         </h2>
+        {!open && rematchControls}
         <div className="flex flex-wrap justify-center gap-2">{actions}</div>
         <p role="status" className="text-xs text-muted-foreground">
           {t(recordingText[game.recording])}
@@ -228,7 +250,10 @@ export function MatchResult({ game, names }: { game: End; names: { you: string; 
                 )}
               </div>
             )}
-            <div className="match-end-actions">{actions}</div>
+            {rematchControls}
+            <div className="match-end-actions" data-rematch={!!rematchControls}>
+              {actions}
+            </div>
             <p className="match-end-recording" role="status">
               {t(recordingText[game.recording])}
             </p>
@@ -242,5 +267,83 @@ export function MatchResult({ game, names }: { game: End; names: { you: string; 
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+function RematchControls({
+  state,
+  onAction,
+  connected,
+  saving,
+}: {
+  state: RematchState;
+  onAction: (action: RematchCommand["action"]) => void;
+  connected: boolean;
+  saving: boolean;
+}) {
+  const { t } = useI18n();
+  const closedMessages = {
+    declined: "The rematch request was declined.",
+    cancelled: "The rematch request was cancelled.",
+    left: "A player left. Find another opponent to keep playing.",
+    expired: "The rematch window has expired.",
+    unavailable: "This rematch is no longer available.",
+    ranked_result_pending:
+      "Your previous ranked result is still being saved. Please try again shortly.",
+  };
+  const message =
+    state.status === "closed"
+      ? closedMessages[state.reason ?? "unavailable"]
+      : state.status === "starting"
+        ? "Starting your rematch…"
+        : saving || state.reason === "ranked_result_pending"
+          ? "Save the ranked result before starting a rematch."
+          : state.status === "waiting"
+            ? "Rematch requested. Waiting for your opponent…"
+            : state.status === "requested"
+              ? "Your opponent wants a rematch. Play again?"
+              : "Same opponent, same mode. Both players must agree within 60 seconds.";
+  const active = state.status !== "closed" && state.status !== "starting";
+  return (
+    <div
+      className="rematch-controls mx-auto my-4 max-w-sm space-y-3"
+      data-rematch-status={state.status}
+    >
+      <p role="status" className="text-sm leading-6 text-muted-foreground">
+        {t(message)}
+      </p>
+      {active && (
+        <div className="flex flex-wrap justify-center gap-2">
+          {state.status === "waiting" ? (
+            <Button
+              className="min-h-11"
+              variant="outline"
+              onClick={() => onAction("cancel")}
+              disabled={!connected}
+            >
+              {t("Cancel rematch")}
+            </Button>
+          ) : (
+            <Button
+              className="min-h-11"
+              onClick={() => onAction("accept")}
+              disabled={!connected || saving}
+            >
+              {t(state.status === "requested" ? "Accept rematch" : "Rematch")}
+            </Button>
+          )}
+          {state.status === "requested" && (
+            <Button
+              className="min-h-11"
+              variant="outline"
+              onClick={() => onAction("decline")}
+              disabled={!connected}
+            >
+              {t("Decline rematch")}
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

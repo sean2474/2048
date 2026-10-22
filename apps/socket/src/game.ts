@@ -1,4 +1,5 @@
 import { allowMove } from "./move-limit";
+import { offerRematch, rematchResultSaved } from "./rematch";
 import type { Account, MatchRecord, ResultStatus } from "schema/results";
 import type { Server } from "socket.io";
 import {
@@ -299,10 +300,12 @@ export function endGame(room: Room, winner: PlayerId | null, reason: EndReason, 
     playerRoom.delete(pid);
   }
   rooms.delete(room.id);
+  offerRematch(room, io);
   if (room.persistResult) {
     void room
       .persistResult(record)
       .then(() => {
+        rematchResultSaved(room.id, io);
         for (const pid of room.players)
           if (room.accounts[pid])
             io.to(playerChannel(pid)).emit("message", {

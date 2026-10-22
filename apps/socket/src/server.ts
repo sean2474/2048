@@ -2,6 +2,7 @@ import { createSoloService, type SoloWriter, type SoloProgressStore } from "./so
 import { attachSpectator, type SpectateAccess } from "./spectate";
 import { attachFriendPresence, type FriendsReader } from "./friend-presence";
 import { createFriendChallenges } from "./friend-challenges";
+import { createRematchService } from "./rematch";
 import type { RankSnapshot } from "schema/ranking";
 import { operationsHandler } from "./operations";
 import type { ResultStoreDiagnostics } from "schema/admin";
@@ -170,7 +171,7 @@ export function createGameServer(
           throw Error("invalid_rating");
         for (const [index, value] of values.entries()) {
           const rating = typeof value === "number" ? value : value.rating;
-          entries[index]!.rating = rating;
+          if (entries[index]) entries[index]!.rating = rating;
           playerAccounts.set(players[index], {
             ...playerAccounts.get(players[index])!,
             rating,
@@ -217,6 +218,13 @@ export function createGameServer(
     void matchWaitingPlayers(io, persistResult, Date.now(), checkAccess);
   }, 1000);
   queueTimer.unref();
+  const rematches = createRematchService(io, {
+    checkAccess,
+    rankedReady: (ids) =>
+      !!options.readRating && !!persistResult && ids.every((id) => !options.hasPendingRanked?.(id)),
+    isSoloPlaying: (pid, accountId) => solo.isPlaying(pid, accountId ?? ""),
+    unavailable: () => closing || draining,
+  });
   const challenges = createFriendChallenges(io, {
     readFriends: options.readFriends,
     persistResult,
@@ -281,6 +289,7 @@ export function createGameServer(
       soloMessages = 0;
     socket.on("solo", (raw: unknown, ack: unknown) => {
       if (typeof ack !== "function") return;
+      rematches.leave(pid);
       if (Date.now() - soloWindow >= 1000) {
         soloWindow = Date.now();
         soloMessages = 0;
@@ -333,11 +342,20 @@ export function createGameServer(
         return;
       }
       const msg = parsed.data;
+      if (
+        ["findMatch", "createRoomWithCode", "joinRoomWithCode", "cancelMatch", "joinRoom"].includes(
+          msg.t,
+        )
+      )
+        rematches.leave(pid);
       if (draining && ["findMatch", "createRoomWithCode", "joinRoomWithCode"].includes(msg.t)) {
         socket.emit("message", { t: "error", reason: "server_updating" });
         return;
       }
       switch (msg.t) {
+        case "rematch":
+          void rematches.handle(pid, msg);
+          break;
         case "findMatch": {
           const request = ++queueRequest;
           if (!canQueue(pid, io)) break;
@@ -439,6 +457,7 @@ export function createGameServer(
     socket.on("disconnect", () => {
       queueRequest++;
       if (playerSockets.get(pid) !== socket.id) return;
+      rematches.leave(pid);
       void solo.disconnect(pid, socket.data.account?.id ?? null, socket.data.soloId);
       playerSockets.delete(pid);
       playerAccounts.delete(pid);
@@ -470,6 +489,7 @@ export function createGameServer(
   const setDraining = (value: boolean) => {
     draining = value;
     if (value) {
+      rematches.close();
       const waiting = new Set([
         ...matchmakingQueue.map((entry) => entry.pid),
         ...waitingByCode.values(),
@@ -487,6 +507,7 @@ export function createGameServer(
     deploymentStatus,
     close: async () => {
       closing = true;
+      rematches.close();
       challenges.close();
       for (const stop of accessStops) stop();
       accessStops.clear();

@@ -16,6 +16,7 @@ import {
   playerAccounts,
 } from "./state";
 import { waitForPlayer } from "./game";
+import { leaveRematch } from "./rematch";
 
 export function cancelMatch(pid: PlayerId) {
   const index = matchmakingQueue.findIndex((entry) => entry.pid === pid);
@@ -190,6 +191,8 @@ export function createMatch(
       return [pid, profile];
     }),
   );
+  leaveRematch(p1, io);
+  leaveRematch(p2, io);
   cancelMatch(p1);
   cancelMatch(p2);
   const id = randomUUID(),

@@ -128,7 +128,9 @@ test(
           page.viewportSize().width,
         );
         assert.equal(
-          await result.getByRole("link", { name: "다시 대전", exact: true }).getAttribute("href"),
+          await result
+            .getByRole("link", { name: "다른 상대 찾기", exact: true })
+            .getAttribute("href"),
           "/play/online",
         );
       }
@@ -139,7 +141,7 @@ test(
       );
       await b.keyboard.press("Escape");
       await b.getByRole("dialog").waitFor({ state: "hidden" });
-      await b.getByRole("link", { name: "다시 대전", exact: true }).click();
+      await b.getByRole("link", { name: "다른 상대 찾기", exact: true }).click();
       await b.waitForURL("**/play/online");
       await b.getByRole("status").filter({ hasText: "상대 찾는 중" }).waitFor();
     });
@@ -255,7 +257,12 @@ test(
         if (winner === "opp")
           assert.equal(await result.locator(".match-end-score").last().textContent(), "—");
         assert.equal(
-          await result.getByRole("link", { name: "다시 대전", exact: true }).getAttribute("href"),
+          await result
+            .getByRole("link", {
+              name: mode === "friend" ? "새 친구방 만들기" : "다른 상대 찾기",
+              exact: true,
+            })
+            .getAttribute("href"),
           mode === "friend" ? "/play/create" : mode === "ranked" ? "/play/ranked" : "/play/online",
         );
         socket.emit("message", { t: "recordStatus", matchId: end.matchId, status: "saved" });
