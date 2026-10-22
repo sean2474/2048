@@ -1,0 +1,228 @@
+{
+  "measuredAt": "2026-10-22T04:09:47.148126+00:00",
+  "origin": "https://www.2048duo.io",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "method": "Lighthouse 13.5.0 CLI mobile, default simulated throttling, fresh browser per run, automation flag enabled; no application interception or score changes. HTTP measurements are separate.",
+  "runs": [
+    {
+      "path": "/",
+      "sample": 1,
+      "fetchTime": "2026-10-22T04:09:53.865Z",
+      "score": 94,
+      "metrics": {
+        "first-contentful-paint": 1382.462,
+        "largest-contentful-paint": 2985.462,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2261.700055658283,
+        "server-response-time": 10
+      }
+    },
+    {
+      "path": "/settings",
+      "sample": 1,
+      "fetchTime": "2026-10-22T04:10:05.700Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1102.6689999999999,
+        "largest-contentful-paint": 2571.669,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1102.6689999999999,
+        "server-response-time": 8
+      }
+    },
+    {
+      "path": "/find-match",
+      "sample": 1,
+      "fetchTime": "2026-10-22T04:10:16.383Z",
+      "score": 98,
+      "metrics": {
+        "first-contentful-paint": 1098.0819999999999,
+        "largest-contentful-paint": 2415.082,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1098.0819999999999,
+        "server-response-time": 9
+      }
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 1,
+      "fetchTime": "2026-10-22T04:10:27.081Z",
+      "score": 98,
+      "metrics": {
+        "first-contentful-paint": 1101.7835,
+        "largest-contentful-paint": 2413.7835,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1101.7835,
+        "server-response-time": 9
+      }
+    },
+    {
+      "path": "/solo",
+      "sample": 1,
+      "fetchTime": "2026-10-22T04:10:37.780Z",
+      "score": 98,
+      "metrics": {
+        "first-contentful-paint": 1101.716,
+        "largest-contentful-paint": 2418.716,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1101.716,
+        "server-response-time": 9
+      }
+    },
+    {
+      "path": "/",
+      "sample": 2,
+      "fetchTime": "2026-10-22T04:10:48.802Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1100.0865,
+        "largest-contentful-paint": 2568.0865,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1100.0865,
+        "server-response-time": 10
+      }
+    },
+    {
+      "path": "/settings",
+      "sample": 2,
+      "fetchTime": "2026-10-22T04:10:59.437Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1105.87,
+        "largest-contentful-paint": 2565.87,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1105.87,
+        "server-response-time": 9
+      }
+    },
+    {
+      "path": "/find-match",
+      "sample": 2,
+      "fetchTime": "2026-10-22T04:11:10.188Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1098.173,
+        "largest-contentful-paint": 2571.173,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1098.173,
+        "server-response-time": 8
+      }
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 2,
+      "fetchTime": "2026-10-22T04:11:20.924Z",
+      "score": 98,
+      "metrics": {
+        "first-contentful-paint": 1159.616,
+        "largest-contentful-paint": 2316.616,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1220.1062060152321,
+        "server-response-time": 17
+      }
+    },
+    {
+      "path": "/solo",
+      "sample": 2,
+      "fetchTime": "2026-10-22T04:11:32.100Z",
+      "score": 90,
+      "metrics": {
+        "first-contentful-paint": 1092.533,
+        "largest-contentful-paint": 3596.372,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1092.533,
+        "server-response-time": 8
+      }
+    },
+    {
+      "path": "/",
+      "sample": 3,
+      "fetchTime": "2026-10-22T04:11:42.971Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1098.6675,
+        "largest-contentful-paint": 2571.6675,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1098.6675,
+        "server-response-time": 8
+      }
+    },
+    {
+      "path": "/settings",
+      "sample": 3,
+      "fetchTime": "2026-10-22T04:11:53.894Z",
+      "score": 96,
+      "metrics": {
+        "first-contentful-paint": 1104.7730000000001,
+        "largest-contentful-paint": 2718.773,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1104.7730000000001,
+        "server-response-time": 11
+      }
+    },
+    {
+      "path": "/find-match",
+      "sample": 3,
+      "fetchTime": "2026-10-22T04:12:04.481Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1100.3145,
+        "largest-contentful-paint": 2573.3145,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1100.3145,
+        "server-response-time": 8
+      }
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 3,
+      "fetchTime": "2026-10-22T04:12:15.136Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1101.8125,
+        "largest-contentful-paint": 2569.8125,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1101.8125,
+        "server-response-time": 10
+      }
+    },
+    {
+      "path": "/solo",
+      "sample": 3,
+      "fetchTime": "2026-10-22T04:12:25.874Z",
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 1098.363,
+        "largest-contentful-paint": 2570.3630000000003,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1098.363,
+        "server-response-time": 9
+      }
+    }
+  ],
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "lighthouseVersion": "13.5.0",
+  "notes": "All 15 runs retained, including home 94 and solo 90. First home run preceded a 3-second worktree dependency install; exact overlap cannot be excluded. Other runs had no parallel build or benchmark. Automatic locale detection served Korean on the direct public ingress. No DNS overrides, synthetic delay or telemetry changes."
+}

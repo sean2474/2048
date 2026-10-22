@@ -2,6 +2,12 @@
 
 This work starts from staging `8804ca0` (server-component boundary refactor). The production baseline is `c9ff17c7b16800f7db32638d62a2980b0134b75f`, which predates that refactor. Before/after results therefore measure the combined release, not an isolated change.
 
+## DNS follow-up — public routing corrected
+
+After the owner approved the protection change, only `2048duo.io` and `www.2048duo.io` were switched from Cloudflare Proxied to DNS only. Normal public traffic now enters Vercel through `icn1` and executes in `hnd1`. The administrator and socket records were preserved.
+
+The [post-change report](dns-routing-results.md) retains all 15 new mobile Lighthouse runs: route medians are **97, 97, 97, 98 and 97**. Home had one 94 and solo one 90; these are not omitted. Twelve desktop/mobile link navigations kept a single document, and production socket/game checks passed. **Vercel field RES95 is still not established**: the latest 24-hour desktop aggregate is 91 and mobile has no events. The measurements below describe the earlier Cloudflare path; use the follow-up for current routing.
+
 ## Changes
 
 - Keep every web/admin `page.tsx` a Server Component; interactive controls remain focused client islands.
@@ -38,7 +44,7 @@ Validation completed: 306 automated tests (272 socket, 7 locale/analytics, 5 dep
 
 The public-seed integration test verifies cold failure recovery, draft exclusion, anonymous-only headers, account-specific wallet HTML, shared public reuse and failed background refresh recovery. Catalog definitions on server pages and purchase price validation remain current. The initial-loading test verifies that forged route/member headers cannot select the wrong loading view.
 
-## Actual production measurements
+## Production measurements before the DNS change
 
 [Mobile Lighthouse, all 15 runs](production-lighthouse-after.json), three fresh-browser observations for each public route, default simulated throttling:
 
@@ -66,7 +72,7 @@ The authenticated [Vercel field dashboard](speed-insights-after.json) still show
 | `/leaderboard` | 658 ms | 804 ms | 1121 ms |
 | `/solo` | 656 ms | 765 ms | 1114 ms |
 
-## Remaining domain-routing bottleneck
+## Domain-routing diagnosis before the DNS change
 
 The public domain is proxied through Cloudflare. In this workstation's measurements, response headers show Cloudflare `LAX`, Vercel ingress `sfo1`, and function execution `hnd1`. The new Tokyo function location is verified, but the public route still crosses the US. This observation is specific to this network/time and does not establish every visitor's path.
 
@@ -82,7 +88,7 @@ A [fixed-English follow-up](fixed-locale-routing-lighthouse.json) uses the same 
 
 This supports the routing diagnosis on the same production code. It does not establish 95 on public DNS or guarantee a field score after a DNS change. The earlier [automatic-locale direct observations](direct-diagnostic-lighthouse.json), including a home score of 94, are also retained.
 
-[Vercel recommends avoiding an extra reverse proxy](https://vercel.com/kb/guide/cloudflare-with-vercel). The Cloudflare dashboard is logged out, so its actual DNS records, rules and security configuration could not be inspected. The next step needs the owner to log in; then inspect the relevant records and any Workers/security rules, preserve their current configuration, and assess switching the web record to DNS-only while retaining the Vercel-hosted origin and TLS. Do not blindly disable Cloudflare for the entire zone. Retest the real public route and actual user metrics afterward.
+[Vercel recommends avoiding an extra reverse proxy](https://vercel.com/kb/guide/cloudflare-with-vercel). This initial report stopped before the DNS change because the Cloudflare dashboard was logged out. The owner subsequently logged in and explicitly approved changing the two public web records after inspection. The [DNS follow-up](dns-routing-results.md) records the applied settings, rollback and actual public-route retest. Cloudflare was not paused for the whole zone.
 
 An `assetPrefix` detour was considered and rejected: it leaves HTML/RSC navigation on the slow route and adds cross-origin deployment-skew complexity for long-lived game tabs. See [Vercel cross-site Skew Protection](https://vercel.com/docs/skew-protection#allowed-domains-for-cross-site-fetch).
 
