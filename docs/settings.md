@@ -63,3 +63,15 @@
 삭제 범위: 로그인 계정, 프로필, 코인 지갑, 계정 설정, 랭크·개인 통계, 구매·출석·업적·일일 퀘스트 기록, 솔로 기록·진행상황, 친구 관계와 해당 계정이 보내거나 받은 개인 메시지. 상대방의 경기 기록은 유지하되 삭제된 참가자의 이름을 `Deleted player`로 익명화하고 계정 참조를 제거한다. 운영 감사 기록은 유지한다. 브라우저의 별도 게스트 설정은 계정 데이터가 아니므로 남는다.
 
 현재 게임 서버가 단일 인스턴스로 매칭·진행 상태를 소유하는 구조에 맞춘다. 여러 소켓 인스턴스로 확장할 때는 활성 경기와 삭제 잠금을 공유 저장소에서 조정해야 한다.
+
+## 언어 동기화 브라우저 회귀 검사
+
+`apps/web/tests/settings-locale-sync.browser.mjs`는 로컬 서버 fixture로 Chrome Android·WebKit iPhone 화면을 검사한다. 영어 → 한국어 → 새로고침 → 영어 흐름에서 서버 제목·설정 섹션, 클라이언트 라벨, 선택값, 두 언어 쿠키가 일치하는지 확인한다. 한국어 서버 응답 전달을 보류한 동안 영어를 선택한 경우에도 마지막 선택이 유지되는지 확인한다. 실제 계정·DB·운영 서버는 사용하지 않으며 테스트마다 개발 서버 포트와 빌드 출력을 분리한다.
+
+먼저 저장소에서 `pnpm install --frozen-lockfile`을 실행한다. 테스트 실행 환경에는 Playwright 패키지, Google Chrome(`channel: "chrome"`), 설치한 Playwright 버전에 맞는 WebKit 브라우저가 필요하다. 외부 Playwright 런타임을 사용하는 경우 다음과 같이 실행한다. WebKit이 필요한 검사이므로 기존 Chrome 전용 성능 검사에 자동으로 포함하지 않는다.
+
+```sh
+NODE_PATH=/path/to/playwright/node_modules node --test apps/web/tests/settings-locale-sync.browser.mjs
+```
+
+Playwright가 저장소의 모듈 경로에서 이미 조회되면 `NODE_PATH`는 생략할 수 있다. 브라우저가 없으면 Playwright CLI의 `install chrome webkit`으로 설치한 뒤 실행한다. 휴대폰 화면·터치 에뮬레이션이며 실제 기기 검증을 대체하지 않는다.
