@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createRequire } from "node:module";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { startServerFixture } from "./server-fixture.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
@@ -58,13 +58,19 @@ test(
             locale: "en-US",
             viewport: { width, height: 900 },
           });
+          const page = await context.newPage();
+          const navigation = [];
+          page.on("request", (request) => {
+            if (request.isNavigationRequest() || request.headers().rsc)
+              navigation.push({ url: request.url(), document: request.isNavigationRequest() });
+          });
           try {
             await context.addCookies([
               app.cookie(),
               { name: "duo.locale", value: "en", url: app.origin },
             ]);
-            const page = await context.newPage();
             page.setDefaultTimeout(20000);
+            page.setDefaultNavigationTimeout(45000);
             const errors = [];
             page.on("pageerror", (error) => errors.push(error.message));
             await page.goto(app.origin + "/");
@@ -73,6 +79,10 @@ test(
             // so the desktop link performs an RSC navigation rather than a document load.
             await page.getByRole("button", { name: "Pause duel animation", exact: true }).click();
             await page.getByRole("button", { name: "Play duel animation", exact: true }).waitFor();
+            // Let initial account/settings Server Actions settle before holding reads.
+            // A client control can hydrate while another provider is still starting;
+            // blocking that initial action tests the action queue, not route loading.
+            await page.waitForLoadState("networkidle");
 
             let release, requested;
             const pending = new Promise((resolve) => {
@@ -177,6 +187,25 @@ test(
                 "preview stays hidden on mobile",
               );
             assert.deepEqual(errors, []);
+          } catch (error) {
+            await page.screenshot({
+              path: new URL(`${route.path}-${width}-failure.png`, evidence).pathname,
+              fullPage: true,
+            });
+            await writeFile(
+              new URL(`${route.path}-${width}-failure.json`, evidence),
+              JSON.stringify(
+                {
+                  url: page.url(),
+                  body: await page.locator("body").innerText(),
+                  navigation,
+                  requests: app.requests,
+                },
+                null,
+                2,
+              ),
+            );
+            throw error;
           } finally {
             hold?.release();
             hold = null;

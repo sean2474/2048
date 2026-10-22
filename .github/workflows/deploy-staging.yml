@@ -1,0 +1,26 @@
+name: Deploy staging
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+# Do not interrupt a migration or a game server draining active matches.
+concurrency:
+  group: release-staging
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/staging'
+    uses: ./.github/workflows/ci.yml
+  deploy:
+    needs: validate
+    uses: ./.github/workflows/release.yml
+    with:
+      environment: staging
+    secrets: inherit

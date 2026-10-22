@@ -1,0 +1,24 @@
+name: Deploy production
+
+# A merge/push never deploys production. Dispatch this workflow on main.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ci.yml
+  deploy:
+    needs: validate
+    uses: ./.github/workflows/release.yml
+    with:
+      environment: production
+    secrets: inherit

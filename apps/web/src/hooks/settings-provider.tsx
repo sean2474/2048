@@ -63,10 +63,7 @@ export function SettingsProvider({
           if (!guestFallback.current) {
             guestFallback.current = parseGuestSettings(undefined, guestLocale.current);
             try {
-              writeCookie(
-                GUEST_SETTINGS_COOKIE,
-                encodeGuestSettings(guestFallback.current),
-              );
+              writeCookie(GUEST_SETTINGS_COOKIE, encodeGuestSettings(guestFallback.current));
             } catch {
               /* Keep the guest snapshot for this visit; saves still report cookie failures. */
             }
