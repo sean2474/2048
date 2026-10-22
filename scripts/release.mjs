@@ -125,8 +125,23 @@ async function stagingProof(tree) {
 
 async function projectSettings(app, id, token, target) {
   const project = await vercel(`/v9/projects/${id}`, token);
-  const { envs } = await vercel(`/v10/projects/${id}/env?decrypt=true`, token);
-  const values = deploymentEnvironment(envs, target, config.branch);
+  const { envs } = await vercel(`/v10/projects/${id}/env`, token);
+  // The list endpoint can return ciphertext even with decrypt=true. Read each
+  // relevant value through the dedicated endpoint; never log its response.
+  const decrypted = await Promise.all(
+    envs
+      .filter(
+        (entry) =>
+          entry.target?.includes(target) &&
+          (!entry.gitBranch || entry.gitBranch === config.branch) &&
+          (entry.key.startsWith("NEXT_PUBLIC_") || entry.key === "ADMIN_SOCKET_URL"),
+      )
+      .map(async (entry) => ({
+        ...entry,
+        value: (await vercel(`/v1/projects/${id}/env/${entry.id}`, token)).value,
+      })),
+  );
+  const values = deploymentEnvironment(decrypted, target, config.branch);
   validateProject(project, values, config, app, environment);
   return { id, token, target, values, previousDeployment: project.targets?.production?.id };
 }
