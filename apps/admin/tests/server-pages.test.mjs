@@ -143,6 +143,9 @@ test(
       cookie: `${cookie.name}=${cookie.value}; 2048-locale=en`,
       "accept-language": "en-US",
     };
+    const returning = await fetch(app.origin + "/login", { headers, redirect: "manual" });
+    assert.equal(returning.status, 307, "a remembered administrator skips the login form");
+    assert.equal(new URL(returning.headers.get("location"), app.origin).pathname, "/");
     const html = async (path) => (await fetch(app.origin + path, { headers })).text();
     const start = calls.length;
     const players = await html("/players?q=hello&status=invalid&offset=-1");
@@ -225,6 +228,12 @@ test(
     // Second factor: an aal1 session never reaches console data or the operations proxy.
     const weak = app.cookie(fixturePlayer, "aal1");
     const weakHeaders = { ...headers, cookie: `${weak.name}=${weak.value}; 2048-locale=en` };
+    const resumeMfa = await fetch(app.origin + "/login", {
+      headers: weakHeaders,
+      redirect: "manual",
+    });
+    assert.equal(resumeMfa.status, 307, "password verification does not need to be repeated");
+    assert.equal(new URL(resumeMfa.headers.get("location"), app.origin).pathname, "/mfa");
     const beforeWeak = calls.length;
     const gated = await fetch(app.origin + "/players", {
       headers: weakHeaders,
@@ -242,5 +251,95 @@ test(
     const verified = await fetch(app.origin + "/mfa", { headers, redirect: "manual" });
     assert.equal(verified.status, 307);
     assert.equal(new URL(verified.headers.get("location"), app.origin).pathname, "/");
+  },
+);
+
+test(
+  "admin sessions survive token expiry and remain isolated from game cookies",
+  { timeout: 120000 },
+  async (t) => {
+    let revoked = false;
+    let refreshes = 0;
+    const app = await startServerFixture({
+      app: "admin",
+      handle: async (url) => {
+        if (url.pathname === "/auth/v1/token") {
+          refreshes++;
+          if (revoked)
+            return {
+              status: 400,
+              data: { code: "refresh_token_not_found", message: "Invalid Refresh Token" },
+            };
+        }
+        if (url.pathname.endsWith("/rpc/is_game_admin")) return { data: true };
+        return undefined;
+      },
+    });
+    t.after(() => app.close());
+    const original = app.cookie();
+    const expired = JSON.parse(Buffer.from(original.value.slice(7), "base64url").toString());
+    expired.expires_at = Math.floor(Date.now() / 1000) - 3600;
+    const jwt = expired.access_token.split(".");
+    const claims = JSON.parse(Buffer.from(jwt[1], "base64url").toString());
+    jwt[1] = Buffer.from(JSON.stringify({ ...claims, exp: expired.expires_at })).toString(
+      "base64url",
+    );
+    expired.access_token = jwt.join(".");
+    const expiredCookie = `${original.name}=base64-${Buffer.from(JSON.stringify(expired)).toString("base64url")}`;
+    const response = await fetch(app.origin + "/login", {
+      headers: { cookie: expiredCookie },
+      redirect: "manual",
+    });
+    assert.equal(response.status, 307);
+    assert.equal(new URL(response.headers.get("location"), app.origin).pathname, "/");
+    assert.equal(
+      refreshes,
+      1,
+      "middleware refreshes once and forwards the new session to the page",
+    );
+    const saved = response.headers
+      .getSetCookie()
+      .filter((cookie) => cookie.startsWith(original.name));
+    assert.ok(saved.length > 0);
+    for (const cookie of saved) {
+      assert.match(
+        cookie,
+        /Max-Age=34560000/i,
+        "login survives closing the browser (400 days, renewed on refresh)",
+      );
+      assert.match(cookie, /Path=\//i);
+      assert.match(cookie, /SameSite=lax/i);
+      assert.doesNotMatch(cookie, /Domain=/i, "the administrator cookie stays on its own host");
+    }
+    const resumed = await fetch(app.origin + "/login", {
+      headers: { cookie: saved.map((cookie) => cookie.split(";")[0]).join("; ") },
+      redirect: "manual",
+    });
+    assert.equal(resumed.status, 307);
+    assert.equal(new URL(resumed.headers.get("location"), app.origin).pathname, "/");
+    assert.equal(refreshes, 1, "a new request reuses the saved MFA-verified session");
+
+    for (const cookie of ["", `sb-127-auth-token=${original.value}`]) {
+      const guest = await fetch(app.origin + "/login", { headers: { cookie }, redirect: "manual" });
+      assert.equal(
+        guest.status,
+        200,
+        "missing or game-only cookies cannot authenticate an administrator",
+      );
+      assert.match(await guest.text(), /name="password"/);
+    }
+
+    revoked = true;
+    const invalid = await fetch(app.origin + "/login", {
+      headers: { cookie: expiredCookie },
+      redirect: "manual",
+    });
+    assert.equal(invalid.status, 200);
+    assert.match(await invalid.text(), /name="password"/);
+    assert.ok(
+      invalid.headers
+        .getSetCookie()
+        .some((cookie) => cookie.startsWith(original.name) && /Max-Age=0/i.test(cookie)),
+    );
   },
 );
