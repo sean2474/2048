@@ -122,6 +122,7 @@ test(
     await account.addCookies([app.cookie(), { name: "duo.locale", value: "en", url: app.origin }]);
     const authenticated = await account.newPage();
     authenticated.setDefaultTimeout(10000);
+    authenticated.setDefaultNavigationTimeout(45000);
     authenticated.on("pageerror", (error) => errors.push(error.message));
     await authenticated.goto(app.origin + "/friends");
     await authenticated

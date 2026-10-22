@@ -33,8 +33,6 @@ jobs:
           mkdir -p "$RUNNER_TEMP/release-bin"
           ln -s "$(command -v flyctl)" "$RUNNER_TEMP/release-bin/fly"
           echo "$RUNNER_TEMP/release-bin" >> "$GITHUB_PATH"
-      - name: Install Vercel CLI
-        run: npm install --global vercel@64.7.0
       - name: Prepare, verify and release this commit
         env:
           RELEASE_ENVIRONMENT: ${{ inputs.environment }}

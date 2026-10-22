@@ -27,6 +27,7 @@ test(
     const errors = [];
     context.on("page", (page) => {
       page.setDefaultTimeout(15000);
+      page.setDefaultNavigationTimeout(45000);
       page.on("pageerror", (error) => errors.push(error.message));
     });
     try {

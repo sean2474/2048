@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { setTimeout } from "node:timers/promises";
 import {
   ADMIN_PROJECT,
   REPOSITORY,
@@ -80,22 +81,31 @@ function command(binary, args, extraEnv = {}, capture = false) {
   });
 }
 
-async function api(base, path, token) {
+async function api(base, path, token, method = "GET", body) {
   const response = await fetch(base + path, {
-    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
     signal: AbortSignal.timeout(30_000),
   });
   if (!response.ok)
     throw Error(`${new URL(base).hostname}: API request failed (${response.status}).`);
-  return response.json();
+  const text = await response.text();
+  return text ? JSON.parse(text) : undefined;
 }
 
 const github = (path) => api("https://api.github.com", path, process.env.GH_TOKEN);
-const vercel = (path, token) =>
+const vercel = (path, token, method, body) =>
   api(
     "https://api.vercel.com",
     `${path}${path.includes("?") ? "&" : "?"}teamId=${VERCEL_TEAM}`,
     token,
+    method,
+    body,
   );
 const history = () =>
   api(
@@ -143,59 +153,84 @@ async function projectSettings(app, id, token, target) {
   );
   const values = deploymentEnvironment(decrypted, target, config.branch);
   validateProject(project, values, config, app, environment);
-  return { id, token, target, values, previousDeployment: project.targets?.production?.id };
-}
-
-function vercelCommand(project, args, capture = false) {
-  return command(
-    "vercel",
-    ["--scope", VERCEL_TEAM, "--token", project.token, ...args],
-    { VERCEL_ORG_ID: VERCEL_TEAM, VERCEL_PROJECT_ID: project.id },
-    capture,
-  );
+  if (project.link?.type !== "github" || String(project.link.repoId) !== "1069491443")
+    throw Error(`${app}: Vercel must be linked to ${REPOSITORY}.`);
+  return {
+    app,
+    id,
+    name: project.name,
+    repoId: String(project.link.repoId),
+    token,
+    target,
+    values,
+    bypass: Object.entries(project.protectionBypass ?? {}).find(
+      ([, value]) => value.scope === "automation-bypass",
+    )?.[0],
+    previousDeployment: project.targets?.production?.id,
+  };
 }
 
 async function prepare(project, sha) {
-  const args = [
-    "deploy",
-    "--yes",
-    "--meta",
-    `releaseCommit=${sha}`,
-    "--meta",
-    `releaseEnvironment=${environment}`,
-  ];
-  if (project.target === "production") args.push("--prod", "--skip-domain");
-  const output = await vercelCommand(project, args, true);
-  const url = output
-    .split(/\s+/)
-    .findLast((part) => /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(part));
-  if (!url) throw Error("Vercel did not return a deployment URL.");
-  const deployment = await vercel(`/v13/deployments/${new URL(url).hostname}`, project.token);
+  // Use the exact Git commit, never a moving branch or untracked local files.
+  // autoAssignCustomDomains is the same API setting as CLI --skip-domain.
+  let deployment = await vercel("/v13/deployments", project.token, "POST", {
+    name: project.name,
+    project: project.id,
+    gitSource: { type: "github", repoId: project.repoId, ref: config.branch, sha },
+    target: project.target === "production" ? "production" : undefined,
+    autoAssignCustomDomains: false,
+    meta: { releaseCommit: sha, releaseEnvironment: environment },
+  });
+  if (deployment.autoAssignCustomDomains !== false || deployment.gitSource?.sha !== sha)
+    throw Error("Vercel did not accept the staged deployment of the exact commit.");
+  const url = `https://${deployment.url}`;
+  evidence[project.app] = { id: deployment.id, url };
+  await saveEvidence();
+  console.log(`Building ${deployment.id} from ${sha}.`);
+  const deadline = Date.now() + 20 * 60_000;
+  while (deployment.readyState !== "READY") {
+    if (
+      interrupted ||
+      ["ERROR", "CANCELED"].includes(deployment.readyState) ||
+      Date.now() >= deadline
+    )
+      throw Error(`Prepared Vercel deployment ${deployment.id} did not become READY.`);
+    await setTimeout(5000);
+    deployment = await vercel(`/v13/deployments/${deployment.id}`, project.token);
+  }
   verifyDeployment(deployment, project.id, sha, project.target);
   return { ...project, deploymentId: deployment.id, url };
 }
 
 async function probeDeployment(project, path, expected) {
-  const output = await vercelCommand(
-    project,
-    [
-      "curl",
-      path,
-      "--deployment",
-      project.url,
-      "--",
-      "-sS",
-      "-o",
-      "/dev/null",
-      "-w",
-      "%{http_code}",
-      "--max-time",
-      "30",
-    ],
-    true,
-  );
-  if (Number(output.match(/(\d{3})$/)?.[1]) !== expected)
-    throw Error(`Prepared deployment failed its ${path} HTTP check.`);
+  if (!project.bypass) {
+    // This is Vercel CLI curl's official automation authentication mechanism.
+    const result = await vercel(
+      `/v1/projects/${project.id}/protection-bypass`,
+      project.token,
+      "PATCH",
+      {},
+    );
+    project.bypass = Object.entries(result.protectionBypass ?? {}).find(
+      ([, value]) => value.scope === "automation-bypass",
+    )?.[0];
+    if (!project.bypass) throw Error("Could not authenticate the prepared deployment check.");
+  }
+  for (let attempt = 0; attempt < 6; attempt++) {
+    if (interrupted) throw Error("Release interrupted.");
+    const url = new URL(path, project.url);
+    url.searchParams.set("_release_check", `${Date.now()}-${attempt}`);
+    const response = await fetch(url, {
+      redirect: "manual",
+      headers: { "x-vercel-protection-bypass": project.bypass, "Cache-Control": "no-cache" },
+      signal: AbortSignal.timeout(30_000),
+    });
+    await response.body?.cancel();
+    if (response.status === expected) return;
+    // New protection credentials can take a few seconds to reach edge regions.
+    if (attempt < 5) await setTimeout(2000);
+  }
+  throw Error(`Prepared deployment failed its ${path} HTTP check.`);
 }
 
 async function publicPage(origin, path, expected, location) {
@@ -209,9 +244,13 @@ async function publicPage(origin, path, expected, location) {
 }
 
 async function assertAlias(origin, project) {
-  const alias = await vercel(`/v4/aliases/${new URL(origin).hostname}`, project.token);
-  if (alias.deployment?.id !== project.deploymentId)
-    throw Error("The service domain does not point to the verified deployment.");
+  for (let attempt = 0; attempt < 60; attempt++) {
+    if (interrupted) throw Error("Release interrupted.");
+    const alias = await vercel(`/v4/aliases/${new URL(origin).hostname}`, project.token);
+    if (alias.deployment?.id === project.deploymentId) return;
+    if (attempt < 59) await setTimeout(2000);
+  }
+  throw Error("The service domain does not point to the verified deployment.");
 }
 
 async function main() {
@@ -325,7 +364,12 @@ async function main() {
       const deployment = await vercel(`/v13/deployments/${project.deploymentId}`, project.token);
       verifyDeployment(deployment, project.id, sha, project.target);
       if (project.target === "production")
-        await vercelCommand(project, ["promote", project.deploymentId, "--yes"]);
+        await vercel(
+          `/v10/projects/${project.id}/promote/${project.deploymentId}`,
+          project.token,
+          "POST",
+          {},
+        );
     }
   });
   await stage("Verify public domains and protected admin preview", async () => {

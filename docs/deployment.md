@@ -48,6 +48,8 @@ GitHub `release-staging` 환경은 staging 브랜치, `release-production` 환�
 
 Vercel·Fly 토큰은 1년 만료로 발급하고 만료 전에 같은 범위의 새 토큰으로 교체한다. Supabase 관리 토큰은 로그인한 계정의 프로젝트 권한을 따르므로 접근 가능한 저장소 관리자와 워크플로 변경 권한을 제한한다. 토큰은 GitHub Secrets에만 저장하고 `.env`나 로그·커밋에 복사하지 않는다. 관리자 프로젝트 토큰은 두 Vercel 환경에 접근할 수 있으므로 파이프라인이 실제 환경 값도 대조한다.
 
+Vercel은 프로젝트 범위 토큰과 공식 REST API를 사용한다. Git 커밋 SHA를 지정해 원격 빌드하고 실제 빌드된 SHA를 다시 대조한다. 보호된 배포의 HTTP 검사는 Vercel의 Automation Bypass를 사용하며 없으면 해당 프로젝트에 생성한다. 이 비밀은 요청 메모리에서만 사용하고 로그·검증 artifact·공개 URL에 넣지 않는다.
+
 새 runner나 자격 증명을 점검할 때 `node scripts/release.mjs --check`로 프로젝트·환경 변수·DB 이력만 읽어 검증할 수 있다. 같은 workflow 환경 변수와 secret이 필요하며 이 명령은 배포하지 않는다.
 
 ## 환경 변수와 접근 경계

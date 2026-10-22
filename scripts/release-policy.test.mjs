@@ -102,6 +102,7 @@ test("a successful build from the wrong project or commit cannot be promoted", (
   const deployment = {
     projectId: "expected",
     meta: { releaseCommit: "commit" },
+    gitSource: { sha: "commit" },
     readyState: "READY",
     target: "production",
   };
@@ -109,6 +110,7 @@ test("a successful build from the wrong project or commit cannot be promoted", (
   for (const change of [
     { projectId: "wrong" },
     { meta: { releaseCommit: "old" } },
+    { gitSource: { sha: "different-source" } },
     { readyState: "ERROR" },
     { aliasError: { code: "failure" } },
     { target: null },

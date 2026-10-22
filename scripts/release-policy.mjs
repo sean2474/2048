@@ -118,6 +118,7 @@ export function verifyDeployment(deployment, projectId, sha, target) {
   if (
     deployment.projectId !== projectId ||
     deployment.meta?.releaseCommit !== sha ||
+    deployment.gitSource?.sha !== sha ||
     deployment.readyState !== "READY" ||
     deployment.aliasError ||
     (deployment.target ?? "preview") !== target

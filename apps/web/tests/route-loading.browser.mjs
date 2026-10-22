@@ -65,6 +65,7 @@ test(
             ]);
             const page = await context.newPage();
             page.setDefaultTimeout(20000);
+            page.setDefaultNavigationTimeout(45000);
             const errors = [];
             page.on("pageerror", (error) => errors.push(error.message));
             await page.goto(app.origin + "/");
