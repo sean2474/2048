@@ -1,4 +1,23 @@
 export const gameMessages: Record<string, string> = {
+  Rematch: "재대결",
+  "Accept rematch": "재대결 수락",
+  "Decline rematch": "거절",
+  "Cancel rematch": "재대결 취소",
+  "Find another opponent": "다른 상대 찾기",
+  "Same opponent, same mode. Both players must agree within 60 seconds.":
+    "같은 상대·같은 모드로 한 판 더! 60초 안에 서로 동의하면 시작해요.",
+  "Rematch requested. Waiting for your opponent…":
+    "재대결을 신청했어요. 상대의 응답을 기다리는 중…",
+  "Your opponent wants a rematch. Play again?": "상대가 재대결을 신청했어요. 한 판 더 할까요?",
+  "Starting your rematch…": "재대결을 시작하는 중…",
+  "The rematch request was declined.": "재대결 요청이 거절되었어요.",
+  "The rematch request was cancelled.": "재대결 요청이 취소되었어요.",
+  "A player left. Find another opponent to keep playing.":
+    "플레이어가 떠났어요. 다른 상대와 대전할 수 있어요.",
+  "The rematch window has expired.": "재대결 신청 시간이 지났어요.",
+  "This rematch is no longer available.": "지금은 재대결을 시작할 수 없어요.",
+  "Save the ranked result before starting a rematch.":
+    "경기 결과가 저장되면 랭크 재대결을 신청할 수 있어요.",
   "Your match will start shortly.": "곧 대전이 시작됩니다.",
   "Ranked matches affect Elo.": "랭크전은 승패에 따라 Elo가 변동됩니다.",
   "Casual matches do not affect Elo.": "일반전은 Elo에 영향을 주지 않습니다.",

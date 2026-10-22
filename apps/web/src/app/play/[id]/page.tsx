@@ -47,7 +47,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   return (
     <main className="contents">
       <h1 className="sr-only">2048 DUO · {t("The arena")}</h1>
-      <GameSession roomId={id} fallback={joining}>
+      <GameSession key={id} roomId={id} fallback={joining}>
         <div className="match-screen">
           <section className="match-toolbar">
             <MatchStatus />

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { GameEmblem } from "@/components/widget/game-emblem";
 import { useI18n } from "ui/i18n";
 import {
@@ -12,7 +13,13 @@ import {
   type ReactNode,
 } from "react";
 import { Flag } from "lucide-react";
-import { ABILITY_CHARGE, type Dir, type S2C } from "schema/in-game";
+import {
+  ABILITY_CHARGE,
+  type Dir,
+  type S2C,
+  type RematchState,
+  type RematchCommand,
+} from "schema/in-game";
 import type { Socket } from "socket.io-client";
 import { DirectionPad } from "@/components/2048/direction-pad";
 import { GameArena } from "@/components/2048/game-arena";
@@ -48,12 +55,14 @@ import {
 
 type GameState = Extract<S2C, { t: "state" | "end" }>;
 function useGameSession(roomId: string) {
+  const router = useRouter();
   const { t } = useI18n();
   const { play } = useAudio();
   const socketRef = useRef<Socket | null>(null);
   const serverOffset = useRef(0);
   const [connected, setConnected] = useState(false);
   const [game, setGame] = useState<GameState | null>(null);
+  const [rematch, setRematch] = useState<RematchState | null>(null);
   const [names, setNames] = useState({ you: "Guest", opp: "Opponent" });
   const [error, setError] = useState("");
   const [actionMessage, setActionMessage] = useState("");
@@ -74,6 +83,7 @@ function useGameSession(roomId: string) {
     setActionMessage("");
     setRejected(false);
     setConnected(false);
+    setRematch(null);
     let socket: Socket;
     try {
       socket = createGameSocket();
@@ -99,12 +109,24 @@ function useGameSession(roomId: string) {
     });
     socket.on("disconnect", () => {
       setConnected(false);
+      setRematch((current) => (current ? { ...current, status: "closed", reason: "left" } : null));
       previousGame = null;
     });
     socket.on("connect_error", () =>
       setError("Connection lost. Reconnecting automatically; you can also try again below."),
     );
     socket.on("message", (message: S2C) => {
+      if (message.t === "rematchState") {
+        if (message.matchId === roomId) setRematch(message);
+        return;
+      }
+      if (message.t === "rematchReady") {
+        if (finished && message.matchId === roomId) {
+          sessionStorage.setItem(CURRENT_ROOM_KEY, message.roomId);
+          router.replace(`/play/${message.roomId}`);
+        }
+        return;
+      }
       if (message.t === "recordStatus") {
         setGame((current) =>
           current?.t === "end" && current.matchId === message.matchId
@@ -158,7 +180,15 @@ function useGameSession(roomId: string) {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [roomId, attempt, settingsResolved, settings.skinId, settings.abilityId, play]);
+  }, [roomId, attempt, settingsResolved, settings.skinId, settings.abilityId, play, router]);
+
+  const handleRematch = useCallback(
+    (action: RematchCommand["action"]) => {
+      if (game?.t !== "end" || !socketRef.current?.connected) return;
+      socketRef.current.emit("message", { t: "rematch", matchId: game.matchId, action });
+    },
+    [game],
+  );
 
   const deadline = game?.t === "state" ? game.reconnectDeadline : undefined;
   const slowDeadline =
@@ -217,6 +247,8 @@ function useGameSession(roomId: string) {
   return {
     t,
     game,
+    rematch,
+    handleRematch,
     rejected,
     error,
     setAttempt,
@@ -437,6 +469,9 @@ export function MatchControls() {
   const {
     t,
     game,
+    rematch,
+    handleRematch,
+    connected,
     player,
     names,
     canMove,
@@ -456,6 +491,9 @@ export function MatchControls() {
     <MatchResult
       key={game.matchId}
       game={game}
+      rematch={rematch}
+      onRematch={handleRematch}
+      connected={connected}
       names={{ you: player?.name || names.you, opp: names.opp }}
     />
   ) : (

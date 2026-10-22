@@ -170,7 +170,7 @@
   color: var(--foreground);
   box-shadow: none;
 }
-.match-end-actions a:first-child {
+.match-end-actions:not([data-rematch="true"]) a:first-child {
   background: var(--primary);
   border-color: var(--primary);
   color: var(--primary-foreground);
@@ -178,7 +178,7 @@
 .match-end-actions a:hover {
   background: var(--muted);
 }
-.match-end-actions a:first-child:hover {
+.match-end-actions:not([data-rematch="true"]) a:first-child:hover {
   background: var(--primary);
   filter: brightness(0.95);
 }
