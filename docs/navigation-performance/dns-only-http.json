@@ -1,0 +1,173 @@
+{
+  "measuredAt": "2026-10-22T04:12:58.218479+00:00",
+  "origin": "https://www.2048duo.io",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "method": "Three sequential GET requests per route from the same workstation with duo.locale=en, fresh curl process for each request. Real public DNS; no connect-to/resolve overrides. First byte and complete streamed HTML measured separately.",
+  "requests": [
+    {
+      "path": "/",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 144.65,
+      "totalMs": 226.69,
+      "bytes": 208479,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::lgtxs-1792642378260-a9db693a9f24",
+      "cfRay": null
+    },
+    {
+      "path": "/",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 219.34,
+      "totalMs": 255.95,
+      "bytes": 208479,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::vc29w-1792642378500-aae2bf754e48",
+      "cfRay": null
+    },
+    {
+      "path": "/",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 131.92,
+      "totalMs": 211.36,
+      "bytes": 208479,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::tvm8c-1792642378777-f2497781cb23",
+      "cfRay": null
+    },
+    {
+      "path": "/settings",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 151.93,
+      "totalMs": 231.58,
+      "bytes": 237893,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::pbzvf-1792642379021-855173814230",
+      "cfRay": null
+    },
+    {
+      "path": "/settings",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 142.03,
+      "totalMs": 223.37,
+      "bytes": 237893,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::gkg7n-1792642379257-3a86c21db6f8",
+      "cfRay": null
+    },
+    {
+      "path": "/settings",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 138.58,
+      "totalMs": 217.23,
+      "bytes": 237893,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::gkg7n-1792642379501-738ecd6b3d55",
+      "cfRay": null
+    },
+    {
+      "path": "/find-match",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 134.03,
+      "totalMs": 181.29,
+      "bytes": 213898,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::pr87r-1792642379737-116b988fc1e0",
+      "cfRay": null
+    },
+    {
+      "path": "/find-match",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 122.13,
+      "totalMs": 177.4,
+      "bytes": 213898,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::tvm8c-1792642379934-484bd76f093b",
+      "cfRay": null
+    },
+    {
+      "path": "/find-match",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 165.35,
+      "totalMs": 214.74,
+      "bytes": 213898,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::l45b2-1792642380130-67fab256be8f",
+      "cfRay": null
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 140.17,
+      "totalMs": 826.98,
+      "bytes": 292275,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::pbzvf-1792642380361-2489b71a81b0",
+      "cfRay": null
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 143.11,
+      "totalMs": 262.33,
+      "bytes": 292275,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::82jm9-1792642381207-333969654d80",
+      "cfRay": null
+    },
+    {
+      "path": "/leaderboard",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 141.69,
+      "totalMs": 306.14,
+      "bytes": 292275,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::pr87r-1792642381487-3379d33a2c0d",
+      "cfRay": null
+    },
+    {
+      "path": "/solo",
+      "sample": 1,
+      "status": 200,
+      "ttfbMs": 126.37,
+      "totalMs": 208.66,
+      "bytes": 326910,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::lgtxs-1792642381809-30fbffc79e24",
+      "cfRay": null
+    },
+    {
+      "path": "/solo",
+      "sample": 2,
+      "status": 200,
+      "ttfbMs": 143.13,
+      "totalMs": 204.03,
+      "bytes": 326910,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::l45b2-1792642382036-62fc6f7e73c8",
+      "cfRay": null
+    },
+    {
+      "path": "/solo",
+      "sample": 3,
+      "status": 200,
+      "ttfbMs": 138.96,
+      "totalMs": 234.78,
+      "bytes": 326910,
+      "server": "Vercel",
+      "edge": "icn1::hnd1::rfqc6-1792642382262-179c25183ed4",
+      "cfRay": null
+    }
+  ]
+}
