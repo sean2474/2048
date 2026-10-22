@@ -183,7 +183,12 @@ test("rendered cues have distinct waveforms, repeat variation, silence tails and
     await writeFile(
       `${artifacts}render-checks.json`,
       JSON.stringify(
-        clips.map(({ name, peak, rms, duration }) => ({ name, peak, rms, duration })),
+        clips.map(({ name, peak, rms, duration }) => ({
+          name,
+          peak: +peak.toFixed(8),
+          rms: +rms.toFixed(8),
+          duration: +duration.toFixed(8),
+        })),
         null,
         2,
       ),
