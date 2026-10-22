@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createRequire } from "node:module";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { startServerFixture } from "./server-fixture.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
@@ -58,12 +58,17 @@ test(
             locale: "en-US",
             viewport: { width, height: 900 },
           });
+          const page = await context.newPage();
+          const navigation = [];
+          page.on("request", (request) => {
+            if (request.isNavigationRequest() || request.headers().rsc)
+              navigation.push({ url: request.url(), document: request.isNavigationRequest() });
+          });
           try {
             await context.addCookies([
               app.cookie(),
               { name: "duo.locale", value: "en", url: app.origin },
             ]);
-            const page = await context.newPage();
             page.setDefaultTimeout(20000);
             page.setDefaultNavigationTimeout(45000);
             const errors = [];
@@ -178,6 +183,25 @@ test(
                 "preview stays hidden on mobile",
               );
             assert.deepEqual(errors, []);
+          } catch (error) {
+            await page.screenshot({
+              path: new URL(`${route.path}-${width}-failure.png`, evidence).pathname,
+              fullPage: true,
+            });
+            await writeFile(
+              new URL(`${route.path}-${width}-failure.json`, evidence),
+              JSON.stringify(
+                {
+                  url: page.url(),
+                  body: await page.locator("body").innerText(),
+                  navigation,
+                  requests: app.requests,
+                },
+                null,
+                2,
+              ),
+            );
+            throw error;
           } finally {
             hold?.release();
             hold = null;
