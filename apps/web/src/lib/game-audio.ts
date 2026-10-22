@@ -1,3 +1,4 @@
+import { skinGesture, varyGesture, type AudioVoice as Voice } from "./skin-audio";
 import { ABILITY_CHARGE, type PublicPlayerState, type S2C } from "schema/in-game";
 import { type SkinTokens, type AbilityId } from "schema/loadout";
 
@@ -91,17 +92,6 @@ export function matchSound(previous: GameState | null, next: GameState): GameSou
     (next.pendingAttacks > previous.pendingAttacks ? "incoming" : null)
   );
 }
-
-type Voice = {
-  frequency: number;
-  to?: number;
-  at?: number;
-  duration: number;
-  wave?: OscillatorType | "noise";
-  gain?: number;
-  attack?: number;
-  cutoff?: number;
-};
 
 // Tone, texture and rhythm identify an event even without seeing the board.
 const sounds: Record<GameSound, readonly Voice[]> = {
@@ -207,18 +197,28 @@ const sounds: Record<GameSound, readonly Voice[]> = {
 
 const legendaryMerges: Record<NonNullable<SkinTokens["character"]>, readonly Voice[]> = {
   fox: [
-    { frequency: 740, to: 1109, duration: 0.07, wave: "triangle" },
-    { frequency: 1480, to: 1175, at: 0.04, duration: 0.13, wave: "triangle" },
+    { frequency: 3600, to: 1400, duration: 0.055, wave: "noise", gain: 0.04 },
+    { frequency: 740, to: 1480, duration: 0.075, wave: "sawtooth", gain: 0.035, cutoff: 2200 },
+    { frequency: 1109, to: 880, at: 0.065, duration: 0.12, gain: 0.035 },
   ],
   dragon: [
-    { frequency: 196, to: 392, duration: 0.1, wave: "triangle" },
-    { frequency: 587, to: 784, at: 0.04, duration: 0.17, wave: "triangle" },
-    { frequency: 1175, to: 1568, at: 0.09, duration: 0.18, wave: "triangle" },
+    { frequency: 130, to: 65, duration: 0.21, wave: "triangle", gain: 0.075, cutoff: 700 },
+    { frequency: 650, to: 190, duration: 0.13, wave: "noise", gain: 0.045, attack: 0.02 },
+    {
+      frequency: 392,
+      to: 294,
+      at: 0.055,
+      duration: 0.19,
+      wave: "sawtooth",
+      gain: 0.025,
+      cutoff: 800,
+    },
   ],
   phoenix: [
-    { frequency: 659, to: 988, duration: 0.12 },
-    { frequency: 1319, to: 1760, at: 0.06, duration: 0.17 },
-    { frequency: 1976, to: 1568, at: 0.12, duration: 0.2 },
+    { frequency: 900, to: 4200, duration: 0.18, wave: "noise", gain: 0.035, attack: 0.035 },
+    { frequency: 659, to: 988, duration: 0.17, wave: "triangle", gain: 0.05, attack: 0.02 },
+    { frequency: 1568, duration: 0.25, at: 0.1, gain: 0.03 },
+    { frequency: 2093, duration: 0.18, at: 0.16, gain: 0.018 },
   ],
   cat: [
     {
@@ -328,7 +328,7 @@ export class GameAudio {
     if (this.master) this.master.gain.value = settings.muted ? 0 : settings.volume;
   }
 
-  play(sound: GameSound, tokens?: SkinTokens) {
+  play(sound: GameSound, tokens?: SkinTokens, skinId?: string) {
     const context = this.context;
     if (
       !context ||
@@ -342,22 +342,21 @@ export class GameAudio {
     const now = context.currentTime;
     const repeated = sound === "move" || sound === "merge";
     const result = sound === "win" || sound === "lose" || sound === "draw";
-    const notes =
-      sound === "merge" && tokens?.character ? legendaryMerges[tokens.character] : sounds[sound];
+    const key = `${sound}:${skinId ?? tokens?.character ?? tokens?.tilePattern ?? "default"}`;
+    const variant = this.variations.get(key) ?? 0;
+    const base =
+      sound === "merge" && tokens?.character
+        ? legendaryMerges[tokens.character]
+        : repeated
+          ? (skinGesture(sound, tokens, skinId) ?? sounds[sound])
+          : sounds[sound];
+    const notes = repeated ? varyGesture(base, variant) : base;
     if (repeated && (now - this.lastPlayed < 0.045 || this.voices.size + notes.length > 12)) return;
     if (result || this.voices.size + notes.length > 12) this.stop();
     this.lastPlayed = now;
-    const key = `${sound}:${tokens?.character ?? "default"}`;
-    const variant = this.variations.get(key) ?? 0;
-    const pitch =
-      sound === "merge"
-        ? [1, 1.125, 1.25, 1.5][variant]
-        : sound === "move"
-          ? [1, 0.94, 1.06, 0.98][variant]
-          : 1;
     if (repeated) this.variations.set(key, (variant + 1) % 4);
     for (const note of notes) {
-      const start = now + (note.at ?? 0) * (repeated && variant % 2 ? 0.85 : 1);
+      const start = now + (note.at ?? 0);
       const envelope = context.createGain();
       const filter = context.createBiquadFilter();
       filter.Q.value = 0.5;
@@ -375,9 +374,9 @@ export class GameAudio {
       } else {
         const oscillator = context.createOscillator();
         oscillator.type = note.wave ?? "sine";
-        oscillator.frequency.setValueAtTime(note.frequency * pitch, start);
+        oscillator.frequency.setValueAtTime(note.frequency, start);
         oscillator.frequency.exponentialRampToValueAtTime(
-          (note.to ?? note.frequency) * pitch,
+          note.to ?? note.frequency,
           start + note.duration,
         );
         source = oscillator;

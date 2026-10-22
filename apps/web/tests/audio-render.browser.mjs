@@ -11,7 +11,11 @@ const artifacts = fileURLToPath(new URL("../../../docs/audio/", import.meta.url)
 
 test("rendered cues have distinct waveforms, repeat variation, silence tails and full-volume headroom", async () => {
   const bundle = await build({
-    entryPoints: [fileURLToPath(new URL("../src/lib/game-audio.ts", import.meta.url))],
+    stdin: {
+      contents:
+        'export { GameAudio } from "./apps/web/src/lib/game-audio"; export { SKINS } from "./packages/schema/loadout";',
+      resolveDir: fileURLToPath(new URL("../../../", import.meta.url)),
+    },
     bundle: true,
     write: false,
     format: "iife",
@@ -42,6 +46,20 @@ test("rendered cues have distinct waveforms, repeat variation, silence tails and
       ];
       const cases = cues.map((sound) => ({ name: sound, sound }));
       for (const skin of [
+        "classic",
+        "paper",
+        "weave",
+        "slate",
+        "tide",
+        "meadow",
+        "rank-bronze",
+        "astral",
+        "runes",
+        "aurora",
+        "dawn-oath",
+        "storm-fox",
+        "chrono-dragon",
+        "star-phoenix",
         "kitty",
         "bunny",
         "sentinel",
@@ -78,7 +96,11 @@ test("rendered cues have distinct waveforms, repeat variation, silence tails and
         }
         for (let i = 0; i < (cue.burst ? 20 : 1); i++) {
           Object.defineProperty(context, "currentTime", { configurable: true, value: i * 0.05 });
-          engine.play(cue.sound, cue.skin);
+          engine.play(
+            cue.sound,
+            AudioHarness.SKINS.find((skin) => skin.id === cue.skin)?.tokens,
+            cue.skin,
+          );
         }
         const samples = (await context.startRendering()).getChannelData(0);
         let peak = 0,
@@ -161,7 +183,12 @@ test("rendered cues have distinct waveforms, repeat variation, silence tails and
     await writeFile(
       `${artifacts}render-checks.json`,
       JSON.stringify(
-        clips.map(({ name, peak, rms, duration }) => ({ name, peak, rms, duration })),
+        clips.map(({ name, peak, rms, duration }) => ({
+          name,
+          peak: +peak.toFixed(8),
+          rms: +rms.toFixed(8),
+          duration: +duration.toFixed(8),
+        })),
         null,
         2,
       ),
