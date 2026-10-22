@@ -78,3 +78,15 @@
 3. `20261022043633_space_ability_default.sql`로 새 DB 기본값과 이전 기본 능력 키를 전환한다. 이 파일을 구형 웹보다 먼저 적용하지 않는다.
 
 두 번째 파일은 웹 배포 후 적용하는 후속 데이터 전환이다. DB 변경을 한꺼번에 모두 적용하는 배포는 금지한다. 롤백이 필요하면 `Space`를 읽을 수 있는 웹 버전을 사용한다.
+
+## 언어 동기화 브라우저 회귀 검사
+
+`apps/web/tests/settings-locale-sync.browser.mjs`는 로컬 서버 fixture로 Chrome Android·WebKit iPhone 화면을 검사한다. 영어 → 한국어 → 새로고침 → 영어 흐름에서 서버 제목·설정 섹션, 클라이언트 라벨, 선택값, 두 언어 쿠키가 일치하는지 확인한다. 한국어 서버 응답 전달을 보류한 동안 영어를 선택한 경우에도 마지막 선택이 유지되는지 확인한다. 실제 계정·DB·운영 서버는 사용하지 않으며 테스트마다 개발 서버 포트와 빌드 출력을 분리한다.
+
+먼저 저장소에서 `pnpm install --frozen-lockfile`을 실행한다. 테스트 실행 환경에는 Playwright 패키지, Google Chrome(`channel: "chrome"`), 설치한 Playwright 버전에 맞는 WebKit 브라우저가 필요하다. 외부 Playwright 런타임을 사용하는 경우 다음과 같이 실행한다. WebKit이 필요한 검사이므로 기존 Chrome 전용 성능 검사에 자동으로 포함하지 않는다.
+
+```sh
+NODE_PATH=/path/to/playwright/node_modules node --test apps/web/tests/settings-locale-sync.browser.mjs
+```
+
+Playwright가 저장소의 모듈 경로에서 이미 조회되면 `NODE_PATH`는 생략할 수 있다. 브라우저가 없으면 Playwright CLI의 `install chrome webkit`으로 설치한 뒤 실행한다. 휴대폰 화면·터치 에뮬레이션이며 실제 기기 검증을 대체하지 않는다.
