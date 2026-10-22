@@ -1,0 +1,13 @@
+{
+  "measuredAt": "2026-10-22T04:26:37.255Z",
+  "origin": "https://www.2048duo.io",
+  "webCommit": "a0ab06b8aff4c96aa7885aec17e89e4a70716e6c",
+  "observation": "One Chrome full-flow attempt selected English and rendered client controls in English while server Settings headings remained Korean past the 15-second wait. This has not been reproduced in subsequent instrumented local/production cycles. No root cause or application fix is claimed.",
+  "failure": [
+    {
+      "engine": "chrome-android",
+      "error": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Settings', exact: true, level: 1 }) to be visible\u001b[22m\n"
+    }
+  ],
+  "latestFullRunPassedBothBrowsers": true
+}
