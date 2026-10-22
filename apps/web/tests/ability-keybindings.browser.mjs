@@ -8,7 +8,7 @@ const { createGameServer } = require("../../socket/src/server.ts");
 const origin = "http://[::1]:3001";
 
 test(
-  "ability shortcuts use 1 or the saved replacement and respect game input locks",
+  "ability shortcuts use Space or the saved replacement and respect game input locks",
   { timeout: 90000 },
   async () => {
     const server = createGameServer();
@@ -76,8 +76,8 @@ test(
       await page.goto(`${origin}/play/20000000-0000-4000-8000-000000000001`);
       const activate = page.locator("[data-ability-control]");
       await activate.waitFor();
-      assert.equal(await activate.getAttribute("aria-keyshortcuts"), "1");
-      await page.keyboard.press("Digit1");
+      assert.equal(await activate.getAttribute("aria-keyshortcuts"), "Space");
+      await page.keyboard.press("Space");
       await page.waitForFunction(
         () => document.querySelector('[data-testid="your-score"]')?.textContent === "1",
       );
@@ -95,8 +95,8 @@ test(
         ]) {
           document.body.dispatchEvent(
             new KeyboardEvent("keydown", {
-              key: "1",
-              code: "Digit1",
+              key: " ",
+              code: "Space",
               bubbles: true,
               cancelable: true,
               ...options,
@@ -109,11 +109,11 @@ test(
           );
           if (element.tagName === "DIV") element.setAttribute("role", tag);
           document.body.append(element);
-          element.dispatchEvent(new KeyboardEvent("keydown", { code: "Digit1", bubbles: true }));
+          element.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
           element.remove();
         }
         const prevented = new KeyboardEvent("keydown", {
-          code: "Digit1",
+          code: "Space",
           bubbles: true,
           cancelable: true,
         });
@@ -123,14 +123,15 @@ test(
       await page.getByRole("button", { name: "Keybindings", exact: true }).click();
       const dialog = page.getByRole("dialog", { name: "Keybindings", exact: true });
       assert.equal(await dialog.locator("button[aria-pressed]").count(), 5);
-      await dialog.getByRole("button", { name: "Use special ability 1", exact: true }).click();
+      await dialog.getByRole("button", { name: "Use special ability Space", exact: true }).click();
       await page.keyboard.press("KeyW");
       await dialog.getByRole("alert").filter({ hasText: "already used" }).waitFor();
       await page.keyboard.press("KeyF");
       await dialog.getByRole("button", { name: "Save keys", exact: true }).click();
       await dialog.waitFor({ state: "hidden" });
       assert.equal(await activate.getAttribute("aria-keyshortcuts"), "F");
-      await page.keyboard.press("Digit1");
+      await page.locator("[data-testid=your-score]").click();
+      await page.keyboard.press("Space");
       await page.keyboard.press("KeyF");
       await page.waitForFunction(
         () => document.querySelector('[data-testid="your-score"]')?.textContent === "2",
@@ -236,7 +237,9 @@ test(
       await page.goto(`${origin}/settings`);
       await page.getByRole("button", { name: "Keybindings", exact: true }).click();
       const dialog = page.getByRole("dialog", { name: "Keybindings", exact: true });
-      await dialog.getByRole("button", { name: "Use special ability 2", exact: true }).waitFor();
+      await dialog
+        .getByRole("button", { name: "Use special ability Space", exact: true })
+        .waitFor();
       assert.equal(await dialog.getByRole("button", { name: "Move up 1", exact: true }).count(), 1);
       assert.equal(
         Object.hasOwn(account.row.keybindings, "ability"),
@@ -249,7 +252,7 @@ test(
         box.y >= 0 && box.y + box.height <= 660,
         "the five-key modal must fit the viewport and scroll",
       );
-      await dialog.getByRole("button", { name: "Use special ability 2", exact: true }).tap();
+      await dialog.getByRole("button", { name: "Use special ability Space", exact: true }).tap();
       await page.keyboard.press("KeyF");
       account.failSave = true;
       await dialog.getByRole("button", { name: "Save keys", exact: true }).tap();
@@ -267,10 +270,12 @@ test(
       await page.getByRole("button", { name: "Keybindings", exact: true }).click();
       await dialog.getByRole("button", { name: "Use special ability F", exact: true }).waitFor();
       await dialog.getByRole("button", { name: "Reset keys", exact: true }).tap();
-      await dialog.getByRole("button", { name: "Use special ability 1", exact: true }).waitFor();
+      await dialog
+        .getByRole("button", { name: "Use special ability Space", exact: true })
+        .waitFor();
       await dialog.getByRole("button", { name: "Save keys", exact: true }).tap();
       await dialog.waitFor({ state: "hidden" });
-      assert.equal(account.row.keybindings.ability, "Digit1");
+      assert.equal(account.row.keybindings.ability, "Space");
       assert.equal(account.row.keybindings.up, "KeyW");
     } finally {
       for (const page of context.pages()) await page.unrouteAll({ behavior: "ignoreErrors" });

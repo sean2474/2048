@@ -50,6 +50,15 @@ export function useGameKeyboard({
         movement.stop();
         return;
       }
+      // Space keeps its native activation behavior on focused controls.
+      if (
+        event.code === "Space" &&
+        event.target instanceof HTMLElement &&
+        event.target.closest(
+          "button, a[href], [role=button], [role=link], [role=checkbox], [role=switch]",
+        )
+      )
+        return;
       const action = resolveKeyAction(event, bindings, characterShortcuts);
       if (!action) return;
       event.preventDefault();
