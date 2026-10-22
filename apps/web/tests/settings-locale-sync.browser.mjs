@@ -47,7 +47,7 @@ async function assertLanguage(page, context, locale) {
   assert.equal(
     JSON.parse(
       decodeURIComponent(cookies.find((cookie) => cookie.name === "duo.guest-settings")?.value),
-    ).locale,
+    ).settings.locale,
     locale,
   );
 }

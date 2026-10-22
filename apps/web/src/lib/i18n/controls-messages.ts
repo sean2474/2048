@@ -2,6 +2,7 @@ export const controlsMessages: Record<string, string> = {
   "X attack": "X 공격",
   "Hard attack": "하드 공격",
   "Opponent ability charge": "상대 능력 충전",
+  Space: "스페이스바",
   Keybindings: "키 설정",
   "Move up": "위로 이동",
   "Move down": "아래로 이동",
@@ -19,14 +20,14 @@ export const controlsMessages: Record<string, string> = {
   "Hit: {attack}": "{attack} 명중",
   "Choose your extra movement and ability keys. Arrow keys always work.":
     "보조 이동키와 특수 능력 키를 설정하세요. 방향키는 항상 사용할 수 있습니다.",
-  "Keys use their physical A–Z / 0–9 positions, even with Korean input enabled.":
-    "한글 입력 상태에서도 키보드의 A–Z / 0–9 위치를 기준으로 작동합니다.",
+  "Use letters, numbers or Space. Letter and number keys use their physical positions, even with Korean input enabled.":
+    "문자·숫자·스페이스바를 사용할 수 있습니다. 한글 입력 상태에서도 문자·숫자 키는 키보드 위치를 기준으로 작동합니다.",
   "Press a key…": "키를 누르세요…",
-  "Choose A–Z or 0–9 without Shift, Ctrl, Alt or Command. Arrow keys stay fixed.":
-    "Shift, Ctrl, Alt, Command 없이 A–Z 또는 0–9를 선택하세요. 방향키는 변경할 수 없습니다.",
+  "Choose A–Z, 0–9 or Space without Shift, Ctrl, Alt or Command. Arrow keys stay fixed.":
+    "Shift, Ctrl, Alt, Command 없이 A–Z, 0–9 또는 스페이스바를 선택하세요. 방향키는 변경할 수 없습니다.",
   "{key} is already used for {action}.": "{key} 키는 이미 '{action}'에 사용 중입니다.",
-  "Press a letter or number. Esc cancels. Tab moves to the next control.":
-    "문자 또는 숫자 키를 누르세요. Esc로 취소하고 Tab으로 다음 항목으로 이동합니다.",
+  "Press a letter, number or Space. Esc cancels. Tab moves to the next control.":
+    "문자·숫자 키 또는 스페이스바를 누르세요. Esc로 취소하고 Tab으로 다음 항목으로 이동합니다.",
   "Select a key to change it. Your settings are saved in this browser.":
     "변경할 키를 선택하세요. 설정은 이 브라우저에 저장됩니다.",
   "Reset keys": "기본값으로",

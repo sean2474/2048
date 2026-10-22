@@ -80,10 +80,27 @@ function guestDefaults(settings: Settings): Settings {
   return { ...settings, skinId: "classic", iconId: DEFAULT_PROFILE_ICON, abilityId: null };
 }
 
+export function encodeGuestSettings(settings: Settings): string {
+  return encodeURIComponent(JSON.stringify({ version: 2, settings }));
+}
+
 export function parseGuestSettings(value?: string, fallbackLocale: Locale = "ko"): Settings {
   try {
-    const parsed = upgradeSettings(value ? JSON.parse(decodeURIComponent(value)) : null);
-    if (isSettings(parsed)) return guestDefaults(parsed);
+    const raw = value ? JSON.parse(decodeURIComponent(value)) : null;
+    const current = raw?.version === 2;
+    const parsed = upgradeSettings(current ? raw.settings : raw);
+    if (isSettings(parsed)) {
+      // Upgrade the old default once; a newly saved custom 1 key stays selectable.
+      if (
+        !current &&
+        isKeybindings(raw?.keybindings) &&
+        parsed.keybindings.ability === "Digit1" &&
+        !Object.values(parsed.keybindings).includes("Space")
+      ) {
+        parsed.keybindings = { ...parsed.keybindings, ability: "Space" };
+      }
+      return guestDefaults(parsed);
+    }
   } catch {
     /* Damaged cookies must not disable game controls. */
   }

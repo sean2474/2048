@@ -10,8 +10,8 @@ export const messages: Record<string, string> = {
   "04. Win conditions": "04. 승리 조건",
   "There is no automatic defense. Use Clear X to remove one X block when your ability is ready.":
     "자동 방어는 없어요. X 제거 능력이 충전되면 직접 사용해 X 블록 1개를 없앨 수 있어요.",
-  "Choose one ability before a match. Merge points fill a 1024-point charge; hold one use and press 1 or the ability button below your board when ready. Change the ability key in Keybindings. Guests use Clear X.":
-    "경기 전 능력 하나를 선택하세요. 병합 점수 1024마다 1회 충전되며 최대 1회분을 보관합니다. 준비되면 1번 키나 내 보드 아래 능력 버튼으로 사용하세요. 키 설정에서 능력 키를 바꿀 수 있습니다. 게스트는 X 제거를 사용합니다.",
+  "Choose one ability before a match. Merge points fill a 1024-point charge; hold one use and press Space or the ability button below your board when ready. Change the ability key in Keybindings. Guests use Clear X.":
+    "경기 전 능력 하나를 선택하세요. 병합 점수 1024마다 1회 충전되며 최대 1회분을 보관합니다. 준비되면 스페이스바나 내 보드 아래 능력 버튼으로 사용하세요. 키 설정에서 능력 키를 바꿀 수 있습니다. 게스트는 X 제거를 사용합니다.",
   "Choose one ability for your next match. Clear X is the default.":
     "다음 대전에서 쓸 능력을 하나 고르세요. 기본 능력은 X 제거예요.",
   "Use {ability}": "{ability} 사용",

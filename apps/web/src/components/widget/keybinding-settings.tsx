@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Keyboard } from "lucide-react";
 import { Button } from "ui/button";
 import { useI18n } from "ui/i18n";
@@ -48,6 +48,7 @@ export function KeybindingSettings({
   const [draft, setDraft] = useState<Keybindings>(bindings);
   const [shortcuts, setShortcuts] = useState(settings.customShortcuts);
   const [listening, setListening] = useState<KeyAction | null>(null);
+  const capturedKey = useRef<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,11 +65,17 @@ export function KeybindingSettings({
     setDraft({ ...bindings });
     setShortcuts(settings.customShortcuts);
     setListening(null);
+    capturedKey.current = null;
     setError(null);
     onOpenChange?.(next);
   };
 
   const captureKey = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (capturedKey.current === event.code) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     if (!listening) return;
     if (event.key === "Tab") {
       setListening(null);
@@ -86,14 +93,17 @@ export function KeybindingSettings({
     event.stopPropagation();
     if (event.repeat) return;
     if (!code) {
-      setError(t("Choose A–Z or 0–9 without Shift, Ctrl, Alt or Command. Arrow keys stay fixed."));
+      setError(
+        t("Choose A–Z, 0–9 or Space without Shift, Ctrl, Alt or Command. Arrow keys stay fixed."),
+      );
       return;
     }
+    capturedKey.current = code;
     const duplicate = KEY_ACTIONS.find((action) => action !== listening && draft[action] === code);
     if (duplicate) {
       setError(
         t("{key} is already used for {action}.", {
-          key: keyLabel(code),
+          key: t(keyLabel(code)),
           action: t(ACTION_LABELS[duplicate]),
         }),
       );
@@ -114,6 +124,12 @@ export function KeybindingSettings({
       </DialogTrigger>
       <DialogContent
         onKeyDownCapture={captureKey}
+        onKeyUpCapture={(event) => {
+          if (capturedKey.current !== event.code) return;
+          event.preventDefault();
+          event.stopPropagation();
+          capturedKey.current = null;
+        }}
         onEscapeKeyDown={(event) => {
           if (listening) {
             event.preventDefault();
@@ -139,7 +155,9 @@ export function KeybindingSettings({
           {t("Enable custom shortcuts")}
         </label>
         <p className="text-xs leading-5 text-muted-foreground">
-          {t("Keys use their physical A–Z / 0–9 positions, even with Korean input enabled.")}
+          {t(
+            "Use letters, numbers or Space. Letter and number keys use their physical positions, even with Korean input enabled.",
+          )}
         </p>
         <div className="divide-y divide-border rounded-xl border px-4">
           {KEY_ACTIONS.map((action) => (
@@ -155,12 +173,13 @@ export function KeybindingSettings({
                 aria-labelledby={`binding-${action} binding-key-${action}`}
                 aria-pressed={listening === action}
                 onClick={() => {
+                  capturedKey.current = null;
                   setListening(action);
                   setError(null);
                 }}
               >
                 <span id={`binding-key-${action}`}>
-                  {listening === action ? t("Press a key…") : keyLabel(draft[action])}
+                  {listening === action ? t("Press a key…") : t(keyLabel(draft[action]))}
                 </span>
               </Button>
             </div>
@@ -168,7 +187,7 @@ export function KeybindingSettings({
         </div>
         <p className="text-xs leading-5 text-muted-foreground" role="status">
           {listening
-            ? t("Press a letter or number. Esc cancels. Tab moves to the next control.")
+            ? t("Press a letter, number or Space. Esc cancels. Tab moves to the next control.")
             : t(
                 scope === "account"
                   ? "Select a key to change it. Your settings are saved to your account."
