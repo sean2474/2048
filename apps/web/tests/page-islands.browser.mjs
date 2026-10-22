@@ -50,6 +50,8 @@ test(
     const page = await guest.newPage(),
       errors = [];
     page.setDefaultTimeout(10000);
+    // A fresh CI fixture compiles each route on its first navigation.
+    page.setDefaultNavigationTimeout(45000);
     page.on("pageerror", (error) => errors.push(error.message));
     let response = await page.goto(app.origin + "/settings");
     assert.match(await response.text(), /Help and customization/);
@@ -120,6 +122,7 @@ test(
     await account.addCookies([app.cookie(), { name: "duo.locale", value: "en", url: app.origin }]);
     const authenticated = await account.newPage();
     authenticated.setDefaultTimeout(10000);
+    authenticated.setDefaultNavigationTimeout(45000);
     authenticated.on("pageerror", (error) => errors.push(error.message));
     await authenticated.goto(app.origin + "/friends");
     await authenticated

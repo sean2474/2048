@@ -79,6 +79,7 @@ test(
       actionRequests = [],
       errors = [];
     page.setDefaultTimeout(15000);
+    page.setDefaultNavigationTimeout(45000);
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("request", (request) => {
       if (/\/(sync_achievements|check_in)$/.test(new URL(request.url()).pathname))
@@ -142,6 +143,7 @@ test(
     await context.addCookies([fixture.cookie()]);
     const page = await context.newPage();
     page.setDefaultTimeout(15000);
+    page.setDefaultNavigationTimeout(45000);
     await page.goto(fixture.origin + "/achievements");
     await page
       .getByRole("alert")
@@ -213,6 +215,8 @@ test(
     await context.addCookies([fixture.cookie()]);
     const page = await context.newPage();
     page.setDefaultTimeout(10000);
+    // A fresh CI fixture compiles the route before rendering this assertion.
+    page.setDefaultNavigationTimeout(45000);
     await page.goto(fixture.origin + "/achievements");
     await page.getByRole("main").locator("#checkin-30").getByText("Permanently unlocked").waitFor();
     assert.equal(

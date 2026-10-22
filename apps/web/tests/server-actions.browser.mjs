@@ -59,6 +59,7 @@ test(
       errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     page.setDefaultTimeout(15000);
+    page.setDefaultNavigationTimeout(45000);
     const actionRequests = [];
     page.on("request", (request) => {
       if (request.headers()["next-action"])

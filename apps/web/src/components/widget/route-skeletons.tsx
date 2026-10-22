@@ -237,7 +237,7 @@ export async function FeedbackLoading() {
         </div>
         <div className="space-y-2">
           <Skeleton className="h-5 w-28" />
-          <Skeleton className="h-11 w-full" />
+          <Skeleton className="h-12 w-full" />
         </div>
         <div className="space-y-2">
           <Skeleton className="h-5 w-20" />
