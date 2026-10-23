@@ -4,8 +4,8 @@ Run in an isolated worktree with its own dependencies and no dev servers. The ha
 
 ```sh
 pnpm install --frozen-lockfile
-NODE_PATH=/path/to/playwright/node_modules BENCH_LABEL=local-check \
-  node apps/web/tests/performance.browser.mjs
+pnpm exec playwright install chrome
+BENCH_LABEL=local-check node apps/web/tests/performance.browser.mjs
 node --test apps/web/tests/performance-metrics.test.mjs
 ```
 
@@ -23,7 +23,7 @@ Available flags (no flags required):
 - `BENCH_GAMES=0`: debug pages only. Omit for match/solo journeys.
 - `BENCH_OBSERVE_MS=1000`: diagnostic minimum observation horizon from navigation start; default 0 stops at the readiness observation. Keep identical values when comparing diagnostic runs.
 
-The root browser test files use the existing Node assert and Playwright conventions. No new package is required. Bundled Playwright can be used through `NODE_PATH`; installed Chrome is selected with `channel: chrome`.
+Use Node 24.x and the pinned root Playwright development dependency installed by pnpm. Chrome is selected with `channel: chrome`; an external `NODE_PATH` runtime is not required. See the [test guide](../testing.md) for the standard checks and artifact policy.
 
 `raw.json` contains source SHA, machine/browser, every discovered route, per-run metrics, request paths/counts, exceptions, game timings and solo clock accuracy. `report.md` summarizes median and nearest-rank p95. Five samples provide only a small lab comparison; p95 is the maximum of five samples, not a population estimate. Build logs and first-run screenshots are stored beside the raw file.
 
@@ -42,7 +42,7 @@ Not covered by this local benchmark: real phone hardware, external DB latency, r
 After a deployment has been explicitly verified, deployed guest-only private friend matches can be measured separately. This command never enters a public/ranked queue or signs in and has no DB cleanup code. Normal guest match records may be stored by the deployed server. Run only on the target authorized for this task:
 
 ```sh
-NODE_PATH=/path/to/playwright/node_modules BENCH_REMOTE_TARGET=staging \
+BENCH_REMOTE_TARGET=staging \
   BENCH_OUTPUT=/tmp/2048-duo-remote-staging-check \
   BENCH_DEPLOYED_COMMIT='replace-with-verified-web-sha' \
   BENCH_SOCKET_BUILD_COMMIT='replace-with-verified-socket-sha' \

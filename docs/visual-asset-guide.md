@@ -1,6 +1,6 @@
 # 아이콘 · 이미지 · 스킨 제작 가이드
 
-최종 갱신: 2026-10-17
+최종 갱신: 2026-10-23
 
 2048 Duo의 새 시각 요소를 만들거나 수정할 때 사용하는 기준이다. 기존 화면의 따뜻한 색상은 유지하고, 기능 아이콘은 간결한 선으로, 수집용 아트는 테마가 드러나는 그림으로 표현한다. 경쟁·티어 화면은 절제된 분위기, 캐릭터 스킨은 개성을 우선한다.
 
@@ -133,4 +133,4 @@ UI 색상은 [globals.css](../apps/web/src/app/globals.css)의 토큰을 사용�
 - 합성 시작·중간·종료, 반복 재생, 창 닫기, 음소거, 동작 줄이기를 확인했는가?
 - SVG 원본과 실제 렌더링 캡처를 남기고 타입 검사·관련 테스트를 통과했는가?
 
-합성 회귀 테스트: [실전 효과](../apps/web/tests/legendary-effects.browser.mjs), [상세 미리보기](../apps/web/tests/skin-merge-preview.browser.mjs). UI 아이콘·반응형 회귀 테스트: [전체 화면](../apps/web/tests/game-details.browser.mjs). 최신 합성 검증 자료는 [legendary-motion](legendary-motion)에 저장한다.
+합성 회귀 테스트: [실전 효과](../apps/web/tests/legendary-effects.browser.mjs), [상세 미리보기](../apps/web/tests/skin-merge-preview.browser.mjs). UI 아이콘·반응형 회귀 테스트: [전체 화면](../apps/web/tests/game-details.browser.mjs). [legendary-motion](legendary-motion)은 기존 검증 기록이다. 새 합성 캡처는 `test-results/legendary-motion/`, UI 아이콘·반응형 캡처는 `test-results/skin-preview-icons/`에 생성하며 [산출물 정책](testing.md#결과-파일)에 따라 필요한 근거만 문서에 추가한다.

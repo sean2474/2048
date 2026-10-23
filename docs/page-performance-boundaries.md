@@ -15,7 +15,9 @@ The page boundary follows where data and interaction belong. Server pages own st
 | `/friends` | Heading and verified guest access panel | Friend search, contacts, invitations and conversation state |
 | `/watch/[id]` | Heading, navigation and verified guest access panel | Live socket connection, boards and connection/replay state |
 | `/how-to-play` | Full instructional content | Shared optional controls only |
-| `/login`, `/signup`, `/forgot-password`, `/reset-password` | Configuration checks, headings and navigation | Authentication forms |
+| `/privacy`, `/terms` | Localized policy text and navigation | Shared optional controls only |
+| `/login`, `/signup` | Configuration and verified-account checks; redirect signed-in non-anonymous users to `/` | Authentication forms |
+| `/forgot-password`, `/reset-password` | Configuration checks, headings and navigation | Recovery forms |
 | `/auth/error` | Error explanation and navigation | Shared optional controls only |
 | `/play/online`, `/play/ranked` | Heading, rules, mode and verified ranked account gate | Queue/socket status, timer, cancellation and match introduction |
 | `/loadout`, `/shop` | Catalog and account reads, wallet, ownership, URL filters/pagination, cards and static previews | Item dialog, legendary playback, equip and purchase controls |
@@ -31,20 +33,22 @@ Every web and administration `page.tsx` is a Server Component. A route must comp
 | `/` | Overview aggregates and charts; validated URL period/mode | URL selects and refresh; operations status notice |
 | `/players`, `/feedback` | Queries, totals, records and URL pagination | Refresh; player status URL control |
 | `/matches`, `/audit` | Validated URL filters, cursor queries and records | Refresh |
-| `/players/[id]` | Player details, match/audit history and safe return link | Reason/confirmation form for access changes |
+| `/players/[id]` | Player details, wallet/coin history, match/audit history and safe return link | Access-change and coin-adjustment forms with confirmation |
 | `/matches/[id]` | Match details and safe return link | Refresh |
 | `/seasons` | Current season and historical records | New-season form and confirmation |
 | `/catalog` | Initial catalog query and page heading/help | Stateful content editor; explicit reload after mutations |
 | `/operations` | Heading and operating instructions | Live polling, retained last-successful snapshot and refresh errors |
-| `/login`, `/auth/error` | Page structure and instructional content | Authentication/language controls |
+| `/login` | Configuration/session checks; redirect existing sessions to the console or MFA | Password sign-in and language controls |
+| `/mfa` | Verified user and MFA gate; enrollment or verification instructions | Authenticator enrollment, code verification and sign-out |
+| `/auth/error` | Page structure and instructional content | Language controls |
 
-`getAdminAccess` caches verified user/role checks only within the current React server request. Both the console layout and every private data page use it. Denied access makes no private record RPC. Supabase RPC authorization remains the final boundary. The catalog's server seed avoids a second initial fetch on hydration. Other record pages fetch only on navigation, filter changes or explicit refresh.
+`getAdminAccess` caches verified user/role checks only within the current React server request. Both the console layout and every private data page use it, including the `aal2` requirement. Denied access makes no private record RPC. Supabase RPC authorization remains the final boundary. The catalog's server seed avoids a second initial fetch on hydration. Other record pages fetch only on navigation, filter changes or explicit refresh.
 
 ## Loading and regression coverage
 
 - The root web shell reads only request cookies/headers before its Suspense boundary. Account and preference I/O runs inside that boundary, so the first response can contain useful loading UI. Loading routes use `getRequestI18n`, which never waits for account preferences.
 - Server-rendered skeletons reserve meaningful space; interactive consumers receive placeholders as server-rendered slots. Skeleton CSS uses its own `skeleton-shimmer` keyframes, avoiding the old game `pulse` collision, and respects reduced motion without JavaScript. Admin permission redirects remain outside streaming boundaries.
-- Initial catalog data is read and validated on the server, shared within the request, and passed to the client catalog provider. URL filters and page changes fetch RSC data. Browser focus and live game updates remain explicit refresh paths.
+- The root provider receives a validated anonymous public-catalog seed with a 30-second stale-while-revalidate cache. Private ownership/wallet reads remain request-scoped, and collection pages and purchase actions read current catalog data. URL filters and page changes fetch RSC data. Browser focus and live game updates remain explicit refresh paths.
 - Server Actions derive identity from the verified session, validate input again, and rely on database ownership/atomic price checks. Expected user IDs are stale-tab guards, never authorization. No service-role key is exposed to the web application. Game moves, timers, and matchmaking retain their existing socket transport.
 - `apps/admin/tests/server-pages.test.mjs` verifies record HTML without browser JavaScript, malicious-text escaping, normalized filters, per-request admin-check reuse, denial without private queries, recovery after backend errors and skeleton streaming before a held query resolves.
 - `apps/admin/tests/admin-expansion.browser.mjs` covers URL pagination/back navigation, safe errors, moderation and season confirmation, rapid duplicate confirmation, focus recovery, operations proxy authorization and responsive overflow.

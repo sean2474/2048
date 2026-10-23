@@ -45,8 +45,9 @@ metric or animation renderer still requires code and tests.
   Existing icons are copied with the [asset seed command](catalog-assets.md).
   Existing procedural board art is stored as DB tokens, not rasterized images.
 
-The client reads `content_catalog()`. Administrator RPCs check the existing
-`is_game_admin()` role on every call; no service key is shipped to either web app.
+Server loaders and the client catalog provider read `content_catalog()`. Administrator RPCs check
+`is_game_admin()` membership and the TOTP-verified `aal2` session on every call;
+no service key is shipped to either web app.
 Mutations validate fields in SQL as well as shared Zod schemas. Drafts are hidden
 from public reads. Uploads cannot overwrite or delete existing artwork. Trusted
 repository SVGs use the seed script; the administrator upload accepts raster files.
@@ -56,10 +57,13 @@ repository SVGs use the seed script; the administrator upload accepts raster fil
 평가한다. 클라이언트는 달성 점수나 해금을 직접 제출하지 않는다. GET
 `achievement_state()`는 읽기 전용이다.
 
-The game keeps the last verified catalog through transient failures, provides a
-retry message and blocks purchases until a valid catalog is available. It refreshes
-on navigation/focus after a 60-second cache interval. Purchases send the displayed
-price; the transaction locks the catalog item and wallet and rejects price changes
+The root provider uses an anonymous public seed with a 30-second stale-while-revalidate
+cache; failed refreshes retain its last valid value. Its client copy refreshes on
+navigation/focus after 60 seconds. Collection pages read the current catalog on the
+server and refresh on focus, filtering and pagination; ownership and wallet data
+are never shared across accounts. Failed page reads offer retry, and purchase actions
+require a current valid catalog. Purchases send the displayed price; the transaction
+locks the catalog item and wallet and rejects price changes
 before charging. Duplicate concurrent requests charge once. During a rolling
 release, the old two-argument purchase RPC only accepts the migration-time price;
 new items and edited prices require the new client confirmation.

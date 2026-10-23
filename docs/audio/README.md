@@ -17,7 +17,9 @@ Only server-confirmed ability charge consumption produces a skill cue. Results i
 - `node --test apps/web/tests/audio-render.browser.mjs` (Playwright runtime required): renders actual Web Audio waveforms, checks audible output, distinct signals, repeat variation, bounded decay and peak headroom at 100% volume.
 - Run `audio.browser.mjs`, `legendary-effects.browser.mjs` and `skin-merge-preview.browser.mjs` with `TEST_WEB_ORIGIN` pointing to this worktree's web server. Live friend-match coverage also requires its socket server. Browser accounts are fictional fixtures.
 
-`sound-preview.wav` and `render-checks.json` are regenerated from the real engine at maximum volume (the app defaults to 45%). Order: 15 event cues, then Classic, Paper, Woven Linen, Slate, Tide Pool, Meadow, Bronze Bastion, Astral Archive, Rune Script, Aurora, Dawn Oath, Storm Fox, Chrono Dragon, Star Phoenix, Kitty Club, Bunny Hop, Iron Sentinel, Rune Knight, Arcanist, Diamond Prism, Master Crown, and a merge variation. JSON also includes the rapid-merge stress case.
+`test-results/audio/sound-preview.wav` and `test-results/audio/render-checks.json` are regenerated from the real engine at maximum volume (the app defaults to 45%). Order: 15 event cues, then Classic, Paper, Woven Linen, Slate, Tide Pool, Meadow, Bronze Bastion, Astral Archive, Rune Script, Aurora, Dawn Oath, Storm Fox, Chrono Dragon, Star Phoenix, Kitty Club, Bunny Hop, Iron Sentinel, Rune Knight, Arcanist, Diamond Prism, Master Crown, and a merge variation. JSON also includes the rapid-merge stress case.
+
+Committed files under `docs/audio/` are retained verification snapshots; reruns write to `test-results/audio/` and do not overwrite them. See the [artifact policy](../testing.md#결과-파일).
 
 The renderer passes actual catalog tokens and IDs to the engine, covering all 11 material families and all 10 legendary characters. Earlier tests passed a skin ID where tokens were expected, so their skin waveform coverage was not reliable. Current checks verify distinct signals, finite samples, decay and headroom; they do not claim a subjective listening review.
 
