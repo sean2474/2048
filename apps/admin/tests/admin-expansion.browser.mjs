@@ -322,7 +322,7 @@ test(
       },
       { name: "duo.locale", value: "en", url: origin },
     ]);
-    const evidence = join(ROOT, "docs/admin-p0");
+    const evidence = join(ROOT, "test-results/admin-p0");
     await mkdir(evidence, { recursive: true });
     const page = await context.newPage();
     page.setDefaultTimeout(10000);

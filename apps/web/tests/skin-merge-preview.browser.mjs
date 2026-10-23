@@ -6,7 +6,7 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { mockAccount, trackAudio } from "./browser-fixtures.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
-const artifacts = fileURLToPath(new URL("../../../docs/legendary-motion", import.meta.url));
+const artifacts = fileURLToPath(new URL("../../../test-results/legendary-motion", import.meta.url));
 const origin = process.env.TEST_WEB_ORIGIN || "http://[::1]:3001";
 
 test("legendary details preview the viewed skin, replay, cancel and respect audio/motion settings", async () => {

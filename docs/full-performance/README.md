@@ -15,7 +15,7 @@ Available flags (no flags required):
 
 - `BENCH_LABEL`: output directory name (`local` default; letters, numbers, hyphens).
 - `BENCH_ROOT`: source worktree to build, default current harness repository.
-- `BENCH_OUTPUT`: evidence directory, default `docs/full-performance/<label>`.
+- `BENCH_OUTPUT`: evidence directory, default `test-results/full-performance/<label>`.
 - `BENCH_PORT`: first of four dedicated loopback ports, default 3410 (web/admin/API/socket).
 - `BENCH_RUNS`: samples per page/device/cache condition, default 5.
 - `BENCH_APP=web|admin`: debug one app. Omit for complete coverage.

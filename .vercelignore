@@ -2,3 +2,7 @@
 **/.data/**
 docs/**
 supabase/.temp/**
+
+# Generated test screenshots, measurements and reports
+test-results/**
+playwright-report/**

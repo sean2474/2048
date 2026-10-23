@@ -41,7 +41,7 @@ test("two browser tabs see their friend-match intro before entering a real game"
     );
     assert.equal(await a.locator(".match-intro [data-profile-icon=guest]").count(), 2);
     assert.equal(await b.locator(".match-intro [data-profile-icon=guest]").count(), 2);
-    const dir = fileURLToPath(new URL("../../../docs/profile-icons/", import.meta.url));
+    const dir = fileURLToPath(new URL("../../../test-results/profile-icons/", import.meta.url));
     fs.mkdirSync(dir, { recursive: true });
     await b.waitForTimeout(800);
     await b.screenshot({ path: `${dir}/live-guest-match.png` });

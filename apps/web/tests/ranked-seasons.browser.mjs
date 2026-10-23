@@ -21,7 +21,7 @@ const old = {
   starts_at: "2026-10-01T00:00:00Z",
   ends_at: current.starts_at,
 };
-const artifacts = fileURLToPath(new URL("../../../docs/ranked-seasons/", import.meta.url));
+const artifacts = fileURLToPath(new URL("../../../test-results/ranked-seasons/", import.meta.url));
 
 test(
   "lifetime evaluation, season qualification, peak rank and archived snapshots",

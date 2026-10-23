@@ -5,7 +5,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 const { chromium } = createRequire(import.meta.url)("playwright");
-const artifacts = fileURLToPath(new URL("../../../docs/profile-icons", import.meta.url));
+const artifacts = fileURLToPath(new URL("../../../test-results/profile-icons", import.meta.url));
 const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
 const roomId = "20000000-0000-4000-8000-000000000001";
 

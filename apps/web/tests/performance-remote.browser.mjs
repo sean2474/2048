@@ -19,7 +19,7 @@ const origin =
   target === "staging" ? "https://2048-web-staging.vercel.app" : "https://www.2048duo.io";
 const root = resolve(import.meta.dirname, "../../..");
 const output = resolve(
-  process.env.BENCH_OUTPUT ?? join(root, "docs/full-performance", `remote-${target}`),
+  process.env.BENCH_OUTPUT ?? join(root, "test-results/full-performance", `remote-${target}`),
 );
 const allCases = [
   "desktop:natural",

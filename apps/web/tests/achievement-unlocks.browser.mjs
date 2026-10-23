@@ -7,7 +7,9 @@ import { authCookieName, mockAccount, mockCatalog } from "./browser-fixtures.mjs
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
-const artifacts = fileURLToPath(new URL("../../../docs/achievement-rewards/", import.meta.url));
+const artifacts = fileURLToPath(
+  new URL("../../../test-results/achievement-rewards/", import.meta.url),
+);
 
 test("visiting automatically checks in once, unlocks the 30th reward, and equip persists", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });

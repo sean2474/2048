@@ -10,7 +10,7 @@ const { createGameServer } = require("../../socket/src/server.ts");
 const { rooms } = require("../../socket/src/state.ts");
 const { broadcast, endGame } = require("../../socket/src/game.ts");
 const origin = "http://[::1]:3001";
-const artifacts = new URL("../../../docs/social/", import.meta.url).pathname;
+const artifacts = new URL("../../../test-results/social/", import.meta.url).pathname;
 const ids = ["10000000-0000-4000-8000-000000000001", "10000000-0000-4000-8000-000000000002"];
 const names = ["신청친구", "응답친구"];
 

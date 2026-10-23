@@ -9,7 +9,7 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 import { mockAccount, mockCatalog } from "./browser-fixtures.mjs";
 const origin = process.env.WEB_TEST_ORIGIN ?? "http://[::1]:3001";
 const root = fileURLToPath(new URL("../../../", import.meta.url));
-const artifacts = path.join(root, "docs/skin-expansion");
+const artifacts = path.join(root, "test-results/skin-expansion");
 
 test("rarity filters, persistence, paging and readable character tiles", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
