@@ -99,4 +99,4 @@ staging 푸시는 CI 통과 후 테스트 환경을 자동 배포한다. 운영�
 - 설계 이력: [랭크 개편](docs/rank-refinement.md), [관리자 확장](docs/admin-expansion-plan.md)
 - 검증 이력: [코드 점검](docs/code-audit-2026-10-16.md), [기능 확장](docs/feature-expansion-2026-10-17.md), [업적 보상](docs/achievement-rewards/verification.md), [관리자 QA](docs/browser-qa.md), [UI 보고서](docs/ui-refresh/report.md)·[검증](docs/ui-refresh/validation.md)
 
-과거 캡처·테스트 결과는 당시 변경의 근거이며 현재 전체 기능의 재검증이나 배포 완료를 뜻하지 않는다. 실제 휴대폰·스크린리더·장기 게임 밸런스와 이메일 수신은 별도 확인이 필요하다.
+과거 캡처·테스트 결과는 당시 변경의 근거이며 현재 전체 기능의 재검증이나 배포 완료를 뜻하지 않는다. 2026-10-23 실제 가입·복구 메일과 운영 인증 흐름을 확인했으며, 일반 사용자용 SMTP 연결은 남아 있다. 실제 휴대폰·스크린리더·장기 게임 밸런스는 별도 확인이 필요하다. [최신 출시 점검](docs/launch-readiness.md)
