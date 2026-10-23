@@ -39,6 +39,6 @@
 
 staging은 최초 실행의 4개 시나리오 모두 통과했다. production은 최초 3개가 통과했고 desktop:natural은 참가 페이지의 숨겨진 스트리밍 DOM까지 CSS locator가 선택해 strict-selector 오류가 발생했다. 제품 코드는 수정하지 않았다. 입력과 제출 버튼을 visible 요소로 좁힌 뒤 해당 시나리오 하나만 재실행하여 통과했다.
 
-최초 실패 원본은 [production initial-attempt.json](remote-production/initial-attempt.json), 제한된 재실행은 [production retry](remote-production-retry/raw.json)에 그대로 보존했다. [최종 production 원본](remote-production/raw.json)은 처음 통과한 3개와 재실행 1개를 합치고 그 이력을 provenance에 명시했다. [staging 원본](remote-staging/raw.json)과 각 환경의 최종 결과 스크린샷도 저장했다.
+최초 실패 원본은 [production initial-attempt.json](remote-production/initial-attempt.json), 제한된 재실행은 [production retry](remote-production-retry/raw.json)에 그대로 보존했다. [최종 production 원본](remote-production/raw.json)은 처음 통과한 3개와 재실행 1개를 합치고 그 이력을 provenance에 명시했다. [staging 원본](remote-staging/raw.json)도 보존한다. 당시 최종 결과 스크린샷은 2026-10-23 산출물 정리 후 [정리 전 Git 기록](https://github.com/sean2474/2048/tree/46d8e38d1fb95e15aac8780cc0b81aeacd6c2363/docs/full-performance)에서 확인할 수 있다.
 
 이 측정은 로그인 계정·랭크 저장·재접속 검사와 별개다. 해당 흐름은 배포 smoke 테스트에서 검증한다. 실제 휴대폰, 다양한 ISP, 장기간의 현장 성능 분포는 측정하지 않았다. 정상 게스트 대전 기록은 배포 서버에 남을 수 있으며 삭제 작업은 수행하지 않았다.

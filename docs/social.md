@@ -29,10 +29,12 @@ Supabase Realtime으로 관계·메시지 변경을 갱신한다. 연결이 끊�
 - `pnpm test`: DB 접근 권한, 친구 수락 조건, 메시지 중복·길이·빈도·페이지 조회, 관전 권한·통제 불가·재접속·종료·권한 회수와 기존 게임 회귀 검사.
 - `pnpm typecheck`, `pnpm lint`.
 - `pnpm --filter socket exec tsx --test tests/friend-challenges.test.ts`: 동시 수락·권한·친구 관계 재검증·게임 중 차단·거절/취소/만료/접속 종료 검사.
-- `NODE_PATH=<bundled node_modules> pnpm --filter socket exec tsx --test ../web/tests/friend-challenges.browser.mjs`: 데스크톱 대시보드/친구 목록의 신청, 모바일의 다른 페이지에서 수락·거절, 두 브라우저의 같은 경기 입장과 실제 이동 확인.
-- `NODE_PATH=<bundled node_modules> pnpm --filter socket exec tsx --test ../web/tests/social.browser.mjs`: 로컬 가상 계정의 요청·수락·메시지 전송 실패/재시도/복원, 30초 복구 조회, 실제 로컬 소켓 관전, 모바일 가로 넘침 검사. 실제 사용자에게 메시지를 보내지 않는다.
-- `NODE_PATH=<bundled node_modules> node --test apps/web/tests/social-discovery.browser.mjs`: 자동완성 지연 조회·이전 응답 무시·한글 조합·키보드/마우스 선택·오류·모바일, 대시보드 친구/요청/읽지 않은 메시지·대화 이동·로딩/빈 목록/재시도·영문/비로그인 검사.
+- `pnpm --filter socket exec tsx --test ../web/tests/friend-challenges.browser.mjs`: 데스크톱 대시보드/친구 목록의 신청, 모바일의 다른 페이지에서 수락·거절, 두 브라우저의 같은 경기 입장과 실제 이동 확인.
+- `pnpm --filter socket exec tsx --test ../web/tests/social.browser.mjs`: 로컬 가상 계정의 요청·수락·메시지 전송 실패/재시도/복원, 30초 복구 조회, 실제 로컬 소켓 관전, 모바일 가로 넘침 검사. 실제 사용자에게 메시지를 보내지 않는다.
+- `node --test apps/web/tests/social-discovery.browser.mjs`: 자동완성 지연 조회·이전 응답 무시·한글 조합·키보드/마우스 선택·오류·모바일, 대시보드 친구/요청/읽지 않은 메시지·대화 이동·로딩/빈 목록/재시도·영문/비로그인 검사.
+- 아래 `docs/social/` 파일은 기존 검증 스냅샷이다. 새 브라우저 실행의 캡처는 `test-results/social/`에 생성한다.
 - 화면 기록: `docs/social/friends-desktop.png`, `friends-mobile.png`, `watch-mobile.png`.
 - 자동완성/대시보드 화면: `docs/social/autocomplete-desktop.png`, `autocomplete-mobile.png`, `dashboard-desktop.png`, `dashboard-mobile.png`.
 - 대전 신청/입장 화면: `docs/social/challenge-button-desktop.png`, `challenge-incoming-mobile.png`, `challenge-game-desktop.png`, `challenge-game-mobile.png`.
-- 별도 worktree 검증 시 `SOCIAL_TEST_ORIGIN=http://[::1]:3011 CORS_ORIGINS=http://[::1]:3011`을 지정한다. 브라우저 테스트는 가상 계정과 임시 소켓 서버를 사용한다.
+- 위 초기 UI 브라우저 파일은 `http://[::1]:3001`을 고정 사용하며 `SOCIAL_TEST_ORIGIN`을 읽지 않는다. 가상 계정과 임시 소켓 서버를 사용하는 수동 검사이므로 전용 worktree의 개발 서버와 포트가 맞는지 먼저 확인한다.
+- 현재 서버 페이지의 친구 메시지·관전 재시도·게스트 차단 회귀는 `node --test apps/web/tests/page-islands.browser.mjs`로 검사한다. 이 검사는 자체 로컬 API fixture와 독립 포트·빌드 폴더를 사용한다.

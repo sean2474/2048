@@ -1,6 +1,6 @@
 # 업적과 꾸미기 보상
 
-최종 갱신: 2026-10-17. 현재 브랜치의 기능 범위는 [README](../README.md)를 따른다.
+최종 갱신: 2026-10-23. 현재 브랜치의 기능 범위는 [README](../README.md)를 따른다.
 
 ## 현재 동작
 
@@ -48,7 +48,7 @@
 | `record_solo()`, `record_solo_endless()` | 서버 전용 싱글 기록·업적 집계 |
 | `player_preferences`의 권한 검사 | 보유하지 않은 보드·프로필 장착 거절 |
 
-웹의 업적 훅은 `sync_achievements()`를 사용하므로 재방문한 이용자도 새로 공개된 규칙을 평가받는다. 클라이언트는 달성 점수나 해금을 직접 제출하지 않는다. 소켓도 서버에서 확인한 장착 정보만 적용한다. 조회 실패를 미해금으로 확정하지 않고 재시도를 제공한다.
+서버 페이지의 최초 렌더링은 `achievement_state()`만 읽는다. 브라우저의 업적 provider가 인증된 `syncAchievementsAction()`을 호출하면 서버가 `sync_achievements()`로 새 규칙을 평가하고, 오늘 출석하지 않은 계정에만 `check_in()`을 실행한다. 변경된 상태는 서버 페이지를 다시 조회해 반영한다. 렌더링이나 링크 미리 가져오기만으로 출석·해금을 기록하지 않는다. 클라이언트는 달성 점수나 해금을 직접 제출하지 않는다. 소켓도 서버에서 확인한 장착 정보만 적용한다. 조회 실패를 미해금으로 확정하지 않고 재시도를 제공한다.
 
 관리자는 공개한 업적을 보관할 수 있지만 기존 해금은 취소하지 않는다. 목표를 높여도 받은 보상은 유지된다. 지급형 꾸미기와 코인 구매형 꾸미기는 별도 획득 경로다. 기본 무료 범위·가격 확인·동시 구매·이전 장착 정리는 [상점 문서](cosmetic-shop.md)에 정리한다.
 
@@ -56,6 +56,6 @@
 
 대상 DB의 실제 이력과 통합 후속 마이그레이션을 확인한다. 카탈로그가 이미 적용된 DB에 이전 업적·솔로 파일을 다시 실행하지 않는다. 이미 적용한 파일은 수정하지 않는다. [배포 절차](deployment.md) · [환경별 통합 이력](full-performance/integration.md)
 
-검증 경로는 `apps/socket/tests/achievement-unlocks.test.ts`, `rank-cosmetics.test.ts`, `catalog.test.ts` 및 웹의 `achievement-unlocks.browser.mjs`, `dynamic-catalog.browser.mjs`다. 실제 파일명과 실행 명령은 각 기능의 테스트 목록을 확인한다. 초기 보상 4종 제작·권한·동시성 결과는 [당시 검증 기록](achievement-rewards/verification.md)에 보존한다.
+검증 경로는 `apps/socket/tests/achievement-unlocks.test.ts`, `rank-cosmetics.test.ts`, `catalog.test.ts` 및 웹의 `achievement-unlocks.browser.mjs`, `dynamic-catalog.browser.mjs`다. 서버 렌더링·출석 액션의 현재 회귀는 `achievement-operations.test.ts`, `achievement-server.test.mjs`, `achievement-actions.browser.mjs`가 담당한다. [서버 컴포넌트·액션 검증 기록](testing/achievement-server-components.tdd.md)을 함께 확인한다. 초기 보상 4종 제작·권한·동시성 결과는 [당시 검증 기록](achievement-rewards/verification.md)에 보존한다.
 
 경기당 완료 10코인·승리 5코인, 반복 상대 제한 등의 과거 경제안은 적용된 지급 규칙이 아니다. 현재 코인은 대시보드의 일일 퀘스트 완료 시 한국 시간 하루 최대 120코인까지 지급한다.

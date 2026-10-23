@@ -44,6 +44,6 @@
 
 로컬 데이터 API는 fixture다. 소켓 패킷 간격은 실제 loopback 통신과 브라우저 자동화 관찰 비용을 포함한다. 모바일은 실제 휴대폰이 아니라 데스크톱 CPU의 터치·화면 에뮬레이션이다. 운영 네트워크/DB 지연, 클라우드 cold start, 실제 휴대폰, 현장 Speed Insights는 이 결과로 검증한 것이 아니다. 배포 환경 측정은 별도 기록한다.
 
-원본: [before](before/raw.json), [after](after/raw.json). 모든 페이지 스크린샷은 측정 worktree에 보관하고, 대표 페이지 화면은 저장소에 포함했다. 첫 게임 결과 캡처는 등장 애니메이션 중간 프레임이어서 대표 화면에서 제외했다.
+원본: [before](before/raw.json), [after](after/raw.json). 당시 모든 페이지 스크린샷은 측정 worktree에 보관하고 대표 화면은 저장소에 포함했다. 2026-10-23 정리에서 직접 참조되지 않은 캡처·빌드 로그는 제거했으며 [정리 전 Git 기록](https://github.com/sean2474/2048/tree/46d8e38d1fb95e15aac8780cc0b81aeacd6c2363/docs/full-performance)에서 확인할 수 있다. 원본 JSON과 측정 수치는 보존한다. 첫 게임 결과 캡처는 등장 애니메이션 중간 프레임이어서 대표 화면에서 제외했다.
 
 실제 배포된 staging·production의 비공개 친구방 측정은 [배포 대전 결과](remote-results.md)에 별도로 기록했다.

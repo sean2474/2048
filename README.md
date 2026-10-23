@@ -1,6 +1,6 @@
 # 2048 Duo
 
-최종 갱신: 2026-10-23. 완료된 기능 브랜치를 통합한 기준이다. 전체 성능 측정 결과와 배포 검증은 별도 보고서에 기록한다.
+최종 갱신: 2026-10-23. 현재 staging에 통합된 코드 기준이다. 운영 배포 여부와 과거 성능 측정 결과는 각 배포·검증 기록에서 별도로 확인한다.
 
 브랜치는 gitflow를 따릅니다. `main`은 운영, `staging`은 통합(develop) 브랜치이며 기능은 `feature/*`, 운영 긴급 수정은 `hotfix/*`에서 작업한 뒤 검증 후 `staging`으로 병합하고 브랜치를 삭제합니다. [Git 작업 규칙](AGENTS.md)을 먼저 확인하세요.
 
@@ -47,7 +47,9 @@ pnpm dev
 | `/tutorial`, `/how-to-play` | 조작·자동 공격·기본 능력 연습, 규칙 |
 | `/settings` | 언어·키·닉네임·소리 설정, 로그아웃·계정 삭제 |
 | `/feedback` | 피드백 작성 |
+| `/login`, `/signup` | 로그인·가입. 이미 로그인한 비익명 계정은 대시보드로 이동 |
 | `/forgot-password`, `/reset-password` | 이메일 비밀번호 복구 |
+| `/privacy`, `/terms` | 개인정보처리방침·이용약관 |
 
 콘텐츠 이름·가격·공개 상태·조건은 DB 카탈로그가 기준이다. 관리자의 `/catalog`에서 스킨·프로필·업적과 Storage 이미지를 관리한다. 새 조건 종류나 애니메이션 구현에는 코드 변경이 필요하다. [콘텐츠 관리](docs/content-catalog.md) · [이미지 초기 업로드](docs/catalog-assets.md)
 
@@ -55,7 +57,7 @@ pnpm dev
 
 한국어·영어를 지원한다. 계정 설정은 DB가 우선이고 새 계정의 첫 설정에만 게스트 언어·키 설정을 가져온다. 소리는 브라우저 로컬에 저장한다. 게스트는 기본 꾸미기·X 제거 능력을 사용한다. [설정 정책](docs/settings.md)
 
-홈·전적·순위·대전 찾기는 서버 렌더링을 사용하고 상호작용과 실시간 갱신은 클라이언트에서 처리한다. [구조와 빌드 비교](docs/web-performance.md)
+웹·관리자의 모든 페이지는 Server Component이며 정적 내용·권한·읽기 전용 데이터는 서버에서 처리한다. 입력·실시간 상태·게임 애니메이션은 필요한 클라이언트 컴포넌트로 분리하고 설정·구매·출석 변경은 인증된 Server Action으로 처리한다. [현재 렌더링 경계](docs/page-performance-boundaries.md) · [최적화·측정 이력](docs/navigation-performance/README.md)
 
 ## 멀티 대전 규칙
 
@@ -66,6 +68,8 @@ pnpm dev
 - 1024를 먼저 만들거나 상대가 움직이지 못하면 승리하고 같은 이동에 양쪽이 막히면 무승부다.
 - 일반전·친구전은 게스트도 참여하며 랭크에 영향을 주지 않는다. 랭크전은 로그인 계정끼리 초기 Elo 1200, K=32로 집계한다. 최초 10경기 후 공식 티어, 시즌 10경기 후 순위표 참가 자격을 얻는다. 승급전과 시즌 Elo 초기화는 없다. [상세 랭크 규칙](docs/ranked-seasons.md)
 
+같은 로그인 계정은 기기·탭이 달라도 일반전·랭크전·친구전 전체에서 대기 또는 경기 하나만 참여한다. 기존 참가를 유지하고 두 번째 참가 요청을 거절한다. 다른 기기의 웹 로그인 자체를 해제하지는 않는다.
+
 서버가 보드·점수·승패·능력과 계정 신원을 판정한다. 멀티 대전은 연결이 끊기면 양쪽 입력을 멈추고 30초 동안 재접속을 기다린다. 방 상태는 메모리에 있으므로 서버 재시작 시 진행 중 멀티 대전은 복구되지 않는다. [게임 설계](docs/game-design.md) · [구현 구조](docs/implementation-notes.md)
 
 싱글플레이는 공격·능력 없이 4×4 타임어택·무한모드로 진행한다. 서버 DB에 저장된 진행상황은 계정으로 다른 기기에서도, 게스트는 같은 브라우저에서 이어갈 수 있다. 타임어택 시간은 접속하지 않은 동안에도 흐른다. [모드·저장·랭킹·업적](docs/solo-time-attack.md)
@@ -74,7 +78,9 @@ pnpm dev
 
 ## 계정·운영
 
-운영 Supabase는 `rbfujqjvkfdgaofztrdq`, 로컬·staging은 `nwdjucplpyorwiwshxtf`다. 두 환경의 계정·데이터·키는 분리한다. SQL은 `supabase/migrations`의 파일명 순서로 적용하며 이미 적용한 파일은 수정하지 않는다. [환경과 배포 순서](docs/deployment.md)
+운영 Supabase는 `rbfujqjvkfdgaofztrdq`, 로컬·staging은 `nwdjucplpyorwiwshxtf`다. 두 환경의 계정·데이터·키는 분리한다. SQL은 대상 DB의 적용 이력과 웹 호환성을 확인해 순서대로 적용하며 이미 적용한 파일은 수정하지 않는다. [환경과 배포 순서](docs/deployment.md)
+
+staging 푸시는 CI 통과 후 테스트 환경을 자동 배포한다. 운영은 검증된 staging 소스만 GitHub Actions의 `Deploy production` 수동 실행으로 배포하며 main 푸시만으로 배포하지 않는다. 자격 증명과 DB·소켓·웹 순서는 [배포 가이드](docs/deployment.md)를 따른다.
 
 서버는 경기 결과를 디스크 outbox에 먼저 기록하고 저장 실패를 재시도한다. 같은 경기 ID는 한 번만 집계하며 저장 대기 중인 계정의 다음 랭크 참가를 막아 Elo 처리 순서를 지킨다. 운영에는 영구 볼륨과 소켓 인스턴스 1개를 사용한다. `/health` 정상만으로 DB 저장 성공을 판단하지 않는다.
 
@@ -87,7 +93,9 @@ pnpm dev
 - 시각 기준: [자산 제작](docs/visual-asset-guide.md), [꾸미기·능력](docs/loadout-and-economy.md)
 - 현재 기능: [카탈로그](docs/content-catalog.md), [랭크](docs/ranked-seasons.md), [상점](docs/cosmetic-shop.md)
 - 플레이와 보상: [일일 퀘스트](docs/daily-quests.md), [싱글플레이](docs/solo-time-attack.md), [친구·관전](docs/social.md), [효과음](docs/audio/README.md)
-- 통합 검증: [통합·배포 기록](docs/full-performance/integration.md), [성능 결과](docs/full-performance/results.md)
+- 현재 구조·검사: [렌더링 경계](docs/page-performance-boundaries.md), [테스트 실행·산출물](docs/testing.md)
+- 성능·기기 검증 이력: [페이지 전환·로딩](docs/navigation-performance/README.md), [소켓](docs/socket-performance/README.md), [모바일 브라우저](docs/navigation-performance/mobile-browser-results.md)
+- 초기 통합 검증: [통합·배포 기록](docs/full-performance/integration.md), [성능 결과](docs/full-performance/results.md)
 - 설계 이력: [랭크 개편](docs/rank-refinement.md), [관리자 확장](docs/admin-expansion-plan.md)
 - 검증 이력: [코드 점검](docs/code-audit-2026-10-16.md), [기능 확장](docs/feature-expansion-2026-10-17.md), [업적 보상](docs/achievement-rewards/verification.md), [관리자 QA](docs/browser-qa.md), [UI 보고서](docs/ui-refresh/report.md)·[검증](docs/ui-refresh/validation.md)
 
