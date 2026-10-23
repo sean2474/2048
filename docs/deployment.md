@@ -76,7 +76,7 @@ Vercel은 프로젝트 범위 토큰과 공식 REST API를 사용한다. Git 커
 
 각 Supabase 프로젝트의 Auth Site URL과 redirect 허용 목록은 해당 환경의 실제 웹 주소에 맞춘다. 가입·OAuth는 `/auth/callback`, 비밀번호 복구는 `/auth/callback?type=recovery`로 돌아온다. 실제 사용하는 URL을 명시하며 운영 인증을 staging callback으로 보내지 않는다. 관리자도 해당 환경 DB의 별도 관리자 역할이 필요하다.
 
-리디렉션 설정 완료는 이메일 전달 성공을 뜻하지 않는다. 가입 메일·비밀번호 재설정 메일의 실제 수신과 callback 완료는 배포 후 별도 확인한다. Google 로그인은 해당 Supabase provider 설정을 완료한 환경에서만 `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true`로 켠다.
+리디렉션 설정 완료는 이메일 전달 성공을 뜻하지 않는다. 가입 메일·비밀번호 재설정 메일의 실제 수신과 callback 완료는 배포 후 확인한다. 2026-10-23 운영에서 해당 흐름을 완료했으며, 기본 이메일 서비스의 수신자 제한을 해결할 사용자 소유 SMTP 연결은 남아 있다. 설정 변경 후 일반 수신자 메일함으로 다시 검증한다. [최신 출시 점검 기록](launch-readiness.md)을 참고한다. Google 로그인은 해당 Supabase provider 설정을 완료한 환경에서만 `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true`로 켠다.
 
 ## 배포 순서
 

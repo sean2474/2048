@@ -14,7 +14,7 @@
 
 ## 운영 설정
 
-Supabase Auth URL Configuration의 허용 리디렉션 목록에 실제 웹 출처의 `/auth/callback?type=recovery`를 등록한다. 개발 주소는 `http://[::1]:3001/auth/callback?type=recovery`다. 사이트 URL·기존 가입/소셜 로그인 콜백은 유지한다. 이메일 발송 설정과 전송 제한은 해당 Supabase 프로젝트에서 관리한다. 이 작업에서는 운영 설정이나 실제 계정 비밀번호를 변경하지 않았다.
+Supabase Auth URL Configuration의 허용 리디렉션 목록에 실제 웹 출처의 `/auth/callback?type=recovery`를 등록한다. 개발 주소는 `http://[::1]:3001/auth/callback?type=recovery`다. 사이트 URL·기존 가입/소셜 로그인 콜백은 유지한다. 이메일 발송 설정과 전송 제한은 해당 Supabase 프로젝트에서 관리한다. 최신 운영 설정과 실제 메일 검증 결과는 [출시 점검 기록](launch-readiness.md)을 따른다.
 
 공식 API 근거: [비밀번호 재설정 요청](https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail), [PKCE 코드 교환](https://supabase.com/docs/reference/javascript/auth-exchangecodeforsession), [비밀번호 인증 흐름](https://supabase.com/docs/guides/auth/passwords). SDK의 `PASSWORD_RECOVERY` verifier 표시 확인은 현재 설치된 `@supabase/auth-js` 구현에 맞췄으며 SDK 업데이트 시 브라우저 회귀 테스트를 함께 실행한다.
 
@@ -30,6 +30,6 @@ Supabase Auth URL Configuration의 허용 리디렉션 목록에 실제 웹 출�
 - 요청 탭과 이메일을 여는 탭 분리, 실제 요청에서 만든 PKCE verifier 교환, 사용한 이메일 링크 재열기 거부, 브라우저 출처 유지.
 - 새로고침 재사용 거부, 외부 리디렉션 무시, 375·768·1440 너비에서 가로 넘침 없음.
 
-실제 메일 수신, 공급자 측 PKCE 만료 시간과 운영 프로젝트의 리디렉션 허용 설정은 별도 운영 환경 검증이 필요하다.
+2026-10-23 새 테스트 계정으로 실제 가입·복구 메일 수신, 운영 콜백, 비밀번호 변경과 새 비밀번호 로그인을 검증했다. 운영 Site URL과 Redirect URLs도 조회했다. 다만 기본 이메일 서비스의 수신자 제한을 해결할 사용자 소유 SMTP 연결과 외부 수신자 검증은 남아 있다. 공급자 측 PKCE 만료 시간과 실기기 조작도 이번 검사 범위 밖이다. [상세 결과와 남은 조건](launch-readiness.md)
 
 `apps/socket/tests/password-recovery-storage.test.ts`는 verifier의 탭 간 공유, 인증 토큰의 메모리 격리, 메인 세션 보존, 저장 공간 차단, 이전 흐름의 정리가 최신 verifier를 삭제하지 않는 경계를 검증한다.
