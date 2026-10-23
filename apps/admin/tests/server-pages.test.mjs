@@ -138,7 +138,22 @@ test(
       },
     });
     t.after(() => app.close());
+    const robotResponse = await fetch(app.origin + "/robots.txt");
+    assert.equal(robotResponse.status, 200);
+    assert.equal(robotResponse.headers.get("x-powered-by"), null);
+    assert.equal(robotResponse.headers.get("x-robots-tag"), "noindex, nofollow");
+    assert.equal(robotResponse.headers.get("x-frame-options"), "DENY");
+    assert.equal(robotResponse.headers.get("x-content-type-options"), "nosniff");
+    assert.match(robotResponse.headers.get("content-security-policy"), /frame-ancestors 'none'/);
+    assert.match(await robotResponse.text(), /Disallow: \//);
     const cookie = app.cookie();
+    app.requests.length = 0;
+    const rememberedRobots = await fetch(app.origin + "/robots.txt", {
+      headers: { cookie: `${cookie.name}=${cookie.value}` },
+    });
+    assert.equal(rememberedRobots.status, 200);
+    await rememberedRobots.text();
+    assert.equal(app.requests.length, 0, "admin robots bypasses session lookup even with a cookie");
     const headers = {
       cookie: `${cookie.name}=${cookie.value}; 2048-locale=en`,
       "accept-language": "en-US",

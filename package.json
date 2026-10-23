@@ -10,7 +10,7 @@
     "dev:socket": "pnpm --filter socket dev",
     "dev": "concurrently -k -n WEB,SOCKET,ADMIN -c green,cyan,magenta \"pnpm dev:web\" \"pnpm --filter socket start\" \"pnpm dev:admin\"",
     "build": "pnpm -r build",
-    "test": "pnpm --filter socket test && pnpm --filter socket exec tsx --test ../../packages/ui/src/locale.test.ts ../web/tests/analytics.test.ts && node --test scripts/*.test.mjs && pnpm test:server",
+    "test": "pnpm --filter socket test && pnpm --filter socket exec tsx --test ../../packages/ui/src/locale.test.ts ../web/tests/analytics.test.ts ../web/tests/launch-hardening.test.ts && node --test scripts/*.test.mjs && pnpm test:server",
     "test:remote": "pnpm --filter socket test:remote",
     "typecheck": "tsc --noEmit --incremental false -p apps/web/tsconfig.json && tsc --noEmit -p apps/socket/tsconfig.json && pnpm --filter 2048-admin typecheck",
     "lint": "pnpm --filter 2048-duo lint && pnpm --filter 2048-admin lint",
