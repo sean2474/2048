@@ -38,6 +38,31 @@ test(
       },
     });
     t.after(fixture.close);
+    const headersResponse = await fetch(fixture.origin + "/");
+    assert.equal(headersResponse.headers.get("x-powered-by"), null);
+    assert.equal(headersResponse.headers.get("x-frame-options"), "DENY");
+    assert.equal(headersResponse.headers.get("x-content-type-options"), "nosniff");
+    assert.equal(headersResponse.headers.get("referrer-policy"), "no-referrer");
+    assert.match(headersResponse.headers.get("content-security-policy"), /frame-ancestors 'none'/);
+    const previewHtml = await headersResponse.text();
+    assert.match(previewHtml, /name="robots" content="noindex, nofollow"/);
+    const ogImage = previewHtml.match(/property="og:image" content="([^"]+)"/)?.[1];
+    assert.ok(ogImage);
+    assert.equal(new URL(ogImage).pathname, "/opengraph-image");
+    assert.match(previewHtml, /name="twitter:card" content="summary_large_image"/);
+    const robotsResponse = await fetch(fixture.origin + "/robots.txt");
+    assert.equal(robotsResponse.status, 200);
+    assert.match(await robotsResponse.text(), /Disallow: \//);
+    const sitemapResponse = await fetch(fixture.origin + "/sitemap.xml");
+    assert.equal(sitemapResponse.status, 200);
+    assert.doesNotMatch(await sitemapResponse.text(), /<loc>/);
+    const imageResponse = await fetch(fixture.origin + "/opengraph-image");
+    assert.equal(imageResponse.status, 200);
+    assert.equal(imageResponse.headers.get("content-type"), "image/png");
+    const png = Buffer.from(await imageResponse.arrayBuffer());
+    assert.equal(png.subarray(1, 4).toString(), "PNG");
+    assert.equal(png.readUInt32BE(16), 1200);
+    assert.equal(png.readUInt32BE(20), 630);
     const read = async (path, id) => {
       const cookie = fixture.cookie(id);
       const response = await fetch(fixture.origin + path, {
@@ -108,6 +133,19 @@ test(
       requested = resolve;
     });
     const cookie = fixture.cookie();
+    fixture.requests.length = 0;
+    for (const path of ["/robots.txt", "/sitemap.xml", "/opengraph-image"]) {
+      const response = await fetch(fixture.origin + path, {
+        headers: { cookie: `${cookie.name}=${cookie.value}` },
+      });
+      assert.equal(response.status, 200);
+      await response.arrayBuffer();
+    }
+    assert.equal(
+      fixture.requests.length,
+      0,
+      "public metadata bypasses session lookup even with a cookie",
+    );
     const responsePromise = fetch(fixture.origin, {
       headers: { cookie: `${cookie.name}=${cookie.value}`, "accept-language": "en" },
     });

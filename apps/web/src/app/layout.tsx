@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import { Header } from "@/components/widget/header";
@@ -16,13 +15,9 @@ import { PlayerProvider } from "@/hooks/use-player";
 import { getPreferences } from "@/lib/supabase/preferences";
 import { getAccount } from "@/lib/supabase/account";
 import { getPublicCatalogSeed } from "@/lib/server/public-catalog";
+import { siteMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: "2048 Duo",
-  referrer: "origin",
-  description:
-    "Race your friends to 1024 in real-time multiplayer. Merge tiles to send obstacles, create a private room, or find a quick match.",
-};
+export const metadata = siteMetadata();
 
 export default async function RootLayout({
   children,

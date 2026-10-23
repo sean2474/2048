@@ -6,5 +6,7 @@ export function middleware(request: NextRequest) {
   return updateSession(request);
 }
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.ico|icons/|profile-icons/).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|icon.ico|icons/|profile-icons/|robots\\.txt$|sitemap\\.xml$|opengraph-image$).*)",
+  ],
 };
