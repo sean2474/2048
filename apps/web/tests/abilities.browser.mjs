@@ -10,7 +10,7 @@ const { createGameServer } = require("../../socket/src/server.ts");
 const { rooms } = require("../../socket/src/state.ts");
 const { broadcast } = require("../../socket/src/game.ts");
 const origin = "http://[::1]:3001";
-const artifacts = new URL("../../../docs/abilities/", import.meta.url).pathname;
+const artifacts = new URL("../../../test-results/abilities/", import.meta.url).pathname;
 
 test(
   "five tutorial steps teach automatic attacks and manual ability in Korean and English",

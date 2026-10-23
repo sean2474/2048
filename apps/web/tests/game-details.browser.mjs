@@ -5,7 +5,9 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 const { chromium } = createRequire(import.meta.url)("playwright");
-const artifacts = fileURLToPath(new URL("../../../docs/skin-preview-icons", import.meta.url));
+const artifacts = fileURLToPath(
+  new URL("../../../test-results/skin-preview-icons", import.meta.url),
+);
 const origin = "http://[::1]:3001";
 
 test("arena details preserve the palette and fit every user page at three sizes", async () => {

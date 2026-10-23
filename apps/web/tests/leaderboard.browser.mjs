@@ -10,7 +10,7 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 // SSR and browser requests share the local fixture server.
 test("rank badges, podium, responsive standings, translations and recovery", async (t) => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
-  const artifacts = fileURLToPath(new URL("../../../docs/rank-polish", import.meta.url));
+  const artifacts = fileURLToPath(new URL("../../../test-results/rank-polish", import.meta.url));
   fs.mkdirSync(artifacts, { recursive: true });
   try {
     const context = await browser.newContext({

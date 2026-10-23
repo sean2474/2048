@@ -7,7 +7,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
 const socketRequire = createRequire(new URL("../../socket/package.json", import.meta.url));
 const { build } = createRequire(socketRequire.resolve("tsx/package.json"))("esbuild");
-const artifacts = fileURLToPath(new URL("../../../docs/audio/", import.meta.url));
+const artifacts = fileURLToPath(new URL("../../../test-results/audio/", import.meta.url));
 
 test("rendered cues have distinct waveforms, repeat variation, silence tails and full-volume headroom", async () => {
   const bundle = await build({

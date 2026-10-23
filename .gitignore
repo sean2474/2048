@@ -59,3 +59,7 @@ supabase/.temp/
 
 # Private Next.js configs created and removed by isolated test servers.
 apps/*/.tsconfig.fixture-*.json
+
+# Generated test screenshots, measurements and reports
+/test-results/
+/playwright-report/

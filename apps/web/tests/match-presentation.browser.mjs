@@ -10,7 +10,9 @@ const { chromium } = require("playwright");
 const { createGameServer } = require("../../socket/src/server.ts");
 const { matchmakingQueue } = require("../../socket/src/state.ts");
 const origin = "http://[::1]:3001";
-const artifacts = fileURLToPath(new URL("../../../docs/match-presentation/", import.meta.url));
+const artifacts = fileURLToPath(
+  new URL("../../../test-results/match-presentation/", import.meta.url),
+);
 
 // All sockets use an isolated server with no production database writer.
 async function withServer(run, options = {}) {

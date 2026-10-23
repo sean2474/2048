@@ -1,12 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createRequire } from "node:module";
+import { mkdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = process.env.TEST_WEB_ORIGIN || "http://[::1]:3001";
+const artifacts = fileURLToPath(new URL("../../../test-results/audio/", import.meta.url));
 
 import { trackAudio } from "./browser-fixtures.mjs";
 
 test("real audio graph, tutorial cues, mute, volume, persistence and mobile controls", async () => {
+  await mkdir(artifacts, { recursive: true });
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   try {
     const context = await browser.newContext({
@@ -80,7 +84,7 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
       assert.ok((await volume.boundingBox()).height >= 44);
     }
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.screenshot({ path: "/tmp/2048-audio-settings.png", fullPage: true });
+    await page.screenshot({ path: `${artifacts}settings.png`, fullPage: true });
     await page.goto(`${origin}/tutorial`);
     await page.waitForFunction(() =>
       document.querySelector('button[aria-label="Game sound"]')?.matches(":enabled"),
@@ -90,7 +94,7 @@ test("real audio graph, tutorial cues, mute, volume, persistence and mobile cont
     await page.getByRole("heading", { name: "You’ve got the basics", exact: true }).waitFor();
     assert.equal(await page.evaluate(() => window.audioProbe.notes.length), 0);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 375);
-    await page.screenshot({ path: "/tmp/2048-audio-tutorial.png", fullPage: true });
+    await page.screenshot({ path: `${artifacts}tutorial.png`, fullPage: true });
     assert.deepEqual(errors, []);
     await context.close();
   } finally {

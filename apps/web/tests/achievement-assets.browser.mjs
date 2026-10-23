@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const root = fileURLToPath(new URL("../../../", import.meta.url));
-const artifacts = path.join(root, "docs/achievement-rewards");
+const artifacts = path.join(root, "test-results/achievement-rewards");
 
 test("achievement portraits crop cleanly and board reward numbers fit even at opponent size", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
