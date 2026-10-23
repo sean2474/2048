@@ -9,7 +9,7 @@ import { authCookieName, mockAccount } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = "http://[::1]:3001";
-const artifacts = fileURLToPath(new URL("../../../docs/password-reset", import.meta.url));
+const artifacts = fileURLToPath(new URL("../../../test-results/password-reset", import.meta.url));
 const genericNotice =
   "If an account exists for this email, a reset link has been sent. Open it in this browser.";
 const invalidNotice =

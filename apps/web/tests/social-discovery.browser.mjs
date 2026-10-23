@@ -10,7 +10,7 @@ const { Server } = createRequire(new URL("../../socket/package.json", import.met
   "socket.io",
 );
 const origin = "http://[::1]:3001";
-const artifacts = new URL("../../../docs/social/", import.meta.url).pathname;
+const artifacts = new URL("../../../test-results/social/", import.meta.url).pathname;
 const friend = {
   id: "10000000-0000-4000-8000-000000000002",
   name: "타일친구",

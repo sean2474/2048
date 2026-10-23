@@ -12,7 +12,7 @@ const { createMatch } = require("../../socket/src/matchmaking.ts");
 const { rooms, playerAccounts } = require("../../socket/src/state.ts");
 const { joinRoom, broadcast, endGame } = require("../../socket/src/game.ts");
 const origin = "http://[::1]:3001";
-const artifacts = new URL("../../../docs/social/", import.meta.url).pathname;
+const artifacts = new URL("../../../test-results/social/", import.meta.url).pathname;
 const ids = ["10000000-0000-4000-8000-000000000001", "10000000-0000-4000-8000-000000000002"];
 
 test(

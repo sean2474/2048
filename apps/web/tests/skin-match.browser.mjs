@@ -10,7 +10,7 @@ import { mockAccount } from "./browser-fixtures.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const origin = "http://[::1]:3001";
-const artifacts = path.join(root, "docs/skin-expansion");
+const artifacts = path.join(root, "test-results/skin-expansion");
 
 test("two real game clients keep each player's skin through moves, reload and result", async () => {
   const server = spawn(

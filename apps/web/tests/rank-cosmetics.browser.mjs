@@ -7,7 +7,7 @@ import { mockAccount, mockCatalog } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = process.env.WEB_TEST_ORIGIN ?? process.env.TEST_WEB_ORIGIN ?? "http://[::1]:3001";
-const artifacts = fileURLToPath(new URL("../../../docs/rank-cosmetics/", import.meta.url));
+const artifacts = fileURLToPath(new URL("../../../test-results/rank-cosmetics/", import.meta.url));
 const ranks = ["bronze", "silver", "gold", "platinum", "diamond", "master"];
 const names = [
   "브론즈의 성채",

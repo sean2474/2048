@@ -5,7 +5,7 @@ import { mkdir } from "node:fs/promises";
 import { mockAccount } from "./browser-fixtures.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = "http://[::1]:3001";
-const screenshots = new URL("../../../docs/daily-quests/", import.meta.url).pathname;
+const screenshots = new URL("../../../test-results/daily-quests/", import.meta.url).pathname;
 
 test("dashboard rewards, retries and guest states stay separate from the achievement collection", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });

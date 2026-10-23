@@ -26,7 +26,9 @@ assert.ok(
 const basePort = Number(process.env.BENCH_PORT ?? 3410);
 assert.ok(Number.isInteger(basePort) && basePort > 1024 && basePort < 65530);
 const ports = { web: basePort, admin: basePort + 1, api: basePort + 2, socket: basePort + 3 };
-const output = resolve(process.env.BENCH_OUTPUT ?? join(root, "docs/full-performance", label));
+const output = resolve(
+  process.env.BENCH_OUTPUT ?? join(root, "test-results/full-performance", label),
+);
 const devices = [
   { name: "desktop", viewport: { width: 1440, height: 900 }, mobile: false },
   { name: "mobile-emulation", viewport: { width: 375, height: 812 }, mobile: true },

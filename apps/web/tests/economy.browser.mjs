@@ -7,7 +7,7 @@ import { mockAccount } from "./browser-fixtures.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const origin = "http://[::1]:3001";
-const artifacts = fileURLToPath(new URL("../../../docs/economy-preview/", import.meta.url));
+const artifacts = fileURLToPath(new URL("../../../test-results/economy-preview/", import.meta.url));
 
 test("shop browsing and planned achievements do not spend coins", async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true });

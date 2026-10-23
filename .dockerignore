@@ -53,3 +53,7 @@ docs
 supabase/.temp
 fly.toml
 fly.staging.toml
+
+# Generated test screenshots, measurements and reports
+test-results
+playwright-report
