@@ -41,7 +41,8 @@ const topology = (machines) => {
   const active = machines.filter((machine) => machine.config.services?.length);
   assert(active.length === 1, message);
   assert(
-    active[0].config.metadata?.fly_process_group === "app" &&
+    active[0].config.metadata?.fly_platform_version === "v2" &&
+      active[0].config.metadata?.fly_process_group === "app" &&
       active[0].config.env?.FLY_PROCESS_GROUP === "app",
     message,
   );

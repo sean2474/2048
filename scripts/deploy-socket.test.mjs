@@ -15,6 +15,7 @@ const rejected = [
   "missing-volume",
   "wrong-region",
   "wrong-group",
+  "unmanaged-active",
   "managed-spare",
   "managed-platform",
   "extra-machine",
@@ -69,7 +70,7 @@ else if(args[0]==="deploy") action=args.includes("--build-only")?"build":"replac
 else action=(args[2]==="spare"?"standby-":"")+args[3].match(/4001\\/(status|drain|resume)/)[1];
 fs.appendFileSync(log,JSON.stringify({action,args})+"\\n");
 if(action==="list") {
-  const active={id:"machine",state:"started",region:"nrt",config:{image:"registry.fly.io/"+args[args.indexOf("-a")+1]+":safe-abcdef",env:{FLY_PROCESS_GROUP:"app"},metadata:{fly_process_group:"app"},mounts:[{volume:"vol_active",path:"/data"}],services:[{protocol:"tcp",internal_port:4000,ports:[{port:80},{port:443}]}]}};
+  const active={id:"machine",state:"started",region:"nrt",config:{image:"registry.fly.io/"+args[args.indexOf("-a")+1]+":safe-abcdef",env:{FLY_PROCESS_GROUP:"app"},metadata:{fly_platform_version:"v2",fly_process_group:"app"},mounts:[{volume:"vol_active",path:"/data"}],services:[{protocol:"tcp",internal_port:4000,ports:[{port:80},{port:443}]}]}};
   const spare={id:"spare",state:"started",region:"nrt",config:{image:actions.includes("update-standby")?active.config.image:"registry.fly.io/2048-socket-staging:safe-old",env:{FLY_PROCESS_GROUP:"standby"},metadata:{game_role:"standby"},mounts:[{volume:"vol_spare",path:"/data"}],guest:{cpus:1,memory_mb:1024},restart:{policy:"on-failure",max_retries:10}}};
   active.image_ref={digest:"sha256:"+"a".repeat(64)};
   spare.image_ref={digest:mode==="standby-digest-mismatch"?"sha256:"+"b".repeat(64):active.image_ref.digest};
@@ -83,6 +84,7 @@ if(action==="list") {
   if(mode==="missing-volume") delete spare.config.mounts;
   if(mode==="wrong-region") spare.region="iad";
   if(mode==="wrong-group") active.config.metadata.fly_process_group="other";
+  if(mode==="unmanaged-active") delete active.config.metadata.fly_platform_version;
   if(mode==="managed-spare") spare.config.metadata.fly_process_group="standby";
   if(mode==="managed-platform") spare.config.metadata.fly_platform_version="v2";
   if(mode==="standby-digest-success" && actions.includes("update-standby")) spare.config.image+="@sha256:"+"a".repeat(64);
