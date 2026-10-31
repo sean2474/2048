@@ -1,6 +1,6 @@
 # 운영·테스트 환경 배포
 
-최종 갱신: 2026-10-23
+최종 갱신: 2026-10-31
 
 게임 웹, 관리자 웹, 실시간 게임 서버를 따로 배포한다. 테스트는 전용 staging 웹·소켓·Supabase를 사용한다. 테스트 계정, 경기, Elo, 업적, 코인은 운영과 공유하지 않는다.
 
@@ -14,7 +14,9 @@
 | Supabase 프로젝트 | `rbfujqjvkfdgaofztrdq` | `nwdjucplpyorwiwshxtf` (Seoul) |
 | 소켓 설정 | [`fly.toml`](../fly.toml) | [`fly.staging.toml`](../fly.staging.toml) |
 
-각 Fly 앱은 1 GB 메모리의 머신 **1개**와 해당 앱 전용 1 GB `results` 볼륨을 사용한다. 볼륨은 `/data`에 마운트하고 결과 재시도 파일은 `/data/results`에 저장한다. 운영 볼륨을 staging에 연결하거나 운영 DB를 테스트 DB로 복제하지 않는다.
+운영 Fly 앱은 도쿄(`nrt`)의 **공개 서버 1대 + 비공개 대기 서버 1대**를 사용한다. 각 머신은 shared CPU 1개, 메모리 1 GB, 서로 다른 하드웨어 영역의 전용 1 GB `results` 볼륨을 사용한다. staging은 공개 서버 1대를 유지하고, 전환 검증 시 비공개 대기를 추가한다. 볼륨은 `/data`에 마운트하고 결과 재시도 파일은 `/data/results`에 저장한다. 운영 볼륨을 staging에 연결하거나 운영 DB를 테스트 DB로 복제하지 않는다.
+
+대기는 `services`가 없고, `env.FLY_PROCESS_GROUP=standby`, `metadata.game_role=standby`로 구분한다. `fly_platform_version`과 `fly_process_group` 메타데이터를 넣지 않아 일반 `fly deploy`의 관리 대상에서 제외한다. 공개 서버만 `app` 프로세스 그룹으로 관리한다. 대기는 자동 정지 없이 실행하지만 사용자 접속을 받지 않는다. 이 구성은 **수동 교체용 예비 용량**이며 동시 경기 처리량이나 자동 장애 전환을 늘리지 않는다.
 
 운영 웹의 `2048duo.io`·`www.2048duo.io`는 Cloudflare **DNS only** CNAME으로 Vercel에 직접 연결한다. 2026-10-22 사용자 승인 후 추가 프록시 경유를 제거했고, HTTPS와 기본 주소의 `www` 이동은 Vercel이 처리한다. `admin.2048duo.io`는 기존 Proxied, `socket.2048duo.io`는 기존 DNS only 설정을 유지한다. 이 두 웹 주소에는 Cloudflare의 HTTP 보안·트래픽 검사가 적용되지 않는다. 현재 대상값, 측정 결과와 두 레코드만 복구하는 절차는 [DNS 변경 기록](navigation-performance/dns-routing-results.md)에 있다.
 
@@ -82,7 +84,7 @@ Vercel은 프로젝트 범위 토큰과 공식 REST API를 사용한다. Git 커
 
 1. `pnpm test`, `pnpm typecheck`, `pnpm lint`와 변경에 해당하는 브라우저 검사를 통과시킨다.
 2. 대상 환경을 확인하고 필요한 DB 마이그레이션을 먼저 적용한다. DB 이력과 저장소 파일 목록을 비교한다.
-3. 카탈로그를 처음 적용할 때 [초기 이미지 업로드](catalog-assets.md)를 완료한다. Fly 앱의 리전, 머신 1개, 전용 볼륨, 환경별 secrets를 확인하고 새 ID·프로토콜을 처리할 소켓을 먼저 배포한다.
+3. 카탈로그를 처음 적용할 때 [초기 이미지 업로드](catalog-assets.md)를 완료한다. Fly 앱의 리전, 공개 머신 정확히 1개, 선택적 비공개 대기 1개, 각각의 전용 볼륨, 환경별 secrets를 확인하고 새 ID·프로토콜을 처리할 소켓을 먼저 배포한다.
 4. Vercel의 프로젝트·Root Directory·환경 변수·커밋을 확인하고 웹과 관리자를 배포한다. 새 결과 사유 등 클라이언트가 먼저 읽을 수 있어야 하는 변경은 예외로, 기존·신규 사유를 모두 읽는 호환 웹을 먼저 배포한 뒤 소켓을 바꾼다. 호환성을 확보하지 못하면 동시 기능 공개를 보류한다.
 5. staging 랭크 검사를 완료한 뒤 운영 페이지·연결·게스트 친구전을 확인한다. 자동 랭크 smoke는 staging 전용이다. 운영/테스트 주소와 실제 접속 DB가 일치해야 한다.
 
@@ -96,7 +98,9 @@ node scripts/deploy-socket.mjs staging
 node scripts/deploy-socket.mjs production
 ```
 
-배포 스크립트는 커밋된 소스와 실행 중 머신 1개를 확인하고, 이미지 빌드를 끝낸 뒤 머신 내부 `127.0.0.1:4001` 제어 포트로 drain을 시작한다. 새 매칭·친구방·솔로 시작을 잠시 거절하며 진행 중 대전과 그 재접속, 이미 접속한 솔로 게임은 계속 처리한다. 경기 종료, 솔로 종료/접속 종료와 체크포인트·결과 저장이 모두 끝나야 같은 머신의 이미지를 교체한다. 저장 오류가 있거나 15분이 지나면 배포를 취소하고 입장을 재개한다. 무제한 솔로가 계속 진행 중이면 종료를 강제하지 않는다.
+배포 스크립트는 커밋된 소스와 공개 서버 1대·선택적 비공개 대기 1대를 확인한다. 이미지 빌드를 끝낸 뒤 공개 서버 내부 `127.0.0.1:4001` 제어 포트로 drain 소유권을 얻고, 대기가 있으면 먼저 새 이미지로 갱신한다. 대기의 공개 서비스 없음·독립 볼륨·이미지·제어 포트·저장 상태를 검증한 뒤 공개 서버의 경기 종료를 기다린다. 새 매칭·친구방·솔로 시작은 잠시 거절하지만 진행 중 대전과 그 재접속, 이미 접속한 솔로 게임은 계속 처리한다. 경기 종료, 솔로 종료/접속 종료와 체크포인트·결과 저장이 모두 끝나야 공개 서버의 이미지를 교체한다. 저장 오류가 있거나 15분이 지나면 배포를 취소하고 입장을 재개한다. 무제한 솔로가 계속 진행 중이면 종료를 강제하지 않는다.
+
+대기 갱신 실패 시 공개 서버를 교체하지 않고 입장을 재개한다. 버전이 다른 대기는 승격하지 않는다. 배포 성공은 두 머신의 이미지·역할·볼륨과 상태를 다시 검증한 뒤에만 기록한다. 이미지 교체는 대기의 환경 변수·리소스·서비스 설정까지 자동 동기화하지 않으므로 Fly 설정을 변경했다면 수동 전환 전에 아래 대조 절차를 수행한다.
 
 동시 배포는 drain 소유자 ID로 차단한다. 대기 중 Ctrl+C/SIGTERM은 입장을 재개하며, 교체가 시작된 뒤에는 Fly 완료를 기다린다. Fly 교체 실패·연결 단절로 결과가 불명확하면 입장을 자동으로 열지 않는다. `fly machine status`와 아래 상태 조회로 확인한 뒤 작업 로그의 `Drain owner` ID로 재개한다. 제어 포트는 외부 서비스로 노출하지 않는다.
 
@@ -112,7 +116,27 @@ fly machine exec <machine-id> 'node -e "fetch(\"http://127.0.0.1:4001/resume\",{
 
 2026-10-17 전체 기능 통합은 **DB·카탈로그 이미지 → 소켓 → 웹/관리자** 순서로 적용한다. 새 웹의 친구 presence가 spectator 연결을 사용하므로 구형 소켓과 혼용하면 게임 연결이 교체될 수 있다. [통합 검증 기록](full-performance/integration.md)에 환경별 DB 이력, 배포 커밋, 검사 결과를 남긴다.
 
-멀티플레이 방·보드·매칭·재접속 상태는 프로세스 메모리에 있다. **위 스크립트의 계획 배포는 경기를 끝낸 뒤 교체한다. 강제 재시작, 서버 장애, 직접 배포는 진행 중 멀티플레이 경기를 끊을 수 있다.** 솔로는 DB에 저장된 진행상황을 복원하지만 저장되지 않은 마지막 변경까지 보존하지는 못한다. [솔로 저장 정책](solo-time-attack.md)을 따른다. 자동 정지는 꺼져 있으며 다중 머신·자동 확장은 지원하지 않는다. Redis 어댑터만 추가해서 현재 보드 상태를 공유할 수는 없다.
+멀티플레이 방·보드·매칭·재접속 상태는 프로세스 메모리에 있다. **위 스크립트의 계획 배포는 경기를 끝낸 뒤 교체한다. 강제 재시작, 서버 장애, 직접 배포는 진행 중 멀티플레이 경기를 끊을 수 있다.** 솔로는 DB에 저장된 진행상황을 복원하지만 저장되지 않은 마지막 변경까지 보존하지는 못한다. [솔로 저장 정책](solo-time-attack.md)을 따른다. 자동 정지·공개 서버 2대의 동시 운영·자동 확장은 사용하지 않는다. Redis 어댑터만 추가해서 현재 보드 상태를 공유할 수는 없다.
+
+### 대기 서버 수동 전환
+
+정상 전환은 잠시 새 접속을 막고 진행 중 경기가 끝난 다음 수행한다. 장애 복구에서는 먼저 기존 머신이 다시 공개 트래픽을 받을 수 없도록 서비스를 제거해야 한다. 기존 outbox를 조회·재처리할 수 없다면 결과 저장 순서와 계정 삭제 보호를 보장할 수 없으므로 즉시 승격하지 않는다. 볼륨은 자동 복제되지 않으며, 미처리 결과가 있는 볼륨을 삭제하거나 빈 대기 볼륨으로 덮어쓰지 않는다.
+
+1. GitHub 배포가 실행 중이지 않은지 확인한다. `fly machine list -a <app> --json`으로 공개/대기 ID, 리전, 서로 다른 `/data` 볼륨, 동일한 이미지와 환경을 확인한다. 위 제어 명령으로 양쪽 저장 오류·대기 작업이 없는지 확인한다.
+2. 고유한 drain owner로 공개 서버의 `/drain`을 POST한다. `/status`의 `ready=true`, `matches=solo=writes=0`, `storageError=false`를 기다린다. 종료를 강제하지 않는다. 현재 readiness는 계정 삭제 HTTP 요청을 추적하지 않으므로 진행 중 계정 삭제가 있으면 완료 후 전환한다.
+3. 두 머신의 전체 config를 보존하고 전환용 JSON을 준비한다. 기존 공개 서버는 `services=[]`, `env.FLY_PROCESS_GROUP=standby`, `metadata={"game_role":"standby"}`로 바꾼다. 새 공개 서버는 자신의 볼륨을 유지하면서 기존 공개 서버의 `services`, `env`, `guest`, `stop_config`를 복사하고 `metadata={"fly_platform_version":"v2","fly_process_group":"app"}`로 지정한다. 이때 env의 프로세스 그룹은 `app`이어야 한다. 비밀 값을 출력하거나 저장소에 JSON을 커밋하지 않는다.
+4. **기존 공개 서버부터** 아래 명령으로 비공개로 바꾼다. 명령이 실패하거나 응답이 끊기면 실제 설정을 다시 조회할 때까지 다음 단계로 가지 않는다. Fly CLI의 config 갱신은 기존 metadata를 병합하므로, JSON에서 빠뜨리는 것만으로 관리 표식이 삭제되지 않는다. 비공개 전환 후 Machines API의 `DELETE /v1/apps/<app>/machines/<old-active-id>/metadata/<key>`로 `fly_platform_version`, `fly_process_group`를 각각 삭제하고 실제 제거를 조회한다. API 429는 `Retry-After`에 따라 기다린 뒤 같은 삭제를 재시도한다. 공개 서비스를 가진 머신이 0대임을 확인한 다음 대기를 공개한다.
+
+   ```sh
+   fly machine update <old-active-id> -a <app> --machine-config <old-as-standby.json> --yes
+   fly machine list -a <app> --json
+   # 기존 서버의 관리 metadata 삭제와 공개 서비스 0대를 확인한 뒤 실행
+   fly machine update <standby-id> -a <app> --machine-config <new-active.json> --yes
+   ```
+
+5. 새 공개 서버의 남은 `game_role` metadata도 같은 DELETE API로 제거한다. 공개 서버가 정확히 1대이고 대기의 서비스·관리 metadata가 없는지 다시 확인한다. 양쪽 제어 포트, 공개 `/health`, 친구 대전·입력·재접속·결과를 검사한다. 실패한 승격은 상태를 확인하기 전 자동 롤백하지 않는다. 원복도 현재 공개 서버를 먼저 비공개로 만드는 같은 순서를 따른다. 어느 순간에도 두 서버를 동시에 공개하지 않는다.
+
+단순 `fly scale count 2`, 대기의 `fly_platform_version=v2` 추가, 대기에 `fly.toml` 적용은 금지한다. Fly의 `standby-for`는 서비스 없는 프로세스의 호스트 장애 시작 기능이며 여기서 필요한 HTTP 라우팅 승격을 대신하지 않는다. [Fly 관리 머신 구분](https://fly.io/docs/machines/guides-examples/managing-machines-with-the-api/), [볼륨 제한](https://fly.io/docs/volumes/overview/)
 
 ## 배포 검증
 

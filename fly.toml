@@ -1,4 +1,5 @@
-# In-memory rooms require one Machine. Use node scripts/deploy-socket.mjs production.
+# In-memory rooms require one public Machine; a service-less standby is managed separately.
+# Use node scripts/deploy-socket.mjs production; never scale the public process group to two.
 
 app = '2048-socket'
 primary_region = 'nrt'
