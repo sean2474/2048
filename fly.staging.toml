@@ -1,4 +1,4 @@
-# Separate app, Supabase project, secrets, and volume; keep exactly one Machine.
+# Separate app, Supabase project, secrets, and volumes; keep exactly one public Machine.
 # Use node scripts/deploy-socket.mjs staging.
 app = '2048-socket-staging'
 primary_region = 'nrt'
